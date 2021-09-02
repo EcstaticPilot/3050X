@@ -13,6 +13,7 @@ extern motor Lfront;
 extern motor Rfront10;
 extern inertial Inertial4;
 extern motor Arm2;
+extern digital_out claw;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.

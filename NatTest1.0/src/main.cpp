@@ -3,7 +3,7 @@
 /*    Module:       main.cpp                                                  */
 /*    Author:       C:\Users\chiep                                            */
 /*    Created:      Tue Oct 06 2020                                           */
-/*    Description:  V5 project                                                */
+/*    Description:  9-1-21 added pneumatics                                              */
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 
@@ -20,6 +20,7 @@
 // Rfront10             motor         10              
 // Inertial4            inertial      4               
 // Arm2                 motor         20              
+// claw                 digital_out   A               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
@@ -161,7 +162,7 @@ Brain.Screen.printAt( 20, 80,"Motor Temp%f ",Rfront10.temperature(pct));
 //Brain.Screen.printAt( 20, 100,"Heading%f ",  Intertial4.setRotation(deg));
 
 
-
+/*
 //scoring in the corner goal
 autonDriver(200, -100, -100, 0, 90, 90); //intake + backwards
 autonDriver(100, 0, 0, 0, 0, 0); //pause
@@ -192,7 +193,7 @@ autonDriver(50, 0, 0, 0, 0, 0); //pause
 autonDriver(800, 5, -5, 100, -10, -10);
 InchDrive(12, 20);
 autonDriver(700, 0, 0, 10, 70, 70);
-
+*/
 /*
 //autonDriver(1000, -52, 50, 20, 0, 0); //turn
 autonDriver(200, 0, 0, 0, 0, 0); //pause
@@ -246,12 +247,21 @@ autonDriver(500000, 0, 0, 0, 0, 0); //End
  void driverControl () {
 
    while (true){
-     motorCurrent(); 
+     if (Controller1.ButtonA.pressing())
+     {
+       claw.set(true);
+     }
+     else if(Controller1.ButtonB.pressing())
+     {
+       claw.set(false);
+     }
+
+     
    Brain.Screen.printAt(160, 60, "hi");
-Brain.Screen.printAt( 20, 20,"Motor Temp%f ",LeftBackMotor.temperature(pct));
-Brain.Screen.printAt( 20, 40,"Motor Temp%f ",RightBackMotor.temperature(pct));
-Brain.Screen.printAt( 20, 60,"Motor Temp%f ",Lfront.temperature(pct));
-Brain.Screen.printAt( 20, 80,"Motor Temp%f ",Rfront10.temperature(pct));
+Brain.Screen.printAt( 20, 20,"LB Motor Temp%f ",LeftBackMotor.temperature(pct));
+Brain.Screen.printAt( 20, 40,"RB Motor Temp%f ",RightBackMotor.temperature(pct));
+Brain.Screen.printAt( 20, 60,"LF Motor Temp%f ",Lfront.temperature(pct));
+Brain.Screen.printAt( 20, 80,"RF Motor Temp%f ",Rfront10.temperature(pct));
 
   LeftBackMotor.spin(forward, Controller1.Axis3.position(pct), pct);
   RightBackMotor.spin(forward, Controller1.Axis2.position(pct), pct);
@@ -259,7 +269,7 @@ Brain.Screen.printAt( 20, 80,"Motor Temp%f ",Rfront10.temperature(pct));
   Rfront10.spin(forward, Controller1.Axis2.position(pct), pct);
 
 
-  if (Controller1.ButtonR1.pressing()) {
+ /* if (Controller1.ButtonR1.pressing()) {
     Lintake.spin(forward, 100, pct);
     Rintake.spin(forward, 100, pct);
     
@@ -279,17 +289,17 @@ Brain.Screen.printAt( 20, 80,"Motor Temp%f ",Rfront10.temperature(pct));
    
 
 
- }
+ }*/
  if (Controller1.ButtonL1.pressing()) {
-    Arm.spin(forward, 85, pct);
-    Arm2.spin(forward, 85, pct);
+    Arm.spin(forward, 100, pct);
+    Arm2.spin(forward, 100, pct);
 
     
    }
    else if 
      (Controller1.ButtonL2.pressing()) {
-       Arm.spin(reverse, 85, pct);
-       Arm2.spin(reverse, 85, pct);
+       Arm.spin(reverse, 100, pct);
+       Arm2.spin(reverse, 100, pct);
      }
   
  
