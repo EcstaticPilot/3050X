@@ -26,7 +26,7 @@ competition Competition;
 using namespace vex;
 float pi = 3.14;
 float Diamter = 4.0;
-
+float scale = 12000/100;
 void drive(int lspeed, int rspeed,  int dtime){
   LeftBack.spin(forward, lspeed, pct);
   LeftFront.spin(forward, lspeed, pct);
@@ -81,7 +81,7 @@ void gyroturn(float target){ //turning gyro
   Brain.Screen.printAt(1, 40, "heading = %0.2f    degrees", heading);
 }
 
-float scale = 12000/100;
+
 
 void driver(){
   
