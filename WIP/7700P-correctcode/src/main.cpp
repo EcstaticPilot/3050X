@@ -16,7 +16,7 @@
 // RightBack            motor         20              
 // RightFront           motor         10              
 // Gyro                 inertial      17              
-// RL19                 motor         19              
+// RL12                 motor         12              
 // LL18                 motor         18              
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
@@ -91,19 +91,19 @@ void driver(){
 
   
     LL18.setStopping(hold); 
-    RL19.setStopping(hold);
+    RL12.setStopping(hold);
     if(Controller1.ButtonLeft.pressing()){
       LL18.spin(forward, 75, pct);
-      RL19.spin(forward, 75, pct);
+      RL12.spin(forward, 75, pct);
   }
     else if(Controller1.ButtonDown.pressing()){
       LL18.spin(reverse, 75, pct);
-      RL19.spin(reverse, 75, pct);
+      RL12.spin(reverse, 75, pct);
 
   }
     else{
       LL18.stop();
-      RL19.stop();
+      RL12.stop();
   }
 
   
