@@ -14,7 +14,7 @@ motor LeftFront = motor(PORT1, ratio18_1, false);
 motor RightBack = motor(PORT20, ratio18_1, true);
 motor RightFront = motor(PORT10, ratio18_1, true);
 inertial Gyro = inertial(PORT17);
-motor RL12 = motor(PORT12, ratio18_1, true);
+motor RL19 = motor(PORT19, ratio18_1, true);
 motor LL18 = motor(PORT18, ratio18_1, false);
 
 // VEXcode generated functions

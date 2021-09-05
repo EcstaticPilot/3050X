@@ -9,7 +9,7 @@ extern motor LeftFront;
 extern motor RightBack;
 extern motor RightFront;
 extern inertial Gyro;
-extern motor RL12;
+extern motor RL19;
 extern motor LL18;
 
 /**
