@@ -9,8 +9,9 @@ extern motor LeftFront;
 extern motor RightBack;
 extern motor RightFront;
 extern inertial Gyro;
-extern motor RL12;
-extern motor LL18;
+extern motor RL19;
+extern motor LL12;
+extern digital_out Grabber;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.

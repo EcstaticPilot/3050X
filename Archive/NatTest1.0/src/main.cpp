@@ -10,16 +10,14 @@
 // ---- START VEXCODE CONFIGURED DEVICES ----
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
-// RightBackMotor       motor         5               
-// LeftBackMotor        motor         6               
-// Arm                  motor         12              
+// RightBackMotor       motor         20              
+// LeftBackMotor        motor         11              
+// LeftLift             motor         12              
 // Controller1          controller                    
-// Lintake              motor         16              
-// Rintake              motor         18              
 // Lfront               motor         1               
 // Rfront10             motor         10              
 // Inertial4            inertial      4               
-// Arm2                 motor         20              
+// RightLift            motor         19              
 // claw                 digital_out   A               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
@@ -87,17 +85,15 @@ wait(5,msec);
 }
 
 
-void autonDriver(int wt, int Lspeed, int Rspeed, int Armspeed, int Lint, int Rint) 
+void autonDriver(int wt, int Lspeed, int Rspeed, int Armspeed) 
 {
 
   LeftBackMotor.spin(forward, Lspeed, pct);
   RightBackMotor.spin(forward, Rspeed, pct);
   Lfront.spin(forward, Lspeed, pct);
   Rfront10.spin(forward, Rspeed, pct); 
-  Arm.spin(forward, Armspeed, pct);
-  Arm2.spin(forward, Armspeed, pct);
-  Lintake.spin(forward, Lint, pct);
-  Rintake.spin(forward, Rint, pct);
+  LeftLift.spin(forward, Armspeed, pct);
+  RightLift.spin(forward, Armspeed, pct);
 
 wait(wt, msec);
 }
@@ -115,7 +111,7 @@ LeftBackMotor.setRotation(0, degrees);
     
    c = LeftBackMotor.rotation(rev)*3.14*dia; 
   }
-   autonDriver(0, 0, 0, 0, 0, 0);
+   autonDriver(0, 0, 0, 0);
     
 }
 
@@ -134,11 +130,11 @@ float kp = 2.0;
   while (fabs(heading4)<= target) 
 {
     speed=kp*(target-heading4);
-    autonDriver(10 , Lspeed, Rspeed, 0, 0, 0);
+    autonDriver(10 , Lspeed, Rspeed, 0);
     wait(10,msec);
     heading4=Inertial4.rotation(degrees); 
   }
-  autonDriver(0, 0, 0, 0, 0, 0);
+  autonDriver(0, 0, 0, 0);
 }
 ////////////----------------------EOF-----------------------//////////////////////
 
@@ -247,11 +243,11 @@ autonDriver(500000, 0, 0, 0, 0, 0); //End
  void driverControl () {
 
    while (true){
-     if (Controller1.ButtonA.pressing())
+     if (Controller1.ButtonR2.pressing())
      {
        claw.set(true);
      }
-     else if(Controller1.ButtonB.pressing())
+     else if(Controller1.ButtonR1.pressing())
      {
        claw.set(false);
      }
@@ -291,21 +287,21 @@ Brain.Screen.printAt( 20, 80,"RF Motor Temp%f ",Rfront10.temperature(pct));
 
  }*/
  if (Controller1.ButtonL1.pressing()) {
-    Arm.spin(forward, 100, pct);
-    Arm2.spin(forward, 100, pct);
+    LeftLift.spin(forward, 100, pct);
+    RightLift.spin(forward, 100, pct);
 
     
    }
    else if 
      (Controller1.ButtonL2.pressing()) {
-       Arm.spin(reverse, 100, pct);
-       Arm2.spin(reverse, 100, pct);
+       LeftLift.spin(reverse, 100, pct);
+       RightLift.spin(reverse, 100, pct);
      }
   
  
  else {
-       Arm.stop(brake);
-       Arm2.stop(brake);
+       LeftLift.stop(brake);
+       RightLift.stop(brake);
 
 
  }}
