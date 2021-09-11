@@ -3,15 +3,15 @@ using namespace vex;
 extern brain Brain;
 
 // VEXcode devices
-extern motor RightBackMotor;
-extern motor LeftBackMotor;
-extern motor LeftLift;
+extern motor RBDrive;
+extern motor LBDrive;
+extern motor LLift;
 extern controller Controller1;
-extern motor Lfront;
-extern motor Rfront10;
-extern inertial Inertial4;
-extern motor RightLift;
-extern digital_out claw;
+extern motor LFDrive;
+extern inertial Gyro;
+extern motor RLift;
+extern digital_out Claw;
+extern motor RFDrive;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.

@@ -10,15 +10,15 @@
 // ---- START VEXCODE CONFIGURED DEVICES ----
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
-// RightBackMotor       motor         20              
-// LeftBackMotor        motor         11              
-// LeftLift             motor         12              
+// RBDrive              motor         20              
+// LBDrive              motor         11              
+// LLift                motor         12              
 // Controller1          controller                    
-// Lfront               motor         1               
-// Rfront10             motor         10              
-// Inertial4            inertial      4               
-// RightLift            motor         19              
-// claw                 digital_out   A               
+// LFDrive              motor         1               
+// Gyro                 inertial      4               
+// RLift                motor         19              
+// Claw                 digital_out   A               
+// RFDrive              motor         10              
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
@@ -35,8 +35,8 @@ Brain.Screen.setFillColor(red);
 Brain.Screen.setPenColor(white);
 Brain.Screen.drawRectangle(10, 10, 100, 50);
 Brain.Screen.printAt(10, 10, "hi");
-Brain.Screen.printAt( 10 , 20,"RMotor Temp%f ",LeftBackMotor.temperature(pct));
-Brain.Screen.printAt( 10, 35,"LMotor Temp%f ",RightBackMotor.temperature(pct));
+Brain.Screen.printAt( 10 , 20,"RMotor Temp%f ",LBDrive.temperature(pct));
+Brain.Screen.printAt( 10, 35,"LMotor Temp%f ",RBDrive.temperature(pct));
 //Brain.Screen.printAt(10, 40,"Motor");
 
 
@@ -64,10 +64,10 @@ void motorCurrent() {
 
 void Drive(float speed)
 {
-     LeftBackMotor.spin(forward,speed, pct);
-    RightBackMotor.spin(forward, speed, pct);
-    Lfront.spin(forward, speed, pct);
-    Rfront10.spin(forward, speed, pct);
+     LBDrive.spin(forward,speed, pct);
+    RBDrive.spin(forward, speed, pct);
+    LFDrive.spin(forward, speed, pct);
+    RFDrive.spin(forward, speed, pct);
 }
 
 void Pdrive (float target, float distrav)
@@ -76,7 +76,7 @@ float error = 0;
 float Dist = 0;
 float kP = 1;
 while(true) {
-Dist = Lfront.position(degrees),( 4*3.14/360);
+Dist = LFDrive.position(degrees),( 4*3.14/360);
 error = target - Dist;
 Drive(error*kP);
 wait(5,msec);
@@ -85,15 +85,16 @@ wait(5,msec);
 }
 
 
-void autonDriver(int wt, int Lspeed, int Rspeed, int Armspeed) 
+void autonDriver(int wt, int lspeed, int rspeed, int liftspeed, bool claw) 
 {
 
-  LeftBackMotor.spin(forward, Lspeed, pct);
-  RightBackMotor.spin(forward, Rspeed, pct);
-  Lfront.spin(forward, Lspeed, pct);
-  Rfront10.spin(forward, Rspeed, pct); 
-  LeftLift.spin(forward, Armspeed, pct);
-  RightLift.spin(forward, Armspeed, pct);
+  LBDrive.spin(forward, lspeed, pct);
+  RBDrive.spin(forward, rspeed, pct);
+  LFDrive.spin(forward, lspeed, pct);
+  RFDrive.spin(forward, rspeed, pct); 
+  LLift.spin(forward, liftspeed, pct);
+  RLift.spin(forward, liftspeed, pct);
+  Claw.set(claw);
 
 wait(wt, msec);
 }
@@ -101,40 +102,40 @@ wait(wt, msec);
  void InchDrive (float target, int speed) {
 
   float c = 0; //our distance
-LeftBackMotor.setRotation(0, degrees);
+LBDrive.setRotation(0, degrees);
   while (fabs (c) <= target) {
 
-    LeftBackMotor.spin(forward,speed, pct);
-    RightBackMotor.spin(forward, speed, pct);
-    Lfront.spin(forward, speed, pct);
-    Rfront10.spin(forward, speed, pct);
+    LBDrive.spin(forward,speed, pct);
+    RBDrive.spin(forward, speed, pct);
+    LFDrive.spin(forward, speed, pct);
+    RFDrive.spin(forward, speed, pct);
     
-   c = LeftBackMotor.rotation(rev)*3.14*dia; 
+   c = LBDrive.rotation(rev)*3.14*dia; 
   }
-   autonDriver(0, 0, 0, 0);
+   autonDriver(0, 0, 0, 0, false);
     
 }
 
 void gyroTurn(float target, int Lspeed, int Rspeed)
 {
-/*  while(Inertial4.isCalibrating())
+/*  while(Gyro.isCalibrating())
 {
   // Wait for Gyro Calibration , Sleep but Allow other tasks to run
     this_thread::sleep_for(20);
 }*/
   float heading4 = 0;
-  Inertial4.setRotation(0, degrees); 
+  Gyro.setRotation(0, degrees); 
  
 float speed=0.0 ;
 float kp = 2.0;
   while (fabs(heading4)<= target) 
 {
     speed=kp*(target-heading4);
-    autonDriver(10 , Lspeed, Rspeed, 0);
+    autonDriver(10 , Lspeed, Rspeed, 0, false);
     wait(10,msec);
-    heading4=Inertial4.rotation(degrees); 
+    heading4=Gyro.rotation(degrees); 
   }
-  autonDriver(0, 0, 0, 0);
+  autonDriver(0, 0, 0, 0, false);
 }
 ////////////----------------------EOF-----------------------//////////////////////
 
@@ -143,98 +144,32 @@ void pre_auton(void) {
 }
 
  void autonomous(void) {
-    while(Inertial4.isCalibrating())
+    while(Gyro.isCalibrating())
 {
   
     wait(20,msec);
 }
- //Brain.Screen.printAt(160, 60, "hi");
-Brain.Screen.printAt( 20, 20,"Motor Temp%f ",LeftBackMotor.temperature(pct));
-Brain.Screen.printAt( 20, 40,"Motor Temp%f ",RightBackMotor.temperature(pct));
-Brain.Screen.printAt( 20, 60,"Motor Temp%f ",Lfront.temperature(pct));
-Brain.Screen.printAt( 20, 80,"Motor Temp%f ",Rfront10.temperature(pct));
- Brain.Screen.printAt( 20, 100,"Heading%f "   , Inertial4.rotation(deg));
+// autonDriver(wait time, left drive speed, right drive speed, lift speed, claw close is true) 
+Brain.Screen.printAt( 20, 20,"Motor Temp%f ",LBDrive.temperature(pct));
+Brain.Screen.printAt( 20, 40,"Motor Temp%f ",RBDrive.temperature(pct));
+Brain.Screen.printAt( 20, 60,"Motor Temp%f ",LFDrive.temperature(pct));
+Brain.Screen.printAt( 20, 80,"Motor Temp%f ",RFDrive.temperature(pct));
+ Brain.Screen.printAt( 20, 100,"Heading%f ",Gyro.rotation(deg));
 
 //Brain.Screen.printAt( 20, 100,"Heading%f ",  Intertial4.setRotation(deg));
+//claw true is close
+InchDrive(9, 60);
+autonDriver(600, -20, -20, -10, false);//back
+autonDriver(300, 20, 20, -10, false);//forward/deploy
+InchDrive(3, 60);
+autonDriver(250, 5, 5, -5, true);
+gyroTurn(90, -60, 60);
+InchDrive(12, 40);
+autonDriver(800, 0, 0, -25, true);
+//autonDriver(10, 10, -10, 0, true);
+//InchDrive(5, 60);
+//autonDriver(0, 0, 0, 0, true);
 
-
-/*
-//scoring in the corner goal
-autonDriver(200, -100, -100, 0, 90, 90); //intake + backwards
-autonDriver(100, 0, 0, 0, 0, 0); //pause
-autonDriver(2000, 0, 0, 85, 0, 0); //arm
-autonDriver(1200, 50, 50, 20, 0, 0); //forward + arm
-autonDriver(210, -50, 50, 20, 0, 0); //turn
-autonDriver(500, 10, 10, 20, 0, 0); //forward slightly
-autonDriver(600, 0, 0, 20, 80, 80); //outake
-autonDriver(500, -50, -50, 20, 0, 0); //backwards
-autonDriver(500, 0, 0, 20, 0, 0); //pause and lift
-
-//face the ball in the middle
-gyroTurn(145, 20, -20);
-
-autonDriver(1700, 70, 70, -90, -100, -100);//Forward + arm down + intake
-autonDriver(100, -5, -5, 0, 0, 0);
-
-gyroTurn(55, -20, 20);
-
-for(int i = 0; i < 3; i++)
-{
-autonDriver(650, 60, 60, -5, 0, 0); //forward
-autonDriver(50, 0, 0, 0, 0, 0); //pause
-autonDriver(600, -60, -60, -5, 0, 0); //backwards
-autonDriver(50, 0, 0, 0, 0, 0); //pause
-}
-
-autonDriver(800, 5, -5, 100, -10, -10);
-InchDrive(12, 20);
-autonDriver(700, 0, 0, 10, 70, 70);
-*/
-/*
-//autonDriver(1000, -52, 50, 20, 0, 0); //turn
-autonDriver(200, 0, 0, 0, 0, 0); //pause
-autonDriver(1600, 85, 85, -80, 0, 0); //forward
-autonDriver(50, 0, 0, 0, 0, 0); //pause
-autonDriver(1000, -18, 30, -5, 0, 0); //turn
-autonDriver(200, 0, 0, 0, 0, 0); //pause
-autonDriver(600, 50, 50, -5, 0, 0); //forward
-autonDriver(50, 0, 0, 0, 0, 0); //pause
-autonDriver(500, -50, -50, -5, 0, 0); //backwards
-autonDriver(50, 0, 0, 0, 0, 0); //pause
-autonDriver(600, 50, 50, 0, 0, 0); //forward
-autonDriver(50, 0, 0, 0, 0, 0); //pause
-autonDriver(500, -50, -50, 0, 0, 0); //backwards
-autonDriver(50, 0, 0, 0, 0, 0); //pause
-autonDriver(600, 50, 50, 0, 0, 0); //forward
-autonDriver(50, 0, 0, 0, 0, 0); //pause
-autonDriver(500, -50, -50, 0, 0, 0); //backwards
-autonDriver(50, 0, 0, 0, 0, 0); //pause
-autonDriver(600, 50, 50, 0, 0, 0); //forward
-autonDriver(50, 0, 0, 0, 0, 0); //pause
-autonDriver(500, -50, -50, 0, 0, 0); //backwards
-autonDriver(50, 0, 0, 0, 0, 0); //pause
-
-//Next phase
-
-autonDriver(300, 90, -90, 0, 0, 0); //turn right
-autonDriver(50, 0, 0, 0, -90, 90); //pause
-autonDriver(700, 75, 75, 0, -90, -90); //forward+intake
-autonDriver(2000, 0, 0, 85, -90, -90); //lift up
-autonDriver(750, -49, 49, 20, 0, 0); //turn left
-autonDriver(70, 10, -10, 20, -90, -90); //pause
-autonDriver(450, 50, 50, 20, 0, 0); //forward
-autonDriver(300, 0, 0, 20, 70, 70); //outake
-autonDriver(500, -70, -70, 20, 0, 0); //backward
-
- autonDriver(100, 35, -35, 0, -90, -90); //turn right slightly
-autonDriver(1300, 60, 60, 0, -90, -90); //forward
-autonDriver(2000, 0, 0, 85, -90, -90); //lift up
-autonDriver(200, -85, 85, 0, 0, 0); //turn left
-autonDriver(700, 60, 60, 0, -90, -90); //forward
-autonDriver(700, 0, 0, 20, 90, 90); //outake
-
-autonDriver(500000, 0, 0, 0, 0, 0); //End
-*/
 
 }
 
@@ -245,24 +180,24 @@ autonDriver(500000, 0, 0, 0, 0, 0); //End
    while (true){
      if (Controller1.ButtonR2.pressing())
      {
-       claw.set(true);
+       Claw.set(true);
      }
      else if(Controller1.ButtonR1.pressing())
      {
-       claw.set(false);
+       Claw.set(false);
      }
 
      
    Brain.Screen.printAt(160, 60, "hi");
-Brain.Screen.printAt( 20, 20,"LB Motor Temp%f ",LeftBackMotor.temperature(pct));
-Brain.Screen.printAt( 20, 40,"RB Motor Temp%f ",RightBackMotor.temperature(pct));
-Brain.Screen.printAt( 20, 60,"LF Motor Temp%f ",Lfront.temperature(pct));
-Brain.Screen.printAt( 20, 80,"RF Motor Temp%f ",Rfront10.temperature(pct));
+Brain.Screen.printAt( 20, 20,"LB Motor Temp%f ",LBDrive.temperature(pct));
+Brain.Screen.printAt( 20, 40,"RB Motor Temp%f ",RBDrive.temperature(pct));
+Brain.Screen.printAt( 20, 60,"LF Motor Temp%f ",LFDrive.temperature(pct));
+Brain.Screen.printAt( 20, 80,"RF Motor Temp%f ",RFDrive.temperature(pct));
 
-  LeftBackMotor.spin(forward, Controller1.Axis3.position(pct), pct);
-  RightBackMotor.spin(forward, Controller1.Axis2.position(pct), pct);
-  Lfront.spin(forward, Controller1.Axis3.position(pct), pct);
-  Rfront10.spin(forward, Controller1.Axis2.position(pct), pct);
+  LBDrive.spin(forward, Controller1.Axis3.position(pct), pct);
+  LFDrive.spin(forward, Controller1.Axis3.position(pct), pct);
+  RFDrive.spin(forward, Controller1.Axis2.position(pct), pct);
+  RBDrive.spin(forward, Controller1.Axis2.position(pct), pct);
 
 
  /* if (Controller1.ButtonR1.pressing()) {
@@ -287,21 +222,21 @@ Brain.Screen.printAt( 20, 80,"RF Motor Temp%f ",Rfront10.temperature(pct));
 
  }*/
  if (Controller1.ButtonL1.pressing()) {
-    LeftLift.spin(forward, 100, pct);
-    RightLift.spin(forward, 100, pct);
+    LLift.spin(forward, 100, pct);
+    RLift.spin(forward, 100, pct);
 
     
    }
    else if 
      (Controller1.ButtonL2.pressing()) {
-       LeftLift.spin(reverse, 100, pct);
-       RightLift.spin(reverse, 100, pct);
+       LLift.spin(reverse, 100, pct);
+       RLift.spin(reverse, 100, pct);
      }
   
  
  else {
-       LeftLift.stop(brake);
-       RightLift.stop(brake);
+       LLift.stop(brake);
+       RLift.stop(brake);
 
 
  }}
