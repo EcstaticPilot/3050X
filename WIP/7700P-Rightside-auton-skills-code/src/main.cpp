@@ -4,7 +4,7 @@
 /*    Author:       C:\Users\chiep                                            */
 /*    Created:      Tue Oct 06 2020                                           */
 /*    Description:  9-1-21 added pneumatics                                              */
-/*                                                                            */
+/*                   abby added right auton 9/17/21                                                         */
 /*----------------------------------------------------------------------------*/
 
 // ---- START VEXCODE CONFIGURED DEVICES ----
@@ -29,6 +29,23 @@ competition Competition;
 float dia = 4.0;
 
 //tis is GUI : Graphic User Interface
+
+
+void Drive(int lspeed, int rspeed){
+  LBDrive.spin(forward, lspeed, pct);
+  RBDrive.spin(forward, rspeed, pct);
+  LFDrive.spin(forward, lspeed, pct);
+  RFDrive.spin(forward, rspeed, pct);
+}
+
+void claw(bool claw){
+  Claw.set(claw);
+}
+
+void lift(int liftspeed){
+  LLift.spin(forward, liftspeed, pct);
+  RLift.spin(forward, liftspeed, pct);
+}
 void draw(){
 
 Brain.Screen.setFillColor(red);
@@ -61,30 +78,6 @@ void motorCurrent() {
 
 }
 
-
-void Drive(float speed)
-{
-     LBDrive.spin(forward,speed, pct);
-    RBDrive.spin(forward, speed, pct);
-    LFDrive.spin(forward, speed, pct);
-    RFDrive.spin(forward, speed, pct);
-}
-
-void Pdrive (float target, float distrav)
-{
-float error = 0;
-float Dist = 0;
-float kP = 1;
-while(true) {
-Dist = LFDrive.position(degrees),( 4*3.14/360);
-error = target - Dist;
-Drive(error*kP);
-wait(5,msec);
-
-}
-}
-
-
 void autonDriver(int wt, int lspeed, int rspeed, int liftspeed, bool claw) 
 {
 
@@ -99,7 +92,7 @@ void autonDriver(int wt, int lspeed, int rspeed, int liftspeed, bool claw)
 wait(wt, msec);
 }
 
- void InchDrive (float target, int speed, int arm,bool claw) {
+ void inchDrive (float target, int speed, bool claw) {
 Claw.set(claw);
   float c = 0; //our distance
 LBDrive.setRotation(0, degrees);
@@ -112,11 +105,11 @@ LBDrive.setRotation(0, degrees);
     
    c = LBDrive.rotation(rev)*3.14*dia; 
   }
-   autonDriver(0, 0, 0, arm, false);
+   autonDriver(0, 0, 0, 0, false);
     
 }
 
-void gyroTurn(float target, int Lspeed, int Rspeed, int lift, bool claw)
+void gyroTurn(float target, int Lspeed, int Rspeed, bool claw)
 {
   while(Gyro.isCalibrating())
 {
@@ -131,11 +124,11 @@ float kp = 2.0;
   while (fabs(heading4)<= target) 
 {
     speed=kp*(target-heading4);
-    autonDriver(10 , Lspeed, Rspeed, lift, claw);
+    autonDriver(10 , Lspeed, Rspeed, 0, claw);
     wait(10,msec);
     heading4=Gyro.rotation(degrees); 
   }
-  autonDriver(0, 0, 0, lift, claw);
+  autonDriver(0, 0, 0, 0, true);
 }
 ////////////----------------------EOF-----------------------//////////////////////
 
@@ -155,30 +148,26 @@ Brain.Screen.printAt( 20, 40,"Motor Temp%f ",RBDrive.temperature(pct));
 Brain.Screen.printAt( 20, 60,"Motor Temp%f ",LFDrive.temperature(pct));
 Brain.Screen.printAt( 20, 80,"Motor Temp%f ",RFDrive.temperature(pct));
  Brain.Screen.printAt( 20, 100,"Heading%f ",Gyro.rotation(deg));
-
-//Brain.Screen.printAt( 20, 100,"Heading%f ",  Intertial4.setRotation(deg));
-//claw true is close
-InchDrive(1, 60, 0, false);
-InchDrive(2, -50, 0, false);
-InchDrive(5, 60, 0, false);
-wait(900, msec);
-autonDriver(250, 0, 0, -5, true);
-autonDriver(2000, 0, 0, 70, true);
-gyroTurn(88, -30, 30, 10, true); //90 degree turn = 64
-InchDrive(22, 60, 10, true);
-autonDriver(700, 0, 0, -60, true);
-InchDrive(10, 60, 0, true);
-autonDriver(1000, -60, -60, 0, false);
-Brain.Screen.printAt(20,20,"DONE TAKE THAT UNBELIEVERS HAHAHAHAHAHAHHAHAHAHAHAA.");
-//autonDriver(700, 0, 0, 50, true);
-//InchDrive(10, 40, true);
-//InchDrive(12, 40, true);
-//autonDriver(800, 0, 0, -25, true);
-//autonDriver(10, 10, -10, 0, true);
-//InchDrive(5, 60);
-//autonDriver(0, 0, 0, 0, true);
-
-
+ //claw true is closed, false is open
+ inchDrive(3, 75, true);
+ inchDrive(2, -75, true);
+ wait(1500, msec);
+ inchDrive(8, 75, false);
+ claw(false);
+ claw(true);
+ wait(500, msec);
+ gyroTurn(45, -75, 75, true);
+ wait(500, msec);
+ inchDrive(5, 75, true);
+ gyroTurn(90, -75, 75, true);
+ lift(75);
+ inchDrive(1, 75, true);
+ inchDrive(2, 75, true);
+ /*
+ 
+ 
+ inchDrive(2, 75, true);
+ inchDrive(0, 75, false);*/
 }
 
   
@@ -207,28 +196,6 @@ Brain.Screen.printAt( 20, 80,"RF Motor Temp%f ",RFDrive.temperature(pct));
   RFDrive.spin(forward, Controller1.Axis2.position(pct), pct);
   RBDrive.spin(forward, Controller1.Axis2.position(pct), pct);
 
-
- /* if (Controller1.ButtonR1.pressing()) {
-    Lintake.spin(forward, 100, pct);
-    Rintake.spin(forward, 100, pct);
-    
-    
-   }
-   else if 
-     (Controller1.ButtonR2.pressing()) {
-       Lintake.spin(reverse, 100, pct);
-       Rintake.spin(reverse, 100, pct);
-       
-     }
-  
- 
- else {
-   Lintake.stop(brake);
-   Rintake.stop(brake);
-   
-
-
- }*/
  if (Controller1.ButtonL1.pressing()) {
     LLift.spin(forward, 100, pct);
     RLift.spin(forward, 100, pct);

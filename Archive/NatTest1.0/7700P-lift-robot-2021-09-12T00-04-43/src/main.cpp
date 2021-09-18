@@ -99,7 +99,7 @@ void autonDriver(int wt, int lspeed, int rspeed, int liftspeed, bool claw)
 wait(wt, msec);
 }
 
- void InchDrive (float target, int speed, int arm,bool claw) {
+ void InchDrive (float target, int speed, bool claw) {
 Claw.set(claw);
   float c = 0; //our distance
 LBDrive.setRotation(0, degrees);
@@ -112,11 +112,11 @@ LBDrive.setRotation(0, degrees);
     
    c = LBDrive.rotation(rev)*3.14*dia; 
   }
-   autonDriver(0, 0, 0, arm, false);
+   autonDriver(0, 0, 0, 0, false);
     
 }
 
-void gyroTurn(float target, int Lspeed, int Rspeed, int lift, bool claw)
+void gyroTurn(float target, int Lspeed, int Rspeed, bool claw)
 {
   while(Gyro.isCalibrating())
 {
@@ -131,11 +131,11 @@ float kp = 2.0;
   while (fabs(heading4)<= target) 
 {
     speed=kp*(target-heading4);
-    autonDriver(10 , Lspeed, Rspeed, lift, claw);
+    autonDriver(10 , Lspeed, Rspeed, 0, claw);
     wait(10,msec);
     heading4=Gyro.rotation(degrees); 
   }
-  autonDriver(0, 0, 0, lift, claw);
+  autonDriver(0, 0, 0, 0, true);
 }
 ////////////----------------------EOF-----------------------//////////////////////
 
@@ -158,18 +158,13 @@ Brain.Screen.printAt( 20, 80,"Motor Temp%f ",RFDrive.temperature(pct));
 
 //Brain.Screen.printAt( 20, 100,"Heading%f ",  Intertial4.setRotation(deg));
 //claw true is close
-InchDrive(1, 60, 0, false);
-InchDrive(2, -50, 0, false);
-InchDrive(5, 60, 0, false);
+InchDrive(3, 60, false);
+InchDrive(2, -50, false);
+InchDrive(4, 60, false);
 wait(900, msec);
 autonDriver(250, 0, 0, -5, true);
-autonDriver(2000, 0, 0, 70, true);
-gyroTurn(88, -30, 30, 10, true); //90 degree turn = 64
-InchDrive(22, 60, 10, true);
-autonDriver(700, 0, 0, -60, true);
-InchDrive(10, 60, 0, true);
-autonDriver(1000, -60, -60, 0, false);
-Brain.Screen.printAt(20,20,"DONE TAKE THAT UNBELIEVERS HAHAHAHAHAHAHHAHAHAHAHAA.");
+autonDriver(1000, 0, 0, 70, true);
+gyroTurn(60, -30, 30, true);
 //autonDriver(700, 0, 0, 50, true);
 //InchDrive(10, 40, true);
 //InchDrive(12, 40, true);
