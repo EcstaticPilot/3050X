@@ -4,7 +4,7 @@
 /*    Author:       C:\Users\chiep                                            */
 /*    Created:      Tue Oct 06 2020                                           */
 /*    Description:  9-1-21 added pneumatics                                              */
-/*                   abby added right auton 9/17/21                                                         */
+/*                   abby added RIGHT auton 9/17/21                                                         */
 /*----------------------------------------------------------------------------*/
 
 // ---- START VEXCODE CONFIGURED DEVICES ----

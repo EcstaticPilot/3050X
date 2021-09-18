@@ -4,7 +4,7 @@
 /*    Author:       C:\Users\chiep                                            */
 /*    Created:      Tue Oct 06 2020                                           */
 /*    Description:  9-1-21 added pneumatics                                              */
-/*                   abby added left auton 9/17/21                                                         */
+/*                   abby added LEFT auton 9/17/21                                                         */
 /*----------------------------------------------------------------------------*/
 
 // ---- START VEXCODE CONFIGURED DEVICES ----
@@ -149,6 +149,13 @@ Brain.Screen.printAt( 20, 60,"Motor Temp%f ",LFDrive.temperature(pct));
 Brain.Screen.printAt( 20, 80,"Motor Temp%f ",RFDrive.temperature(pct));
  Brain.Screen.printAt( 20, 100,"Heading%f ",Gyro.rotation(deg));
  //claw true is closed, false is open
+ gyroTurn(90, 75, 75, true);
+ inchDrive(5, 75, false);
+ wait(700,msec);
+ claw(true);
+ lift(75);
+ inchDrive(10, 75, true);
+ wait(10000 ,msec);
  
  /*
  
