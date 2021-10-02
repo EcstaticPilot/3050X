@@ -149,6 +149,12 @@ Brain.Screen.printAt( 20, 60,"Motor Temp%f ",LFDrive.temperature(pct));
 Brain.Screen.printAt( 20, 80,"Motor Temp%f ",RFDrive.temperature(pct));
  Brain.Screen.printAt( 20, 100,"Heading%f ",Gyro.rotation(deg));
  //claw true is closed, false is open
+
+  //ring auton
+  inchDrive(5, 75, true);
+  claw(false);
+
+ //right side auton
  inchDrive(3, 75, true);
  inchDrive(2, -75, true);
  wait(1500, msec);
