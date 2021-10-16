@@ -14,11 +14,11 @@
 // [Name]               [Type]        [Port(s)]
 // RBDrive              motor         20              
 // LBDrive              motor         11              
-// LLift                motor         12              
+// LLift                motor         2               
 // Controller1          controller                    
 // LFDrive              motor         1               
 // Gyro                 inertial      13              
-// RLift                motor         19              
+// RLift                motor         9               
 // Claw                 digital_out   A               
 // RFDrive              motor         10              
 // ---- END VEXCODE CONFIGURED DEVICES ----
@@ -156,12 +156,34 @@ InchDrive(1, 60, 0, false);
 InchDrive(3, -50, 0, false);
 InchDrive(7, 50, 0, false);
 InchDrive(1, 2, 0, true);
-//go forward a bit
-InchDrive(2, 50,0,true);
-wait(200,msec);
+wait(500, msec);
+//pulling ring w/ goal back
 
 InchDrive(0,0,0,false);
-InchDrive(8,-50,0,false);
+wait(100,msec);
+InchDrive(15, -50,0,false);
+
+//getting yeeelow goal
+/*gyroTurn(90, -75, 75,0,false);
+InchDrive(4, 75, 0, false);
+gyroTurn(90, 75, -75,0,false);
+InchDrive(19, 75, 0, false);
+InchDrive(2,0,0,true);
+wait(500, msec);
+InchDrive(0,0,0,false);
+wait(500, msec);
+gyroTurn(90, 75, -75,0,false);
+InchDrive(5, 75, 0, false);
+gyroTurn(90, -75, 75,0,false);
+InchDrive(10, -75, 0 , false);
+*/
+
+
+
+
+
+
+
 
 
 /*
