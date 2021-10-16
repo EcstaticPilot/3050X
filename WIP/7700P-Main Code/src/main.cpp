@@ -151,11 +151,20 @@ Brain.Screen.printAt( 20, 80,"Motor Temp%f ",RFDrive.temperature(pct));
 //true is open, false is close
 
 
+//win point
 InchDrive(1, 60, 0, false);
 InchDrive(3, -50, 0, false);
 InchDrive(7, 50, 0, false);
 InchDrive(1, 2, 0, true);
+//go forward a bit
+InchDrive(2, 50,0,true);
+wait(200,msec);
 
+InchDrive(0,0,0,false);
+InchDrive(8,-50,0,false);
+
+
+/*
 //new auton, need to test out once robot is finished and ready to go
 gyroTurn(90, 75, 75, 10, false);
 InchDrive(2, 75, 0, false);
@@ -165,8 +174,7 @@ InchDrive(0, 75, 0, false);
 wait(100,msec);
 lift(75);
 InchDrive(28, -75, 0, false);
-
-
+*/
 
 
 
