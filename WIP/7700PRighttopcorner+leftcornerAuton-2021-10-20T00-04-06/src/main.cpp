@@ -150,30 +150,26 @@ Brain.Screen.printAt( 20, 80,"Motor Temp%f ",RFDrive.temperature(pct));
  Brain.Screen.printAt( 20, 100,"Heading%f ",Gyro.rotation(deg));
  //claw true is closed, false is open
 
-  //ring auton
-  inchDrive(5, 75, true);
-  claw(false);
 
- //right side auton
- inchDrive(3, 75, true);
- inchDrive(2, -75, true);
- wait(1500, msec);
- inchDrive(8, 75, false);
- claw(false);
- claw(true);
- wait(500, msec);
- gyroTurn(45, -75, 75, true);
- wait(500, msec);
- inchDrive(5, 75, true);
- gyroTurn(90, -75, 75, true);
- lift(75);
- inchDrive(1, 75, true);
- inchDrive(2, 75, true);
- /*
+ //continue on to lift code from github
+ gyroTurn(50, -50, 50, true);
+ wait(800, msec);
+ inchDrive(19, 50, true);
+ wait(800, msec);
+ gyroTurn(50, 50, -50, true);
+ wait(800, msec);
+ inchDrive(37, 75, true);
+
+ //claw part, no claw right now
+
+
  
- 
- inchDrive(2, 75, true);
- inchDrive(0, 75, false);*/
+
+
+
+
+
+  
 }
 
   
