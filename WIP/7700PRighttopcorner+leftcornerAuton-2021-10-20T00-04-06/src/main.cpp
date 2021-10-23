@@ -76,7 +76,6 @@ void motorCurrent() {
   */
 
 
-
 }
 
 void autonDriver(int wt, int lspeed, int rspeed, int liftspeed, bool claw) 
@@ -144,11 +143,32 @@ void pre_auton(void) {
     wait(20,msec);
 }
 // autonDriver(wait time, left drive speed, right drive speed, lift speed, claw close is true) 
-Brain.Screen.printAt( 20, 20,"Motor Temp%f ",LBDrive.temperature(pct));
-Brain.Screen.printAt( 20, 40,"Motor Temp%f ",RBDrive.temperature(pct));
-Brain.Screen.printAt( 20, 60,"Motor Temp%f ",LFDrive.temperature(pct));
-Brain.Screen.printAt( 20, 80,"Motor Temp%f ",RFDrive.temperature(pct));
+ Brain.Screen.printAt( 20, 20,"Motor Temp%f ",LBDrive.temperature(pct));
+ Brain.Screen.printAt( 20, 40,"Motor Temp%f ",RBDrive.temperature(pct));
+ Brain.Screen.printAt( 20, 60,"Motor Temp%f ",LFDrive.temperature(pct));
+ Brain.Screen.printAt( 20, 80,"Motor Temp%f ",RFDrive.temperature(pct));
  Brain.Screen.printAt( 20, 100,"Heading%f ",Gyro.rotation(deg));
+ //happy face
+ Brain.Screen.setFillColor(yellow);
+ Brain.Screen.drawCircle(360, 125, 110);
+ Brain.Screen.setPenColor(black);
+ Brain.Screen.drawLine(315, 180, 400, 180);
+ Brain.Screen.drawLine(315, 181, 400, 181);
+ Brain.Screen.drawLine(315, 182, 400, 182);
+ Brain.Screen.drawLine(315, 183, 400, 183);
+ //end of first line
+ Brain.Screen.drawLine(290, 100, 350, 100);
+ Brain.Screen.drawLine(290, 101, 350, 101);
+ Brain.Screen.drawLine(290, 102, 350, 102);
+ Brain.Screen.drawLine(290, 103, 350, 103);
+ //end of second line
+ Brain.Screen.drawLine(375, 100, 430, 100);
+ Brain.Screen.drawLine(375, 101, 430, 101);
+ Brain.Screen.drawLine(375, 102, 430, 102);
+ Brain.Screen.drawLine(375, 103, 430, 103);
+
+
+
  //claw true is closed, false is open
  //win point
  inchDrive(1, 60,  false);
@@ -170,18 +190,15 @@ Brain.Screen.printAt( 20, 80,"Motor Temp%f ",RFDrive.temperature(pct));
  wait(800, msec);
  gyroTurn(65, 50, -50, true);
  wait(800, msec);
- inchDrive(45, 75, true);
+ inchDrive(47, 75, true);
 
  //claw part, no claw right now
-
-
- 
-
-
-
-
-
-  
+ wait(500, msec);
+ inchDrive(0,0,false);
+ wait(500, msec);
+ inchDrive(0,0,true);
+ wait(500, msec);
+ inchDrive(48, -50, true); 
 }
 
   
