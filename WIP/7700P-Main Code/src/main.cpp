@@ -163,65 +163,7 @@ InchDrive(0,0,0,false);
 wait(100,msec);
 InchDrive(15, -50,0,false);
 
-//getting yeeelow goal
-/*gyroTurn(90, -75, 75,0,false);
-InchDrive(4, 75, 0, false);
-gyroTurn(90, 75, -75,0,false);
-InchDrive(19, 75, 0, false);
-InchDrive(2,0,0,true);
-wait(500, msec);
-InchDrive(0,0,0,false);
-wait(500, msec);
-gyroTurn(90, 75, -75,0,false);
-InchDrive(5, 75, 0, false);
-gyroTurn(90, -75, 75,0,false);
-InchDrive(10, -75, 0 , false);
-*/
 
-
-
-
-
-
-
-
-
-/*
-//new auton, need to test out once robot is finished and ready to go
-gyroTurn(90, 75, 75, 10, false);
-InchDrive(2, 75, 0, false);
-gyroTurn(90, 75, -75, 10, false);
-InchDrive(28 , 75, 0, true);
-InchDrive(0, 75, 0, false);
-wait(100,msec);
-lift(75);
-InchDrive(28, -75, 0, false);
-*/
-
-
-
-//InchDrive(140, 50, 20, false);
-//InchDrive(5, -20, 0, true);
-/*
-InchDrive(4, 60, 0, true);
-wait(2000, msec);
-autonDriver(600, 0, 0, 0, true);
-autonDriver(250, 0, 0, -5, false);
-autonDriver(2000, 0, 0, 70, false);
-gyroTurn(88, -30, 30, 10, false); //90 degree turn = 64
-InchDrive(22, 60, 10, false);
-autonDriver(700, 0, 0, -60, false);
-InchDrive(10, 60, 40, false);
-wait(1000, msec);
-autonDriver(1000, -60, -60, 0, true);
-Brain.Screen.printAt(20,20,"DONE TAKE THAT UNBELIEVERS HAHAHAHAHAHAHHAHAHAHAHAA.");*/
-//autonDriver(700, 0, 0, 50, true);
-//InchDrive(10, 40, true);
-//InchDrive(12, 40, true);
-//autonDriver(800, 0, 0, -25, true);
-//autonDriver(10, 10, -10, 0, true);
-//InchDrive(5, 60);
-//autonDriver(0, 0, 0, 0, true);
 
 
 }

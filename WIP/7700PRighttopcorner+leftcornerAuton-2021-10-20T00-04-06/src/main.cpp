@@ -12,13 +12,14 @@
 // [Name]               [Type]        [Port(s)]
 // RBDrive              motor         20              
 // LBDrive              motor         11              
-// LLift                motor         12              
+// LLift                motor         2               
 // Controller1          controller                    
-// LFDrive              motor         1               
+// LFDrive              motor         3               
 // Gyro                 inertial      13              
-// RLift                motor         19              
+// RLift                motor         9               
 // Claw                 digital_out   A               
 // RFDrive              motor         10              
+// mogolift             motor         8               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
@@ -149,6 +150,17 @@ Brain.Screen.printAt( 20, 60,"Motor Temp%f ",LFDrive.temperature(pct));
 Brain.Screen.printAt( 20, 80,"Motor Temp%f ",RFDrive.temperature(pct));
  Brain.Screen.printAt( 20, 100,"Heading%f ",Gyro.rotation(deg));
  //claw true is closed, false is open
+ //win point
+ inchDrive(1, 60,  false);
+ inchDrive(3, -50, false);
+ inchDrive(7, 50,  false);
+ inchDrive(1, 2,  true);
+ wait(500, msec);
+ //pulling ring w/ goal back
+
+ inchDrive(0,0 , false);
+ wait(100,msec);
+ inchDrive(15, -50, false);
 
 
  //continue on to lift code from github
