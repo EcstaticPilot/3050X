@@ -169,9 +169,9 @@ Brain.Screen.printAt( 20, 80,"Motor Temp%f ",RFDrive.temperature(pct));
  wait(800, msec);
  inchDrive(19, 50, true);
  wait(800, msec);
- gyroTurn(50, -50, 50, true);
+ gyroTurn(65, -50, 50, true);
  wait(800, msec);
- inchDrive(37, 75, true);
+ inchDrive(45, 75, true);
 
  //claw part, no claw right now
 }
