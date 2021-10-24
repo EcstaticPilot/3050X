@@ -12,6 +12,7 @@ extern inertial Gyro;
 extern motor RLift;
 extern digital_out Claw;
 extern motor RFDrive;
+extern motor ClawSpin;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.

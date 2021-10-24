@@ -21,6 +21,7 @@
 // RLift                motor         9               
 // Claw                 digital_out   A               
 // RFDrive              motor         10              
+// ClawSpin             motor         5               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
@@ -181,6 +182,17 @@ InchDrive(15, -50,0,false);
      {
        Claw.set(false);
      }
+    while (true){
+      if (Controller1.ButtonY.pressing())
+      {
+        ClawSpin.spin(forward, 100, pct);
+        
+      }
+      else if(Controller1.ButtonA.pressing())
+      {
+        ClawSpin.spin(reverse, 100, pct);
+      }
+    }
 
      
    Brain.Screen.printAt(160, 60, "hi");
