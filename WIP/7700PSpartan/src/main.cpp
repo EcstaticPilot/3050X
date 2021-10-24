@@ -202,6 +202,20 @@ Brain.Screen.printAt( 20, 80,"RF Motor Temp%f ",RFDrive.temperature(pct));
   RFDrive.spin(forward, Controller1.Axis2.position(pct), pct);
   RBDrive.spin(forward, Controller1.Axis2.position(pct), pct);
 
+if (Controller1.ButtonX.pressing())
+{
+    LFDrive.setBrake(hold);
+    LBDrive.setBrake(hold);
+    RFDrive.setBrake(hold);
+    RBDrive.setBrake(hold);
+}
+else{
+      LFDrive.setBrake(coast);
+    LBDrive.setBrake(coast);
+    RFDrive.setBrake(coast);
+    RBDrive.setBrake(coast);
+}
+
   if (Controller1.ButtonL1.pressing()) {
     LLift.spin(forward, 100, pct);
     RLift.spin(forward, 100, pct);
