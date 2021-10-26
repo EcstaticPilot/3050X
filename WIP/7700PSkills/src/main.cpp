@@ -169,36 +169,28 @@ Brain.Screen.printAt( 20, 80,"Motor Temp%f ",RFDrive.temperature(pct));
  Brain.Screen.drawLine(375, 101, 430, 101);
  Brain.Screen.drawLine(375, 102, 430, 102);
  Brain.Screen.drawLine(375, 103, 430, 103);
- //claw true is closed, false is open
- //win point
- /*inchDrive(1, 60,  false);
- inchDrive(3, -50, false);
- inchDrive(7, 50,  false);
- inchDrive(1, 2,  true);
- wait(500, msec);
- //pulling ring w/ goal back
-
- inchDrive(0,0 , false);
- wait(100,msec);
- inchDrive(15, -50, false);
-
+ 
  //continue on to lift code from github
- gyroTurn(50, 50, -50, true);
- wait(800, msec);
- inchDrive(19, 50, true);
- wait(800, msec);
- gyroTurn(65, -50, 50, true);
- wait(800, msec);
- inchDrive(45, 75, true);
+ inchDrive(1, 60,  false);
+ inchDrive(3, -50, false);
+ inchDrive(0, 50, false);
+ wait(500, msec);
+ inchDrive(110, 75, false);
+ wait(500, msec);
+ //turn
+ gyroTurn(60, -75, 75, true);
+ wait(500, msec);
+ inchDrive(10, 75, true);
+ wait(500, msec);
+ gyroTurn(60, -75, 75, true);
+ inchDrive(110, 75, false);
+ wait(30000, msec);
 
- //claw part, no claw right now
- wait(500, msec);
- inchDrive(0,0,false);
- wait(500, msec);
- inchDrive(0,0,true);
- wait(500, msec);
- inchDrive(48, -50, true);
- */ 
+
+
+
+
+ 
 }
 
   
@@ -228,6 +220,20 @@ Brain.Screen.printAt( 20, 80,"RF Motor Temp%f ",RFDrive.temperature(pct));
   LFDrive.spin(forward, Controller1.Axis3.position(pct), pct);
   RFDrive.spin(forward, Controller1.Axis2.position(pct), pct);
   RBDrive.spin(forward, Controller1.Axis2.position(pct), pct);
+
+if (Controller1.ButtonX.pressing())
+{
+    LFDrive.setBrake(hold);
+    LBDrive.setBrake(hold);
+    RFDrive.setBrake(hold);
+    RBDrive.setBrake(hold);
+}
+else{
+      LFDrive.setBrake(coast);
+    LBDrive.setBrake(coast);
+    RFDrive.setBrake(coast);
+    RBDrive.setBrake(coast);
+}
 
   if (Controller1.ButtonL1.pressing()) {
     LLift.spin(forward, 100, pct);

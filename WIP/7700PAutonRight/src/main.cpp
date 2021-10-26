@@ -91,7 +91,9 @@ void autonDriver(int wt, int lspeed, int rspeed, int liftspeed, bool claw)
   RLift.spin(forward, liftspeed, pct);
   Claw.set(claw);
 
-wait(wt, msec);
+ wait(wt, msec);
+ LLift.setBrake(hold);
+ RLift.setBrake(hold);
 }
 
  void inchDrive (float target, int speed, bool claw) {
@@ -171,14 +173,28 @@ Brain.Screen.printAt( 20, 80,"Motor Temp%f ",RFDrive.temperature(pct));
  Brain.Screen.drawLine(375, 103, 430, 103);
  //claw true is closed, false is open
  //win point
- /*inchDrive(1, 60,  false);
+ inchDrive(1, 60,  false);
  inchDrive(3, -50, false);
- inchDrive(7, 50,  false);
- inchDrive(1, 2,  true);
- wait(500, msec);
+ inchDrive(50, 100, false);
+ wait(200, msec);
+ autonDriver(0, 0, 0, 0, false);
+ wait(200, msec);
+ inchDrive(5, 80, false);
+ wait(100, msec);
+ autonDriver(0, 0, 0, 0, true);
+ inchDrive(58, -80, true);
+ 
+
+ /*inchDrive(7, 50,  false);
+ //lift goes up
+ autonDriver(600, 0, 0, 50, true);
+ autonDriver(1000,0,0,0, false);
+ 
+
+ inchDrive(1, 50,  true);
  //pulling ring w/ goal back
 
- inchDrive(0,0 , false);
+ inchDrive(0,50 , false);
  wait(100,msec);
  inchDrive(15, -50, false);
 
@@ -198,7 +214,7 @@ Brain.Screen.printAt( 20, 80,"Motor Temp%f ",RFDrive.temperature(pct));
  inchDrive(0,0,true);
  wait(500, msec);
  inchDrive(48, -50, true);
- */ 
+ */
 }
 
   
@@ -228,6 +244,20 @@ Brain.Screen.printAt( 20, 80,"RF Motor Temp%f ",RFDrive.temperature(pct));
   LFDrive.spin(forward, Controller1.Axis3.position(pct), pct);
   RFDrive.spin(forward, Controller1.Axis2.position(pct), pct);
   RBDrive.spin(forward, Controller1.Axis2.position(pct), pct);
+
+if (Controller1.ButtonX.pressing())
+{
+    LFDrive.setBrake(hold);
+    LBDrive.setBrake(hold);
+    RFDrive.setBrake(hold);
+    RBDrive.setBrake(hold);
+}
+else{
+      LFDrive.setBrake(coast);
+    LBDrive.setBrake(coast);
+    RFDrive.setBrake(coast);
+    RBDrive.setBrake(coast);
+}
 
   if (Controller1.ButtonL1.pressing()) {
     LLift.spin(forward, 100, pct);
