@@ -171,23 +171,31 @@ Brain.Screen.printAt( 20, 80,"Motor Temp%f ",RFDrive.temperature(pct));
  Brain.Screen.drawLine(375, 103, 430, 103);
  
  //continue on to lift code from github
+ wait(2000, msec);
  inchDrive(1, 60,  false);
  inchDrive(3, -50, false);
  inchDrive(0, 50, false);
  wait(500, msec);
- inchDrive(110, 75, false);
+ inchDrive(122, 75, false);
  wait(500, msec);
+ gyroTurn(100, -75, 75, true);
+ inchDrive(100, 75, false);
+ wait(500, msec);
+ gyroTurn(100, 75, -75, true);
+ /*inchDrive(5, -75, false);
  //turn
- gyroTurn(60, -75, 75, true);
+ //nothing for now
+ gyroTurn(39, -75, 75, true);
  wait(500, msec);
- inchDrive(10, 75, true);
+ inchDrive(18, 75, true);
  wait(500, msec);
- gyroTurn(60, -75, 75, true);
+ gyroTurn(30, -75, 75, true);
+ //nothing for now
  inchDrive(110, 75, false);
- wait(200, msec);
+ wait(500, msec);
  //continue on skllls rn 40 points
  //this below will get the 3 goal
- gyroTurn(120, -75, 75, false);
+ gyroTurn(60, -75, 75, false);
  wait(500, msec);
  inchDrive(130, 75, false);
  wait(500, msec);
@@ -200,7 +208,7 @@ Brain.Screen.printAt( 20, 80,"Motor Temp%f ",RFDrive.temperature(pct));
  inchDrive(45, 75, false);
  wait(30000, msec);
  //this will get the fourth goal
-  /*gyroTurn(60, -75, 75, false);
+  gyroTurn(60, -75, 75, false);
   wait(500, msec);
   inchDrive(60, 75, false);
   wait(500, msec);
