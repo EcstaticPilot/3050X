@@ -15,7 +15,7 @@
 // LLift                motor         2               
 // Controller1          controller                    
 // LFDrive              motor         3               
-// Gyro                 inertial      13              
+// Gyro                 inertial      1               
 // RLift                motor         9               
 // Claw                 digital_out   A               
 // RFDrive              motor         10              
@@ -126,7 +126,7 @@ float kp = 2.0;
   while (fabs(heading4)<= target) 
 {
     speed=kp*(target-heading4);
-    autonDriver(10 , Lspeed, Rspeed, 0, claw);
+    autonDriver(10 , speed, -speed, 0, claw);
     wait(10,msec);
     heading4=Gyro.rotation(degrees); 
   }
@@ -135,7 +135,7 @@ float kp = 2.0;
 ////////////----------------------EOF-----------------------//////////////////////
 
 void pre_auton(void) {
-
+wait(2000, msec);
 }
 
  void autonomous(void) {
@@ -171,7 +171,7 @@ Brain.Screen.printAt( 20, 80,"Motor Temp%f ",RFDrive.temperature(pct));
  Brain.Screen.drawLine(375, 103, 430, 103);
  
  //continue on to lift code from github
- wait(2000, msec);
+ wait(2000, msec);// wait for calibration, take out for events
  inchDrive(1, 60,  false);
  inchDrive(3, -50, false);
  inchDrive(0, 50, false);
@@ -181,7 +181,7 @@ Brain.Screen.printAt( 20, 80,"Motor Temp%f ",RFDrive.temperature(pct));
  gyroTurn(100, -75, 75, true);
  inchDrive(100, 75, false);
  wait(500, msec);
- gyroTurn(100, 75, -75, true);
+ gyroTurn(80, 75, -75, true);
  /*inchDrive(5, -75, false);
  //turn
  //nothing for now

@@ -21,6 +21,7 @@
 // RFDrive              motor         10              
 // mogolift             motor         8               
 // ClawSpin             motor         5               
+// Claw2                digital_out   B               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
@@ -42,6 +43,7 @@ void Drive(int lspeed, int rspeed){
 
 void claw(bool claw){
   Claw.set(claw);
+  Claw2.set(claw);
 }
 
 void lift(int liftspeed){
@@ -182,10 +184,12 @@ Brain.Screen.printAt( 20, 80,"Motor Temp%f ",RFDrive.temperature(pct));
      if (Controller1.ButtonR2.pressing())
      {
        Claw.set(true);
+       Claw2.set(true);
      }
      else if(Controller1.ButtonR1.pressing())
      {
        Claw.set(false);
+       Claw2.set(false);
      }
      
      

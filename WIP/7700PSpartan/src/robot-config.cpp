@@ -19,6 +19,7 @@ digital_out Claw = digital_out(Brain.ThreeWirePort.A);
 motor RFDrive = motor(PORT10, ratio18_1, true);
 motor mogolift = motor(PORT8, ratio18_1, true);
 motor ClawSpin = motor(PORT5, ratio18_1, false);
+digital_out Claw2 = digital_out(Brain.ThreeWirePort.B);
 
 // VEXcode generated functions
 // define variable for remote controller enable/disable
