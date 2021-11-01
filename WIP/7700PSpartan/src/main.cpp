@@ -242,14 +242,14 @@ else{
 
 
    if (Controller1.ButtonLeft.pressing()) {
-    ClawSpin.spin(forward, 20, pct);
+    ClawSpin.spin(forward, 100, pct);
 
 
     
    }
    else if 
      (Controller1.ButtonRight.pressing()) {
-      ClawSpin.spin(reverse, 20, pct);
+      ClawSpin.spin(reverse, 100, pct);
        
      }
      else{
