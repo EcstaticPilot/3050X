@@ -8,13 +8,12 @@ extern motor LBDrive;
 extern motor LLift;
 extern controller Controller1;
 extern motor LFDrive;
-extern motor RLift;
-extern motor RFDrive;
-extern digital_out Claw2;
-extern motor ClawSpin;
-extern motor mogolift;
-extern digital_out Claw;
 extern inertial Gyro;
+extern motor RLift;
+extern digital_out Claw;
+extern motor RFDrive;
+extern motor mogolift;
+extern motor ClawSpin;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
