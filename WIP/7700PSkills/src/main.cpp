@@ -15,7 +15,7 @@
 // LLift                motor         2               
 // Controller1          controller                    
 // LFDrive              motor         3               
-// Gyro                 inertial      1               
+// Gyro                 inertial      13              
 // RLift                motor         9               
 // Claw                 digital_out   A               
 // RFDrive              motor         10              
@@ -178,10 +178,13 @@ Brain.Screen.printAt( 20, 80,"Motor Temp%f ",RFDrive.temperature(pct));
  wait(500, msec);
  inchDrive(122, 75, false);
  wait(500, msec);
- gyroTurn(100, -75, 75, true);
- inchDrive(100, 75, false);
- wait(500, msec);
+ autonDriver(400, 50, -50, 0, false);
  gyroTurn(80, 75, -75, true);
+ inchDrive(100, -75, false);
+ wait(500, msec);
+ autonDriver(700, -50, 50, 0, false);
+ //pushes yellow at angle
+ //gyroTurn(80, -75, 75, true);
  /*inchDrive(5, -75, false);
  //turn
  //nothing for now

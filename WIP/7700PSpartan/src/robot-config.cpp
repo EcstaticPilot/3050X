@@ -17,7 +17,7 @@ motor RLift = motor(PORT9, ratio18_1, false);
 motor RFDrive = motor(PORT10, ratio18_1, true);
 digital_out Claw2 = digital_out(Brain.ThreeWirePort.B);
 motor ClawSpin = motor(PORT5, ratio18_1, false);
-motor mogolift = motor(PORT8, ratio18_1, false);
+motor mogolift = motor(PORT8, ratio18_1, true);
 digital_out Claw = digital_out(Brain.ThreeWirePort.A);
 inertial Gyro = inertial(PORT13);
 
