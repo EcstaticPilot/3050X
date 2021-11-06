@@ -15,12 +15,13 @@
 // LLift                motor         2               
 // Controller1          controller                    
 // LFDrive              motor         3               
-// Gyro                 inertial      13              
 // RLift                motor         9               
-// Claw                 digital_out   A               
 // RFDrive              motor         10              
-// mogolift             motor         8               
+// Claw2                digital_out   B               
 // ClawSpin             motor         5               
+// mogolift             motor         8               
+// Claw                 digital_out   A               
+// Gyro                 inertial      13              
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
@@ -42,6 +43,7 @@ void Drive(int lspeed, int rspeed){
 
 void claw(bool claw){
   Claw.set(claw);
+  Claw2.set(claw);
 }
 
 void lift(int liftspeed){
@@ -90,14 +92,14 @@ void autonDriver(int wt, int lspeed, int rspeed, int liftspeed, bool claw)
   LLift.spin(forward, liftspeed, pct);
   RLift.spin(forward, liftspeed, pct);
   Claw.set(claw);
+  Claw2.set(claw);
 
- wait(wt, msec);
- LLift.setBrake(hold);
- RLift.setBrake(hold);
+wait(wt, msec);
 }
 
- void inchDrive (float target, int speed, bool claw) {
+ void inchDrive (float target, int speed, int lift, bool claw) {
 Claw.set(claw);
+Claw2.set(claw);
   float c = 0; //our distance
 LBDrive.setRotation(0, degrees);
   while (fabs (c) <= target) {
@@ -109,7 +111,7 @@ LBDrive.setRotation(0, degrees);
     
    c = LBDrive.rotation(rev)*3.14*dia; 
   }
-   autonDriver(0, 0, 0, 0, false);
+   autonDriver(0, 0, 0, lift, false);
     
 }
 
@@ -151,8 +153,12 @@ Brain.Screen.printAt( 20, 20,"Motor Temp%f ",LBDrive.temperature(pct));
 Brain.Screen.printAt( 20, 40,"Motor Temp%f ",RBDrive.temperature(pct));
 Brain.Screen.printAt( 20, 60,"Motor Temp%f ",LFDrive.temperature(pct));
 Brain.Screen.printAt( 20, 80,"Motor Temp%f ",RFDrive.temperature(pct));
- Brain.Screen.printAt( 20, 100,"Heading%f ",Gyro.rotation(deg));
- //claw true is closed, false is open
+Brain.Screen.printAt( 20, 100,"Left Lift Temp%f ",LLift.temperature(pct));
+Brain.Screen.printAt( 20, 120,"Right Lift Temp%f ",RLift.temperature(pct));
+
+
+ //Brain.Screen.printAt( 20, 100,"Heading%f ",Gyro.rotation(deg));
+ //claw false is closed, true is open
  //happy face
  Brain.Screen.setFillColor(yellow);
  Brain.Screen.drawCircle(360, 125, 110);
@@ -171,74 +177,68 @@ Brain.Screen.printAt( 20, 80,"Motor Temp%f ",RFDrive.temperature(pct));
  Brain.Screen.drawLine(375, 101, 430, 101);
  Brain.Screen.drawLine(375, 102, 430, 102);
  Brain.Screen.drawLine(375, 103, 430, 103);
- //claw true is closed, false is open
- //win point
- inchDrive(1, 60,  false);
- inchDrive(3, -50, false);
- inchDrive(50, 100, false);
- wait(200, msec);
- autonDriver(0, 0, 0, 0, false);
- wait(200, msec);
- inchDrive(5, 80, false);
- wait(100, msec);
- autonDriver(0, 0, 0, 0, true);
- inchDrive(58, -80, true);
+
+inchDrive(3, 100, 0, false);
+inchDrive(5, -100, 0, false);
+LLift.spin(forward);
+RLift.spin(forward);
+wait(1500, msec);
+LLift.stop(brake);
+RLift.stop(brake);
+inchDrive(2, 70, 0, false);
+wait(600, msec);
+autonDriver(600, 0, 0, 0, true);
+wait(300, msec);
+inchDrive(6, 50, 0, true);
+autonDriver(200, 0, 0, 0, false);
+Claw.set(false);
+Claw2.set(false);
+LLift.spin(forward);
+RLift.spin(forward);
+wait(1100, msec);
+LLift.stop(brake);
+RLift.stop(brake);
+ClawSpin.stop(brake);
+gyroTurn(20, -50, 50, false);
+inchDrive(4, 50, 0, false);
+gyroTurn(90, -50, 50, false);
+Claw.set(true);
+Claw2.set(true);
+
+
+//autonDriver(700, 0, 0, 60, true);
+//autonDriver(20, 0, 0, 0, true);
+// inchDrive(42, 60, 0, true);
+ //inchDrive(0, 0, false);
+ //wait(600, msec);
+
  
-
- /*inchDrive(7, 50,  false);
- //lift goes up
- autonDriver(600, 0, 0, 50, true);
- autonDriver(1000,0,0,0, false);
- 
-
- inchDrive(1, 50,  true);
- //pulling ring w/ goal back
-
- inchDrive(0,50 , false);
- wait(100,msec);
- inchDrive(15, -50, false);
-
  //continue on to lift code from github
- gyroTurn(50, 50, -50, true);
- wait(800, msec);
- inchDrive(19, 50, true);
- wait(800, msec);
- gyroTurn(65, -50, 50, true);
- wait(800, msec);
- inchDrive(45, 75, true);
-
- //claw part, no claw right now
- wait(500, msec);
- inchDrive(0,0,false);
- wait(500, msec);
- inchDrive(0,0,true);
- wait(500, msec);
- inchDrive(48, -50, true);
- */
+ wait(15000, msec);
 }
 
   
 
  void driverControl () {
+   bool isBraked = false;
+
+   LLift.setBrake(hold);
+   RLift.setBrake(hold);
+   ClawSpin.setBrake(coast);
 
    while (true){
-     if (Controller1.ButtonR2.pressing())
-     {
-       Claw.set(true);
-     }
-     else if(Controller1.ButtonR1.pressing())
-     {
-       Claw.set(false);
-     }
-     
-     
-
-     
-   Brain.Screen.printAt(160, 60, "hi");
 Brain.Screen.printAt( 20, 20,"LB Motor Temp%f ",LBDrive.temperature(pct));
 Brain.Screen.printAt( 20, 40,"RB Motor Temp%f ",RBDrive.temperature(pct));
 Brain.Screen.printAt( 20, 60,"LF Motor Temp%f ",LFDrive.temperature(pct));
 Brain.Screen.printAt( 20, 80,"RF Motor Temp%f ",RFDrive.temperature(pct));
+Brain.Screen.printAt( 20, 100,"LLift Temp%f ",LLift.temperature(pct));
+Brain.Screen.printAt( 20, 120,"RLift Temp%f ",RLift.temperature(pct));
+if(isBraked){
+  Brain.Screen.printAt( 20, 140,"isBraked = yes");
+}
+else{
+  Brain.Screen.printAt( 20, 140,"isBraked = no");
+}
 
   LBDrive.spin(forward, Controller1.Axis3.position(pct), pct);
   LFDrive.spin(forward, Controller1.Axis3.position(pct), pct);
@@ -247,7 +247,14 @@ Brain.Screen.printAt( 20, 80,"RF Motor Temp%f ",RFDrive.temperature(pct));
 
 if (Controller1.ButtonX.pressing())
 {
-    LFDrive.setBrake(hold);
+  isBraked = true;
+}
+else if(Controller1.ButtonY.pressing()){
+  isBraked = false;
+}
+if(isBraked){
+
+      LFDrive.setBrake(hold);
     LBDrive.setBrake(hold);
     RFDrive.setBrake(hold);
     RBDrive.setBrake(hold);
@@ -257,6 +264,7 @@ else{
     LBDrive.setBrake(coast);
     RFDrive.setBrake(coast);
     RBDrive.setBrake(coast);
+
 }
 
   if (Controller1.ButtonL1.pressing()) {
@@ -279,16 +287,27 @@ else{
 
  }
 
+      if (Controller1.ButtonR2.pressing())
+     {
+       Claw.set(false);
+       Claw2.set(false);
+     }
+     else if(Controller1.ButtonR1.pressing())
+     {
+       Claw.set(true);
+       Claw2.set(true);
+     }
+
 
    if (Controller1.ButtonLeft.pressing()) {
-    ClawSpin.spin(forward, 20, pct);
+    ClawSpin.spin(forward, 75, pct);
 
 
     
    }
    else if 
      (Controller1.ButtonRight.pressing()) {
-      ClawSpin.spin(reverse, 20, pct);
+      ClawSpin.spin(reverse, 75, pct);
        
      }
      else{

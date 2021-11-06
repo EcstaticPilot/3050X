@@ -13,12 +13,13 @@ motor LBDrive = motor(PORT11, ratio18_1, false);
 motor LLift = motor(PORT2, ratio18_1, true);
 controller Controller1 = controller(primary);
 motor LFDrive = motor(PORT3, ratio18_1, false);
-inertial Gyro = inertial(PORT13);
 motor RLift = motor(PORT9, ratio18_1, false);
-digital_out Claw = digital_out(Brain.ThreeWirePort.A);
 motor RFDrive = motor(PORT10, ratio18_1, true);
-motor mogolift = motor(PORT8, ratio18_1, true);
+digital_out Claw2 = digital_out(Brain.ThreeWirePort.B);
 motor ClawSpin = motor(PORT5, ratio18_1, false);
+motor mogolift = motor(PORT8, ratio18_1, true);
+digital_out Claw = digital_out(Brain.ThreeWirePort.A);
+inertial Gyro = inertial(PORT13);
 
 // VEXcode generated functions
 // define variable for remote controller enable/disable
