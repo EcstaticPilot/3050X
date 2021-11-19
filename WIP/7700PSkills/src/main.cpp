@@ -33,11 +33,13 @@ float dia = 4.0;
 //tis is GUI : Graphic User Interface
 
 
-void Drive(int lspeed, int rspeed){
+void Drive(int wt, int lspeed, int rspeed){
   LBDrive.spin(forward, lspeed, pct);
   RBDrive.spin(forward, rspeed, pct);
   LFDrive.spin(forward, lspeed, pct);
   RFDrive.spin(forward, rspeed, pct);
+
+
 }
 
 void claw(bool claw){
@@ -169,20 +171,80 @@ Brain.Screen.printAt( 20, 80,"Motor Temp%f ",RFDrive.temperature(pct));
  Brain.Screen.drawLine(375, 101, 430, 101);
  Brain.Screen.drawLine(375, 102, 430, 102);
  Brain.Screen.drawLine(375, 103, 430, 103);
- 
+
+float backLiftTime = 1200;
+//wait(2000, msec);
+mogolift.setVelocity(100, percent);
+mogolift.spin(reverse);
+wait(backLiftTime, msec);
+mogolift.stop(brake);
+inchDrive(8, -75, false);
+mogolift.spin(forward);
+wait(backLiftTime,msec);
+mogolift.stop(brake);
+gyroTurn(15, 75, -75, false);
+inchDrive(3, 75, false);
+gyroTurn(60, 75, -75, false);
+inchDrive(48, 75, false);
+inchDrive(3, -50, false);
+LLift.setVelocity(100,percent);
+RLift.setVelocity(100,percent);
+LLift.spin(forward);
+RLift.spin(forward);
+wait(300, msec);
+LLift.stop(brake);
+RLift.stop(brake);
+ClawSpin.setVelocity(100, percent);
+ClawSpin.spin(forward);
+wait(700, msec);
+ClawSpin.stop(brake);
+inchDrive(0, 50, true);
+inchDrive(6, 75, true);
+inchDrive(0, 50, false);
+inchDrive(50, -75, false);
+
+//turn left 90 
+//autonDriver(36, -100, 100, 0, false);
+ //wait(400, msec);
  //continue on to lift code from github
- wait(2000, msec);// wait for calibration, take out for events
- inchDrive(1, 60,  false);
- inchDrive(3, -50, false);
+/* inchDrive(2, 100,  false);
+ inchDrive(4, -100, false);
  inchDrive(0, 50, false);
  wait(500, msec);
- inchDrive(122, 75, false);
+ inchDrive(118, 75, false);
  wait(500, msec);
- autonDriver(400, 50, -50, 0, false);
- gyroTurn(80, 75, -75, true);
- inchDrive(100, -75, false);
+ autonDriver(36, -100, 100, 0, false);
+ wait(400, msec);
+ inchDrive(27, 75, false);
+ autonDriver(35, -100, 100, 0, false);
+ wait(400, msec);
+ inchDrive(100, 75, false);
  wait(500, msec);
- autonDriver(700, -50, 50, 0, false);
+ //big one in the middle
+ inchDrive(15, -75, false);
+ wait(200, msec);
+ autonDriver(27, 100, -100, 0, false);
+ wait(400, msec);
+ inchDrive(45, 74, false);
+ wait(500, msec);
+ autonDriver(36, 100, -100, 0, false);
+ wait(400, msec);
+ inchDrive(104, 75, false);
+ wait(500, msec);
+ autonDriver(36, -100, 100, 0, false);
+ wait(400, msec);
+ inchDrive(25, 75, false);*/
+ 
+
+
+
+ 
+ 
+ 
+ //autonDriver(400, 50, -50, 0, false);
+ //gyroTurn(100, -75, 75, true);
+ //inchDrive(80, -75, false);
+ 
  //pushes yellow at angle
  //gyroTurn(80, -75, 75, true);
  /*inchDrive(5, -75, false);
@@ -235,7 +297,7 @@ Brain.Screen.printAt( 20, 80,"Motor Temp%f ",RFDrive.temperature(pct));
      {
        Claw.set(false);
      }
-     
+     ClawSpin.setVelocity(100, percent);
      
 
      
