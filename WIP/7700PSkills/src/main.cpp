@@ -173,7 +173,7 @@ Brain.Screen.printAt( 20, 80,"Motor Temp%f ",RFDrive.temperature(pct));
  Brain.Screen.drawLine(375, 103, 430, 103);
 //auton
 
- /*inchDrive(2, 100,  false);
+ inchDrive(2, 100,  false);
  inchDrive(4, -100, false);
  inchDrive(0, 50, false);
  wait(500, msec);
@@ -206,8 +206,8 @@ Brain.Screen.printAt( 20, 80,"Motor Temp%f ",RFDrive.temperature(pct));
  inchDrive(118, 75, false);
  
  //last blue goal
- inchDrive(125, -75, false);
- */
+ inchDrive(100, -75, false);
+ 
  //mogo part
  mogolift.spin(reverse, 100, pct);
  wait(300, msec);
