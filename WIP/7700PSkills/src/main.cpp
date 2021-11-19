@@ -171,43 +171,9 @@ Brain.Screen.printAt( 20, 80,"Motor Temp%f ",RFDrive.temperature(pct));
  Brain.Screen.drawLine(375, 101, 430, 101);
  Brain.Screen.drawLine(375, 102, 430, 102);
  Brain.Screen.drawLine(375, 103, 430, 103);
+//auton
 
-float backLiftTime = 1200;
-//wait(2000, msec);
-mogolift.setVelocity(100, percent);
-mogolift.spin(reverse);
-wait(backLiftTime, msec);
-mogolift.stop(brake);
-inchDrive(8, -75, false);
-mogolift.spin(forward);
-wait(backLiftTime,msec);
-mogolift.stop(brake);
-gyroTurn(15, 75, -75, false);
-inchDrive(3, 75, false);
-gyroTurn(60, 75, -75, false);
-inchDrive(48, 75, false);
-inchDrive(3, -50, false);
-LLift.setVelocity(100,percent);
-RLift.setVelocity(100,percent);
-LLift.spin(forward);
-RLift.spin(forward);
-wait(300, msec);
-LLift.stop(brake);
-RLift.stop(brake);
-ClawSpin.setVelocity(100, percent);
-ClawSpin.spin(forward);
-wait(700, msec);
-ClawSpin.stop(brake);
-inchDrive(0, 50, true);
-inchDrive(6, 75, true);
-inchDrive(0, 50, false);
-inchDrive(50, -75, false);
-
-//turn left 90 
-//autonDriver(36, -100, 100, 0, false);
- //wait(400, msec);
- //continue on to lift code from github
-/* inchDrive(2, 100,  false);
+ /*inchDrive(2, 100,  false);
  inchDrive(4, -100, false);
  inchDrive(0, 50, false);
  wait(500, msec);
@@ -215,8 +181,8 @@ inchDrive(50, -75, false);
  wait(500, msec);
  autonDriver(36, -100, 100, 0, false);
  wait(400, msec);
- inchDrive(27, 75, false);
- autonDriver(35, -100, 100, 0, false);
+ inchDrive(24, 75, false);
+ autonDriver(45, -100, 100, 0, false);
  wait(400, msec);
  inchDrive(100, 75, false);
  wait(500, msec);
@@ -225,7 +191,7 @@ inchDrive(50, -75, false);
  wait(200, msec);
  autonDriver(27, 100, -100, 0, false);
  wait(400, msec);
- inchDrive(45, 74, false);
+ inchDrive(40, 74, false);
  wait(500, msec);
  autonDriver(36, 100, -100, 0, false);
  wait(400, msec);
@@ -233,55 +199,29 @@ inchDrive(50, -75, false);
  wait(500, msec);
  autonDriver(36, -100, 100, 0, false);
  wait(400, msec);
- inchDrive(25, 75, false);*/
- 
+ inchDrive(22, 75, false);
 
+ //3rd yellow goal
+ autonDriver(36, -100, 100, 0, false);
+ inchDrive(118, 75, false);
+ 
+ //last blue goal
+ inchDrive(125, -75, false);
+ */
+ //mogo part
+ mogolift.spin(reverse, 100, pct);
+ wait(300, msec);
+ mogolift.stop();
+ inchDrive(5, -75, false);
+ mogolift.spin(forward, 100, pct);
+ wait(700, msec);
+ mogolift.stop();
+ inchDrive(98, 75, false);
+ mogolift.spin(reverse, 100, pct);
+ wait(700, msec);
+ mogolift.stop();
 
-
- 
- 
- 
- //autonDriver(400, 50, -50, 0, false);
- //gyroTurn(100, -75, 75, true);
- //inchDrive(80, -75, false);
- 
- //pushes yellow at angle
- //gyroTurn(80, -75, 75, true);
- /*inchDrive(5, -75, false);
- //turn
- //nothing for now
- gyroTurn(39, -75, 75, true);
- wait(500, msec);
- inchDrive(18, 75, true);
- wait(500, msec);
- gyroTurn(30, -75, 75, true);
- //nothing for now
- inchDrive(110, 75, false);
- wait(500, msec);
- //continue on skllls rn 40 points
- //this below will get the 3 goal
- gyroTurn(60, -75, 75, false);
- wait(500, msec);
- inchDrive(130, 75, false);
- wait(500, msec);
- gyroTurn(60, -90, 75, false);
- wait(500, msec);
- inchDrive(50, 75, false);
- wait(500, msec);
- gyroTurn(60, -90, 75, false);
- wait(500, msec);
- inchDrive(45, 75, false);
- wait(30000, msec);
- //this will get the fourth goal
-  gyroTurn(60, -75, 75, false);
-  wait(500, msec);
-  inchDrive(60, 75, false);
-  wait(500, msec);
-  gyroTurn(60, -75, 75, false);
-  wait(500, msec);
-  inchDrive(145, 75, false);
-  wait(30000, msec);  
-  */
+  
 }
 
   
