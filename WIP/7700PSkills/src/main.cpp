@@ -207,6 +207,7 @@ wait(2000, msec);
  inchDrive(100, -75, false);
  
  //mogo part
+ //gets last blue and pulls it to other side
  mogolift.spin(reverse, 100, pct);
  wait(600, msec);
  mogolift.stop();
@@ -218,7 +219,9 @@ wait(2000, msec);
  mogolift.spin(reverse, 100, pct);
  wait(700, msec);
  mogolift.stop();
+ 
 }
+
 
   
 
