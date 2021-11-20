@@ -77,9 +77,6 @@ void motorCurrent() {
   Brain.Screen.printAt( 10, 122,"RMotor current%f ",Rfront10.current());
   Brain.Screen.printAt( 10, 132,"Motor current%f  ",Arm.current());
   */
-
-
-
 }
 
 void autonDriver(int wt, int lspeed, int rspeed, int liftspeed, bool claw) 
@@ -147,10 +144,10 @@ wait(2000, msec);
     wait(20,msec);
 }
 // autonDriver(wait time, left drive speed, right drive speed, lift speed, claw close is true) 
-Brain.Screen.printAt( 20, 20,"Motor Temp%f ",LBDrive.temperature(pct));
-Brain.Screen.printAt( 20, 40,"Motor Temp%f ",RBDrive.temperature(pct));
-Brain.Screen.printAt( 20, 60,"Motor Temp%f ",LFDrive.temperature(pct));
-Brain.Screen.printAt( 20, 80,"Motor Temp%f ",RFDrive.temperature(pct));
+ Brain.Screen.printAt( 20, 20,"Motor Temp%f ",LBDrive.temperature(pct));
+ Brain.Screen.printAt( 20, 40,"Motor Temp%f ",RBDrive.temperature(pct));
+ Brain.Screen.printAt( 20, 60,"Motor Temp%f ",LFDrive.temperature(pct));
+ Brain.Screen.printAt( 20, 80,"Motor Temp%f ",RFDrive.temperature(pct));
  Brain.Screen.printAt( 20, 100,"Heading%f ",Gyro.rotation(deg));
  //claw true is closed, false is open
  //happy face
@@ -171,7 +168,8 @@ Brain.Screen.printAt( 20, 80,"Motor Temp%f ",RFDrive.temperature(pct));
  Brain.Screen.drawLine(375, 101, 430, 101);
  Brain.Screen.drawLine(375, 102, 430, 102);
  Brain.Screen.drawLine(375, 103, 430, 103);
-//auton
+
+ //auton
 
  inchDrive(2, 100,  false);
  inchDrive(4, -100, false);
@@ -210,7 +208,7 @@ Brain.Screen.printAt( 20, 80,"Motor Temp%f ",RFDrive.temperature(pct));
  
  //mogo part
  mogolift.spin(reverse, 100, pct);
- wait(300, msec);
+ wait(600, msec);
  mogolift.stop();
  inchDrive(5, -75, false);
  mogolift.spin(forward, 100, pct);
@@ -220,8 +218,6 @@ Brain.Screen.printAt( 20, 80,"Motor Temp%f ",RFDrive.temperature(pct));
  mogolift.spin(reverse, 100, pct);
  wait(700, msec);
  mogolift.stop();
-
-  
 }
 
   
