@@ -33,8 +33,10 @@ float dia = 4.0;
 
 //tis is GUI : Graphic User Interface
 
+void pre_auton(void) {
+}
 
-void Drive(int lspeed, int rspeed){
+void Drive(int lspeed, int rspeed, int wt){
   LBDrive.spin(forward, lspeed, pct);
   RBDrive.spin(forward, rspeed, pct);
   LFDrive.spin(forward, lspeed, pct);
@@ -138,9 +140,40 @@ float kp = 2.0;
 }
 ////////////----------------------EOF-----------------------//////////////////////
 
-void pre_auton(void) {
+void breakdrive()
+{
+RBDrive.stop(brake);
+LBDrive.stop(brake);
+RLift.stop(brake);
+LFDrive.stop(brake);
 
 }
+void balance()
+{
+ float pitch=Gyro.pitch(deg);
+ float oldpitch=pitch;
+ inchDrive(10, 100, 0, true);
+     Brain.Screen.clearScreen();
+     float kp=1;
+      float kd = 15.0;
+
+//float d=0.3;
+while(true)//(fabs(pitch)>d)
+{
+  float speed = kp*pitch+kd*(pitch-oldpitch);
+  Drive(speed, speed, 10);
+  oldpitch=pitch;
+    pitch = Gyro.pitch(deg);
+    Brain.Screen.printAt(1, 100, "pitch=   %.3f   ",pitch);
+
+}
+breakdrive();
+Brain.Screen.printAt(1, 150, "i am done ");
+
+}
+ 
+
+
 
  void autonomous(void) {
     while(Gyro.isCalibrating())
@@ -290,6 +323,12 @@ else{
    if (Controller1.ButtonLeft.pressing()) {
     ClawSpin.spin(forward, 75, pct);
 
+if (Controller1.ButtonB.pressing())  
+    {
+      
+    balance();
+     
+    }
 
     
    }
@@ -331,7 +370,6 @@ Competition.autonomous(autonomous);
   Competition.drivercontrol(driverControl);
 
 
-    pre_auton();
    
    
     //autonomous ();

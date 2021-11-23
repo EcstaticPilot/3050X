@@ -169,8 +169,50 @@ wait(2000, msec);
  Brain.Screen.drawLine(375, 102, 430, 102);
  Brain.Screen.drawLine(375, 103, 430, 103);
 
- //auton
 
+
+//Felix's Auton
+float backLiftTime = 1200;
+//Grab the seesaw mogo
+mogolift.setVelocity(100, percent);
+mogolift.spin(reverse);
+wait(backLiftTime, msec);
+mogolift.stop(brake);
+inchDrive(8, -75, false);
+mogolift.spin(forward);
+wait(backLiftTime,msec);
+mogolift.stop(brake);
+//Go for the left yellow mogo
+inchDrive(6, 100, false);
+gyroTurn(15, 75, -75, false);
+inchDrive(3, 75, false);
+gyroTurn(75, 75, -75, false);
+inchDrive(75, 75, false);
+inchDrive(3, -50, false);
+LLift.setVelocity(100,percent);
+RLift.setVelocity(100,percent);
+LLift.spin(forward);
+RLift.spin(forward);
+wait(400, msec);
+LLift.stop(brake);
+RLift.stop(brake);
+ClawSpin.setVelocity(100, percent);
+ClawSpin.spin(forward);
+wait(700, msec);
+ClawSpin.stop(brake);
+inchDrive(30, 100, false);
+inchDrive(0, 50, true);
+inchDrive(6, 75, true);
+inchDrive(0, 50, false);
+inchDrive(50, -75, false);
+gyroTurn(35, 75, -75, false);
+inchDrive(80, 100, false);
+gyroTurn(20, 75, -75, false);
+inchDrive(40, 100, false);
+
+//Abby's Code Below
+/*
+ //auton
  inchDrive(2, 100,  false);
  inchDrive(4, -100, false);
  inchDrive(0, 50, false);
@@ -180,7 +222,7 @@ wait(2000, msec);
  autonDriver(36, -100, 100, 0, false);
  wait(400, msec);
  inchDrive(24, 75, false);
- autonDriver(45, -100, 100, 0, false);
+ autonDriver(45, -100, 120, 0, false);
  wait(400, msec);
  inchDrive(100, 75, false);
  wait(500, msec);
@@ -219,7 +261,7 @@ wait(2000, msec);
  mogolift.spin(reverse, 100, pct);
  wait(700, msec);
  mogolift.stop();
- 
+ */
 }
 
 
