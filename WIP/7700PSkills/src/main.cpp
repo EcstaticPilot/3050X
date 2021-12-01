@@ -20,7 +20,7 @@
 // Claw                 digital_out   A               
 // RFDrive              motor         10              
 // mogolift             motor         8               
-// ClawSpin             motor         5               
+// ClawSpin             motor         7               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
@@ -168,50 +168,12 @@ wait(2000, msec);
  Brain.Screen.drawLine(375, 101, 430, 101);
  Brain.Screen.drawLine(375, 102, 430, 102);
  Brain.Screen.drawLine(375, 103, 430, 103);
-
-
-
-//Felix's Auton
-float backLiftTime = 1200;
-//Grab the seesaw mogo
-mogolift.setVelocity(100, percent);
-mogolift.spin(reverse);
-wait(backLiftTime, msec);
-mogolift.stop(brake);
-inchDrive(8, -75, false);
-mogolift.spin(forward);
-wait(backLiftTime,msec);
-mogolift.stop(brake);
-//Go for the left yellow mogo
-inchDrive(6, 100, false);
-gyroTurn(15, 75, -75, false);
-inchDrive(3, 75, false);
-gyroTurn(75, 75, -75, false);
-inchDrive(75, 75, false);
-inchDrive(3, -50, false);
-LLift.setVelocity(100,percent);
-RLift.setVelocity(100,percent);
-LLift.spin(forward);
-RLift.spin(forward);
-wait(400, msec);
-LLift.stop(brake);
-RLift.stop(brake);
-ClawSpin.setVelocity(100, percent);
-ClawSpin.spin(forward);
-wait(700, msec);
-ClawSpin.stop(brake);
-inchDrive(30, 100, false);
-inchDrive(0, 50, true);
-inchDrive(6, 75, true);
-inchDrive(0, 50, false);
-inchDrive(50, -75, false);
-gyroTurn(35, 75, -75, false);
-inchDrive(80, 100, false);
-gyroTurn(20, 75, -75, false);
-inchDrive(40, 100, false);
+ //printing some words :)
+ Brain.Screen.setFillColor(green);
+ Brain.Screen.printAt(20, 130,"7700P is better than" );
+ Brain.Screen.printAt(20, 150, "7700E and thats a fact");
 
 //Abby's Code Below
-/*
  //auton
  inchDrive(2, 100,  false);
  inchDrive(4, -100, false);
@@ -261,7 +223,38 @@ inchDrive(40, 100, false);
  mogolift.spin(reverse, 100, pct);
  wait(700, msec);
  mogolift.stop();
- */
+ 
+
+ //Phoenix YOO
+ //need to combine asap and see the total amount of points
+ //YOOOOO
+ /*float backLiftTime = 1200;
+//Grab the seesaw mogo
+ mogolift.setVelocity(100, percent);
+mogolift.spin(reverse);
+wait(backLiftTime, msec);
+mogolift.stop(brake);
+inchDrive(9, -75, false);
+mogolift.spin(forward);
+wait(backLiftTime,msec);
+mogolift.stop(brake);
+//Go for the left yellow mogo
+inchDrive(6, 100, false);
+gyroTurn(15, 75, -75, false);
+inchDrive(3, 75, false);
+gyroTurn(65, 75, -75, false);
+inchDrive(75, 75, false);
+inchDrive(35, -75, false );
+//Go for the middle yellow mogo
+gyroTurn(30, 75, -75, false);
+inchDrive(70, 100, false);
+//Go for the right mogo
+inchDrive(15, 100, false);
+gyroTurn(15, 75, -5, false);
+inchDrive(5, 100, false);
+gyroTurn(200, 75, -75, false);
+inchDrive(40, 100, false);
+*/
 }
 
 

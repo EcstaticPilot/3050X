@@ -18,7 +18,7 @@
 // RLift                motor         9               
 // RFDrive              motor         10              
 // Claw2                digital_out   B               
-// ClawSpin             motor         6               
+// ClawSpin             motor         7               
 // mogolift             motor         8               
 // Claw                 digital_out   A               
 // Gyro                 inertial      13              
@@ -178,6 +178,36 @@ Brain.Screen.printAt( 20, 120,"Right Lift Temp%f ",RLift.temperature(pct));
  Brain.Screen.drawLine(375, 102, 430, 102);
  Brain.Screen.drawLine(375, 103, 430, 103);
 
+
+ 
+float backLiftTime = 1200;
+//Grab the seesaw mogo
+mogolift.setVelocity(100, percent);
+mogolift.spin(reverse);
+wait(backLiftTime, msec);
+mogolift.stop(brake);
+inchDrive(9, -75, false, false);
+mogolift.spin(forward);
+wait(backLiftTime,msec);
+mogolift.stop(brake);
+//Go for the left yellow mogo
+inchDrive(6, 100, false, false);
+gyroTurn(15, 75, -75, false);
+inchDrive(3, 75, false, false);
+gyroTurn(65, 75, -75, false);
+inchDrive(75, 75, false, false);
+inchDrive(35, -75, false ,false);
+//Go for the middle yellow mogo
+gyroTurn(30, 75, -75, false);
+inchDrive(70, 100, false,false);
+//Go for the right mogo
+inchDrive(15, 100, false, false);
+gyroTurn(15, 75, -5, false);
+inchDrive(5, 100, false, false);
+gyroTurn(200, 75, -75, false);
+inchDrive(40, 100, false, false);
+
+/*
 inchDrive(3, 100, 0, false);
 inchDrive(5, -100, 0, false);
 LLift.spin(forward);
@@ -204,7 +234,7 @@ inchDrive(4, 50, 0, false);
 gyroTurn(90, -50, 50, false);
 Claw.set(true);
 Claw2.set(true);
-
+*/
 
 //autonDriver(700, 0, 0, 60, true);
 //autonDriver(20, 0, 0, 0, true);
