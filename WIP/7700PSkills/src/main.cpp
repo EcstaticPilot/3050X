@@ -158,7 +158,9 @@ while(true)//(fabs(pitch)>d)
 
 }
 breakdrive();
-Brain.Screen.printAt(1, 150, "i am done ");
+Brain.Screen.printAt(1, 150, "bro if this doesn't balance im blaming sean");
+Brain.Screen.printAt(1, 155, "if i fall off this beam, blame this guy called sean m");
+Brain.Screen.printAt(1, 160, "imagine falling off, couldn't be me");
 
 }
 
@@ -368,6 +370,9 @@ else{
       ClawSpin.spin(reverse, 20, pct);
        
      }
+   else if(Controller1.ButtonA.pressing()){
+     balance();
+   }
      else{
        ClawSpin.stop(hold);
      }

@@ -34,12 +34,13 @@ float dia = 4.0;
 //tis is GUI : Graphic User Interface
 
 
-void Drive(int lspeed, int rspeed){
+void Drive(int wt, int lspeed, int rspeed){
   LBDrive.spin(forward, lspeed, pct);
   RBDrive.spin(forward, rspeed, pct);
   LFDrive.spin(forward, lspeed, pct);
   RFDrive.spin(forward, rspeed, pct);
 }
+
 
 void claw(bool claw){
   Claw.set(claw);
@@ -135,6 +136,38 @@ float kp = 2.0;
     heading4=Gyro.rotation(degrees); 
   }
   autonDriver(0, 0, 0, 0, true);
+}
+void breakdrive(){
+  RBDrive.stop(brake);
+  LBDrive.stop(brake);
+  RFDrive.stop(brake);
+  LFDrive.stop(brake);
+}
+
+void balance()
+{
+ float pitch=Gyro.pitch(deg);
+ float oldpitch=pitch;
+ inchDrive(10, 100, false, false);
+     Brain.Screen.clearScreen();
+     float kp=1;
+     float kd = 20.0;
+
+//float d=0.5;
+while(true)//(fabs(pitch)>d)
+{
+  float speed = kp*pitch+kd*(pitch-oldpitch);
+  Drive(speed, speed, 10);
+  oldpitch=pitch;
+    pitch = Gyro.pitch(deg);
+    Brain.Screen.printAt(1, 100, "pitch=   %.3f   ",pitch);
+
+}
+breakdrive();
+Brain.Screen.printAt(1, 150, "bro if this doesn't balance im blaming sean");
+Brain.Screen.printAt(1, 155, "if i fall off this beam, blame this guy called sean m");
+Brain.Screen.printAt(1, 160, "imagine falling off, couldn't be me");
+
 }
 ////////////----------------------EOF-----------------------//////////////////////
 
@@ -340,6 +373,9 @@ else{
       ClawSpin.spin(reverse, 75, pct);
        
      }
+      else if(Controller1.ButtonA.pressing()){
+     balance();
+   }
      else{
        ClawSpin.stop(hold);
      }
