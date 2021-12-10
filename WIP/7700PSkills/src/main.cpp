@@ -131,6 +131,43 @@ float kp = 2.0;
   }
   autonDriver(0, 0, 0, 0, true);
 }
+void breakdrive(){
+  RBDrive.stop(brake);
+  LBDrive.stop(brake);
+  RFDrive.stop(brake);
+  LFDrive.stop(brake);
+}
+
+void balance()
+{
+ float pitch=Gyro.pitch(deg);
+ float oldpitch=pitch;
+ inchDrive(10, 100, false);
+     Brain.Screen.clearScreen();
+     float kp=1;
+     float kd = 20.0;
+
+//float d=0.5;
+while(true)//(fabs(pitch)>d)
+{
+  float speed = kp*pitch+kd*(pitch-oldpitch);
+  Drive(speed, speed, 10);
+  oldpitch=pitch;
+    pitch = Gyro.pitch(deg);
+    Brain.Screen.printAt(1, 100, "pitch=   %.3f   ",pitch);
+
+}
+breakdrive();
+Brain.Screen.printAt(1, 150, "i am done ");
+
+}
+
+
+
+
+
+
+
 ////////////----------------------EOF-----------------------//////////////////////
 
 void pre_auton(void) {
@@ -175,7 +212,7 @@ wait(2000, msec);
 
 //Abby's Code Below
  //auton
- inchDrive(2, 100,  false);
+ /*inchDrive(2, 100,  false);
  inchDrive(4, -100, false);
  inchDrive(0, 50, false);
  wait(500, msec);
@@ -223,12 +260,10 @@ wait(2000, msec);
  mogolift.spin(reverse, 100, pct);
  wait(700, msec);
  mogolift.stop();
- 
+ */
 
- //Phoenix YOO
- //need to combine asap and see the total amount of points
- //YOOOOO
- /*float backLiftTime = 1200;
+ //Felix Code
+ float backLiftTime = 1200;
 //Grab the seesaw mogo
  mogolift.setVelocity(100, percent);
 mogolift.spin(reverse);
@@ -242,11 +277,11 @@ mogolift.stop(brake);
 inchDrive(6, 100, false);
 gyroTurn(15, 75, -75, false);
 inchDrive(3, 75, false);
-gyroTurn(65, 75, -75, false);
+gyroTurn(45, 75, -75, false);
 inchDrive(75, 75, false);
 inchDrive(35, -75, false );
 //Go for the middle yellow mogo
-gyroTurn(30, 75, -75, false);
+gyroTurn(20, 75, -75, false);
 inchDrive(70, 100, false);
 //Go for the right mogo
 inchDrive(15, 100, false);
@@ -254,7 +289,8 @@ gyroTurn(15, 75, -5, false);
 inchDrive(5, 100, false);
 gyroTurn(200, 75, -75, false);
 inchDrive(40, 100, false);
-*/
+balance();
+
 }
 
 

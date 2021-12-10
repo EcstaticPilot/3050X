@@ -18,8 +18,8 @@
 // RLift                motor         9               
 // RFDrive              motor         10              
 // Claw2                digital_out   B               
-// ClawSpin             motor         7               
-// mogolift             motor         8               
+// ClawSpin             motor         4               
+// mogolift             motor         19              
 // Claw                 digital_out   A               
 // Gyro                 inertial      13              
 // ---- END VEXCODE CONFIGURED DEVICES ----
