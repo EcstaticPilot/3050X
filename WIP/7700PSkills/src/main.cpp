@@ -19,7 +19,7 @@
 // RLift                motor         9               
 // Claw                 digital_out   A               
 // RFDrive              motor         10              
-// mogolift             motor         8               
+// mogolift             motor         19              
 // ClawSpin             motor         7               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
@@ -161,7 +161,6 @@ breakdrive();
 Brain.Screen.printAt(1, 150, "bro if this doesn't balance im blaming sean");
 Brain.Screen.printAt(1, 155, "if i fall off this beam, blame this guy called sean m");
 Brain.Screen.printAt(1, 160, "imagine falling off, couldn't be me");
-
 }
 
 
@@ -214,7 +213,7 @@ wait(2000, msec);
 
 //Abby's Code Below
  //auton
- /*inchDrive(2, 100,  false);
+ inchDrive(2, 100,  false);
  inchDrive(4, -100, false);
  inchDrive(0, 50, false);
  wait(500, msec);
@@ -262,12 +261,12 @@ wait(2000, msec);
  mogolift.spin(reverse, 100, pct);
  wait(700, msec);
  mogolift.stop();
- */
+ 
 
  //Felix Code
- float backLiftTime = 1200;
+ float backLiftTime = 1400;
 //Grab the seesaw mogo
- mogolift.setVelocity(100, percent);
+ /*mogolift.setVelocity(100, percent);
 mogolift.spin(reverse);
 wait(backLiftTime, msec);
 mogolift.stop(brake);
@@ -277,22 +276,24 @@ wait(backLiftTime,msec);
 mogolift.stop(brake);
 //Go for the left yellow mogo
 inchDrive(6, 100, false);
-gyroTurn(15, 75, -75, false);
+gyroTurn(7, 75, -75, false);
 inchDrive(3, 75, false);
-gyroTurn(45, 75, -75, false);
-inchDrive(75, 75, false);
-inchDrive(35, -75, false );
+gyroTurn(8, 75, -75, false);
+inchDrive(3, 75, false);
+gyroTurn(69, 75, -75, false);
+inchDrive(100, 75, false);
+inchDrive(60, -75, false);
 //Go for the middle yellow mogo
-gyroTurn(20, 75, -75, false);
-inchDrive(70, 100, false);
+gyroTurn(35, 75, -75, false);
+inchDrive(100, 100, false);
 //Go for the right mogo
-inchDrive(15, 100, false);
-gyroTurn(15, 75, -5, false);
-inchDrive(5, 100, false);
-gyroTurn(200, 75, -75, false);
-inchDrive(40, 100, false);
-balance();
-
+gyroTurn(120, 75, -5, false);
+inchDrive(20, 100, false);
+gyroTurn(15, 75, -75, false);
+inchDrive(100, 100, false);
+//gyroTurn(270, 75, -75, false);
+//inchDrive(5, 75, false);
+//balance();*/
 }
 
 

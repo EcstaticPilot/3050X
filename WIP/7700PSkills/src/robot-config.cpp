@@ -17,7 +17,7 @@ inertial Gyro = inertial(PORT13);
 motor RLift = motor(PORT9, ratio18_1, false);
 digital_out Claw = digital_out(Brain.ThreeWirePort.A);
 motor RFDrive = motor(PORT10, ratio18_1, true);
-motor mogolift = motor(PORT8, ratio18_1, true);
+motor mogolift = motor(PORT19, ratio18_1, true);
 motor ClawSpin = motor(PORT7, ratio18_1, false);
 
 // VEXcode generated functions
