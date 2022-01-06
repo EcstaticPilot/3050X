@@ -97,17 +97,19 @@ wait(wt, msec);
 Claw.set(claw);
   float c = 0; //our distance
 LBDrive.setRotation(0, degrees);
+Brain.Screen.clearScreen();
   while (fabs (c) <= target) {
 
     LBDrive.spin(forward,speed, pct);
     RBDrive.spin(forward, speed, pct);
     LFDrive.spin(forward, speed, pct);
     RFDrive.spin(forward, speed, pct);
-    
+        Brain.Screen.printAt(1,40, "inchdrive");
    c = LBDrive.rotation(rev)*3.14*dia; 
   }
-   autonDriver(0, 0, 0, 0, false);
-    
+  autonDriver(0, 0, 0, 0, false);
+  Brain.Screen.clearScreen();
+
 }
 
 void gyroTurn(float target, int Lspeed, int Rspeed, bool claw)
@@ -122,14 +124,17 @@ void gyroTurn(float target, int Lspeed, int Rspeed, bool claw)
  
 float speed=0.0 ;
 float kp = 2.0;
+Brain.Screen.clearScreen();
   while (fabs(heading4)<= target) 
 {
     speed=kp*(target-heading4);
     autonDriver(10 , speed, -speed, 0, claw);
     wait(10,msec);
     heading4=Gyro.rotation(degrees); 
+    Brain.Screen.printAt(1,40, "gyroturn");
   }
   autonDriver(0, 0, 0, 0, true);
+  Brain.Screen.clearScreen();
 }
 void breakdrive(){
   RBDrive.stop(brake);
@@ -213,7 +218,8 @@ wait(2000, msec);
 
 //Abby's Code Below
  //auton
- inchDrive(2, 100,  false);
+ //cancer bui
+ /*inchDrive(2, 100,  false);
  inchDrive(4, -100, false);
  inchDrive(0, 50, false);
  wait(500, msec);
@@ -249,7 +255,9 @@ wait(2000, msec);
  inchDrive(100, -75, false);
  
  //mogo part
- //gets last blue and pulls it to other side
+ //gets last blue and pulls it to other side 
+ //reverses
+ //needs revision cuz might not work all the time
  mogolift.spin(reverse, 100, pct);
  wait(600, msec);
  mogolift.stop();
@@ -261,12 +269,22 @@ wait(2000, msec);
  mogolift.spin(reverse, 100, pct);
  wait(700, msec);
  mogolift.stop();
- 
+ //have to add balance code at the end here
+ //has to turn around and get on the balance beam
+ mogolift.spin(reverse, 100, pct);
+ wait(600, msec);
+ mogolift.stop();
+ autonDriver(36, -100, 100, 0, false);
+ wait(400, msec);
+ inchDrive(2, 75, 75);
+ balance();
+*/
 
- //Felix Code
+
+ //Phoenix Code
  float backLiftTime = 1400;
 //Grab the seesaw mogo
- /*mogolift.setVelocity(100, percent);
+ mogolift.setVelocity(100, percent);
 mogolift.spin(reverse);
 wait(backLiftTime, msec);
 mogolift.stop(brake);
@@ -293,7 +311,7 @@ gyroTurn(15, 75, -75, false);
 inchDrive(100, 100, false);
 //gyroTurn(270, 75, -75, false);
 //inchDrive(5, 75, false);
-//balance();*/
+//balance();
 }
 
 
