@@ -213,8 +213,8 @@ wait(2000, msec);
  Brain.Screen.drawLine(375, 103, 430, 103);
  //printing some words :)
  Brain.Screen.setFillColor(green);
- Brain.Screen.printAt(20, 130,"7700P is better than" );
- Brain.Screen.printAt(20, 150, "7700E and thats a fact");
+ Brain.Screen.printAt(20, 130,"7700P is better than E" );
+ 
 
 //Abby's Code Below
  //auton
