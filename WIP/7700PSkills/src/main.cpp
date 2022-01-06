@@ -127,7 +127,14 @@ float kp = 2.0;
 Brain.Screen.clearScreen();
   while (fabs(heading4)<= target) 
 {
-    speed=kp*(target-heading4);
+  if(target > 0)
+  {
+    speed=kp*(target-heading4)+25;
+  }
+  if(target < 0)
+  {
+    speed=kp*(target-heading4)-25;
+  }
     autonDriver(10 , speed, -speed, 0, claw);
     wait(10,msec);
     heading4=Gyro.rotation(degrees); 
