@@ -315,7 +315,7 @@ inchDrive(50, 100, false);
 gyroTurn(-3, 100);
 inchDrive(50, 10, false);
 //Go for the right mogo
-gyroTurn(120,false);
+gyroTurn(30,false);
 inchDrive(20, 100, false);
 gyroTurn(15,false);
 inchDrive(100, 100, false);
