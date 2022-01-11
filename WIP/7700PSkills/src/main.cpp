@@ -112,7 +112,7 @@ Brain.Screen.clearScreen();
 
 }
 
-void gyroTurn(float target, int Lspeed, int Rspeed, bool claw)
+void gyroTurn(float target, bool claw)
 {
   while(Gyro.isCalibrating())
 {
@@ -124,8 +124,9 @@ void gyroTurn(float target, int Lspeed, int Rspeed, bool claw)
  
 float speed=0.0 ;
 float kp = 2.0;
+float d = 2.0;
 Brain.Screen.clearScreen();
-  while (fabs(heading4)<= target) 
+  while (fabs(target-heading4)>= d) 
 {
   if(target > 0)
   {
@@ -301,20 +302,22 @@ wait(backLiftTime,msec);
 mogolift.stop(brake);
 //Go for the left yellow mogo
 inchDrive(6, 100, false);
-gyroTurn(7, 75, -75, false);
+gyroTurn(7, false);
 inchDrive(3, 75, false);
-gyroTurn(8, 75, -75, false);
+gyroTurn(8, false);
 inchDrive(3, 75, false);
-gyroTurn(69, 75, -75, false);
+gyroTurn(50, false);
 inchDrive(100, 75, false);
 inchDrive(60, -75, false);
 //Go for the middle yellow mogo
-gyroTurn(35, 75, -75, false);
-inchDrive(100, 100, false);
+gyroTurn(24 , false);
+inchDrive(50, 100, false);
+gyroTurn(-3, 100);
+inchDrive(50, 10, false);
 //Go for the right mogo
-gyroTurn(120, 75, -5, false);
+gyroTurn(120,false);
 inchDrive(20, 100, false);
-gyroTurn(15, 75, -75, false);
+gyroTurn(15,false);
 inchDrive(100, 100, false);
 //gyroTurn(270, 75, -75, false);
 //inchDrive(5, 75, false);
