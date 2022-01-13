@@ -223,10 +223,41 @@ wait(2000, msec);
  Brain.Screen.setFillColor(green);
  Brain.Screen.printAt(20, 130,"7700P is better than E" );
  
+ 
+ Brain.Screen.printAt(50, 150, "    PPPPPPPPPPPPPPPPPPPPPPPP");
+ Brain.Screen.printAt(50, 150, "   PPPP                   PPPP");
+ Brain.Screen.printAt(50, 149, "  PPPP                      PPPP");
+ Brain.Screen.printAt(50, 150, "PPPP                         PPPP");
+ Brain.Screen.printAt(50, 151, "PPPP                          PPPP");
+ Brain.Screen.printAt(50, 152, "PPPP                           PPPP");
+ Brain.Screen.printAt(50, 153, "PPPP                           PPPP");
+ Brain.Screen.printAt(50, 154, "PPPP                          PPPP");
+ Brain.Screen.printAt(50, 155, "PPPP                        PPPP");
+ Brain.Screen.printAt(50, 156, "PPPP                       PPPP");
+ Brain.Screen.printAt(50, 153, "PPPP                     PPPP");
+ Brain.Screen.printAt(50, 153, "PPPP                   PPPP");
+ Brain.Screen.printAt(50, 153, "PPPP                 PPPP");
+ Brain.Screen.printAt(50, 153, "PPPP               PPPP");
+ Brain.Screen.printAt(50, 153, "PPPP              PPPP");
+ Brain.Screen.printAt(50, 153, "PPPPPPPPPPPPPPPPPPPPP");
+ Brain.Screen.printAt(50, 153, "PPPP");
+ Brain.Screen.printAt(50, 154, "PPPP");
+ Brain.Screen.printAt(50, 155, "PPPP");
+ Brain.Screen.printAt(50, 156, "PPPP");
+ Brain.Screen.printAt(50, 157, "PPPP");
+ Brain.Screen.printAt(50, 158, "PPPP");
+ Brain.Screen.printAt(50, 159, "PPPP");
+ Brain.Screen.printAt(50, 160, "PPPP");
+ Brain.Screen.printAt(50, 161, "PPPP");
+ Brain.Screen.printAt(50, 162, "PPPP");
+ Brain.Screen.printAt(50, 163, "PPPP");
+ Brain.Screen.printAt(50, 164, "PPPP");
+ Brain.Screen.printAt(50, 165, "PPPP");
+ Brain.Screen.printAt(50, 166, "PPPP");
+ Brain.Screen.printAt(50, 167, "PPPP");
 
 //Abby's Code Below
  //auton
- //cancer bui
  inchDrive(2, 100,  false);
  inchDrive(4, -100, false);
  inchDrive(0, 50, false);
@@ -266,7 +297,7 @@ wait(2000, msec);
  //gets last blue and pulls it to other side 
  //reverses
  //needs revision cuz might not work all the time
- /*mogolift.spin(reverse, 100, pct);
+ mogolift.spin(reverse, 100, pct);
  wait(600, msec);
  mogolift.stop();
  inchDrive(5, -75, false);
@@ -286,7 +317,7 @@ wait(2000, msec);
  wait(400, msec);
  inchDrive(2, 75, 75);
  balance();
-*/
+
 
  //Phoenix Code
  /*float backLiftTime = 1400;
