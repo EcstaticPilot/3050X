@@ -227,7 +227,7 @@ wait(2000, msec);
 //Abby's Code Below
  //auton
  //cancer bui
- /*inchDrive(2, 100,  false);
+ inchDrive(2, 100,  false);
  inchDrive(4, -100, false);
  inchDrive(0, 50, false);
  wait(500, msec);
@@ -249,15 +249,15 @@ wait(2000, msec);
  wait(500, msec);
  autonDriver(36, 100, -100, 0, false);
  wait(400, msec);
- inchDrive(104, 75, false);
+ inchDrive(99, 75, false);
  wait(500, msec);
  autonDriver(36, -100, 100, 0, false);
  wait(400, msec);
- inchDrive(22, 75, false);
+ inchDrive(21, 75, false);
 
  //3rd yellow goal
  autonDriver(36, -100, 100, 0, false);
- inchDrive(118, 75, false);
+ inchDrive(114, 75, false);
  
  //last blue goal
  inchDrive(100, -75, false);
@@ -266,7 +266,7 @@ wait(2000, msec);
  //gets last blue and pulls it to other side 
  //reverses
  //needs revision cuz might not work all the time
- mogolift.spin(reverse, 100, pct);
+ /*mogolift.spin(reverse, 100, pct);
  wait(600, msec);
  mogolift.stop();
  inchDrive(5, -75, false);
@@ -288,9 +288,8 @@ wait(2000, msec);
  balance();
 */
 
-
  //Phoenix Code
- float backLiftTime = 1400;
+ /*float backLiftTime = 1400;
 //Grab the seesaw mogo
  mogolift.setVelocity(100, percent);
 mogolift.spin(reverse);
@@ -310,7 +309,7 @@ gyroTurn(50, false);
 inchDrive(100, 75, false);
 inchDrive(60, -75, false);
 //Go for the middle yellow mogo
-gyroTurn(24 , false);
+gyroTurn(22 , false);
 inchDrive(50, 100, false);
 gyroTurn(-3, 100);
 inchDrive(50, 10, false);
@@ -322,6 +321,7 @@ inchDrive(100, 100, false);
 //gyroTurn(270, 75, -75, false);
 //inchDrive(5, 75, false);
 //balance();
+*/
 }
 
 
