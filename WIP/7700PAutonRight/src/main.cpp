@@ -34,13 +34,25 @@ float dia = 4.0;
 //tis is GUI : Graphic User Interface
 
 
-void Drive(int wt, int lspeed, int rspeed){
-  LBDrive.spin(forward, lspeed, pct);
-  RBDrive.spin(forward, rspeed, pct);
-  LFDrive.spin(forward, lspeed, pct);
-  RFDrive.spin(forward, rspeed, pct);
-}
+void Drive(int wt, int lspeed, int rspeed,
+           bool driveVolts = false) { // bool = optional var
+  if (driveVolts == true) {
+    lspeed*=120;
+    lspeed*=120;
+    LBDrive.spin(forward, lspeed , voltageUnits::mV);
+    LFDrive.spin(forward, lspeed , voltageUnits::mV);
+    RBDrive.spin(forward, rspeed , voltageUnits::mV);
+    RFDrive.spin(forward, rspeed , voltageUnits::mV);
 
+  } else {
+
+    LBDrive.spin(forward, lspeed, pct);
+    RBDrive.spin(forward, rspeed, pct);
+    LFDrive.spin(forward, lspeed, pct);
+    RFDrive.spin(forward, rspeed, pct);
+  }
+  wait(wt, msec);
+}
 
 void claw(bool claw){
   Claw.set(claw);
