@@ -161,6 +161,13 @@ RLift.stop(brake);
 LFDrive.stop(brake);
 
 }
+void coastdrive(){
+  RBDrive.stop(coast);
+  LBDrive.stop(coast);
+  RFDrive.stop(coast);
+  LFDrive.stop(coast);
+}
+
 void balance()
 {
  float pitch=Gyro.pitch(deg);
@@ -181,8 +188,6 @@ while(true)//(fabs(pitch)>d)
 
 }
 breakdrive();
-Brain.Screen.printAt(1, 150, "i am done ");
-
 }
  
 
@@ -224,6 +229,37 @@ Brain.Screen.printAt( 20, 120,"Right Lift Temp%f ",RLift.temperature(pct));
  Brain.Screen.drawLine(375, 102, 430, 102);
  Brain.Screen.drawLine(375, 103, 430, 103);
  //new one
+
+  Brain.Screen.printAt(50, 150, "PPPPPPPPPPPPPPPPPPPPPPPPPP");
+  Brain.Screen.printAt(50, 150, "PPPP                    PPPP");
+  Brain.Screen.printAt(50, 149, "PPPP                      PPPP");
+  Brain.Screen.printAt(50, 150, "PPPP                         PPPP");
+  Brain.Screen.printAt(50, 151, "PPPP                          PPPP");
+  Brain.Screen.printAt(50, 152, "PPPP                           PPPP");
+  Brain.Screen.printAt(50, 153, "PPPP                           PPPP");
+  Brain.Screen.printAt(50, 154, "PPPP                           PPPP");
+  Brain.Screen.printAt(50, 155, "PPPP                           PPPP");
+  Brain.Screen.printAt(50, 156, "PPPP                          PPPP");
+  Brain.Screen.printAt(50, 153, "PPPP                          PPPP");
+  Brain.Screen.printAt(50, 153, "PPPP                         PPPP");
+  Brain.Screen.printAt(50, 153, "PPPP                       PPPP");
+  Brain.Screen.printAt(50, 153, "PPPP                     PPPP");
+  Brain.Screen.printAt(50, 153, "PPPP                   PPPP");
+  Brain.Screen.printAt(50, 153, "PPPPPPPPPPPPPPPPPPPPPPPP");
+  Brain.Screen.printAt(50, 153, "PPPP");
+  Brain.Screen.printAt(50, 154, "PPPP");
+  Brain.Screen.printAt(50, 155, "PPPP");
+  Brain.Screen.printAt(50, 156, "PPPP");
+  Brain.Screen.printAt(50, 157, "PPPP");
+  Brain.Screen.printAt(50, 158, "PPPP");
+  Brain.Screen.printAt(50, 159, "PPPP");
+  Brain.Screen.printAt(50, 160, "PPPP");
+  Brain.Screen.printAt(50, 161, "PPPP");
+  Brain.Screen.printAt(50, 162, "PPPP");
+  Brain.Screen.printAt(50, 163, "PPPP");
+
+
+
  //false is open, true is closed
  inchDrive(1, 60,0,  false);
  inchDrive(3, -50,0, false);

@@ -155,7 +155,12 @@ void breakdrive(){
   RFDrive.stop(brake);
   LFDrive.stop(brake);
 }
-
+void coastdrive(){
+  RBDrive.stop(coast);
+  LBDrive.stop(coast);
+  RFDrive.stop(coast);
+  LFDrive.stop(coast);
+}
 void balance()
 {
  float pitch=Gyro.pitch(deg);
@@ -176,9 +181,6 @@ while(true)//(fabs(pitch)>d)
 
 }
 breakdrive();
-Brain.Screen.printAt(1, 150, "bro if this doesn't balance im blaming sean");
-Brain.Screen.printAt(1, 155, "if i fall off this beam, blame this guy called sean m");
-Brain.Screen.printAt(1, 160, "imagine falling off, couldn't be me");
 
 }
 ////////////----------------------EOF-----------------------//////////////////////
@@ -223,6 +225,36 @@ Brain.Screen.printAt( 20, 120,"Right Lift Temp%f ",RLift.temperature(pct));
  Brain.Screen.drawLine(375, 102, 430, 102);
  Brain.Screen.drawLine(375, 103, 430, 103);
 
+ //Brain.Screen.printAt(69, 420, "Clark is a woman #lgbtq+ #comingoutin2022");
+ //Brain.Screen.printAt(69, 421, "deez nuts in ur mom");
+
+  Brain.Screen.printAt(50, 150, "PPPPPPPPPPPPPPPPPPPPPPPPPP");
+  Brain.Screen.printAt(50, 150, "PPPP                    PPPP");
+  Brain.Screen.printAt(50, 149, "PPPP                      PPPP");
+  Brain.Screen.printAt(50, 150, "PPPP                         PPPP");
+  Brain.Screen.printAt(50, 151, "PPPP                          PPPP");
+  Brain.Screen.printAt(50, 152, "PPPP                           PPPP");
+  Brain.Screen.printAt(50, 153, "PPPP                           PPPP");
+  Brain.Screen.printAt(50, 154, "PPPP                           PPPP");
+  Brain.Screen.printAt(50, 155, "PPPP                           PPPP");
+  Brain.Screen.printAt(50, 156, "PPPP                          PPPP");
+  Brain.Screen.printAt(50, 153, "PPPP                          PPPP");
+  Brain.Screen.printAt(50, 153, "PPPP                         PPPP");
+  Brain.Screen.printAt(50, 153, "PPPP                       PPPP");
+  Brain.Screen.printAt(50, 153, "PPPP                     PPPP");
+  Brain.Screen.printAt(50, 153, "PPPP                   PPPP");
+  Brain.Screen.printAt(50, 153, "PPPPPPPPPPPPPPPPPPPPPPPP");
+  Brain.Screen.printAt(50, 153, "PPPP");
+  Brain.Screen.printAt(50, 154, "PPPP");
+  Brain.Screen.printAt(50, 155, "PPPP");
+  Brain.Screen.printAt(50, 156, "PPPP");
+  Brain.Screen.printAt(50, 157, "PPPP");
+  Brain.Screen.printAt(50, 158, "PPPP");
+  Brain.Screen.printAt(50, 159, "PPPP");
+  Brain.Screen.printAt(50, 160, "PPPP");
+  Brain.Screen.printAt(50, 161, "PPPP");
+  Brain.Screen.printAt(50, 162, "PPPP");
+  Brain.Screen.printAt(50, 163, "PPPP");
 
  
 float backLiftTime = 1200;

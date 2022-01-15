@@ -5,6 +5,7 @@
 /*    Created:      Tue Oct 06 2020                                           */
 /*    Description:  9-1-21 added pneumatics */
 /*                   abby added LEFT auton 9/17/21 */
+                  
 /*----------------------------------------------------------------------------*/
 
 // ---- START VEXCODE CONFIGURED DEVICES ----
@@ -35,7 +36,7 @@ float dia = 4.0;
 void Drive(int wt, int lspeed, int rspeed,
            bool driveVolts = false) { // bool = optional var
   if (driveVolts == true) {
-    lspeed*=120;
+    lspeed*=120; // * = multiply
     lspeed*=120;
     LBDrive.spin(forward, lspeed , voltageUnits::mV);
     LFDrive.spin(forward, lspeed , voltageUnits::mV);
@@ -141,11 +142,17 @@ void gyroTurn(float target, bool claw) {
   autonDriver(0, 0, 0, 0, true);
   Brain.Screen.clearScreen();
 }
-void breakdrive() {
+void brakedrive() {
   RBDrive.stop(brake);
   LBDrive.stop(brake);
   RFDrive.stop(brake);
   LFDrive.stop(brake);
+}
+void coastdrive(){
+  RBDrive.stop(coast);
+  LBDrive.stop(coast);
+  RFDrive.stop(coast);
+  LFDrive.stop(coast);
 }
 
 void balance() {
@@ -155,7 +162,7 @@ void balance() {
   Brain.Screen.clearScreen();
   float kp = 1;
   float kd = 20.0;
-
+ 
   // float d=0.5;
   while (true) //(fabs(pitch)>d)
   {
@@ -165,7 +172,7 @@ void balance() {
     pitch = Gyro.pitch(deg);
     Brain.Screen.printAt(1, 100, "pitch=   %.3f   ", pitch);
   }
-  breakdrive();
+  brakedrive();
 }
 
 ////////////----------------------EOF-----------------------//////////////////////
@@ -205,9 +212,6 @@ void autonomous(void) {
   Brain.Screen.drawLine(375, 103, 430, 103);
   // printing some words :)
   Brain.Screen.setFillColor(green);
-  Brain.Screen.printAt(20, 130, "7700P is better than E");
-  Brain.Screen.printAt(69, 420, "Clark is a woman #lgbtq+ #comingoutin2022");
-  Brain.Screen.printAt(69, 421, "deez nuts in ur mom");
 
   Brain.Screen.printAt(50, 150, "PPPPPPPPPPPPPPPPPPPPPPPPPP");
   Brain.Screen.printAt(50, 150, "PPPP                    PPPP");
@@ -239,7 +243,8 @@ void autonomous(void) {
 
   // Abby's Code Below
   // auton
-  /*inchDrive(2, 100,  false);
+
+  inchDrive(2, 100,  false);
   inchDrive(4, -100, false);
   inchDrive(0, 50, false);
   wait(500, msec);
@@ -251,8 +256,10 @@ void autonomous(void) {
   autonDriver(45, -100, 120, 0, false);
   wait(400, msec);
   inchDrive(100, 75, false);
-  wait(500, msec);
-  //big one in the middle
+  wait(500, msec); 
+
+  //big one in the middle if yk yk ;)
+
   inchDrive(15, -75, false);
   wait(200, msec);
   autonDriver(27, 100, -100, 0, false);
@@ -268,16 +275,19 @@ void autonomous(void) {
   inchDrive(21, 75, false);
 
   //3rd yellow goal
+
   autonDriver(36, -100, 100, 0, false);
   inchDrive(114, 75, false);
 
   //last blue goal
+
   inchDrive(100, -75, false);
 
   //mogo part
   //gets last blue and pulls it to other side
   //reverses
   //needs revision cuz might not work all the time
+  
   mogolift.spin(reverse, 100, pct);
   wait(600, msec);
   mogolift.stop();
@@ -289,22 +299,26 @@ void autonomous(void) {
   mogolift.spin(reverse, 100, pct);
   wait(700, msec);
   mogolift.stop();
+
   //have to add balance code at the end here
   //has to turn around and get on the balance beam
+
   mogolift.spin(reverse, 100, pct);
   wait(600, msec);
   mogolift.stop();
   autonDriver(36, -100, 100, 0, false);
   wait(400, msec);
-  */
-  inchDrive(7, 75, 75);
-  balance();
-  wait(3000, msec);
+  
 
-  // Phoenix Code
-  /*float backLiftTime = 1400;
+  //balance area
+  inchDrive(5, 75, 75);
+  balance();
+
+
+ // Felix's Code
+ /*float backLiftTime = 1400;
  //Grab the seesaw mogo
-  mogolift.setVelocity(100, percent);
+ mogolift.setVelocity(100, percent);
  mogolift.spin(reverse);
  wait(backLiftTime, msec);
  mogolift.stop(brake);
@@ -312,7 +326,9 @@ void autonomous(void) {
  mogolift.spin(forward);
  wait(backLiftTime,msec);
  mogolift.stop(brake);
+
  //Go for the left yellow mogo
+
  inchDrive(6, 100, false);
  gyroTurn(7, false);
  inchDrive(3, 75, false);
@@ -321,19 +337,25 @@ void autonomous(void) {
  gyroTurn(50, false);
  inchDrive(100, 75, false);
  inchDrive(60, -75, false);
+
  //Go for the middle yellow mogo
+
  gyroTurn(22 , false);
  inchDrive(50, 100, false);
  gyroTurn(-3, 100);
  inchDrive(50, 10, false);
+
  //Go for the right mogo
+
  gyroTurn(30,false);
  inchDrive(20, 100, false);
  gyroTurn(15,false);
  inchDrive(100, 100, false);
- //gyroTurn(270, 75, -75, false);
- //inchDrive(5, 75, false);
- //balance();
+
+ gyroTurn(270, 75, -75, false);
+ inchDrive(5, 75, false);
+ balance();
+
  */
 }
 
