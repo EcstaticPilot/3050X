@@ -246,7 +246,7 @@ void autonomous(void) {
   // auton
   //90 = right, -90 = left
   // claw true is closed, false is open
-  /*inchDrive(2, 75,  false);
+  inchDrive(2, 75,  false);
   inchDrive(4, -75, false);
   inchDrive(0, 50, false);
   wait(500, msec);
@@ -271,25 +271,31 @@ void autonomous(void) {
   wait(500, msec);
   gyroTurn(90, false);
   wait(400, msec);
-  inchDrive(84, 75, false);
+  inchDrive(74, 75, false);
   wait(500, msec);
   gyroTurn(-90, false);
   wait(400, msec);
   inchDrive(35, 75, false);
-  wait(100, msec);
+  wait(300, msec);
 
   //getting red
-*/
-  inchDrive(0, 0, true);
-  
-  /*
+  Claw.set(true);
   wait(100, msec);
-  inchDrive(14, -75, true);  
+  inchDrive(8, -75, true);  
   wait(100, msec);
-  gyroTurn(-90, false);
+  gyroTurn(-90, true);
+
+  inchDrive(75, 75, true);
+
+  //lifting
+
+  /*LLift.spin(forward, 100, pct);
+  RLift.spin(forward, 100, pct);
+  wait(100, msec);
+  LLift.setBrake(coast);*/
 
   
-*/
+
 
   
   
