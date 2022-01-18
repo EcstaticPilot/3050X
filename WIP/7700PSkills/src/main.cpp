@@ -93,8 +93,19 @@ void autonDriver(int wt, int lspeed, int rspeed, int liftspeed, bool claw) {
   LLift.spin(forward, liftspeed, pct);
   RLift.spin(forward, liftspeed, pct);
   Claw.set(claw);
-
   wait(wt, msec);
+}
+void brakedrive() {
+  RBDrive.stop(brake);
+  LBDrive.stop(brake);
+  RFDrive.stop(brake);
+  LFDrive.stop(brake);
+}
+void coastdrive(){
+  RBDrive.stop(coast);
+  LBDrive.stop(coast);
+  RFDrive.stop(coast);
+  LFDrive.stop(coast);
 }
 
 void inchDrive(float target, int speed, bool claw) {
@@ -111,49 +122,39 @@ void inchDrive(float target, int speed, bool claw) {
     Brain.Screen.printAt(1, 40, "inchdrive");
     c = LBDrive.rotation(rev) * 3.14 * dia;
   }
-  autonDriver(0, 0, 0, 0, false);
+  brakedrive();
   Brain.Screen.clearScreen();
 }
 
 void gyroTurn(float target, bool claw) {
   while (Gyro.isCalibrating()) {
     // Wait for Gyro Calibration , Sleep but Allow other tasks to run
+    //90 = right, -90 = left
     this_thread::sleep_for(20);
   }
   float heading4 = 0;
   Gyro.setRotation(0, degrees);
 
   float speed = 0.0;
-  float kp = 2.0;
+  float kp = 1.0;
   float d = 2.0;
   Brain.Screen.clearScreen();
   while (fabs(target - heading4) >= d) {
     if (target > 0) {
-      speed = kp * (target - heading4) + 25;
+      speed = kp * (target - heading4) + 10;
     }
     if (target < 0) {
-      speed = kp * (target - heading4) - 25;
+      speed = kp * (target - heading4) - 10;
     }
     autonDriver(10, speed, -speed, 0, claw);
-    wait(10, msec);
     heading4 = Gyro.rotation(degrees);
-    Brain.Screen.printAt(1, 40, "gyroturn");
+    Brain.Screen.printAt(1, 40, "heading = %.3f", heading4);
   }
-  autonDriver(0, 0, 0, 0, true);
-  Brain.Screen.clearScreen();
+  brakedrive();
+  //Brain.Screen.clearScreen();
 }
-void brakedrive() {
-  RBDrive.stop(brake);
-  LBDrive.stop(brake);
-  RFDrive.stop(brake);
-  LFDrive.stop(brake);
-}
-void coastdrive(){
-  RBDrive.stop(coast);
-  LBDrive.stop(coast);
-  RFDrive.stop(coast);
-  LFDrive.stop(coast);
-}
+
+
 
 void balance() {
   float pitch = Gyro.pitch(deg);
@@ -243,52 +244,56 @@ void autonomous(void) {
 
   // Abby's Code Below
   // auton
-
-  inchDrive(2, 100,  false);
-  inchDrive(4, -100, false);
+  //90 = right, -90 = left
+  // claw true is closed, false is open
+  /*inchDrive(2, 75,  false);
+  inchDrive(4, -75, false);
   inchDrive(0, 50, false);
   wait(500, msec);
   inchDrive(118, 75, false);
   wait(500, msec);
-  autonDriver(36, -100, 100, 0, false);
+  gyroTurn(-90, false);
   wait(400, msec);
   inchDrive(24, 75, false);
-  autonDriver(45, -100, 120, 0, false);
+  wait(200, msec);
+  gyroTurn(-90, false);
   wait(400, msec);
-  inchDrive(100, 75, false);
+  inchDrive(95, 75, false);
   wait(500, msec); 
 
   //big one in the middle if yk yk ;)
 
   inchDrive(15, -75, false);
-  wait(200, msec);
-  autonDriver(27, 100, -100, 0, false);
+  wait(200, msec); 
+  gyroTurn(90, false);
   wait(400, msec);
-  inchDrive(40, 74, false);
+  inchDrive(48, 75, false);
   wait(500, msec);
-  autonDriver(36, 100, -100, 0, false);
+  gyroTurn(90, false);
   wait(400, msec);
-  inchDrive(99, 75, false);
+  inchDrive(84, 75, false);
   wait(500, msec);
-  autonDriver(36, -100, 100, 0, false);
+  gyroTurn(-90, false);
   wait(400, msec);
-  inchDrive(21, 75, false);
+  inchDrive(35, 75, false);
+  wait(100, msec);
 
-  //3rd yellow goal
-
-  autonDriver(36, -100, 100, 0, false);
-  inchDrive(114, 75, false);
-
-  //last blue goal
-
-  inchDrive(100, -75, false);
-
-  //mogo part
-  //gets last blue and pulls it to other side
-  //reverses
-  //needs revision cuz might not work all the time
+  //getting red
+*/
+  inchDrive(0, 0, true);
   
-  mogolift.spin(reverse, 100, pct);
+  /*
+  wait(100, msec);
+  inchDrive(14, -75, true);  
+  wait(100, msec);
+  gyroTurn(-90, false);
+
+  
+*/
+
+  
+  
+  /*mogolift.spin(reverse, 100, pct);
   wait(600, msec);
   mogolift.stop();
   inchDrive(5, -75, false);
@@ -299,22 +304,27 @@ void autonomous(void) {
   mogolift.spin(reverse, 100, pct);
   wait(700, msec);
   mogolift.stop();
-
+ 
   //have to add balance code at the end here
   //has to turn around and get on the balance beam
 
+  //new stuff, need to test out, cuz i didnt use field and might be very cancer
   mogolift.spin(reverse, 100, pct);
   wait(600, msec);
   mogolift.stop();
-  autonDriver(36, -100, 100, 0, false);
+  //driving a forward a bit to get loose from the mogo
+  inchDrive(3, 75, false);
+  gyroTurn(-90, false);
   wait(400, msec);
-  
 
+  //going up beam and pusing blue
+
+ 
   //balance area
-  inchDrive(5, 75, 75);
+  inchDrive(5, 75, false);
   balance();
 
-
+ */
  // Felix's Code
  /*float backLiftTime = 1400;
  //Grab the seesaw mogo
