@@ -10,11 +10,11 @@
 // ---- START VEXCODE CONFIGURED DEVICES ----
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
-// RBDrive              motor         18              
-// LBDrive              motor         10              
+// RBDrive              motor         10              
+// LBDrive              motor         11              
 // Controller1          controller                    
-// LFDrive              motor         14              
-// RFDrive              motor         1               
+// LFDrive              motor         20              
+// RFDrive              motor         13              
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
@@ -39,32 +39,12 @@ void draw(){
 Brain.Screen.setFillColor(red);
 Brain.Screen.setPenColor(white);
 Brain.Screen.drawRectangle(10, 10, 100, 50);
-Brain.Screen.printAt(10, 10, "hi");
-Brain.Screen.printAt( 10 , 20,"RMotor Temp%f ",LBDrive.temperature(pct));
-Brain.Screen.printAt( 10, 35,"LMotor Temp%f ",RBDrive.temperature(pct));
+
 //Brain.Screen.printAt(10, 40,"Motor");
 
 
-Brain.Screen.setFillColor(blue);
-Brain.Screen.setPenColor(white);
-Brain.Screen.drawRectangle(400, 10, 80, 50);
-Brain.Screen.printAt(410, 15, "C++" );
-
-
-
 }
 
-void motorCurrent() { 
- /* Brain.Screen.printAt( 10, 80,"LMotor current%f  ",LeftBackMotor.current());
-  Brain.Screen.printAt( 10, 96,"RMotor current%f  ",RightBackMotor.current());
-  Brain.Screen.printAt( 10, 110,"LMotor current%f ",Lfront.current());
-  Brain.Screen.printAt( 10, 122,"RMotor current%f ",Rfront10.current());
-  Brain.Screen.printAt( 10, 132,"Motor current%f  ",Arm.current());
-  */
-
-
-
-}
 
 
 ////////////----------------------EOF-----------------------//////////////////////

@@ -11,17 +11,18 @@
 // ---- START VEXCODE CONFIGURED DEVICES ----
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
-// RBDrive              motor         20
-// LBDrive              motor         11
-// LLift                motor         2
-// Controller1          controller
-// LFDrive              motor         3
-// Gyro                 inertial      13
-// RLift                motor         9
-// Claw                 digital_out   A
-// RFDrive              motor         10
-// mogolift             motor         19
-// ClawSpin             motor         7
+// RBDrive              motor         20              
+// LBDrive              motor         11              
+// LLift                motor         2               
+// Controller1          controller                    
+// LFDrive              motor         3               
+// Gyro                 inertial      13              
+// RLift                motor         9               
+// Claw                 digital_out   A               
+// RFDrive              motor         10              
+// mogolift             motor         19              
+// ClawSpin             motor         7               
+// Claw2                digital_out   B               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
@@ -271,28 +272,28 @@ void autonomous(void) {
   wait(500, msec);
   gyroTurn(90, false);
   wait(400, msec);
-  inchDrive(74, 75, false);
+  inchDrive(78, 75, false);
   wait(500, msec);
   gyroTurn(-90, false);
   wait(400, msec);
-  inchDrive(35, 75, false);
+  inchDrive(69, 75, false);
   wait(300, msec);
 
-  //getting red
-  Claw.set(true);
+  //getting red mogo
+  Claw.set(false);
+  Claw2.set(false);
   wait(100, msec);
-  inchDrive(8, -75, true);  
+  inchDrive(8, -75, false);  
   wait(100, msec);
-  gyroTurn(-90, true);
-
+  gyroTurn(-90, false);
   inchDrive(75, 75, true);
 
   //lifting
 
-  /*LLift.spin(forward, 100, pct);
+  LLift.spin(forward, 100, pct);
   RLift.spin(forward, 100, pct);
   wait(100, msec);
-  LLift.setBrake(coast);*/
+  LLift.setBrake(coast);
 
   
 

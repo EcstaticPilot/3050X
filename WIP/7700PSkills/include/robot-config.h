@@ -14,6 +14,7 @@ extern digital_out Claw;
 extern motor RFDrive;
 extern motor mogolift;
 extern motor ClawSpin;
+extern digital_out Claw2;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
