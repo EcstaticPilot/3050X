@@ -141,13 +141,14 @@ void gyroTurn(float target, bool claw) {
   float d = 2.0;
   Brain.Screen.clearScreen();
   while (fabs(target - heading4) >= d) {
-    if (target > 0) {
+    if (target - heading4 > 0) {
       speed = kp * (target - heading4) + 10;
     }
-    if (target < 0) {
+    if (target - heading4 < 0) {
       speed = kp * (target - heading4) - 10;
     }
     autonDriver(10, speed, -speed, 0, claw);
+    //Drive(10, speed, -speed);
     heading4 = Gyro.rotation(degrees);
     Brain.Screen.printAt(1, 40, "heading = %.3f", heading4);
   }
@@ -160,16 +161,16 @@ void gyroTurn(float target, bool claw) {
 void balance() {
   float pitch = Gyro.pitch(deg);
   float oldpitch = pitch;
-  inchDrive(10, 100, false);
+  inchDrive(10, 75, false);
   Brain.Screen.clearScreen();
   float kp = 1;
-  float kd = 20.0;
+  float kd = 8.0; //20
  
   // float d=0.5;
   while (true) //(fabs(pitch)>d)
   {
     float speed = kp * pitch + kd * (pitch - oldpitch);
-    Drive(speed, speed, 10);
+    Drive(10, speed, speed);
     oldpitch = pitch;
     pitch = Gyro.pitch(deg);
     Brain.Screen.printAt(1, 100, "pitch=   %.3f   ", pitch);
@@ -255,11 +256,11 @@ void autonomous(void) {
   wait(500, msec);
   gyroTurn(-90, false);
   wait(400, msec);
-  inchDrive(24, 75, false);
+  inchDrive(26, 75, false);
   wait(200, msec);
   gyroTurn(-90, false);
   wait(400, msec);
-  inchDrive(95, 75, false);
+  inchDrive(93, 75, false);
   wait(500, msec); 
 
   //big one in the middle if yk yk ;)
@@ -274,13 +275,43 @@ void autonomous(void) {
   wait(400, msec);
   inchDrive(78, 75, false);
   wait(500, msec);
+  inchDrive(15, -75, false);
   gyroTurn(-90, false);
   wait(400, msec);
-  inchDrive(69, 75, false);
-  wait(300, msec);
+  inchDrive(62, 75, false);
+  wait(500, msec);
+  gyroTurn(-90, false);
+  wait(500, msec);
+  inchDrive(80, 75, false);
 
+
+  //red goal
+  inchDrive(90, -75, false);
+
+  /*inchDrive(-108, 75, false);
+  wait(500, msec);
+  gyroTurn(90, false);
+  wait(500, msec);
+  inchDrive(18, 75, false);
+  wait(500, msec);
+  gyroTurn(-90, false);
+  wait(500, msec);
+  inchDrive(108, 75, false);
+  wait(500, msec);
+*/
+
+
+  
+ //lifting
+
+  /*LLift.spin(forward, 100, pct);
+  RLift.spin(forward, 100, pct);
+  wait(100, msec);
+  LLift.setBrake(coast);
+*/
+  
   //getting red mogo
-  Claw.set(false);
+  /*Claw.set(false);
   Claw2.set(false);
   wait(100, msec);
   inchDrive(8, -75, false);  
@@ -294,10 +325,12 @@ void autonomous(void) {
   RLift.spin(forward, 100, pct);
   wait(100, msec);
   LLift.setBrake(coast);
-
-  
-
-
+*/
+ //pushing last goal
+  /*gyroTurn(90, false);
+  inchDrive(75, 75, false);
+  brakedrive();
+*/
   
   
   /*mogolift.spin(reverse, 100, pct);
