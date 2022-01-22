@@ -164,7 +164,7 @@ void balance() {
   inchDrive(10, 75, false);
   Brain.Screen.clearScreen();
   float kp = 1;
-  float kd = 8.0; //20
+  float kd = 10.0; //20
  
   // float d=0.5;
   while (true) //(fabs(pitch)>d)
@@ -282,11 +282,30 @@ void autonomous(void) {
   wait(500, msec);
   gyroTurn(-90, false);
   wait(500, msec);
-  inchDrive(80, 75, false);
+  inchDrive(86, 75, false);
+  wait(500, msec);
 
 
   //red goal
-  inchDrive(90, -75, false);
+  inchDrive(95, -75, false);
+  wait(200, msec);
+  gyroTurn(90, false);
+  wait(100, msec);
+  inchDrive(20, 75, false);
+  wait(200, msec);
+  gyroTurn(-90, false);
+  wait(200, msec);
+  inchDrive(104, 75, false);
+  wait(500, msec);
+  
+
+  //pushing blue on platform
+  gyroTurn(-90, false);
+  wait(200, msec);
+  inchDrive(8, 75, false);
+  balance();
+
+
 
   /*inchDrive(-108, 75, false);
   wait(500, msec);
