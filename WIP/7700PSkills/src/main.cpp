@@ -295,7 +295,7 @@ void autonomous(void) {
   wait(200, msec);
   gyroTurn(-90, false);
   wait(200, msec);
-  inchDrive(104, 75, false);
+  inchDrive(98, 75, false);
   wait(500, msec);
   
 
