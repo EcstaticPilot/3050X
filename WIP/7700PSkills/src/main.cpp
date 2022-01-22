@@ -260,7 +260,7 @@ void autonomous(void) {
   wait(200, msec);
   gyroTurn(-90, false);
   wait(400, msec);
-  inchDrive(93, 75, false);
+  inchDrive(60, 75, false);
   wait(500, msec); 
 
   //big one in the middle if yk yk ;)
@@ -273,39 +273,60 @@ void autonomous(void) {
   wait(500, msec);
   gyroTurn(90, false);
   wait(400, msec);
-  inchDrive(78, 75, false);
+  inchDrive(76, 75, false);
   wait(500, msec);
   inchDrive(15, -75, false);
+  wait(500, msec);
   gyroTurn(-90, false);
   wait(400, msec);
   inchDrive(62, 75, false);
   wait(500, msec);
   gyroTurn(-90, false);
   wait(500, msec);
-  inchDrive(86, 75, false);
+  inchDrive(78, 75, false);
   wait(500, msec);
 
 
   //red goal
-  inchDrive(95, -75, false);
+  inchDrive(110, -75, false);
   wait(200, msec);
   gyroTurn(90, false);
   wait(100, msec);
-  inchDrive(20, 75, false);
+  inchDrive(30, 75, false);
   wait(200, msec);
   gyroTurn(-90, false);
   wait(200, msec);
-  inchDrive(98, 75, false);
+  inchDrive(110, 75, false);
   wait(500, msec);
+
+  //backing up and going on ramp
+  inchDrive(15, -75, false);
+  wait(200, msec);
+  gyroTurn(-90, false);
+  wait(200, msec);
+  inchDrive(18, 75, false);
+  wait(500, msec);
+  gyroTurn(90, false);
+  wait(500, msec);
+  inchDrive(15, 75, false);
+  wait(500, msec);
+  gyroTurn(-90, false);
+  wait(500, msec);
+
+  //ramp
+  inchDrive(16, 75, false);
+  wait(500, msec);
+  balance();
+
   
 
   //pushing blue on platform
-  gyroTurn(-90, false);
+  /*gyroTurn(-90, false);
   wait(200, msec);
   inchDrive(8, 75, false);
   balance();
 
-
+*/
 
   /*inchDrive(-108, 75, false);
   wait(500, msec);
@@ -424,7 +445,6 @@ void autonomous(void) {
  gyroTurn(270, 75, -75, false);
  inchDrive(5, 75, false);
  balance();
-
  */
 }
 
