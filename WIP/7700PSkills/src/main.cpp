@@ -260,12 +260,12 @@ void autonomous(void) {
   wait(200, msec);
   gyroTurn(-90, false);
   wait(400, msec);
-  inchDrive(60, 75, false);
+  inchDrive(70, 75, false);
   wait(500, msec); 
 
   //big one in the middle if yk yk ;)
 
-  inchDrive(15, -75, false);
+  inchDrive(10, -75, false);
   wait(200, msec); 
   gyroTurn(90, false);
   wait(400, msec);
@@ -273,13 +273,13 @@ void autonomous(void) {
   wait(500, msec);
   gyroTurn(90, false);
   wait(400, msec);
-  inchDrive(76, 75, false);
+  inchDrive(59, 75, false);
   wait(500, msec);
-  inchDrive(15, -75, false);
+  //inchDrive(15, -75, false);
   wait(500, msec);
   gyroTurn(-90, false);
   wait(400, msec);
-  inchDrive(62, 75, false);
+  inchDrive(45, 75, false);
   wait(500, msec);
   gyroTurn(-90, false);
   wait(500, msec);
@@ -288,11 +288,11 @@ void autonomous(void) {
 
 
   //red goal
-  inchDrive(110, -75, false);
+  inchDrive(120, -75, false);
   wait(200, msec);
   gyroTurn(90, false);
   wait(100, msec);
-  inchDrive(30, 75, false);
+  inchDrive(28, 75, false);
   wait(200, msec);
   gyroTurn(-90, false);
   wait(200, msec);
@@ -300,28 +300,43 @@ void autonomous(void) {
   wait(500, msec);
 
   //backing up and going on ramp
-  inchDrive(15, -75, false);
-  wait(200, msec);
-  gyroTurn(-90, false);
-  wait(200, msec);
-  inchDrive(18, 75, false);
+  inchDrive(120, -75, false);
   wait(500, msec);
   gyroTurn(90, false);
-  wait(500, msec);
-  inchDrive(15, 75, false);
-  wait(500, msec);
-  gyroTurn(-90, false);
+  wait(200, msec);
+
+  //lift
+  LLift.spin(forward, 100, pct);
+  RLift.spin(forward, 100, pct);
+  wait(100, msec);
+  LLift.setBrake(coast);
+
+  //go forward to ramp
+  inchDrive(35, 75, false);
   wait(500, msec);
 
+  //lift going down
+  LLift.spin(reverse, 100, pct);
+  RLift.spin(reverse, 100, pct);
+  wait(100, msec);
+  LLift.setBrake(coast);
+  
+  //going up ramp
+  inchDrive(15, 75, false);
+  wait(200, msec);
+  balance();
+
+
+
   //ramp
-  inchDrive(16, 75, false);
+  /*inchDrive(16, 75, false);
   wait(500, msec);
   balance();
 
   
 
   //pushing blue on platform
-  /*gyroTurn(-90, false);
+  gyroTurn(-90, false);
   wait(200, msec);
   inchDrive(8, 75, false);
   balance();
