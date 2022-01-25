@@ -292,7 +292,7 @@ void autonomous(void) {
   wait(500, msec);
 
   //turning to push yellow
-  inchDrive(15, -75, false);
+  /*inchDrive(15, -75, false);
   wait(200, msec);
   gyroTurn(90, false);
   wait(100, msec);
@@ -309,7 +309,7 @@ void autonomous(void) {
   inchDrive(20, -75, false);
   wait(100, msec);
   gyroTurn(90, false);
-
+ */
 
   //red goal
   inchDrive(118, -75, false);
@@ -323,11 +323,15 @@ void autonomous(void) {
   inchDrive(110, 75, false);
   wait(500, msec);
 
-  //go up red ramp
-  inchDrive(-15, 75, false);
+  //going to other side
+  //diagonally
+  inchDrive(20, -75, false);
   wait(200, msec);
-  gyroTurn(-90 , false);
-  wait(200, msec);
+  gyroTurn(45, false);
+  wait(100, msec);
+  inchDrive(100, -100, false);
+  wait(200,msec);
+  gyroTurn(45, false);
 
 
 
@@ -437,7 +441,7 @@ void autonomous(void) {
 
  //Go for the left yellow mogo
 
- inchDrive(6, 100, false);
+ inchDrive(6, 100, false);ax
  gyroTurn(7, false);
  inchDrive(3, 75, false);
  gyroTurn(8, false);
