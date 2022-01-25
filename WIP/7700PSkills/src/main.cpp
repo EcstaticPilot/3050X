@@ -247,6 +247,7 @@ void autonomous(void) {
   // Abby's Code Below
   // auton
   //90 = right, -90 = left
+  //90 = right, -90 = left
   // claw true is closed, false is open
   inchDrive(2, 75,  false);
   inchDrive(4, -75, false);
@@ -277,18 +278,41 @@ void autonomous(void) {
   wait(500, msec);
   //inchDrive(15, -75, false);
   wait(500, msec);
+  //backing up from big one in middle
+  inchDrive(8, -75, false);
+  wait(200, msec);
+
   gyroTurn(-90, false);
   wait(400, msec);
   inchDrive(45, 75, false);
   wait(500, msec);
   gyroTurn(-90, false);
   wait(500, msec);
-  inchDrive(78, 75, false);
+  inchDrive(65, 75, false);
   wait(500, msec);
+
+  //turning to push yellow
+  inchDrive(15, -75, false);
+  wait(200, msec);
+  gyroTurn(90, false);
+  wait(100, msec);
+  inchDrive(8, 75, false);
+  wait(100, msec);
+  gyroTurn(-90, false);
+  wait(100, msec);
+  inchDrive(15, 75, false);
+  wait(100, msec);
+  gyroTurn(-90, false);
+  wait(100, msec);
+  inchDrive(20, 75, false);
+  wait(100, msec);
+  inchDrive(20, -75, false);
+  wait(100, msec);
+  gyroTurn(90, false);
 
 
   //red goal
-  inchDrive(120, -75, false);
+  inchDrive(118, -75, false);
   wait(200, msec);
   gyroTurn(90, false);
   wait(100, msec);
@@ -299,32 +323,11 @@ void autonomous(void) {
   inchDrive(110, 75, false);
   wait(500, msec);
 
-  //backing up and going on ramp
-  inchDrive(120, -75, false);
-  wait(500, msec);
-  gyroTurn(90, false);
+  //go up red ramp
+  inchDrive(-15, 75, false);
   wait(200, msec);
-
-  //lift
-  LLift.spin(forward, 100, pct);
-  RLift.spin(forward, 100, pct);
-  wait(100, msec);
-  LLift.setBrake(coast);
-
-  //go forward to ramp
-  inchDrive(35, 75, false);
-  wait(500, msec);
-
-  //lift going down
-  LLift.spin(reverse, 100, pct);
-  RLift.spin(reverse, 100, pct);
-  wait(100, msec);
-  LLift.setBrake(coast);
-  
-  //going up ramp
-  inchDrive(15, 75, false);
+  gyroTurn(-90 , false);
   wait(200, msec);
-  balance();
 
 
 
