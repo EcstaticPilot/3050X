@@ -21,7 +21,7 @@
 // Claw                 digital_out   A               
 // RFDrive              motor         10              
 // mogolift             motor         19              
-// ClawSpin             motor         7               
+// ClawSpin             motor         14              
 // Claw2                digital_out   B               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
@@ -248,22 +248,44 @@ void autonomous(void) {
   // auton
   //90 = right, -90 = left
   //90 = right, -90 = left
-  // claw true is closed, false is open
+ 
+  // claw true is open, false is closed
+  //Claw.set(true);
+// Claw2.set(true);
+
+
+
   inchDrive(2, 75,  false);
   inchDrive(4, -75, false);
   inchDrive(0, 50, false);
-  wait(500, msec);
+
+  wait(100, msec);
+   mogolift.spin(reverse, 50, pct);
+   wait(1200, msec);
+   mogolift.stop(brake);
+
+
   inchDrive(118, 75, false);
   wait(500, msec);
   gyroTurn(-90, false);
   wait(400, msec);
-  inchDrive(26, 75, false);
+  inchDrive(13, 75, false);
+  //26
   wait(200, msec);
   gyroTurn(-90, false);
   wait(400, msec);
+  
+  //curve turn
+   Drive(1300, -65, -50);
+   wait(100, msec);
+  
+   wait(100, msec);
+   mogolift.spin(forward, 50, pct);
+   wait(1200, msec);
+   mogolift.stop(brake);
+
   inchDrive(70, 75, false);
   wait(500, msec); 
-
   //big one in the middle if yk yk ;)
 
   inchDrive(10, -75, false);
@@ -292,7 +314,7 @@ void autonomous(void) {
   wait(500, msec);
 
   //turning to push yellow
-  /*inchDrive(15, -75, false);
+  inchDrive(15, -75, false);
   wait(200, msec);
   gyroTurn(90, false);
   wait(100, msec);
@@ -309,10 +331,14 @@ void autonomous(void) {
   inchDrive(20, -75, false);
   wait(100, msec);
   gyroTurn(90, false);
- */
+ 
+ 
+
+
+
 
   //red goal
-  inchDrive(118, -75, false);
+  inchDrive(108, -50, false);
   wait(200, msec);
   gyroTurn(90, false);
   wait(100, msec);
@@ -350,7 +376,7 @@ void autonomous(void) {
 
 */
 
-  /*inchDrive(-108, 75, false);
+  inchDrive(-108, 75, false);
   wait(500, msec);
   gyroTurn(90, false);
   wait(500, msec);
@@ -360,7 +386,7 @@ void autonomous(void) {
   wait(500, msec);
   inchDrive(108, 75, false);
   wait(500, msec);
-*/
+
 
 
   
