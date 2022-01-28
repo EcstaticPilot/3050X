@@ -256,12 +256,11 @@ void autonomous(void) {
 
 
   inchDrive(2, 75,  false);
-  inchDrive(4, -75, false);
   inchDrive(0, 50, false);
 
   wait(100, msec);
-   mogolift.spin(reverse, 50, pct);
-   wait(1200, msec);
+   mogolift.spin(reverse, 100, pct);
+   wait(1400, msec);
    mogolift.stop(brake);
 
 
@@ -276,43 +275,42 @@ void autonomous(void) {
   wait(400, msec);
   
   //curve turn
-   Drive(1300, -65, -50);
-   wait(100, msec);
-  
-   wait(100, msec);
-   mogolift.spin(forward, 50, pct);
-   wait(1200, msec);
+   Drive(666, -65, -48);
+   wait(2000, msec);
+   mogolift.spin(forward, 100, pct);
+   wait(1300, msec);
    mogolift.stop(brake);
+   inchDrive(3, 75, false);
+   wait(500, msec);
+   wait(500, msec); 
 
-  inchDrive(70, 75, false);
-  wait(500, msec); 
-  //big one in the middle if yk yk ;)
-
-  inchDrive(10, -75, false);
-  wait(200, msec); 
+//yellow one next to the side of the blue seesaw
+  gyroTurn(75, false);
+  wait(400, msec);
+  inchDrive(120, 75, false);
+  wait(500, msec);
+  inchDrive(20, -75, false);
+  wait(500, msec);
+//really frikin big one in the middle if yk yk ;)
   gyroTurn(90, false);
   wait(400, msec);
-  inchDrive(48, 75, false);
+  inchDrive(45, 75, false);
   wait(500, msec);
   gyroTurn(90, false);
-  wait(400, msec);
-  inchDrive(59, 75, false);
   wait(500, msec);
-  //inchDrive(15, -75, false);
+  inchDrive(50, 75, false);
   wait(500, msec);
-  //backing up from big one in middle
-  inchDrive(8, -75, false);
-  wait(200, msec);
-
+//yellow mogo on the other side
   gyroTurn(-90, false);
-  wait(400, msec);
+  wait(500, msec);
   inchDrive(45, 75, false);
   wait(500, msec);
   gyroTurn(-90, false);
   wait(500, msec);
-  inchDrive(65, 75, false);
+  inchDrive(120, 75, false);
   wait(500, msec);
 
+/*
   //turning to push yellow
   inchDrive(15, -75, false);
   wait(200, msec);
@@ -331,7 +329,7 @@ void autonomous(void) {
   inchDrive(20, -75, false);
   wait(100, msec);
   gyroTurn(90, false);
- 
+ */
  
 
 
