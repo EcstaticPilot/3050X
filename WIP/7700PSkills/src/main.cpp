@@ -275,7 +275,7 @@ void autonomous(void) {
   wait(400, msec);
   
   //curve turn
-   Drive(666, -65, -48);
+   Drive(700, -70, -40);//65
    wait(2000, msec);
    mogolift.spin(forward, 100, pct);
    wait(1300, msec);
