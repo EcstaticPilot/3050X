@@ -259,66 +259,49 @@ void autonomous(void) {
   wait(500, msec);
   gyroTurn(-90, false);
   wait(400, msec);
-  inchDrive(18, 75, false);
+  inchDrive(26, 75, false);
 
   wait(200, msec);
   gyroTurn(-90, false);
   wait(400, msec);
   
-  inchDrive(120, 75, false);
+  inchDrive(69, 75, false);
   wait(500, msec);
-  inchDrive(15, -75, false);
+  inchDrive(6, -75, false);
   wait(500, msec);
   
 //really frikin big one in the middle if yk yk ;)
   gyroTurn(90, false);
   wait(400, msec);
-  inchDrive(45, 75, false);
+  inchDrive(48, 75, false);
   wait(500, msec);
   gyroTurn(90, false);
   wait(500, msec);
-  inchDrive(54, 75, false);
+  inchDrive(57, 75, false);
   wait(500, msec);
-
-
-  //turning to push yellow
-  inchDrive(15, -75, false);
-  wait(200, msec);
-  gyroTurn(90, false);
+  inchDrive(8, -75, false);
   wait(100, msec);
-  inchDrive(8, 75, false);
+
+  //third yellow
+  gyroTurn(-90, false);
+  wait(100, msec);
+  inchDrive(50, 75, false);
   wait(100, msec);
   gyroTurn(-90, false);
   wait(100, msec);
+  inchDrive(70, 75, false);
+  wait(500, msec);
 
 
-  inchDrive(15, 75, false);
-  wait(100, msec);
-  gyroTurn(-90, false);
-  wait(100, msec);
-  inchDrive(20, 75, false);
-  wait(100, msec);
-  inchDrive(20, -75, false);
-  wait(100, msec);
-  gyroTurn(90, false);
+
 
   //red goal
-  inchDrive(108, -50, false);
-  wait(200, msec);
-  gyroTurn(90, false);
-  wait(100, msec);
-  inchDrive(28, 75, false);
-  wait(200, msec);
-  gyroTurn(-90, false);
-  wait(200, msec);
-  inchDrive(110, 75, false);
-  wait(500, msec);
 
-  inchDrive(-108, 75, false);
+  inchDrive(108, -75, false);
   wait(500, msec);
   gyroTurn(90, false);
   wait(500, msec);
-  inchDrive(18, 75, false);
+  inchDrive(25, 75, false);
   wait(500, msec);
   gyroTurn(-90, false);
   wait(500, msec);
