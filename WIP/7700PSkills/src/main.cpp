@@ -15,7 +15,7 @@
 // LBDrive              motor         11              
 // LLift                motor         2               
 // Controller1          controller                    
-// LFDrive              motor         3               
+// LFDrive              motor         15              
 // Gyro                 inertial      13              
 // RLift                motor         9               
 // Claw                 digital_out   A               
@@ -249,48 +249,27 @@ void autonomous(void) {
   //90 = right, -90 = left
   //90 = right, -90 = left
  
-  // claw true is open, false is closed
-  //Claw.set(true);
-// Claw2.set(true);
-
-
-
+ // claw true is open, false is closed
+ //Claw.set(true);
+ // Claw2.set(true);
   inchDrive(2, 75,  false);
   inchDrive(0, 50, false);
-
-  wait(100, msec);
-   mogolift.spin(reverse, 100, pct);
-   wait(1400, msec);
-   mogolift.stop(brake);
-
 
   inchDrive(118, 75, false);
   wait(500, msec);
   gyroTurn(-90, false);
   wait(400, msec);
-  inchDrive(13, 75, false);
-  //26
+  inchDrive(18, 75, false);
+
   wait(200, msec);
   gyroTurn(-90, false);
   wait(400, msec);
   
-  //curve turn
-   Drive(700, -70, -40);//65
-   wait(2000, msec);
-   mogolift.spin(forward, 100, pct);
-   wait(1300, msec);
-   mogolift.stop(brake);
-   inchDrive(3, 75, false);
-   wait(500, msec);
-   wait(500, msec); 
-
-//yellow one next to the side of the blue seesaw
-  gyroTurn(75, false);
-  wait(400, msec);
   inchDrive(120, 75, false);
   wait(500, msec);
-  inchDrive(20, -75, false);
+  inchDrive(15, -75, false);
   wait(500, msec);
+  
 //really frikin big one in the middle if yk yk ;)
   gyroTurn(90, false);
   wait(400, msec);
@@ -298,19 +277,10 @@ void autonomous(void) {
   wait(500, msec);
   gyroTurn(90, false);
   wait(500, msec);
-  inchDrive(50, 75, false);
-  wait(500, msec);
-//yellow mogo on the other side
-  gyroTurn(-90, false);
-  wait(500, msec);
-  inchDrive(45, 75, false);
-  wait(500, msec);
-  gyroTurn(-90, false);
-  wait(500, msec);
-  inchDrive(120, 75, false);
+  inchDrive(54, 75, false);
   wait(500, msec);
 
-/*
+
   //turning to push yellow
   inchDrive(15, -75, false);
   wait(200, msec);
@@ -320,6 +290,8 @@ void autonomous(void) {
   wait(100, msec);
   gyroTurn(-90, false);
   wait(100, msec);
+
+
   inchDrive(15, 75, false);
   wait(100, msec);
   gyroTurn(-90, false);
@@ -329,11 +301,6 @@ void autonomous(void) {
   inchDrive(20, -75, false);
   wait(100, msec);
   gyroTurn(90, false);
- */
- 
-
-
-
 
   //red goal
   inchDrive(108, -50, false);
@@ -347,33 +314,6 @@ void autonomous(void) {
   inchDrive(110, 75, false);
   wait(500, msec);
 
-  //going to other side
-  //diagonally
-  inchDrive(20, -75, false);
-  wait(200, msec);
-  gyroTurn(45, false);
-  wait(100, msec);
-  inchDrive(100, -100, false);
-  wait(200,msec);
-  gyroTurn(45, false);
-
-
-
-  //ramp
-  /*inchDrive(16, 75, false);
-  wait(500, msec);
-  balance();
-
-  
-
-  //pushing blue on platform
-  gyroTurn(-90, false);
-  wait(200, msec);
-  inchDrive(8, 75, false);
-  balance();
-
-*/
-
   inchDrive(-108, 75, false);
   wait(500, msec);
   gyroTurn(90, false);
@@ -384,114 +324,6 @@ void autonomous(void) {
   wait(500, msec);
   inchDrive(108, 75, false);
   wait(500, msec);
-
-
-
-  
- //lifting
-
-  /*LLift.spin(forward, 100, pct);
-  RLift.spin(forward, 100, pct);
-  wait(100, msec);
-  LLift.setBrake(coast);
-*/
-  
-  //getting red mogo
-  /*Claw.set(false);
-  Claw2.set(false);
-  wait(100, msec);
-  inchDrive(8, -75, false);  
-  wait(100, msec);
-  gyroTurn(-90, false);
-  inchDrive(75, 75, true);
-
-  //lifting
-
-  LLift.spin(forward, 100, pct);
-  RLift.spin(forward, 100, pct);
-  wait(100, msec);
-  LLift.setBrake(coast);
-*/
- //pushing last goal
-  /*gyroTurn(90, false);
-  inchDrive(75, 75, false);
-  brakedrive();
-*/
-  
-  
-  /*mogolift.spin(reverse, 100, pct);
-  wait(600, msec);
-  mogolift.stop();
-  inchDrive(5, -75, false);
-  mogolift.spin(forward, 100, pct);
-  wait(700, msec);
-  mogolift.stop();
-  inchDrive(98, 75, false);
-  mogolift.spin(reverse, 100, pct);
-  wait(700, msec);
-  mogolift.stop();
- 
-  //have to add balance code at the end here
-  //has to turn around and get on the balance beam
-
-  //new stuff, need to test out, cuz i didnt use field and might be very cancer
-  mogolift.spin(reverse, 100, pct);
-  wait(600, msec);
-  mogolift.stop();
-  //driving a forward a bit to get loose from the mogo
-  inchDrive(3, 75, false);
-  gyroTurn(-90, false);
-  wait(400, msec);
-
-  //going up beam and pusing blue
-
- 
-  //balance area
-  inchDrive(5, 75, false);
-  balance();
-
- */
- // Felix's Code
- /*float backLiftTime = 1400;
- //Grab the seesaw mogo
- mogolift.setVelocity(100, percent);
- mogolift.spin(reverse);
- wait(backLiftTime, msec);
- mogolift.stop(brake);
- inchDrive(9, -75, false);
- mogolift.spin(forward);
- wait(backLiftTime,msec);
- mogolift.stop(brake);
-
- //Go for the left yellow mogo
-
- inchDrive(6, 100, false);ax
- gyroTurn(7, false);
- inchDrive(3, 75, false);
- gyroTurn(8, false);
- inchDrive(3, 75, false);
- gyroTurn(50, false);
- inchDrive(100, 75, false);
- inchDrive(60, -75, false);
-
- //Go for the middle yellow mogo
-
- gyroTurn(22 , false);
- inchDrive(50, 100, false);
- gyroTurn(-3, 100);
- inchDrive(50, 10, false);
-
- //Go for the right mogo
-
- gyroTurn(30,false);
- inchDrive(20, 100, false);
- gyroTurn(15,false);
- inchDrive(100, 100, false);
-
- gyroTurn(270, 75, -75, false);
- inchDrive(5, 75, false);
- balance();
- */
 }
 
 void driverControl() {
