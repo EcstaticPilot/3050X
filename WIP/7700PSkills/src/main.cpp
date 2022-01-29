@@ -5,6 +5,8 @@
 /*    Created:      Tue Oct 06 2020                                           */
 /*    Description:  9-1-21 added pneumatics */
 /*                   abby added LEFT auton 9/17/21 */
+//after skills comp on 1/29/22 everything fixed and updated
+//without neumatics
                   
 /*----------------------------------------------------------------------------*/
 
@@ -127,18 +129,21 @@ void inchDrive(float target, int speed, bool claw) {
   Brain.Screen.clearScreen();
 }
 
-void gyroTurn(float target, bool claw) {
+void gyroTurn(float target, bool claw, float &facing) {
   while (Gyro.isCalibrating()) {
     // Wait for Gyro Calibration , Sleep but Allow other tasks to run
     //90 = right, -90 = left
     this_thread::sleep_for(20);
   }
   float heading4 = 0;
-  Gyro.setRotation(0, degrees);
+  //Gyro.setRotation(0, degrees);
 
   float speed = 0.0;
   float kp = 1.0;
   float d = 2.0;
+  facing += target;
+  target=facing;
+
   Brain.Screen.clearScreen();
   while (fabs(target - heading4) >= d) {
     if (target - heading4 > 0) {
@@ -183,6 +188,7 @@ void balance() {
 void pre_auton(void) { wait(2000, msec); }
 
 void autonomous(void) {
+  float facing=0;
   while (Gyro.isCalibrating()) {
 
     wait(20, msec);
@@ -257,12 +263,12 @@ void autonomous(void) {
 
   inchDrive(118, 75, false);
   wait(500, msec);
-  gyroTurn(-90, false);
+  gyroTurn(-90, false,facing);
   wait(400, msec);
   inchDrive(26, 75, false);
 
   wait(200, msec);
-  gyroTurn(-90, false);
+  gyroTurn(-90, false, facing);
   wait(400, msec);
   
   inchDrive(69, 75, false);
@@ -271,11 +277,11 @@ void autonomous(void) {
   wait(500, msec);
   
 //really frikin big one in the middle if yk yk ;)
-  gyroTurn(90, false);
+  gyroTurn(90, false ,facing);
   wait(400, msec);
   inchDrive(48, 75, false);
   wait(500, msec);
-  gyroTurn(90, false);
+  gyroTurn(90, false ,facing);
   wait(500, msec);
   inchDrive(57, 75, false);
   wait(500, msec);
@@ -283,11 +289,11 @@ void autonomous(void) {
   wait(100, msec);
 
   //third yellow
-  gyroTurn(-90, false);
+  gyroTurn(-90, false ,facing);
   wait(100, msec);
   inchDrive(50, 75, false);
   wait(100, msec);
-  gyroTurn(-90, false);
+  gyroTurn(-90, false ,facing);
   wait(100, msec);
   inchDrive(70, 75, false);
   wait(500, msec);
@@ -299,11 +305,11 @@ void autonomous(void) {
 
   inchDrive(108, -75, false);
   wait(500, msec);
-  gyroTurn(90, false);
+  gyroTurn(90, false ,facing);
   wait(500, msec);
   inchDrive(25, 75, false);
   wait(500, msec);
-  gyroTurn(-90, false);
+  gyroTurn(-90, false ,facing);
   wait(500, msec);
   inchDrive(108, 75, false);
   wait(500, msec);
