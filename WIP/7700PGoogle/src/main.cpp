@@ -259,7 +259,7 @@ switch(AutonSelect)
   case 0:
 autonDriver(500, 0, 0, 0, false, -70, 0);
 autonDriver(700, 0, 0, 70, false, 0, 0);
-autonDriver(500, 0, 0, 0, false, 70, 0);
+autonDriver(500, 0, 0, 0, false, 60, 0);
 autonDriver(700, 0, 0, -70, true, 0, 0);
 
 inchDrive(60, 100, true);
@@ -273,15 +273,17 @@ inchDrive(60, -100, false);
    //Deploy
 autonDriver(500, 0, 0, 0, false, -70, 0);
 autonDriver(700, 0, 0, 70, false, 0, 0);
-autonDriver(500, 0, 0, 0, false, 70, 0);
+autonDriver(500, 0, 0, 0, false, 80, 0);
 autonDriver(700, 0, 0, -70, true, 0, 0);
 
 autonDriver(2000, 0, 0, 0, true, 0, -70);
 inchDrive(4, -60, true);
 autonDriver(1900, 0, 0, 0, true, 0, 70);
 inchDrive(10, 60, true);
-gyroTurn(90, true, facing);
-
+gyroTurn(42, true, facing);
+inchDrive(80, 100, false);
+gyroTurn(125, false, facing);
+inchDrive(40, 100, false);
 
   break;
    case 2:
