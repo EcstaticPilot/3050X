@@ -282,8 +282,10 @@ autonDriver(1900, 0, 0, 0, true, 0, 70);
 inchDrive(10, 60, true);
 gyroTurn(42, true, facing);
 inchDrive(80, 100, false);
-gyroTurn(125, false, facing);
-inchDrive(40, 100, false);
+gyroTurn(120, false, facing);
+inchDrive(80, 100, false);
+gyroTurn(-70, false, facing);
+inchDrive(70, 100, false);
 
   break;
    case 2:
