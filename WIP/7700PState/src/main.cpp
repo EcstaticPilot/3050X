@@ -35,7 +35,7 @@ competition Competition;
 
 // Global Variable
 float dia = 4.0;
-int AutonSelect=2;
+int AutonSelect=3;
 // tis is GUI : Graphic User Interface
 
 void Drive(int wt, int lspeed, int rspeed,
@@ -289,7 +289,7 @@ autonDriver(500, 0, 0, 0, false, 0, 0);
   wait(500, msec);
   
 //really frikin big one in the middle if yk yk ;)
-  gyroTurn(90, false ,facing);
+  gyroTurn(-270, false ,facing);
   wait(400, msec);
   inchDrive(48, 75, false);
   wait(500, msec);
@@ -334,12 +334,10 @@ void driverControl() {
 
   while (true) {
     if (Controller1.ButtonR2.pressing()) {
-      Claw.set(true);
-    } else if (Controller1.ButtonR1.pressing()) {
       Claw.set(false);
+    } else if (Controller1.ButtonR1.pressing()) {
+      Claw.set(true);
     }
-    //ClawSpin.setVelocity(100, percent);
-
     Brain.Screen.printAt(160, 60, "hi");
     Brain.Screen.printAt(20, 20, "LB Motor Temp%f ", LBDrive.temperature(pct));
     Brain.Screen.printAt(20, 40, "RB Motor Temp%f ", RBDrive.temperature(pct));
