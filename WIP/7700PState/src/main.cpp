@@ -24,7 +24,7 @@
 // Claw                 digital_out   C               
 // RFDrive              motor         10              
 // mogolift             motor         19              
-// ClawSpin             motor         16              
+// ClawSpin             motor         18              
 // Claw2                digital_out   B               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
@@ -338,7 +338,7 @@ void driverControl() {
     } else if (Controller1.ButtonR1.pressing()) {
       Claw.set(false);
     }
-    ClawSpin.setVelocity(100, percent);
+    //ClawSpin.setVelocity(100, percent);
 
     Brain.Screen.printAt(160, 60, "hi");
     Brain.Screen.printAt(20, 20, "LB Motor Temp%f ", LBDrive.temperature(pct));
@@ -378,17 +378,17 @@ void driverControl() {
     }
 
     if (Controller1.ButtonLeft.pressing()) {
-      ClawSpin.spin(forward, 20, pct);
+      ClawSpin.spin(forward, 70, pct);
 
     } else if (Controller1.ButtonRight.pressing()) {
-      ClawSpin.spin(reverse, 20, pct);
+      ClawSpin.spin(reverse, 70, pct);
 
-    } else if (Controller1.ButtonA.pressing()) {
-      balance();
-    } else {
+    } else{
       ClawSpin.stop(hold);
     }
-
+     if (Controller1.ButtonA.pressing()) {
+      balance();
+    } 
     if (Controller1.ButtonUp.pressing()) {
       mogolift.spin(forward, 100, pct);
     } else if (Controller1.ButtonDown.pressing()) {

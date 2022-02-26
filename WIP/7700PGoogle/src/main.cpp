@@ -119,14 +119,14 @@ void inchDrive(float target, int speed, bool claw) {
   float c = 0; // our distance
   LBDrive.setRotation(0, degrees);
   Brain.Screen.clearScreen();
-  while (fabs(c) <= target) {
+  while (abs(c) <= abs(target)) {
 
     LBDrive.spin(forward, speed, pct);
     RBDrive.spin(forward, speed, pct);
     LFDrive.spin(forward, speed, pct);
     RFDrive.spin(forward, speed, pct);
     Brain.Screen.printAt(1, 40, "inchdrive");
-    c = LBDrive.rotation(rev) * 3.14 * dia;
+    c = abs(LBDrive.rotation(rev) * 3.14 * dia);
   }
   brakedrive();
   Brain.Screen.clearScreen();
@@ -276,16 +276,15 @@ autonDriver(700, 0, 0, 70, false, 0, 0);
 autonDriver(500, 0, 0, 0, false, 80, 0);
 autonDriver(700, 0, 0, -70, true, 0, 0);
 
-autonDriver(2000, 0, 0, 0, true, 0, -70);
-inchDrive(4, -60, true);
-autonDriver(1900, 0, 0, 0, true, 0, 70);
-inchDrive(10, 60, true);
-gyroTurn(42, true, facing);
-inchDrive(80, 100, false);
-gyroTurn(120, false, facing);
-inchDrive(80, 100, false);
-gyroTurn(-70, false, facing);
-inchDrive(70, 100, false);
+mogolift.spin(reverse, 100, pct);
+wait(1500, msec);
+mogolift.stop(brake);
+inchDrive(18, 100, false);
+mogolift.spin(forward, 100, pct);
+wait(1100, msec);
+mogolift.stop(brake);
+gyroTurn(150, false, facing);
+
 
   break;
    case 2:
