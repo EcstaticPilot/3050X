@@ -269,6 +269,7 @@ autonDriver(500, 0, 0, 0, false, 0, 0);
  // claw true is open, false is closed
  //Claw.set(true);
  // Claw2.set(true);
+  mogolift.setVelocity(100, pct);
 //red one
   inchDrive(118, 75, false);
   wait(500, msec);
@@ -322,6 +323,20 @@ autonDriver(500, 0, 0, 0, false, 0, 0);
   wait(500, msec);
   inchDrive(130, 75, false);
   wait(500, msec);
+  
+  //blue one on red seesaw
+  inchDrive(60, -100, false);
+  gyroTurn(-87);
+  inchDrive(120, 100, false);
+  gyroTurn(90);
+  mogolift.spin(reverse);
+  wait(1400, msec);
+  mogolift.stop(brake);
+  inchDrive(50, -100, false);
+  mogolift.spin(forward);
+  wait(1100, msec);
+  mogolift.stop(brake);
+  inchDrive(100, 100, false);
   break;
 }
   
