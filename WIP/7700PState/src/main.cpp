@@ -134,20 +134,19 @@ void inchDrive(float target, int speed, bool claw) {
   Brain.Screen.clearScreen();
 }
 
-void gyroTurn(float target, bool claw, float &facing) {
+void gyroTurn(float target) {
   while (Gyro.isCalibrating()) {
     // Wait for Gyro Calibration , Sleep but Allow other tasks to run
     //90 = right, -90 = left
     this_thread::sleep_for(20);
   }
   float heading4 = 0;
-  //Gyro.setRotation(0, degrees);
+  Gyro.setRotation(0, degrees);
 
   float speed = 0.0;
   float kp = 1.0;
   float d = 2.0;
-  facing += target;
-  target=facing;
+
 
   Brain.Screen.clearScreen();
   while (fabs(target - heading4) >= d) {
@@ -214,7 +213,7 @@ switch(AutonSelect)
 {
 
   case 0:
-autonDriver(500, 0, 0, 0, false, -70, 0);
+  autonDriver(500, 0, 0, 0, false, -70, 0);
 autonDriver(700, 0, 0, 70, false, 0, 0);
 autonDriver(500, 0, 0, 0, false, 60, 0);
 autonDriver(700, 0, 0, -70, true, 0, 0);
@@ -237,11 +236,11 @@ autonDriver(2000, 0, 0, 0, true, 0, -70);
 inchDrive(4, -60, true);
 autonDriver(1900, 0, 0, 0, true, 0, 70);
 inchDrive(10, 60, true);
-gyroTurn(42, true, facing);
+gyroTurn(42);
 inchDrive(80, 100, false);
-gyroTurn(120, false, facing);
+gyroTurn(120);
 inchDrive(80, 100, false);
-gyroTurn(-70, false, facing);
+gyroTurn(-70);
 inchDrive(70, 100, false);
 
   break;
@@ -262,7 +261,7 @@ autonDriver(500, 0, 0, 0, false, 0, 0);
   break;
    case 3:
 
-// Abby's Code Below
+// Abby's Code fixed by felix & ryan Below
   // auton
   //90 = right, -90 = left
   //90 = right, -90 = left
@@ -270,17 +269,16 @@ autonDriver(500, 0, 0, 0, false, 0, 0);
  // claw true is open, false is closed
  //Claw.set(true);
  // Claw2.set(true);
-  inchDrive(2, 75,  false);
-  inchDrive(0, 50, false);
-
+//red one
   inchDrive(118, 75, false);
   wait(500, msec);
-  gyroTurn(-90, false,facing);
+  //yellow one next to really frikin big one in the middle if yk yk ;)
+  gyroTurn(-90);
   wait(400, msec);
   inchDrive(26, 75, false);
 
   wait(200, msec);
-  gyroTurn(-90, false, facing);
+  gyroTurn(-90);
   wait(400, msec);
   
   inchDrive(69, 75, false);
@@ -289,11 +287,11 @@ autonDriver(500, 0, 0, 0, false, 0, 0);
   wait(500, msec);
   
 //really frikin big one in the middle if yk yk ;)
-  gyroTurn(-270, false ,facing);
+  gyroTurn(90);
   wait(400, msec);
   inchDrive(48, 75, false);
   wait(500, msec);
-  gyroTurn(90, false ,facing);
+  gyroTurn(90);
   wait(500, msec);
   inchDrive(57, 75, false);
   wait(500, msec);
@@ -301,11 +299,11 @@ autonDriver(500, 0, 0, 0, false, 0, 0);
   wait(100, msec);
 
   //third yellow
-  gyroTurn(-90, false ,facing);
+  gyroTurn(-90);
   wait(100, msec);
   inchDrive(50, 75, false);
   wait(100, msec);
-  gyroTurn(-90, false ,facing);
+  gyroTurn(-90);
   wait(100, msec);
   inchDrive(70, 75, false);
   wait(500, msec);
@@ -314,16 +312,15 @@ autonDriver(500, 0, 0, 0, false, 0, 0);
 
 
   //red goal
-
-  inchDrive(108, -75, false);
+  inchDrive(128, -75, false);
   wait(500, msec);
-  gyroTurn(90, false ,facing);
+  gyroTurn(90);
   wait(500, msec);
-  inchDrive(25, 75, false);
+  inchDrive(20, 75, false);
   wait(500, msec);
-  gyroTurn(-90, false ,facing);
+  gyroTurn(-90);
   wait(500, msec);
-  inchDrive(108, 75, false);
+  inchDrive(130, 75, false);
   wait(500, msec);
   break;
 }
