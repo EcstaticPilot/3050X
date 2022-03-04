@@ -12,17 +12,31 @@
 // [Name]               [Type]        [Port(s)]
 // Controller1          controller                    
 // LFDrive              motor         2               
+// LBDrive              motor         1               
+// LUDrive              motor         3               
+// RFDrive              motor         9               
+// RBDrive              motor         10              
+// RUDrive              motor         8               
+// FClaw                digital_out   A               
+// FClaw2               digital_out   B               
+// Clamp                digital_out   D               
+// Clamp2               digital_out   E               
+// Lift                 motor         7               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
 
 using namespace vex;
 
+
 // A global instance of competition
 competition Competition;
 
 // define your global instances of motors and other devices here
 
+float d = 4.0; //Global Wheel Diameter
+float pi = 3.1415926535897932384626;
+float g = 7/5;
 /*---------------------------------------------------------------------------*/
 /*                          Pre-Autonomous Functions                         */
 /*                                                                           */
@@ -56,7 +70,7 @@ void pre_auton(void) {
 /*                                                                           */
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
-float d = 4.0; //Global Wheel Diameter
+
 
 void stopDrive(){
   LFDrive.stop();
@@ -95,7 +109,7 @@ void inchDrive(float target, int speed){
     RFDrive.spin(forward, speed, pct);
     RBDrive.spin(forward, speed, pct);
     RUDrive.spin(forward, speed, pct);
-    c = LBDrive.rotation(rev) * 3.14159265358979323846 * d * 5/7;
+    c = LBDrive.rotation(rev) * pi * d * g;
   }
   stopDrive();
 }

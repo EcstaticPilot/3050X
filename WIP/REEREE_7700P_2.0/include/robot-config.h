@@ -3,6 +3,7 @@ using namespace vex;
 extern brain Brain;
 
 // VEXcode devices
+extern controller Controller1;
 extern motor LFDrive;
 extern motor LBDrive;
 extern motor LUDrive;
@@ -11,8 +12,6 @@ extern motor RBDrive;
 extern motor RUDrive;
 extern digital_out FClaw;
 extern digital_out FClaw2;
-extern controller Controller1;
-extern digital_out BClaw;
 extern digital_out Clamp;
 extern digital_out Clamp2;
 extern motor Lift;
