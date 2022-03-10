@@ -14,6 +14,7 @@ extern digital_out Claw;
 extern digital_out Tilter;
 extern motor Lift;
 extern inertial Gyro;
+extern motor backLift;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.

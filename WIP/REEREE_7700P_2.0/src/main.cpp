@@ -5,6 +5,8 @@
 /*    Created:      Thu Sep 26 2019                                           */
 /*    Description:  Competition Template                                      */
 /*                                                                            */
+/*    Changes Made:                                                           */
+/*    3/9/22 Abby added inchdrive, gyroturn, auton selecter, yellow rush      */
 /*----------------------------------------------------------------------------*/
 
 // ---- START VEXCODE CONFIGURED DEVICES ----
@@ -21,58 +23,96 @@
 // Tilter               digital_out   B               
 // Lift                 motor         7               
 // Gyro                 inertial      6               
+// backLift             motor         4               
 // ---- END VEXCODE CONFIGURED DEVICES ----
+
 
 #include "vex.h"
 
 using namespace vex;
 
-
-// A global instance of competition
 competition Competition;
 
-// define your global instances of motors and other devices here
 
-float d = 4.0; //Global Wheel Diameter
+float d = 4.0; //global wheel diameter
 float pi = 3.1415926535897932384626;
 float g = 7/5;
+
+//GUI 
+
+//CASE 0 = YELLOW RUSH
+//CASE 1 = SKILLS
+
+int autonSelect = 0;
+int autonMin = 0;
+int autonMax = 4;
+
+//CLAW
+
 //true open
 //false close
 
-/*---------------------------------------------------------------------------*/
-/*                          Pre-Autonomous Functions                         */
-/*                                                                           */
-/*  You may want to perform some actions before the competition starts.      */
-/*  Do them in the following function.  You must return from this function   */
-/*  or the autonomous and usercontrol tasks will not be started.  This       */
-/*  function is only called once after the V5 has been powered on and        */
-/*  not every time that the robot is disabled.                               */
-/*---------------------------------------------------------------------------*/
+//GYRO
+
+//90 = right
+//-90 = left
+
+void drawGUI() {
+  // 2 buttons for selecting auto
+  Brain.Screen.clearScreen();
+  Brain.Screen.printAt(1, 40, "Select Auton then Press Go");
+  Brain.Screen.printAt(1, 200, "Auton Selected =  %d   ", autonSelect);
+  Brain.Screen.setFillColor(red);
+  Brain.Screen.drawRectangle(20, 50, 100, 100);
+  Brain.Screen.drawCircle(300, 75, 25);
+  Brain.Screen.printAt(25, 75, "Select");
+  Brain.Screen.setFillColor(green);
+  Brain.Screen.drawRectangle(170, 50, 100, 100);
+  Brain.Screen.printAt(175, 75, "GO");
+  Brain.Screen.setFillColor(black);
+}
+
+void selectAuton() {
+  bool selectingAuton = true;
+
+  int x = Brain.Screen.xPosition(); // get the x position of last touch of the screen
+  int y = Brain.Screen.yPosition(); // get the y position of last touch of the screen
+  // check to see if buttons were pressed
+  if (x >= 20 && x <= 120 && y >= 50 && y <= 150) // select button pressed
+  {
+    autonSelect++;
+    if (autonSelect > autonMax)autonSelect = autonMin; // rollover
+      
+    Brain.Screen.printAt(1, 200, "Auton Selected =  %d   ", autonSelect);
+  }
+  if (x >= 170 && x <= 270 && y >= 50 && y <= 150) {
+    selectingAuton = false; // GO button pressed
+    Brain.Screen.printAt(1, 200, "Auton  =  %d   GO           ", autonSelect);
+  }
+  if (!selectingAuton) {
+    Brain.Screen.setFillColor(green);
+    Brain.Screen.drawCircle(300, 75, 25);
+  } else {
+    Brain.Screen.setFillColor(red);
+    Brain.Screen.drawCircle(300, 75, 25);
+  }
+  wait(10, msec); // slow it down
+  Brain.Screen.setFillColor(black);
+}
 
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
-
+  Brain.Screen.printAt(1, 40, "pre auton is running");
+  drawGUI();
+  Brain.Screen.pressed(selectAuton);
   Brain.Screen.printAt(20, 20, "LF Temp %f ", LFDrive.temperature(pct));
   Brain.Screen.printAt(20, 40, "LB Temp %f ", LBDrive.temperature(pct));
   Brain.Screen.printAt(20, 60, "LU Temp %f ", LUDrive.temperature(pct));
   Brain.Screen.printAt(20, 80, "RF Temp %f ", RFDrive.temperature(pct));
   Brain.Screen.printAt(20, 100, "RB Temp % f", RBDrive.temperature(pct));
   Brain.Screen.printAt(20, 120, "RU Temp % f", RUDrive.temperature(pct));
-  // All activities that occur before the competition starts
-  // Example: clearing encoders, setting servo positions, ...
 }
-
-/*---------------------------------------------------------------------------*/
-/*                                                                           */
-/*                              Autonomous Task                              */
-/*                                                                           */
-/*  This task is used to control your robot during the autonomous phase of   */
-/*  a VEX Competition.                                                       */
-/*                                                                           */
-/*  You must modify the code to add your own robot specific commands here.   */
-/*---------------------------------------------------------------------------*/
-
 
 void brakeDrive(){
   LFDrive.stop(brake);
@@ -102,6 +142,7 @@ void setCoast(){
 }
 
 void inchDrive(float target, int speed, bool claw){
+
   float c = 0; //Current Location
   Claw.set(claw);
   LBDrive.setRotation(0, degrees);
@@ -114,17 +155,19 @@ void inchDrive(float target, int speed, bool claw){
     RUDrive.spin(forward, speed, pct);
     c = LBDrive.rotation(rev) * pi * d * g;
   }
+
   brakeDrive();
+
 }
 
-void autonDriver(int wt, int lspeed, int rspeed, bool claw) //int liftspeed) //bool claw, //int Clawspin, int moggs) 
+void autonDriver(int wt, int lspeed, int rspeed, bool claw) //int liftspeed //bool claw //int Clawspin int moggs
 {
-
   LBDrive.spin(forward, lspeed, pct);
   RBDrive.spin(forward, rspeed, pct);
   LFDrive.spin(forward, lspeed, pct);
   RFDrive.spin(forward, rspeed, pct); 
   Claw.set(claw);
+  
   /*//LLift.spin(forward, liftspeed, pct);
   //RLift.spin(forward, liftspeed, pct);
   ClawSpin.spin(forward, Clawspin, pct);
@@ -134,11 +177,11 @@ void autonDriver(int wt, int lspeed, int rspeed, bool claw) //int liftspeed) //b
 
 void gyroTurn(float target) {
   while (Gyro.isCalibrating()) {
-    // Wait for Gyro Calibration , Sleep but Allow other tasks to run
+    // wait for Gyro Calibration , sleep but awwllow other tasks to run
     //90 = right, -90 = left
     this_thread::sleep_for(20);
   }
-  float heading69 = 0;
+  float heading = 0;
   Gyro.setRotation(0, degrees);
 
   float speed = 0.0;
@@ -146,47 +189,156 @@ void gyroTurn(float target) {
   float d = 2.0;
 
   Brain.Screen.clearScreen();
-  while (fabs(target - heading69) >= d) {
-    if (target - heading69 > 0) {
-      speed = kp * (target - heading69) + 10;
+  while (fabs(target - heading) >= d) {
+    if (target - heading > 0) {
+      speed = kp * (target - heading) + 10;
     }
-    if (target - heading69 < 0) {
-      speed = kp * (target - heading69) - 10;
+    if (target - heading < 0) {
+      speed = kp * (target - heading) - 10;
     }
     autonDriver(10, speed, -speed, false);;
     //Drive(10, speed, -speed);
-    heading69 = Gyro.rotation(degrees);
-    Brain.Screen.printAt(1, 40, "heading = %.3f", heading69);
+    heading = Gyro.rotation(degrees);
+    Brain.Screen.printAt(1, 40, "heading = %.3f", heading);
   }
   brakeDrive();
   //Brain.Screen.clearScreen();
 }
 
 
+
+/////////////////////////////////////////////////////////////////////////EOF//////////////////////////////////////////////////////////////////
+
+
+
 void autonomous(void) { 
-  //YELLOW RUSH
 
-  //true open
-  //false close
-  Tilter.set(true);
-  Claw.set(true);
-  wait(200, msec);
-  inchDrive(90, 75, true);
-  wait(200, msec);
-  Claw.set(false);
-  wait(500, msec);
-  inchDrive(90, -75, false);
-  wait(15000, msec);
+ //CLAW
+
+ //true open
+ //false close
+
+ //GYRO
+
+ //90 = right
+ //-90 = left
+
+  switch (autonSelect) {
+
+   //YELLOW RUSH
+
+    case 0:
+
+    Tilter.set(true);
+    Claw.set(true);
+    wait(200, msec);
+    inchDrive(90, 75, true);
+    wait(200, msec);
+    Claw.set(false);
+    wait(500, msec);
+    inchDrive(90, -75, false);
+    wait(15000, msec);
+
+  break;
   
+    //SKILLS
 
+    case 1:
+    //red one
+  inchDrive(118, 75, false);
+  wait(500, msec);
+  //yellow one next to really frikin big one in the middle if yk yk ;)
+  gyroTurn(-90);
+  wait(400, msec);
+  inchDrive(26, 75, false);
+
+  wait(200, msec);
+  gyroTurn(-90);
+  wait(400, msec);
+  
+  inchDrive(69, 75, false);
+  wait(500, msec);
+  inchDrive(6, -75, false);
+  wait(500, msec);
+  
+//really frikin big one in the middle if yk yk ;)
+  gyroTurn(90);
+  wait(400, msec);
+  inchDrive(48, 75, false);
+  wait(500, msec);
+  gyroTurn(90);
+  wait(500, msec);
+  inchDrive(57, 75, false);
+  wait(500, msec);
+  inchDrive(8, -75, false);
+  wait(100, msec);
+
+  //third yellow
+  gyroTurn(-90);
+  wait(100, msec);
+  inchDrive(50, 75, false);
+  wait(100, msec);
+  gyroTurn(-90);
+  wait(100, msec);
+  inchDrive(70, 75, false);
+  wait(500, msec);
+
+
+
+
+  //red goal
+  inchDrive(128, -75, false);
+  wait(500, msec);
+  gyroTurn(90);
+  wait(500, msec);
+  inchDrive(20, 75, false);
+  wait(500, msec);
+  gyroTurn(-90);
+  wait(500, msec);
+  inchDrive(130, 75, false);
+  wait(500, msec);
+  
+  //blue one on red seesaw
+  inchDrive(60, -100, false);
+  gyroTurn(-87);
+  inchDrive(120, 100, false);
+  gyroTurn(90);
+  backLift.spin(reverse);
+  wait(1400, msec);
+  backLift.stop(brake);
+  inchDrive(50, -100, false);
+  backLift.spin(forward);
+  wait(1100, msec);
+  backLift.stop(brake);
+  inchDrive(100, 100, false);
+
+  //code 1
+
+  break;
+
+    case 2:
+
+  //code 2
+
+  break;
+
+    case 3:
+
+  //code 3
+
+  break;
+  }
 }
+
+
 void usercontrol(void) {
-  // User control code here, inside the loop
+
    bool reversed = false;
    bool locked = false;
    bool aDown = 0; //Variable for when you're trying to reverse
    bool xDown = 0; //Variable for when you're locking the drive
    Lift.setBrake(hold);
+
   while (1) {
     //Reversing Drive
     if(Controller1.ButtonA.pressing() && !aDown){
@@ -203,7 +355,6 @@ void usercontrol(void) {
       Brain.Screen.printAt(20, 140, "normal");
     }
     
-
     //Locking Drive
     if(Controller1.ButtonX.pressing() && !xDown){
       locked = !locked;
@@ -267,22 +418,22 @@ void usercontrol(void) {
     }
 
 
-    wait(20, msec); // Sleep the task for a short amount of time to
-                    // prevent wasted resources.
+    wait(20, msec); 
+                  
   }
 }
 
 
-// Main will set up the competition functions and callbacks.
+
 int main() {
-  // Set up callbacks for autonomous and driver control periods.
+  
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
 
-  // Run the pre-autonomous function.
+  
   pre_auton();
 
-  // Prevent main from exiting with an infinite loop.
+  
   while (true) {
     wait(100, msec);
   }

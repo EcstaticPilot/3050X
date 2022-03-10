@@ -19,6 +19,7 @@ digital_out Claw = digital_out(Brain.ThreeWirePort.A);
 digital_out Tilter = digital_out(Brain.ThreeWirePort.B);
 motor Lift = motor(PORT7, ratio18_1, true);
 inertial Gyro = inertial(PORT6);
+motor backLift = motor(PORT4, ratio18_1, false);
 
 // VEXcode generated functions
 // define variable for remote controller enable/disable

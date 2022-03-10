@@ -167,7 +167,7 @@ void gyroTurn(float target) {
   //Brain.Screen.clearScreen();
 }
 
-
+  
 
 void balance() {
   float pitch = Gyro.pitch(deg);
