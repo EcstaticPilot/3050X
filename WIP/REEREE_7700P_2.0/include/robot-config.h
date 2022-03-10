@@ -10,11 +10,10 @@ extern motor LUDrive;
 extern motor RFDrive;
 extern motor RBDrive;
 extern motor RUDrive;
-extern digital_out FClaw;
-extern digital_out FClaw2;
-extern digital_out Clamp;
-extern digital_out Clamp2;
+extern digital_out Claw;
+extern digital_out Tilter;
 extern motor Lift;
+extern inertial Gyro;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.

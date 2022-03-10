@@ -89,7 +89,7 @@ void motorCurrent() {
    */
 }
 
-void autonDriver(int wt, int lspeed, int rspeed, int liftspeed, bool claw, int Clawspin, int moggs) 
+void autonDriver(int wt, int lspeed, int rspeed, int liftspeed) //bool claw, //int Clawspin, int moggs) 
 {
 
   LBDrive.spin(forward, lspeed, pct);
@@ -98,10 +98,12 @@ void autonDriver(int wt, int lspeed, int rspeed, int liftspeed, bool claw, int C
   RFDrive.spin(forward, rspeed, pct); 
   LLift.spin(forward, liftspeed, pct);
   RLift.spin(forward, liftspeed, pct);
-  Claw.set(claw);
-  ClawSpin.spin(forward, Clawspin, pct);
+
+  //Claw.set(claw);
+  /*ClawSpin.spin(forward, Clawspin, pct);
   mogolift.spin(forward, moggs, pct);
 wait(wt, msec);
+*/
 }
 void brakedrive() {
   RBDrive.stop(brake);

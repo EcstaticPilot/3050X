@@ -11,17 +11,16 @@
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
 // Controller1          controller                    
-// LFDrive              motor         2               
-// LBDrive              motor         1               
-// LUDrive              motor         3               
-// RFDrive              motor         9               
-// RBDrive              motor         10              
-// RUDrive              motor         8               
-// FClaw                digital_out   A               
-// FClaw2               digital_out   B               
-// Clamp                digital_out   D               
-// Clamp2               digital_out   E               
+// LFDrive              motor         9               
+// LBDrive              motor         8               
+// LUDrive              motor         10              
+// RFDrive              motor         3               
+// RBDrive              motor         1               
+// RUDrive              motor         2               
+// Claw                 digital_out   A               
+// Tilter               digital_out   B               
 // Lift                 motor         7               
+// Gyro                 inertial      6               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
@@ -37,6 +36,9 @@ competition Competition;
 float d = 4.0; //Global Wheel Diameter
 float pi = 3.1415926535897932384626;
 float g = 7/5;
+//true open
+//false close
+
 /*---------------------------------------------------------------------------*/
 /*                          Pre-Autonomous Functions                         */
 /*                                                                           */
@@ -72,13 +74,13 @@ void pre_auton(void) {
 /*---------------------------------------------------------------------------*/
 
 
-void stopDrive(){
-  LFDrive.stop();
-  LBDrive.stop();
-  LUDrive.stop();
-  RFDrive.stop();
-  RBDrive.stop();
-  RUDrive.stop();
+void brakeDrive(){
+  LFDrive.stop(brake);
+  LBDrive.stop(brake);
+  LUDrive.stop(brake);
+  RFDrive.stop(brake);
+  RBDrive.stop(brake);
+  RUDrive.stop(brake);
 }
 
 void setHold(){
@@ -99,8 +101,9 @@ void setCoast(){
   RUDrive.setBrake(coast);
 }
 
-void inchDrive(float target, int speed){
+void inchDrive(float target, int speed, bool claw){
   float c = 0; //Current Location
+  Claw.set(claw);
   LBDrive.setRotation(0, degrees);
   while (fabs(c) <= target) {
     LFDrive.spin(forward, speed, pct);
@@ -111,44 +114,81 @@ void inchDrive(float target, int speed){
     RUDrive.spin(forward, speed, pct);
     c = LBDrive.rotation(rev) * pi * d * g;
   }
-  stopDrive();
+  brakeDrive();
 }
 
-void autonomous(void) {
-  // ..........................................................................
-  // Insert autonomous user code here.
-  // ..........................................................................
-  setHold();
-  inchDrive(70, 100); //Rush Yellow
-  setCoast();
+void autonDriver(int wt, int lspeed, int rspeed, bool claw) //int liftspeed) //bool claw, //int Clawspin, int moggs) 
+{
+
+  LBDrive.spin(forward, lspeed, pct);
+  RBDrive.spin(forward, rspeed, pct);
+  LFDrive.spin(forward, lspeed, pct);
+  RFDrive.spin(forward, rspeed, pct); 
+  Claw.set(claw);
+  /*//LLift.spin(forward, liftspeed, pct);
+  //RLift.spin(forward, liftspeed, pct);
+  ClawSpin.spin(forward, Clawspin, pct);
+  mogolift.spin(forward, moggs, pct);
+  wait(wt, msec);*/
 }
 
-/*---------------------------------------------------------------------------*/
-/*                                                                           */
-/*                              User Control Task                            */
-/*                                                                           */
-/*  This task is used to control your robot during the user control phase of */
-/*  a VEX Competition.                                                       */
-/*                                                                           */
-/*  You must modify the code to add your own robot specific commands here.   */
-/*---------------------------------------------------------------------------*/
+void gyroTurn(float target) {
+  while (Gyro.isCalibrating()) {
+    // Wait for Gyro Calibration , Sleep but Allow other tasks to run
+    //90 = right, -90 = left
+    this_thread::sleep_for(20);
+  }
+  float heading69 = 0;
+  Gyro.setRotation(0, degrees);
 
+  float speed = 0.0;
+  float kp = 1.0;
+  float d = 2.0;
+
+  Brain.Screen.clearScreen();
+  while (fabs(target - heading69) >= d) {
+    if (target - heading69 > 0) {
+      speed = kp * (target - heading69) + 10;
+    }
+    if (target - heading69 < 0) {
+      speed = kp * (target - heading69) - 10;
+    }
+    autonDriver(10, speed, -speed, false);;
+    //Drive(10, speed, -speed);
+    heading69 = Gyro.rotation(degrees);
+    Brain.Screen.printAt(1, 40, "heading = %.3f", heading69);
+  }
+  brakeDrive();
+  //Brain.Screen.clearScreen();
+}
+
+
+void autonomous(void) { 
+  //YELLOW RUSH
+
+  //true open
+  //false close
+  Tilter.set(true);
+  Claw.set(true);
+  wait(200, msec);
+  inchDrive(90, 75, true);
+  wait(200, msec);
+  Claw.set(false);
+  wait(500, msec);
+  inchDrive(90, -75, false);
+  wait(15000, msec);
+  
+
+}
 void usercontrol(void) {
   // User control code here, inside the loop
    bool reversed = false;
+   bool locked = false;
    bool aDown = 0; //Variable for when you're trying to reverse
+   bool xDown = 0; //Variable for when you're locking the drive
+   Lift.setBrake(hold);
   while (1) {
-    // This is the main execution loop for the user control program.
-    // Each time through the loop your program should update motor + servo
-    // values based on feedback from the joysticks.
-
-    // ........................................................................
-    // Insert user code here. This is where you use the joystick values to
-    // update your motors, etc.
-    // ........................................................................
-
-   
-    
+    //Reversing Drive
     if(Controller1.ButtonA.pressing() && !aDown){
       reversed = !reversed;
       aDown = true;
@@ -156,13 +196,29 @@ void usercontrol(void) {
     else if (!Controller1.ButtonA.pressing()) {
       aDown = false;
     }
-
-
     if(reversed){
       Brain.Screen.printAt(20, 140, "reversed");
     }
     else if(!reversed){
       Brain.Screen.printAt(20, 140, "normal");
+    }
+    
+
+    //Locking Drive
+    if(Controller1.ButtonX.pressing() && !xDown){
+      locked = !locked;
+      xDown = true;
+    }
+    else if (!Controller1.ButtonX.pressing()) {
+      xDown = false;
+    }
+    if(locked){
+      Brain.Screen.printAt(20, 160, "locked");
+      setHold();
+    }
+    else if(!locked){
+      Brain.Screen.printAt(20, 160, "coast");
+      setCoast();
     }
 
     //Drive Code
@@ -184,49 +240,31 @@ void usercontrol(void) {
     }
       
       //Lift Code
-      if ((Controller1.ButtonR1.pressing() && !reversed) || (Controller1.ButtonR2.pressing() && reversed)){
-        Lift.spin(fwd, 100, pct);
-      }
-      else if ((Controller1.ButtonR2.pressing() && !reversed) || (Controller1.ButtonR1.pressing() && reversed)){
-        Lift.spin(reverse, 100, pct);
-      }
-      else{
-        Lift.stop();
-      }
-    
-
-    //Locking Drive
-    if (Controller1.ButtonX.pressing()) {
-      setHold();
-    } else if (Controller1.ButtonY.pressing()) {
-      setCoast();
+    if(Controller1.ButtonL1.pressing()){
+      Lift.spin(fwd, 100, pct);
     }
-
+    else if(Controller1.ButtonL2.pressing()){
+      Lift.spin(reverse, 100, pct);
+    }
+    else{
+      Lift.stop();
+    }
 
     //Front Claw
     if (Controller1.ButtonR1.pressing()){
-      FClaw.set(true);
-      FClaw2.set(true);
+      Claw.set(true);
     }
     else if (Controller1.ButtonR2.pressing()){
-      FClaw.set(false);
-      FClaw2.set(false);
+      Claw.set(false);
     }
 
-    
-
-    //Clamp
-    if (Controller1.ButtonUp.pressing()){
-      Clamp.set(true);
-      Clamp2.set(true);
+    //Tilter
+    if (Controller1.ButtonB.pressing()){
+      Tilter.set(true);
     }
-    else if (Controller1.ButtonDown.pressing()){
-      Clamp.set(false);
-      Clamp2.set(false);
+    else if (Controller1.ButtonY.pressing()){
+      Tilter.set(false);
     }
-
-    
-
 
 
     wait(20, msec); // Sleep the task for a short amount of time to
@@ -234,9 +272,8 @@ void usercontrol(void) {
   }
 }
 
-//
+
 // Main will set up the competition functions and callbacks.
-//
 int main() {
   // Set up callbacks for autonomous and driver control periods.
   Competition.autonomous(autonomous);
