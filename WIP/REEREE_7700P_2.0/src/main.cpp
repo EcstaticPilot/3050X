@@ -51,8 +51,9 @@ float g = 7/5;
 //GUI 
 
 //CASE 0 = YELLOW RUSH
-//CASE 1 = SKILLS
-//CASE 2 = MIDDLE RUSH
+//CASE 1 = ABBY SKILLS
+//CASE 2 = 80 POINT SKILLS
+//CASE 3 = MIDDLE RUSH
 
 int autonSelect = 2   ; //Default
 int autonMin = 0;
@@ -272,8 +273,6 @@ void autonomous(void) {
     wait(500, msec);
     inchDrive(6, -75, false);
     wait(500, msec);
-  
-   
 
     gyroTurn(90); //Tall Neutral Goal
     wait(400, msec);
@@ -285,8 +284,6 @@ void autonomous(void) {
     wait(500, msec);
     inchDrive(8, -75, false);
     wait(100, msec);
-
-   
 
     gyroTurn(-90); //Second short neutral goals
     wait(100, msec);
@@ -334,26 +331,26 @@ void autonomous(void) {
   
    
     case 2: // 3-12-22 Skills
-    inchDrive(60, 40, false); //Push the red alliance goal to the other sidess
+    inchDrive(60, 50, false); /* og = 40 */ //Push the red alliance goal to the other sidess
     wait(200, msec);
-    inchDrive(7, -50, false); //Back up slightly
+    inchDrive(7, -75, false); /*-50*/ //Back up slightly
     wait(200, msec);
     gyroTurn(-70); //Turn left 90 degrees
-    inchDrive(10, 50, false); //Drive to align with the neutral goal
+    inchDrive(10, 75, false); /*50*/ //Drive to align with the neutral goal
     gyroTurn(-70); //Turn left 90 degrees to face the neutral goal
-    inchDrive(30, 50, false); //Push the neutral goal back to the homezone
+    inchDrive(30, 75, false); /*50*/ //Push the neutral goal back to the homezone
 
-    inchDrive(2, -50, false); //Back up again
+    inchDrive(2,75, false); /*-50*/ //Back up again
     gyroTurn(75); //Turn right
     inchDrive(25, 50, false); //Align with the middle goal
     gyroTurn(70); //Face the tall goal
-    inchDrive(30, 50, false); //Push the tall goal to the other side
+    inchDrive(30,  75 /*50*/ , false); //Push the tall goal to the other side
 
-    inchDrive(4, -50, false); //Back up again
+    inchDrive(4, -75, false); /*-50*/ //Back up again
     gyroTurn(-70); //Turn left
-    inchDrive(25, 50, false); //Align with the second short neutral goal
+    inchDrive(25, 75, false); /*50*/ //Align with the second short neutral goal
     gyroTurn(-77); //Face the second short neutral goal
-    inchDrive(27, 50, false); //Push the second short neutral goal over
+    inchDrive(27, 75, false);/*50*/ //Push the second short neutral goal over
 
     inchDrive(27, -70, false); //Back up to the blue goal
     backLift.spin(reverse, 100, pct);
@@ -373,6 +370,7 @@ void autonomous(void) {
     Lift.spin(reverse);
     inchDrive(35, -100, false);
     Lift.stop();
+    wait(5000, msec);
     break;
 
   }
