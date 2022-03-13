@@ -7,8 +7,9 @@
 /*                                                                            */
 /*    Changes Made:                                                           */
 /*    3/9/22 Abby added inchdrive, gyroturn, auton selecter, yellow rush      */
-/*    3/11/22 Abby addded onto 120 Point Skills                                                                        */
-/*                                                                            */
+/*    3/11/22 Abby addded onto 120 Point Skills                               */
+/*    3/12/22 Made 80 point programming skills for the new robot, made the    */
+/*            tilter a toggle and the locking drive no longer a toggle        */
 /*                                                                            */
 /*                                                                            */
 /*                                                                            */
@@ -53,7 +54,7 @@ float g = 7/5;
 //CASE 1 = SKILLS
 //CASE 2 = MIDDLE RUSH
 
-int autonSelect = 3   ; //Default
+int autonSelect = 2   ; //Default
 int autonMin = 0;
 int autonMax = 4;
 
@@ -242,38 +243,22 @@ void autonomous(void) {
 
   switch (autonSelect) {
 
-    case 0:
-
-    //YELLOW RUSH
-
-    
+    case 0: //Yellow Rush
+  
     deploy();
     inchDrive(32, 100, true);
     Claw.set(false);
     Lift.spin(reverse);
     inchDrive(35, -100, false);
     Lift.stop();
-  
-   //END OF YELLOW RUSH
+    break;
 
-   break;
-
-    case 1:
-
-    //SKILLS
-
-    //120 POINTS RN
+    case 1: //Abby Skills
 
     deploy();
     backLift.setVelocity(100, pct);
-
-    //red one
-
-    inchDrive(118, 75, false);
-
-    wait(500, msec);
-
-   //yellow one next to really frikin big one in the middle if yk yk ;)
+    inchDrive(118, 75, false); //Red Mogo
+    wait(500, msec); //Short Neutral Goal
 
     gyroTurn(-90);
     wait(400, msec);
@@ -288,9 +273,9 @@ void autonomous(void) {
     inchDrive(6, -75, false);
     wait(500, msec);
   
-   //yellow one in the middle            
+   
 
-    gyroTurn(90);
+    gyroTurn(90); //Tall Neutral Goal
     wait(400, msec);
     inchDrive(48, 75, false);
     wait(500, msec);
@@ -301,9 +286,9 @@ void autonomous(void) {
     inchDrive(8, -75, false);
     wait(100, msec);
 
-   //third yellow
+   
 
-    gyroTurn(-90);
+    gyroTurn(-90); //Second short neutral goals
     wait(100, msec);
     inchDrive(50, 75, false);
     wait(100, msec);
@@ -345,43 +330,50 @@ void autonomous(void) {
     wait(100, msec);
     inchDrive(100, 100, false); 
     wait(2000, msec);
-
-   //END OF SKILLS
     break;
   
-
-   //code 1
-
    
-    case 2:
-  
-  // Sarah Skills
-   
-  deploy();
-  inchDrive(60, 50, true);
-  wait(200, msec);
-  inchDrive(10, -50, true);
-  wait(200, msec);
-  gyroTurn(-70);
-  inchDrive(10, 50, true);
-  gyroTurn(-70);
-  inchDrive(45, 50, true);
+    case 2: // 3-12-22 Skills
+    inchDrive(60, 40, false); //Push the red alliance goal to the other sidess
+    wait(200, msec);
+    inchDrive(7, -50, false); //Back up slightly
+    wait(200, msec);
+    gyroTurn(-70); //Turn left 90 degrees
+    inchDrive(10, 50, false); //Drive to align with the neutral goal
+    gyroTurn(-70); //Turn left 90 degrees to face the neutral goal
+    inchDrive(30, 50, false); //Push the neutral goal back to the homezone
 
-   //code 2
+    inchDrive(2, -50, false); //Back up again
+    gyroTurn(75); //Turn right
+    inchDrive(25, 50, false); //Align with the middle goal
+    gyroTurn(70); //Face the tall goal
+    inchDrive(30, 50, false); //Push the tall goal to the other side
 
-   break;
+    inchDrive(4, -50, false); //Back up again
+    gyroTurn(-70); //Turn left
+    inchDrive(25, 50, false); //Align with the second short neutral goal
+    gyroTurn(-77); //Face the second short neutral goal
+    inchDrive(27, 50, false); //Push the second short neutral goal over
 
-    case 3:
+    inchDrive(27, -70, false); //Back up to the blue goal
+    backLift.spin(reverse, 100, pct);
+    wait(3000, msec);
+    backLift.stop();
+    gyroTurn(-70);
+    inchDrive(10, -30, false); //Pick up the blue goal
+    backLift.spin(forward);
+    inchDrive(30, 100, false); //Drive to the other side of the field
+    backLift.stop();
+    break;
 
-   // Middle Rush
+    case 3: // Middle Rush
     deploy();
     inchDrive(42, 100, true);
     Claw.set(false);
     Lift.spin(reverse);
     inchDrive(35, -100, false);
     Lift.stop();
-
-   break;
+    break;
 
   }
 }
@@ -390,9 +382,9 @@ void autonomous(void) {
 void usercontrol(void) {
 
    bool reversed = false;
-   bool locked = false;
+   bool tiltedUp = false;
    bool aDown = 0; //Variable for when you're trying to reverse
-   bool xDown = 0; //Variable for when you're locking the drive
+   bool bDown = 0; //Variable for when you're locking the drive
    Lift.setBrake(hold);
 
   while (1) {
@@ -412,20 +404,18 @@ void usercontrol(void) {
     }
     
     //Locking Drive
-    if(Controller1.ButtonX.pressing() && !xDown){
-      locked = !locked;
-      xDown = true;
+    if(Controller1.ButtonB.pressing() && !bDown){
+      tiltedUp = !tiltedUp;
+      bDown = true;
     }
-    else if (!Controller1.ButtonX.pressing()) {
-      xDown = false;
+    else if (!Controller1.ButtonB.pressing()) {
+      bDown = false;
     }
-    if(locked){
-      Brain.Screen.printAt(20, 160, "locked");
-      setHold();
+    if(tiltedUp){
+      Tilter.set(true);
     }
-    else if(!locked){
-      Brain.Screen.printAt(20, 160, "coast");
-      setCoast();
+    else if(!tiltedUp){
+      Tilter.set(false);
     }
 
     //Drive Code
@@ -476,13 +466,14 @@ void usercontrol(void) {
       Claw.set(false);
     }
 
-    //Tilter
+    //Locking Drive
+    if (Controller1.ButtonX.pressing()){
+      setHold();
+    }
     if (Controller1.ButtonY.pressing()){
-      Tilter.set(true);
+      setCoast();
     }
-    else if (Controller1.ButtonB.pressing()){
-      Tilter.set(false);
-    }
+
     wait(20, msec); 
                   
   }
