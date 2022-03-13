@@ -413,7 +413,6 @@ void autonomous(void) {
     inchDrive(28, -75, false);
     Lift.stop();
     gyroTurn(45);
-    wait(100, msec);
     Claw.set(true);
     Claw.set(true);
     //middle rush
@@ -421,9 +420,7 @@ void autonomous(void) {
     wait(200, msec);
     gyroTurn(-45);
     Claw.set(true);
-   
-
-
+  
     //turning (need to test)
     wait(200, msec);
     gyroTurn(-18);
@@ -433,10 +430,7 @@ void autonomous(void) {
     inchDrive(35, -75, false);
     Lift.stop();
    
-
     break;
-
-
   }
 }
 
