@@ -5,11 +5,19 @@
 /*    Created:      Thu Sep 26 2019                                           */
 /*    Description:  Competition Template                                      */
 /*                                                                            */
+/*                                                                            */
+/*                                                                            */
 /*    Changes Made:                                                           */
+/*                                                                            */
 /*    3/9/22 Abby added inchdrive, gyroturn, auton selecter, yellow rush      */
 /*    3/11/22 Abby addded onto 120 Point Skills                               */
 /*    3/12/22 Made 80 point programming skills for the new robot, made the    */
 /*            tilter a toggle and the locking drive no longer a toggle        */
+/*    3/13/22 At comp abby, changed skills, finalized yellow rush (dont touch)*/
+/*    inch drive and gyro turn need to be fixed                               */
+/*    55 degrees for gyro = 90 and 30 inches for inch drive = whole field     */
+/*                                                                            */
+/*                                                                            */
 /*                                                                            */
 /*                                                                            */
 /*                                                                            */
@@ -48,9 +56,9 @@ float d = 4.0; //Global Wheel Diameter
 float pi = 3.1415926535897932384626;
 float g = 7/5;
 
-int autonSelect = 0   ; //Default
+int autonSelect = 0 ; //Default
 int autonMin = 0;
-int autonMax = 4;
+int autonMax = 6;
 
 //GUI:
 
@@ -58,6 +66,8 @@ int autonMax = 4;
   //CASE 1 = ABBY SKILLS
   //CASE 2 = 80 POINT SEAN SKILLS
   //CASE 3 = MIDDLE RUSH
+  //CASE 4 = DO NOTHING AUTON
+  //CASE 5 = YELLOW RUSH + MIDDLE RUSH
 
 //CLAW:
 
@@ -257,78 +267,82 @@ void autonomous(void) {
 
     case 1: //ABBY SKILLS
     //robot is much faster, changing speed to 50 instead of 75
+    //diving inch drive by half
+   
+    
     deploy();
-    backLift.setVelocity(100, pct);
-    inchDrive(118, 50, false); //Red Mogo
-    wait(500, msec); //Short Neutral Goal
+    backLift.setVelocity(75, pct);
+    inchDrive(59, 50, false); //Red Mogo //118
+    wait(300, msec); //Short Neutral Goal
 
-    gyroTurn(-90); //left turn
-    wait(400, msec);
-    inchDrive(26, 50, false);
+    gyroTurn(-80); //left turn
+    wait(300, msec);
+    inchDrive(13, 55, false); //26
 
-    wait(200, msec);
-    gyroTurn(-90);
-    wait(400, msec);
+    wait(300, msec);
+    gyroTurn(-80);
+    wait(300, msec);
   
-    inchDrive(69, 50, false); //og 69 
-    wait(500, msec);
-    inchDrive(6, -50, false);
-    wait(500, msec);
+    inchDrive(34, 55, false); //og 69 
+    wait(300, msec);
+    inchDrive(30, -55, false); //46
+    wait(300, msec);
 
-    gyroTurn(90); //Tall Neutral Goal
-    wait(400, msec);
-    inchDrive(48, 50, false);
-    wait(500, msec);
-    gyroTurn(90);
-    wait(500, msec);
-    inchDrive(57, 50, false);
-    wait(500, msec);
-    inchDrive(8, -50, false);
+    gyroTurn(80); //Tall Neutral Goal
+    wait(300, msec);
+    inchDrive(24, 55, false); //48
+    wait(300, msec);
+    gyroTurn(-80);
+    wait(300, msec);
+    inchDrive(28, 55, false); //57
+    wait(300, msec);
+    inchDrive(4, -55, false); //8
     wait(100, msec);
 
-    gyroTurn(-90); //Second short neutral goals
+    gyroTurn(-80); //Second short neutral goals
     wait(100, msec);
-    inchDrive(50, 50, false);
+    inchDrive(25, 55, false); //50
     wait(100, msec);
-    gyroTurn(-90);
+    gyroTurn(-80);
     wait(100, msec);
-    inchDrive(70, 50, false);
+    inchDrive(35, 55, false); //70
     wait(500, msec);
 
    //red goal
 
-    inchDrive(128, -50, false);
-    wait(500, msec);
-    gyroTurn(90);
-    wait(500, msec);
-    inchDrive(20, 50, false);
-    wait(500, msec);
-    gyroTurn(-90);
-    wait(500, msec);
-    inchDrive(130, 50, false);
-    wait(500, msec);
+    inchDrive(64, -55, false); //128
+    wait(300, msec);
+    gyroTurn(80);
+    wait(300, msec);
+    inchDrive(10, 55, false); //20
+    wait(300, msec);
+    gyroTurn(-80);
+    wait(300, msec);
+    inchDrive(65, 55, false); //130
+    wait(300, msec);
   
    //blue one on red seesaw
 
-    inchDrive(60, -70, false);
-    wait(100, msec);
-    gyroTurn(-87);
-    wait(100, msec);
-    inchDrive(120, 70, false);
-    wait(100, msec);
-    gyroTurn(90);
-    wait(100, msec);
+    inchDrive(30, -55, false); //60
+    wait(200, msec);
+    gyroTurn(-80);
+    wait(200, msec);
+    inchDrive(60, 55, false); //120
+    wait(200, msec);
+    gyroTurn(80);
+    wait(200, msec);
     backLift.spin(reverse);
-    wait(1400, msec);
+    wait(600, msec);
     backLift.stop(brake);
-    inchDrive(50, -70, false);
+    inchDrive(25, -55, false);  //50
     backLift.spin(forward);
-    wait(1100, msec);
+    wait(600, msec);
     backLift.stop(brake);
-    wait(100, msec);
-    inchDrive(100, 70, false); 
+    wait(200, msec);
+    inchDrive(50, 55, false);  //100
     wait(2000, msec);
-    break;
+    
+    break;  
   
    
     case 2: // SEAN SKILLS 3-12-22 Skills
@@ -336,28 +350,28 @@ void autonomous(void) {
     wait(200, msec);
     inchDrive(7, -50, false); /*-50*/ //Back up slightly
     wait(200, msec);
-    gyroTurn(-70); //Turn left 90 degrees
+    gyroTurn(-80); //Turn left 90 degrees
     inchDrive(10, 50, false); /*50*/ //Drive to align with the neutral goal
-    gyroTurn(-70); //Turn left 90 degrees to face the neutral goal
+    gyroTurn(-80); //Turn left 90 degrees to face the neutral goal
     inchDrive(30,50, false); /*50*/ //Push the neutral goal back to the homezone
 
     inchDrive(2,-50, false); /*-50*/ //Back up again
-    gyroTurn(75); //Turn right
+    gyroTurn(80); //Turn right
     inchDrive(25, 50, false); //Align with the middle goal
-    gyroTurn(70); //Face the tall goal
+    gyroTurn(80); //Face the tall goal
     inchDrive(30,  50, false); /*50*/  //Push the tall goal to the other side
 
     inchDrive(4, -50, false); /*-50*/ //Back up again
-    gyroTurn(-70); //Turn left
+    gyroTurn(-80); //Turn left
     inchDrive(25, 50, false); /*50*/ //Align with the second short neutral goal
-    gyroTurn(-77); //Face the second short neutral goal
+    gyroTurn(-80); //Face the second short neutral goal
     inchDrive(27, 50, false);/*50*/ //Push the second short neutral goal over
 
     inchDrive(27, -50, false); //Back up to the blue goal
     backLift.spin(reverse, 100, pct);
-    wait(3000, msec);
+    wait(700, msec);
     backLift.stop();
-    gyroTurn(-70);
+    gyroTurn(-80);
     inchDrive(10, -30, false); //Pick up the blue goal
     backLift.spin(forward);
     inchDrive(30, 100, false); //Drive to the other side of the field
@@ -366,13 +380,62 @@ void autonomous(void) {
 
     case 3: // MIDDLE RUSH
     deploy();
-    inchDrive(42, 100, true);
+    inchDrive(42, 75, true);
     Claw.set(false);
     Lift.spin(reverse);
-    inchDrive(35, -100, false);
+    inchDrive(35, -75, false);
     Lift.stop();
     wait(5000, msec);
     break;
+
+    //DO NOTHING AUTON
+    case 4:
+    deploy();
+    wait(15000, msec);
+    break;
+
+    //YELLOW RUSH + MIDDLE RUSH
+
+    case 5:
+
+    //testing
+
+    //true = open
+    //false= close
+
+    
+    //yellow rush
+    deploy();
+    inchDrive(32, 75, true);
+    Claw.set(false);
+    wait(100, msec);
+    Lift.spin(reverse);
+    inchDrive(28, -75, false);
+    Lift.stop();
+    gyroTurn(45);
+    wait(100, msec);
+    Claw.set(true);
+    Claw.set(true);
+    //middle rush
+    inchDrive(4,-75, true);
+    wait(200, msec);
+    gyroTurn(-45);
+    Claw.set(true);
+   
+
+
+    //turning (need to test)
+    wait(200, msec);
+    gyroTurn(-18);
+    inchDrive(42, 75, true);
+    Claw.set(false);
+    Lift.spin(reverse);
+    inchDrive(35, -75, false);
+    Lift.stop();
+   
+
+    break;
+
 
   }
 }
