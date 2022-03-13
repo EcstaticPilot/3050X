@@ -52,10 +52,10 @@ float g = 7/5;
 
 //CASE 0 = YELLOW RUSH
 //CASE 1 = ABBY SKILLS
-//CASE 2 = 80 POINT SKILLS
+//CASE 2 = 80 POINT  SEAN SKILLS
 //CASE 3 = MIDDLE RUSH
 
-int autonSelect = 2   ; //Default
+int autonSelect = 0   ; //Default
 int autonMin = 0;
 int autonMax = 4;
 
@@ -244,7 +244,7 @@ void autonomous(void) {
 
   switch (autonSelect) {
 
-    case 0: //Yellow Rush
+    case 0: //YELLOW RUSH
   
     deploy();
     inchDrive(32, 100, true);
@@ -330,7 +330,7 @@ void autonomous(void) {
     break;
   
    
-    case 2: // 3-12-22 Skills
+    case 2: // SEAN SKILLS 3-12-22 Skills
     inchDrive(60, 50, false); /* og = 40 */ //Push the red alliance goal to the other sidess
     wait(200, msec);
     inchDrive(7, -75, false); /*-50*/ //Back up slightly
@@ -340,7 +340,7 @@ void autonomous(void) {
     gyroTurn(-70); //Turn left 90 degrees to face the neutral goal
     inchDrive(30, 75, false); /*50*/ //Push the neutral goal back to the homezone
 
-    inchDrive(2,75, false); /*-50*/ //Back up again
+    inchDrive(2,-75, false); /*-50*/ //Back up again
     gyroTurn(75); //Turn right
     inchDrive(25, 50, false); //Align with the middle goal
     gyroTurn(70); //Face the tall goal

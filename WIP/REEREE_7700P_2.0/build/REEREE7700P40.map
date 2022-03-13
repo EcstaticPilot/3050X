@@ -3370,19 +3370,17 @@ Linker script and memory map
                 0x000000000380461c                pi
  .data.g        0x0000000003804620        0x4 build/src/main.o
                 0x0000000003804620                g
- .data.autonSelect
-                0x0000000003804624        0x4 build/src/main.o
-                0x0000000003804624                autonSelect
  .data.autonMax
-                0x0000000003804628        0x4 build/src/main.o
-                0x0000000003804628                autonMax
+                0x0000000003804624        0x4 build/src/main.o
+                0x0000000003804624                autonMax
  .data.appRunning
-                0x000000000380462c        0x4 /Applications/VEXcode Pro V5.app/Contents/Resources/sdk/vexv5/libv5rt.a(v5_startup.c.obj)
-                0x000000000380462c                appRunning
- .data.__yoff   0x0000000003804630        0x4 /Applications/VEXcode Pro V5.app/Contents/Resources/sdk/vexv5/libv5rt.a(v5_apijump.c.obj)
+                0x0000000003804628        0x4 /Applications/VEXcode Pro V5.app/Contents/Resources/sdk/vexv5/libv5rt.a(v5_startup.c.obj)
+                0x0000000003804628                appRunning
+ .data.__yoff   0x000000000380462c        0x4 /Applications/VEXcode Pro V5.app/Contents/Resources/sdk/vexv5/libv5rt.a(v5_apijump.c.obj)
  .data._ZN3vex24__default_motor_velocityE
-                0x0000000003804634        0x4 /Applications/VEXcode Pro V5.app/Contents/Resources/sdk/vexv5/libv5rt.a(vex_motor.cpp.obj)
-                0x0000000003804634                vex::__default_motor_velocity
+                0x0000000003804630        0x4 /Applications/VEXcode Pro V5.app/Contents/Resources/sdk/vexv5/libv5rt.a(vex_motor.cpp.obj)
+                0x0000000003804630                vex::__default_motor_velocity
+ *fill*         0x0000000003804634        0x4 
  .data.impure_data
                 0x0000000003804638      0x428 /Applications/VEXcode Pro V5.app/Contents/Resources/sdk/vexv5/gcc/libs/libc.a(lib_a-impure.o)
  .data._impure_ptr
@@ -3603,152 +3601,156 @@ Linker script and memory map
  *(.gnu.linkonce.tb.*)
                 0x0000000003804a78                __tbss_end = .
 
-.bss            0x0000000003804a78      0x685
+.bss            0x0000000003804a78      0x68d
                 0x0000000003804a78                __bss_start = .
  *(.bss)
  *(.bss.*)
  .bss.Competition
                 0x0000000003804a78       0x28 build/src/main.o
                 0x0000000003804a78                Competition
- .bss.autonMin  0x0000000003804aa0        0x4 build/src/main.o
-                0x0000000003804aa0                autonMin
- .bss.Brain     0x0000000003804aa4      0x2bc build/src/robot-config.o
-                0x0000000003804aa4                Brain
+ .bss.autonSelect
+                0x0000000003804aa0        0x4 build/src/main.o
+                0x0000000003804aa0                autonSelect
+ .bss.autonMin  0x0000000003804aa4        0x4 build/src/main.o
+                0x0000000003804aa4                autonMin
+ .bss.Brain     0x0000000003804aa8      0x2bc build/src/robot-config.o
+                0x0000000003804aa8                Brain
  .bss.Controller1
-                0x0000000003804d60      0x1ac build/src/robot-config.o
-                0x0000000003804d60                Controller1
- .bss.LFDrive   0x0000000003804f0c       0x24 build/src/robot-config.o
-                0x0000000003804f0c                LFDrive
- .bss.LBDrive   0x0000000003804f30       0x24 build/src/robot-config.o
-                0x0000000003804f30                LBDrive
- .bss.LUDrive   0x0000000003804f54       0x24 build/src/robot-config.o
-                0x0000000003804f54                LUDrive
- .bss.RFDrive   0x0000000003804f78       0x24 build/src/robot-config.o
-                0x0000000003804f78                RFDrive
- .bss.RBDrive   0x0000000003804f9c       0x24 build/src/robot-config.o
-                0x0000000003804f9c                RBDrive
- .bss.RUDrive   0x0000000003804fc0       0x24 build/src/robot-config.o
-                0x0000000003804fc0                RUDrive
- .bss.Claw      0x0000000003804fe4       0x18 build/src/robot-config.o
-                0x0000000003804fe4                Claw
- .bss.Tilter    0x0000000003804ffc       0x18 build/src/robot-config.o
-                0x0000000003804ffc                Tilter
- .bss.Lift      0x0000000003805014       0x24 build/src/robot-config.o
-                0x0000000003805014                Lift
- .bss.Gyro      0x0000000003805038       0x38 build/src/robot-config.o
-                0x0000000003805038                Gyro
- .bss.backLift  0x0000000003805070       0x24 build/src/robot-config.o
-                0x0000000003805070                backLift
+                0x0000000003804d64      0x1ac build/src/robot-config.o
+                0x0000000003804d64                Controller1
+ .bss.LFDrive   0x0000000003804f10       0x24 build/src/robot-config.o
+                0x0000000003804f10                LFDrive
+ .bss.LBDrive   0x0000000003804f34       0x24 build/src/robot-config.o
+                0x0000000003804f34                LBDrive
+ .bss.LUDrive   0x0000000003804f58       0x24 build/src/robot-config.o
+                0x0000000003804f58                LUDrive
+ .bss.RFDrive   0x0000000003804f7c       0x24 build/src/robot-config.o
+                0x0000000003804f7c                RFDrive
+ .bss.RBDrive   0x0000000003804fa0       0x24 build/src/robot-config.o
+                0x0000000003804fa0                RBDrive
+ .bss.RUDrive   0x0000000003804fc4       0x24 build/src/robot-config.o
+                0x0000000003804fc4                RUDrive
+ .bss.Claw      0x0000000003804fe8       0x18 build/src/robot-config.o
+                0x0000000003804fe8                Claw
+ .bss.Tilter    0x0000000003805000       0x18 build/src/robot-config.o
+                0x0000000003805000                Tilter
+ .bss.Lift      0x0000000003805018       0x24 build/src/robot-config.o
+                0x0000000003805018                Lift
+ *fill*         0x000000000380503c        0x4 
+ .bss.Gyro      0x0000000003805040       0x38 build/src/robot-config.o
+                0x0000000003805040                Gyro
+ .bss.backLift  0x0000000003805078       0x24 build/src/robot-config.o
+                0x0000000003805078                backLift
  .bss.__dso_handle
-                0x0000000003805094        0x4 /Applications/VEXcode Pro V5.app/Contents/Resources/sdk/vexv5/libv5rt.a(v5_startup.c.obj)
-                0x0000000003805094                __dso_handle
+                0x000000000380509c        0x4 /Applications/VEXcode Pro V5.app/Contents/Resources/sdk/vexv5/libv5rt.a(v5_startup.c.obj)
+                0x000000000380509c                __dso_handle
  .bss._ZN3vex11competition22bStopTasksBetweenModesE
-                0x0000000003805098        0x1 /Applications/VEXcode Pro V5.app/Contents/Resources/sdk/vexv5/libv5rt.a(vex_competition.cpp.obj)
-                0x0000000003805098                vex::competition::bStopTasksBetweenModes
+                0x00000000038050a0        0x1 /Applications/VEXcode Pro V5.app/Contents/Resources/sdk/vexv5/libv5rt.a(vex_competition.cpp.obj)
+                0x00000000038050a0                vex::competition::bStopTasksBetweenModes
  .bss._ZN3vex11competition25bStopAllTasksBetweenModesE
-                0x0000000003805099        0x1 /Applications/VEXcode Pro V5.app/Contents/Resources/sdk/vexv5/libv5rt.a(vex_competition.cpp.obj)
-                0x0000000003805099                vex::competition::bStopAllTasksBetweenModes
+                0x00000000038050a1        0x1 /Applications/VEXcode Pro V5.app/Contents/Resources/sdk/vexv5/libv5rt.a(vex_competition.cpp.obj)
+                0x00000000038050a1                vex::competition::bStopAllTasksBetweenModes
  .bss._ZN3vex11competition14_auton_pendingE
-                0x000000000380509a        0x1 /Applications/VEXcode Pro V5.app/Contents/Resources/sdk/vexv5/libv5rt.a(vex_competition.cpp.obj)
-                0x000000000380509a                vex::competition::_auton_pending
- *fill*         0x000000000380509b        0x1 
+                0x00000000038050a2        0x1 /Applications/VEXcode Pro V5.app/Contents/Resources/sdk/vexv5/libv5rt.a(vex_competition.cpp.obj)
+                0x00000000038050a2                vex::competition::_auton_pending
+ *fill*         0x00000000038050a3        0x1 
  .bss._ZN3vex11competition20_autonomous_callbackE
-                0x000000000380509c        0x4 /Applications/VEXcode Pro V5.app/Contents/Resources/sdk/vexv5/libv5rt.a(vex_competition.cpp.obj)
-                0x000000000380509c                vex::competition::_autonomous_callback
+                0x00000000038050a4        0x4 /Applications/VEXcode Pro V5.app/Contents/Resources/sdk/vexv5/libv5rt.a(vex_competition.cpp.obj)
+                0x00000000038050a4                vex::competition::_autonomous_callback
  .bss._ZN3vex11competition23_drivercontrol_callbackE
-                0x00000000038050a0        0x4 /Applications/VEXcode Pro V5.app/Contents/Resources/sdk/vexv5/libv5rt.a(vex_competition.cpp.obj)
-                0x00000000038050a0                vex::competition::_drivercontrol_callback
+                0x00000000038050a8        0x4 /Applications/VEXcode Pro V5.app/Contents/Resources/sdk/vexv5/libv5rt.a(vex_competition.cpp.obj)
+                0x00000000038050a8                vex::competition::_drivercontrol_callback
  .bss._ZN3vex11competition15_driver_pendingE
-                0x00000000038050a4        0x1 /Applications/VEXcode Pro V5.app/Contents/Resources/sdk/vexv5/libv5rt.a(vex_competition.cpp.obj)
-                0x00000000038050a4                vex::competition::_driver_pending
- *fill*         0x00000000038050a5        0x3 
+                0x00000000038050ac        0x1 /Applications/VEXcode Pro V5.app/Contents/Resources/sdk/vexv5/libv5rt.a(vex_competition.cpp.obj)
+                0x00000000038050ac                vex::competition::_driver_pending
+ *fill*         0x00000000038050ad        0x3 
  .bss._ZN3vex5color6orangeE
-                0x00000000038050a8        0x8 /Applications/VEXcode Pro V5.app/Contents/Resources/sdk/vexv5/libv5rt.a(vex_color.cpp.obj)
-                0x00000000038050a8                vex::color::orange
- .bss._ZN3vex5color5blackE
                 0x00000000038050b0        0x8 /Applications/VEXcode Pro V5.app/Contents/Resources/sdk/vexv5/libv5rt.a(vex_color.cpp.obj)
-                0x00000000038050b0                vex::color::black
- .bss._ZN3vex5color6yellowE
+                0x00000000038050b0                vex::color::orange
+ .bss._ZN3vex5color5blackE
                 0x00000000038050b8        0x8 /Applications/VEXcode Pro V5.app/Contents/Resources/sdk/vexv5/libv5rt.a(vex_color.cpp.obj)
-                0x00000000038050b8                vex::color::yellow
- .bss._ZN3vex5color5greenE
+                0x00000000038050b8                vex::color::black
+ .bss._ZN3vex5color6yellowE
                 0x00000000038050c0        0x8 /Applications/VEXcode Pro V5.app/Contents/Resources/sdk/vexv5/libv5rt.a(vex_color.cpp.obj)
-                0x00000000038050c0                vex::color::green
- .bss._ZN3vex5color6purpleE
+                0x00000000038050c0                vex::color::yellow
+ .bss._ZN3vex5color5greenE
                 0x00000000038050c8        0x8 /Applications/VEXcode Pro V5.app/Contents/Resources/sdk/vexv5/libv5rt.a(vex_color.cpp.obj)
-                0x00000000038050c8                vex::color::purple
- .bss._ZN3vex5color4cyanE
+                0x00000000038050c8                vex::color::green
+ .bss._ZN3vex5color6purpleE
                 0x00000000038050d0        0x8 /Applications/VEXcode Pro V5.app/Contents/Resources/sdk/vexv5/libv5rt.a(vex_color.cpp.obj)
-                0x00000000038050d0                vex::color::cyan
- .bss._ZN3vex5color4blueE
+                0x00000000038050d0                vex::color::purple
+ .bss._ZN3vex5color4cyanE
                 0x00000000038050d8        0x8 /Applications/VEXcode Pro V5.app/Contents/Resources/sdk/vexv5/libv5rt.a(vex_color.cpp.obj)
-                0x00000000038050d8                vex::color::blue
- .bss._ZN3vex5color3redE
+                0x00000000038050d8                vex::color::cyan
+ .bss._ZN3vex5color4blueE
                 0x00000000038050e0        0x8 /Applications/VEXcode Pro V5.app/Contents/Resources/sdk/vexv5/libv5rt.a(vex_color.cpp.obj)
-                0x00000000038050e0                vex::color::red
- .bss._ZN3vex5color11transparentE
+                0x00000000038050e0                vex::color::blue
+ .bss._ZN3vex5color3redE
                 0x00000000038050e8        0x8 /Applications/VEXcode Pro V5.app/Contents/Resources/sdk/vexv5/libv5rt.a(vex_color.cpp.obj)
-                0x00000000038050e8                vex::color::transparent
- .bss._ZN3vex5color5whiteE
+                0x00000000038050e8                vex::color::red
+ .bss._ZN3vex5color11transparentE
                 0x00000000038050f0        0x8 /Applications/VEXcode Pro V5.app/Contents/Resources/sdk/vexv5/libv5rt.a(vex_color.cpp.obj)
-                0x00000000038050f0                vex::color::white
+                0x00000000038050f0                vex::color::transparent
+ .bss._ZN3vex5color5whiteE
+                0x00000000038050f8        0x8 /Applications/VEXcode Pro V5.app/Contents/Resources/sdk/vexv5/libv5rt.a(vex_color.cpp.obj)
+                0x00000000038050f8                vex::color::white
  .bss._ZN3vex4task8_labelIdE
-                0x00000000038050f8        0x4 /Applications/VEXcode Pro V5.app/Contents/Resources/sdk/vexv5/libv5rt.a(vex_task.cpp.obj)
-                0x00000000038050f8                vex::task::_labelId
+                0x0000000003805100        0x4 /Applications/VEXcode Pro V5.app/Contents/Resources/sdk/vexv5/libv5rt.a(vex_task.cpp.obj)
+                0x0000000003805100                vex::task::_labelId
  *(.gnu.linkonce.b.*)
  *(COMMON)
- COMMON         0x00000000038050fc        0x1 /Applications/VEXcode Pro V5.app/Contents/Resources/sdk/vexv5/libv5rt.a(v5_startup.c.obj)
-                0x00000000038050fc                __vex_critical_section
-                0x00000000038050fd                __bss_end = .
+ COMMON         0x0000000003805104        0x1 /Applications/VEXcode Pro V5.app/Contents/Resources/sdk/vexv5/libv5rt.a(v5_startup.c.obj)
+                0x0000000003805104                __vex_critical_section
+                0x0000000003805105                __bss_end = .
                 0x0000000003804a78                _SDA_BASE_ = (__sdata_start + ((__sbss_end - __sdata_start) / 0x2))
                 0x0000000003804618                _SDA2_BASE_ = (__sdata2_start + ((__sbss2_end - __sdata2_start) / 0x2))
 
-.heap           0x00000000038050fd   0x100003
-                0x0000000003805100                . = ALIGN (0x10)
- *fill*         0x00000000038050fd        0x3 
-                0x0000000003805100                _heap = .
-                0x0000000003805100                HeapBase = .
-                0x0000000003805100                _heap_start = .
-                0x0000000003905100                . = (. + _HEAP_SIZE)
- *fill*         0x0000000003805100   0x100000 
-                0x0000000003905100                _heap_end = .
-                0x0000000003905100                HeapLimit = .
+.heap           0x0000000003805105   0x10000b
+                0x0000000003805110                . = ALIGN (0x10)
+ *fill*         0x0000000003805105        0xb 
+                0x0000000003805110                _heap = .
+                0x0000000003805110                HeapBase = .
+                0x0000000003805110                _heap_start = .
+                0x0000000003905110                . = (. + _HEAP_SIZE)
+ *fill*         0x0000000003805110   0x100000 
+                0x0000000003905110                _heap_end = .
+                0x0000000003905110                HeapLimit = .
 
-.stack          0x0000000003905100     0x3800
-                0x0000000003905100                . = ALIGN (0x10)
-                0x0000000003905100                _stack_end = .
-                0x0000000003907100                . = (. + _STACK_SIZE)
- *fill*         0x0000000003905100     0x2000 
-                0x0000000003907100                . = ALIGN (0x10)
-                0x0000000003907100                _stack = .
-                0x0000000003907100                __stack = _stack
-                0x0000000003907100                . = ALIGN (0x10)
-                0x0000000003907100                _irq_stack_end = .
-                0x0000000003907500                . = (. + _IRQ_STACK_SIZE)
- *fill*         0x0000000003907100      0x400 
-                0x0000000003907500                . = ALIGN (0x10)
-                0x0000000003907500                __irq_stack = .
-                0x0000000003907500                _supervisor_stack_end = .
-                0x0000000003907d00                . = (. + _SUPERVISOR_STACK_SIZE)
- *fill*         0x0000000003907500      0x800 
-                0x0000000003907d00                . = ALIGN (0x10)
-                0x0000000003907d00                __supervisor_stack = .
-                0x0000000003907d00                _abort_stack_end = .
-                0x0000000003908100                . = (. + _ABORT_STACK_SIZE)
- *fill*         0x0000000003907d00      0x400 
-                0x0000000003908100                . = ALIGN (0x10)
-                0x0000000003908100                __abort_stack = .
-                0x0000000003908100                _fiq_stack_end = .
-                0x0000000003908500                . = (. + _FIQ_STACK_SIZE)
- *fill*         0x0000000003908100      0x400 
-                0x0000000003908500                . = ALIGN (0x10)
-                0x0000000003908500                __fiq_stack = .
-                0x0000000003908500                _undef_stack_end = .
-                0x0000000003908900                . = (. + _UNDEF_STACK_SIZE)
- *fill*         0x0000000003908500      0x400 
-                0x0000000003908900                . = ALIGN (0x10)
-                0x0000000003908900                __undef_stack = .
-                0x0000000003908900                _end = .
+.stack          0x0000000003905110     0x3800
+                0x0000000003905110                . = ALIGN (0x10)
+                0x0000000003905110                _stack_end = .
+                0x0000000003907110                . = (. + _STACK_SIZE)
+ *fill*         0x0000000003905110     0x2000 
+                0x0000000003907110                . = ALIGN (0x10)
+                0x0000000003907110                _stack = .
+                0x0000000003907110                __stack = _stack
+                0x0000000003907110                . = ALIGN (0x10)
+                0x0000000003907110                _irq_stack_end = .
+                0x0000000003907510                . = (. + _IRQ_STACK_SIZE)
+ *fill*         0x0000000003907110      0x400 
+                0x0000000003907510                . = ALIGN (0x10)
+                0x0000000003907510                __irq_stack = .
+                0x0000000003907510                _supervisor_stack_end = .
+                0x0000000003907d10                . = (. + _SUPERVISOR_STACK_SIZE)
+ *fill*         0x0000000003907510      0x800 
+                0x0000000003907d10                . = ALIGN (0x10)
+                0x0000000003907d10                __supervisor_stack = .
+                0x0000000003907d10                _abort_stack_end = .
+                0x0000000003908110                . = (. + _ABORT_STACK_SIZE)
+ *fill*         0x0000000003907d10      0x400 
+                0x0000000003908110                . = ALIGN (0x10)
+                0x0000000003908110                __abort_stack = .
+                0x0000000003908110                _fiq_stack_end = .
+                0x0000000003908510                . = (. + _FIQ_STACK_SIZE)
+ *fill*         0x0000000003908110      0x400 
+                0x0000000003908510                . = ALIGN (0x10)
+                0x0000000003908510                __fiq_stack = .
+                0x0000000003908510                _undef_stack_end = .
+                0x0000000003908910                . = (. + _UNDEF_STACK_SIZE)
+ *fill*         0x0000000003908510      0x400 
+                0x0000000003908910                . = ALIGN (0x10)
+                0x0000000003908910                __undef_stack = .
+                0x0000000003908910                _end = .
 LOAD /Applications/VEXcode Pro V5.app/Contents/Resources/sdk/vexv5/stdlib_0.lib
 LOAD build/src/main.o
 LOAD build/src/robot-config.o
