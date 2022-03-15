@@ -421,7 +421,6 @@ void autonomous(void) {
     gyroTurn(-45);
     Claw.set(true);
   
-    //turning (need to test)
     wait(200, msec);
     gyroTurn(-18);
     inchDrive(42, 75, true);
