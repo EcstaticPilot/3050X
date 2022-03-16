@@ -16,7 +16,7 @@
 // RBDrive              motor         20              
 // LBDrive              motor         11              
 // LLift                motor         2               
-// Controller1          controller                    
+// Controller1          controller                     
 // LFDrive              motor         15              
 // Gyro                 inertial      13              
 // RLift                motor         9               
