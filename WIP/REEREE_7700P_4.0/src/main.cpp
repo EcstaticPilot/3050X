@@ -56,7 +56,7 @@ float d = 4.0; //Global Wheel Diameter
 float pi = 3.1415926535897932384626;
 float g = 7/5;
 
-int autonSelect = 5 ; //Default
+int autonSelect = 1 ; //Default
 int autonMin = 0;
 int autonMax = 6;
 
@@ -285,21 +285,45 @@ void autonomous(void) {
   
     inchDrive(34, 55, false); //og 69 
     wait(300, msec);
-    inchDrive(30, -55, false); //46
+    inchDrive(33, -55, false); //46
     wait(300, msec);
 
     gyroTurn(80); //Tall Neutral Goal
     wait(300, msec);
-    inchDrive(24, 55, false); //48
+    inchDrive(20, 55, false); //48
     wait(300, msec);
     gyroTurn(-80);
     wait(300, msec);
-    inchDrive(28, 55, false); //57
+    inchDrive(34, 55, false); //57
     wait(300, msec);
-    inchDrive(4, -55, false); //8
+    inchDrive(20, -55, false); //8
     wait(100, msec);
 
-    gyroTurn(-80); //Second short neutral goals
+    gyroTurn(80); 
+    wait(300, msec);
+    inchDrive(18, 55, false);
+    gyroTurn(-80);
+    wait(300, msec);
+    inchDrive(28, 55, false);
+
+
+    wait(200, msec);
+    gyroTurn(-10);
+    inchDrive(58, -55, false);
+    wait(200, msec);
+    gyroTurn(80); 
+    wait(100, msec);
+    inchDrive(10, 55, false);
+    wait(100, msec);
+    gyroTurn(-80); 
+    wait(100, msec);
+    inchDrive(69, 55, false);
+
+
+    //
+
+
+    /*gyroTurn(-80); //Second short neutral goals
     wait(100, msec);
     inchDrive(25, 55, false); //50
     wait(100, msec);
@@ -341,6 +365,7 @@ void autonomous(void) {
     wait(200, msec);
     inchDrive(50, 55, false);  //100
     wait(2000, msec);
+    */
     
     break;  
   
@@ -418,9 +443,9 @@ void autonomous(void) {
     Claw.set(true);
     
     //middle rush
-    inchDrive(2,-75, true);
+    //inchDrive(2,-75, true);
     wait(200, msec);
-    gyroTurn(-85);
+    gyroTurn(-86);
     Claw.set(true);
   
     wait(200, msec);
