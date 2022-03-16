@@ -56,7 +56,7 @@ float d = 4.0; //Global Wheel Diameter
 float pi = 3.1415926535897932384626;
 float g = 7/5;
 
-int autonSelect = 0 ; //Default
+int autonSelect = 5 ; //Default
 int autonMin = 0;
 int autonMax = 6;
 
@@ -408,25 +408,26 @@ void autonomous(void) {
     deploy();
     inchDrive(32, 75, true);
     Claw.set(false);
-    wait(100, msec);
+    wait(300, msec);
     Lift.spin(reverse);
-    inchDrive(28, -75, false);
+    inchDrive(26, -50, false);
     Lift.stop();
     gyroTurn(45);
+    inchDrive(0, 75, true);
+    inchDrive(1, 75, true);
     Claw.set(true);
-    Claw.set(true);
+    
     //middle rush
-    inchDrive(4,-75, true);
+    inchDrive(2,-75, true);
     wait(200, msec);
-    gyroTurn(-45);
+    gyroTurn(-85);
     Claw.set(true);
   
     wait(200, msec);
-    gyroTurn(-18);
     inchDrive(42, 75, true);
     Claw.set(false);
     Lift.spin(reverse);
-    inchDrive(35, -75, false);
+    inchDrive(38, -50, false);
     Lift.stop();
    
     break;
