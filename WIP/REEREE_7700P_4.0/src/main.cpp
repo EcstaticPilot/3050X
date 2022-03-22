@@ -16,9 +16,9 @@
 /*    3/13/22 At comp abby, changed skills, finalized yellow rush (dont touch)*/
 /*    inch drive and gyro turn need to be fixed                               */
 /*    55 degrees for gyro = 90 and 30 inches for inch drive = whole field     */
-/*                                                                            */
-/*                                                                            */
-/*                                                                            */
+/*    3/15/22 Abby fixed middle + yellow rush and pushing skills              */
+/*    started working on lifting skills (lifting goal onto platforms)         */
+/*    instead of just pushing goals                                           */
 /*                                                                            */
 /*                                                                            */
 /*                                                                            */
@@ -56,18 +56,19 @@ float d = 4.0; //Global Wheel Diameter
 float pi = 3.1415926535897932384626;
 float g = 7/5;
 
-int autonSelect = 1 ; //Default
+int autonSelect = 6 ; //Default
 int autonMin = 0;
 int autonMax = 6;
 
 //GUI:
 
   //CASE 0 = YELLOW RUSH
-  //CASE 1 = ABBY SKILLS
+  //CASE 1 = ABBY 100 POINT PUSHING KILLS
   //CASE 2 = 80 POINT SEAN SKILLS
   //CASE 3 = MIDDLE RUSH
   //CASE 4 = DO NOTHING AUTON
   //CASE 5 = YELLOW RUSH + MIDDLE RUSH
+  //CADE 6 = ABBY LIFTING SKILLS
 
 //CLAW:
 
@@ -188,6 +189,21 @@ void deploy(){
   Claw.set(true);
   Tilter.set(false);
 }
+void lift_up(int speed){
+  Lift.spin(forward, speed, pct);
+  wait(500, msec);
+  //Lift.stop();
+
+
+}
+void lift_down(int speed){
+  Lift.spin(reverse, speed, pct);
+  wait(500, msec);
+  Lift.stop();
+
+
+}
+
 
 void autonDriver(int wt, int lspeed, int rspeed, bool claw) //int liftspeed //bool claw //int Clawspin int moggs
 {
@@ -214,7 +230,7 @@ void gyroTurn(float target) {
   Gyro.setRotation(0, degrees);
 
   float speed = 0.0;
-  float kp = 1.0;
+  float kp = 1.0; //1
   float d = 2.0;
 
   Brain.Screen.clearScreen();
@@ -318,9 +334,6 @@ void autonomous(void) {
     gyroTurn(-80); 
     wait(100, msec);
     inchDrive(69, 55, false);
-
-
-    //
 
 
     /*gyroTurn(-80); //Second short neutral goals
@@ -455,6 +468,54 @@ void autonomous(void) {
     inchDrive(38, -50, false);
     Lift.stop();
    
+    break;
+
+
+    case 6:
+    //ABBY LIFTING SKILLS (TRYING TO BEAT 100 POINTS : NOT BY PUSHING)
+
+    deploy();
+    
+
+    //lift 
+    deploy();
+    inchDrive(32, 75, true);
+    Claw.set(false);
+    wait(300, msec);
+    Lift.spin(reverse);
+    
+  
+
+    gyroTurn(-75);
+    inchDrive(20, 75, false);
+    gyroTurn(68);
+    wait(500, msec);
+
+    inchDrive(18 , 75, false);
+    wait(200, msec);
+    
+    lift_up(75);
+    wait(900, msec);
+    Lift.stop();
+    Lift.setBrake(hold);
+
+    inchDrive(5, 75, false);
+    
+  
+    
+    
+    
+
+    //lift
+    /*
+    lift_up(75);
+    wait(80, msec);
+    Lift.stop();
+    Lift.setBrake(hold);    
+  
+    */
+
+
     break;
   }
 }
