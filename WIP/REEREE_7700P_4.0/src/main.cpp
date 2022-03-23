@@ -56,9 +56,9 @@ float d = 4.0; //Global Wheel Diameter
 float pi = 3.1415926535897932384626;
 float g = 7/5;
 
-int autonSelect = 6 ; //Default
+int autonSelect = 1 ; //Default
 int autonMin = 0;
-int autonMax = 6;
+int autonMax = 8;
 
 //GUI:
 
@@ -68,7 +68,9 @@ int autonMax = 6;
   //CASE 3 = MIDDLE RUSH
   //CASE 4 = DO NOTHING AUTON
   //CASE 5 = YELLOW RUSH + MIDDLE RUSH
-  //CADE 6 = ABBY LIFTING SKILLS
+  //CASE 6 = 40 POINT LIFT (EMERGENCY USE)
+  //CASE 7 = ABBY LIFTING SKILLS
+
 
 //CLAW:
 
@@ -249,7 +251,29 @@ void gyroTurn(float target) {
   brakeDrive();
   //Brain.Screen.clearScreen();
 }
+void balance()
+{
+ float pitch=Gyro.pitch(deg);
+ float oldpitch=pitch;
+ inchDrive(10, 100, true);
+     Brain.Screen.clearScreen();
+     float kp=1;
+      float kd = 15.0;
+     
 
+float d=0.3;
+while(true)(fabs(pitch)>d);
+{
+  float speed = kp*pitch+kd*(pitch-oldpitch);
+  autonDriver(10, speed, speed,  false);
+  
+  //Drive(speed, speed, 10);
+  oldpitch=pitch;
+    pitch = Gyro.pitch(deg);
+    Brain.Screen.printAt(1, 100, "pitch=   %.3f   ",pitch);
+brakeDrive();
+}
+}
 
 
 //////////////////////////////////////////////////////////////////EOF//////////////////////////////////////////////////////////////////
@@ -284,9 +308,11 @@ void autonomous(void) {
     case 1: //ABBY SKILLS
     //robot is much faster, changing speed to 50 instead of 75
     //diving inch drive by half
-   
-    
-    deploy();
+   inchDrive(15, 75, false);
+    balance();
+
+
+    /*deploy();
     backLift.setVelocity(75, pct);
     inchDrive(59, 50, false); //Red Mogo //118
     wait(300, msec); //Short Neutral Goal
@@ -312,7 +338,7 @@ void autonomous(void) {
     wait(300, msec);
     inchDrive(34, 55, false); //57
     wait(300, msec);
-    inchDrive(20, -55, false); //8
+    inchDrive(33, -55, false); //8
     wait(100, msec);
 
     gyroTurn(80); 
@@ -322,62 +348,18 @@ void autonomous(void) {
     wait(300, msec);
     inchDrive(28, 55, false);
 
-
     wait(200, msec);
-    gyroTurn(-10);
+    gyroTurn(-3);
+    wait(200, msec);
     inchDrive(58, -55, false);
     wait(200, msec);
     gyroTurn(80); 
     wait(100, msec);
-    inchDrive(10, 55, false);
+    inchDrive(5, 55, false);
     wait(100, msec);
     gyroTurn(-80); 
     wait(100, msec);
     inchDrive(69, 55, false);
-
-
-    /*gyroTurn(-80); //Second short neutral goals
-    wait(100, msec);
-    inchDrive(25, 55, false); //50
-    wait(100, msec);
-    gyroTurn(-80);
-    wait(100, msec);
-    inchDrive(35, 55, false); //70
-    wait(500, msec);
-
-   //red goal
-
-    inchDrive(64, -55, false); //128
-    wait(300, msec);
-    gyroTurn(80);
-    wait(300, msec);
-    inchDrive(10, 55, false); //20
-    wait(300, msec);
-    gyroTurn(-80);
-    wait(300, msec);
-    inchDrive(65, 55, false); //130
-    wait(300, msec);
-  
-   //blue one on red seesaw
-
-    inchDrive(30, -55, false); //60
-    wait(200, msec);
-    gyroTurn(-80);
-    wait(200, msec);
-    inchDrive(60, 55, false); //120
-    wait(200, msec);
-    gyroTurn(80);
-    wait(200, msec);
-    backLift.spin(reverse);
-    wait(600, msec);
-    backLift.stop(brake);
-    inchDrive(25, -55, false);  //50
-    backLift.spin(forward);
-    wait(600, msec);
-    backLift.stop(brake);
-    wait(200, msec);
-    inchDrive(50, 55, false);  //100
-    wait(2000, msec);
     */
     
     break;  
@@ -472,7 +454,7 @@ void autonomous(void) {
 
 
     case 6:
-    //ABBY LIFTING SKILLS (TRYING TO BEAT 100 POINTS : NOT BY PUSHING)
+    //40 POINT LIFT (EMEGENCY USE)
 
     deploy();
     
@@ -480,6 +462,7 @@ void autonomous(void) {
     //lift 
     deploy();
     inchDrive(32, 75, true);
+    wait(100, msec);
     Claw.set(false);
     wait(300, msec);
     Lift.spin(reverse);
@@ -487,24 +470,32 @@ void autonomous(void) {
   
 
     gyroTurn(-75);
-    inchDrive(20, 75, false);
-    gyroTurn(68);
+    wait(100, msec);
+    inchDrive(25, 75, false);
+    gyroTurn(70);
     wait(500, msec);
 
-    inchDrive(18 , 75, false);
-    wait(200, msec);
+    inchDrive(23 , 75, false);
+    wait(400, msec);
     
-    lift_up(75);
-    wait(900, msec);
-    Lift.stop();
+    lift_up(100);
+    wait(1900, msec);
+
     Lift.setBrake(hold);
 
     inchDrive(5, 75, false);
-    
-  
-    
-    
-    
+
+    wait(100, msec);
+
+    Claw.set(true);    
+
+    wait(500, msec);
+
+    inchDrive(10, -75, false);
+
+
+    lift_down(100);
+    wait(2000, msec);
 
     //lift
     /*
@@ -512,8 +503,96 @@ void autonomous(void) {
     wait(80, msec);
     Lift.stop();
     Lift.setBrake(hold);    
-  
     */
+    break;
+
+
+    case 7:
+
+    //ABBY LIFTING SKILLS
+
+    deploy();
+    backLift.setVelocity(75, pct);
+    inchDrive(59, 50, false); //Red Mogo //118
+    wait(300, msec); //Short Neutral Goal
+
+    gyroTurn(-80); //left turn
+    wait(300, msec);
+    inchDrive(13, 55, false); //26
+
+    wait(300, msec);
+    gyroTurn(-80);
+    wait(300, msec);
+  
+    inchDrive(28, 55, false); //og 69 
+    wait(300, msec);
+
+    //yellow lift 
+
+    Claw.set(false);
+    wait(300, msec);
+    Lift.spin(reverse);
+
+    inchDrive(10, 55, false); 
+    wait(100, msec);
+
+    gyroTurn(80);    
+    wait(100, msec);
+    inchDrive(8, 75, false);
+
+    wait(100, msec);
+    gyroTurn(-80); 
+
+    wait(100,  msec);
+
+    lift_up(100);
+    wait(1900, msec);
+
+    Lift.setBrake(hold);
+
+    inchDrive(3, 75, false);
+
+    wait(100, msec);
+
+    Claw.set(true); 
+
+
+/*
+    inchDrive(33, -55, false); //46
+    wait(300, msec);
+
+    gyroTurn(80); //Tall Neutral Goal
+    wait(300, msec);
+    inchDrive(20, 55, false); //48
+    wait(300, msec);
+    gyroTurn(-80);
+    wait(300, msec);
+    inchDrive(34, 55, false); //57
+    wait(300, msec);
+    inchDrive(33, -55, false); //8
+    wait(100, msec);
+
+    gyroTurn(80); 
+    wait(300, msec);
+    inchDrive(18, 55, false);
+    gyroTurn(-80);
+    wait(300, msec);
+    inchDrive(28, 55, false);
+
+    wait(200, msec);
+    gyroTurn(-3);
+    wait(200, msec);
+    inchDrive(58, -55, false);
+    wait(200, msec);
+    gyroTurn(80); 
+    wait(100, msec);
+    inchDrive(5, 55, false);
+    wait(100, msec);
+    gyroTurn(-80); 
+    wait(100, msec);
+    inchDrive(69, 55, false);
+
+*/
 
 
     break;
