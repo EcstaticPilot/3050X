@@ -19,7 +19,7 @@
 /*    3/15/22 Abby fixed middle + yellow rush and pushing skills              */
 /*    started working on lifting skills (lifting goal onto platforms)         */
 /*    instead of just pushing goals                                           */
-/*                                                                            */
+/*    3/22/22 Abby worked on lifting skills (160 points max) 200 if balance   */
 /*                                                                            */
 /*                                                                            */
 /*                                                                            */
@@ -56,7 +56,7 @@ float d = 4.0; //Global Wheel Diameter
 float pi = 3.1415926535897932384626;
 float g = 7/5;
 
-int autonSelect = 1 ; //Default
+int autonSelect = 7 ; //Default
 int autonMin = 0;
 int autonMax = 8;
 
@@ -222,6 +222,30 @@ void autonDriver(int wt, int lspeed, int rspeed, bool claw) //int liftspeed //bo
   wait(wt, msec);*/
 }
 
+void Drive(int wt, int lspeed, int rspeed,
+           bool driveVolts = false) { // bool = optional var
+  if (driveVolts == true) {
+    lspeed*=120;
+    lspeed*=120;
+    LBDrive.spin(forward, lspeed , voltageUnits::mV);
+    LFDrive.spin(forward, lspeed , voltageUnits::mV);
+    RBDrive.spin(forward, rspeed , voltageUnits::mV);
+    RFDrive.spin(forward, rspeed , voltageUnits::mV);
+    RUDrive.spin(forward, rspeed, voltageUnits::mV);
+    LUDrive.spin(forward, rspeed, voltageUnits::mV);
+
+  } else {
+
+    LBDrive.spin(forward, lspeed, pct);
+    RBDrive.spin(forward, rspeed, pct);
+    LFDrive.spin(forward, lspeed, pct);
+    RFDrive.spin(forward, rspeed, pct);
+    RUDrive.spin(forward, rspeed, pct);
+    LUDrive.spin(forward, lspeed, pct);
+  }
+  wait(wt, msec);
+}
+
 void gyroTurn(float target) {
   while (Gyro.isCalibrating()) {
     // wait for Gyro Calibration , sleep but awwllow other tasks to run
@@ -243,8 +267,8 @@ void gyroTurn(float target) {
     if (target - heading < 0) {
       speed = kp * (target - heading) - 10;
     }
-    autonDriver(10, speed, -speed, false);;
-    //Drive(10, speed, -speed);
+    //autonDriver(10, speed, -speed, false);;
+    Drive(10, speed, -speed);
     heading = Gyro.rotation(degrees);
     Brain.Screen.printAt(1, 40, "heading = %.3f", heading);
   }
@@ -255,29 +279,27 @@ void balance()
 {
  float pitch=Gyro.pitch(deg);
  float oldpitch=pitch;
- inchDrive(10, 100, true);
+ inchDrive(10, 55,true);
      Brain.Screen.clearScreen();
      float kp=1;
       float kd = 15.0;
-     
 
-float d=0.3;
-while(true)(fabs(pitch)>d);
+//float d=0.3;
+while(true)//(fabs(pitch)>d)
 {
   float speed = kp*pitch+kd*(pitch-oldpitch);
-  autonDriver(10, speed, speed,  false);
-  
-  //Drive(speed, speed, 10);
+  Drive(speed, -speed, 10);
+ 
   oldpitch=pitch;
     pitch = Gyro.pitch(deg);
     Brain.Screen.printAt(1, 100, "pitch=   %.3f   ",pitch);
-brakeDrive();
+
 }
+brakeDrive();
 }
 
 
 //////////////////////////////////////////////////////////////////EOF//////////////////////////////////////////////////////////////////
-
 
 
 void autonomous(void) { 
@@ -511,20 +533,26 @@ void autonomous(void) {
 
     //ABBY LIFTING SKILLS
 
+    //lift back lift revserse
+
+    
+    //backLift.spin(reverse, 100, pct);   
+
     deploy();
     backLift.setVelocity(75, pct);
+    backLift.spinFor(reverse, 700, degrees, false);
     inchDrive(59, 50, false); //Red Mogo //118
     wait(300, msec); //Short Neutral Goal
 
-    gyroTurn(-80); //left turn
+    gyroTurn(-58); //left turn
     wait(300, msec);
     inchDrive(13, 55, false); //26
 
     wait(300, msec);
-    gyroTurn(-80);
+    gyroTurn(-58);
     wait(300, msec);
   
-    inchDrive(28, 55, false); //og 69 
+    inchDrive(15, 55, false); //og 69 
     wait(300, msec);
 
     //yellow lift 
@@ -533,20 +561,65 @@ void autonomous(void) {
     wait(300, msec);
     Lift.spin(reverse);
 
-    inchDrive(10, 55, false); 
+    inchDrive(16, 55, false); 
     wait(100, msec);
 
-    gyroTurn(80);    
+    gyroTurn(58);    
     wait(100, msec);
-    inchDrive(8, 75, false);
+    inchDrive(15, 75, false);
 
     wait(100, msec);
-    gyroTurn(-80); 
+    gyroTurn(-58); 
 
     wait(100,  msec);
 
     lift_up(100);
-    wait(1900, msec);
+    wait(700, msec);
+
+    Lift.setBrake(hold);
+
+    inchDrive(8, 75, false);
+
+    wait(100, msec);
+
+    Claw.set(true); 
+
+
+    //2nd yellow goal
+
+    wait(100, msec);
+
+    inchDrive(6, -55, false);
+
+    wait(100, msec);
+
+    lift_down(100);
+    wait(700, msec);
+
+    gyroTurn(141);
+
+    wait(100, msec);
+
+    inchDrive(15, 55, false);
+
+    //claw grabbing
+
+    Claw.set(false);
+
+    wait(300, msec);
+
+    Lift.spin(reverse);
+
+    wait(700, msec);
+
+    gyroTurn(141);
+
+    wait(300, msec);
+
+    inchDrive(30, 55, false);
+    
+    lift_up(100);
+    wait(700, msec);
 
     Lift.setBrake(hold);
 
@@ -556,13 +629,15 @@ void autonomous(void) {
 
     Claw.set(true); 
 
+    //third yellow
+     
 
-/*
-    inchDrive(33, -55, false); //46
-    wait(300, msec);
+  
+    
 
-    gyroTurn(80); //Tall Neutral Goal
-    wait(300, msec);
+
+   /*
+
     inchDrive(20, 55, false); //48
     wait(300, msec);
     gyroTurn(-80);
