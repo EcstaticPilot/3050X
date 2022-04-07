@@ -67,9 +67,10 @@ int autonMax = 8;
   //CASE 2 = 80 POINT SEAN SKILLS
   //CASE 3 = MIDDLE RUSH
   //CASE 4 = DO NOTHING AUTON
-  //CASE 5 = YELLOW RUSH + MIDDLE RUSH
-  //CASE 6 = 40 POINT LIFT (EMERGENCY USE)
-  //CASE 7 = ABBY LIFTING SKILLS
+  //CASE 5 = YELLOW RUSH + MIDDLE RUSH (DEPOSITING TO RIGHT // USED ON RIGHT SIDE)
+  //CASE 6 = YELLOW RUSH + MIDDLE RUSH (DEPOSITING TO LEFT // USED ON LEFT  SIDE)
+  //CASE 7 = 40 POINT LIFT (EMERGENCY USE)
+  //CASE 8 = ABBY LIFTING SKILLS
 
 
 //CLAW:
@@ -81,6 +82,11 @@ int autonMax = 8;
 
   //RIGHT = 90
   //LEFT = -90
+
+//TILE
+
+  //ONE TILE = 24 INCHES X 24 INCHES
+
 
 void drawGUI() {
   // 2 buttons for selecting auto
@@ -186,6 +192,7 @@ void inchDrive(float target, int speed, bool claw){
   brakeDrive();
 
 }
+
 
 void deploy(){
   Claw.set(true);
@@ -297,7 +304,16 @@ while(true)//(fabs(pitch)>d)
 }
 brakeDrive();
 }
+/*
+void tileDrive(float ur_mom, int speed, bool claw){
+  ur_mom == inchDrive(24, 75, true);
 
+
+
+
+}
+
+*/
 
 //////////////////////////////////////////////////////////////////EOF//////////////////////////////////////////////////////////////////
 
@@ -436,7 +452,7 @@ void autonomous(void) {
     wait(15000, msec);
     break;
 
-    //YELLOW RUSH + MIDDLE RUSH
+    //YELLOW RUSH + MIDDLE RUSH (DEPOSITING TO RIGHT // USED ON RIGHT SIDE)
 
     case 5:
 
@@ -444,7 +460,6 @@ void autonomous(void) {
 
     //true = open
     //false= close
-
     
     //yellow rush
     deploy();
@@ -476,6 +491,36 @@ void autonomous(void) {
 
 
     case 6:
+
+    //yellow rush
+    deploy();
+    inchDrive(32, 75, true);
+    Claw.set(false);
+    wait(300, msec);
+    Lift.spin(reverse);
+    inchDrive(26, -50, false);
+    Lift.stop();
+    gyroTurn(-45);
+    inchDrive(0, 75, true);
+    inchDrive(1, 75, true);
+    Claw.set(true);
+    
+    //middle rush
+    //inchDrive(2,-75, true);
+    wait(200, msec);
+    gyroTurn(86);
+    Claw.set(true);
+  
+    wait(200, msec);
+    inchDrive(42, 75, true);
+    Claw.set(false);
+    Lift.spin(reverse);
+    inchDrive(38, -50, false);
+    Lift.stop();
+
+    break;
+
+    case 7:
     //40 POINT LIFT (EMEGENCY USE)
 
     deploy();
@@ -529,7 +574,7 @@ void autonomous(void) {
     break;
 
 
-    case 7:
+    case 8:
 
     //ABBY LIFTING SKILLS
 
@@ -630,12 +675,7 @@ void autonomous(void) {
     Claw.set(true); 
 
     //third yellow
-     
-
-  
     
-
-
    /*
 
     inchDrive(20, 55, false); //48
@@ -668,9 +708,8 @@ void autonomous(void) {
     inchDrive(69, 55, false);
 
 */
-
-
     break;
+
   }
 }
 
