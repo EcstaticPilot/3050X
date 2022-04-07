@@ -706,10 +706,8 @@ void autonomous(void) {
     gyroTurn(-80); 
     wait(100, msec);
     inchDrive(69, 55, false);
-
 */
     break;
-
   }
 }
 
