@@ -5,7 +5,7 @@
 /*    Created:      Fri Apr 15 2022                                                     */
 /*    Description:  V5 project                                                          */
 /*                                                                                      */
-/*                                                                                      */
+/*    4/15/22: File is Made (Abby)                                                      */
 /*                                                                                      */
 /*    Changes Made:                                                                     */
 /*                                                                                      */
@@ -121,6 +121,7 @@ void selectAuton() {
   Brain.Screen.setFillColor(black);
 }
 
+
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
   Gyro.calibrate();
@@ -184,16 +185,16 @@ void deploy(){
 }
 void lift_up(int speed){
   Lift.spin(forward, speed, pct);
+ 
   wait(500, msec);
   //Lift.stop();
-
-
 }
 
 void lift_down(int speed){
   Lift.spin(reverse, speed, pct);
   wait(500, msec);
   Lift.stop();
+  
 }
 
 void inchDrive(float target, int speed, bool claw) {
@@ -213,6 +214,7 @@ void inchDrive(float target, int speed, bool claw) {
   brakeDrive();
   Brain.Screen.clearScreen();
 }
+
 
 void Drive(int wt, int lspeed, int rspeed,
            bool driveVolts = false) { // bool = optional var
@@ -270,16 +272,10 @@ void gyroTurn(float target) {
 
 
 
+////////////////////////////////////////////////////////////////EOF////////////////////////////////////////////////////////////////////////////////
 
 
 
-
-
-
-
-
-
-////////////////////////////////////////////////////////////////EOF/////////////////////////////////////////////////////////////////
 
 void autonomous(void) { 
 
@@ -309,7 +305,7 @@ void autonomous(void) {
     case 1: //ABBY SKILLS
     //robot is much faster, changing speed to 50 instead of 75
     //diving inch drive by half
-   inchDrive(15, 75, false);
+    inchDrive(15, 75, false);
     //balance();
 
 
@@ -484,7 +480,7 @@ void autonomous(void) {
     break;
 
     case 7:
-    //40 POINT LIFT (EMEGENCY USE)
+    //40 POINT LIFT (EMEGENCY USE) (BY SEAN + NO LIFTING)
 
     deploy();
     
@@ -757,10 +753,10 @@ void usercontrol(void) {
     */
 
     //Front Claw
-    if (Controller1.ButtonR1.pressing()){
+    if (Controller1.ButtonR2.pressing()){
       Claw.set(true);
     }
-    else if (Controller1.ButtonR2.pressing()){
+    else if (Controller1.ButtonR1.pressing()){
       Claw.set(false);
     }
 
