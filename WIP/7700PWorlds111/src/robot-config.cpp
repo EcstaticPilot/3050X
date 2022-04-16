@@ -17,7 +17,8 @@ motor LMDrive = motor(PORT2, ratio18_1, true);
 motor LBDrive = motor(PORT3, ratio18_1, true);
 controller Controller1 = controller(primary);
 digital_out Claw = digital_out(Brain.ThreeWirePort.A);
-digital_out Tilter = digital_out(Brain.ThreeWirePort.B);
+digital_out tilter = digital_out(Brain.ThreeWirePort.B);
+inertial Gyro = inertial(PORT7);
 
 // VEXcode generated functions
 // define variable for remote controller enable/disable

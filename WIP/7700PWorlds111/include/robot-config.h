@@ -12,7 +12,8 @@ extern motor LMDrive;
 extern motor LBDrive;
 extern controller Controller1;
 extern digital_out Claw;
-extern digital_out Tilter;
+extern digital_out tilter;
+extern inertial Gyro;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.

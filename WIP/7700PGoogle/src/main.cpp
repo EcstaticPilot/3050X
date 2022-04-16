@@ -101,6 +101,9 @@ void autonDriver(int wt, int lspeed, int rspeed, int liftspeed, bool claw, int C
   mogolift.spin(forward, moggs, pct);
 wait(wt, msec);
 }
+
+
+
 void brakedrive() {
   RBDrive.stop(brake);
   LBDrive.stop(brake);
@@ -119,14 +122,14 @@ void inchDrive(float target, int speed, bool claw) {
   float c = 0; // our distance
   LBDrive.setRotation(0, degrees);
   Brain.Screen.clearScreen();
-  while (abs(c) <= abs(target)) {
+  while (fabs(c) <= fabs(target)) {
 
     LBDrive.spin(forward, speed, pct);
     RBDrive.spin(forward, speed, pct);
     LFDrive.spin(forward, speed, pct);
     RFDrive.spin(forward, speed, pct);
     Brain.Screen.printAt(1, 40, "inchdrive");
-    c = abs(LBDrive.rotation(rev) * 3.14 * dia);
+    c = fabs(LBDrive.rotation(rev) * 3.14 * dia);
   }
   brakedrive();
   Brain.Screen.clearScreen();

@@ -209,8 +209,6 @@ void lift_down(int speed){
   Lift.spin(reverse, speed, pct);
   wait(500, msec);
   Lift.stop();
-
-
 }
 
 
