@@ -293,8 +293,9 @@ void autonomous(void) {
     Lift.setBrake(brake);
     inchDrive(33, 100, false);
     Claw.set(true);
-    inchDrive(20, -100, true);
+    inchDrive(33, -100, true);
     wait(200, msec);
+    /*
     {
       LFDrive.spin(reverse, 100, pct);
       LMDrive.spin(reverse, 100, pct);
@@ -333,7 +334,7 @@ void autonomous(void) {
     inchDrive(33, 100, false);
     Claw.set(true);
     inchDrive(20, -100, true);
-
+*/
     break;
 
     case 1: //ABBY SKILLS
