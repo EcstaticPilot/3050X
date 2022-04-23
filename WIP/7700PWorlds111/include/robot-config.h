@@ -12,7 +12,7 @@ extern motor LMDrive;
 extern motor LBDrive;
 extern controller Controller1;
 extern digital_out Claw;
-extern digital_out tilter;
+extern digital_out Backlift;
 extern inertial Gyro;
 
 /**

@@ -27,11 +27,11 @@
 // RMDrive              motor         9               
 // RBDrive              motor         8               
 // LFDrive              motor         1               
-// LMDrive              motor         2               
+// LMDrive              motor         4               
 // LBDrive              motor         3               
 // Controller1          controller                    
 // Claw                 digital_out   A               
-// tilter               digital_out   B               
+// Backlift             digital_out   B               
 // Gyro                 inertial      7               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
@@ -45,7 +45,7 @@ float d = 4.0; //Global Wheel Diameter
 float pi = 3.1415926535897932384626;
 float g = 7/5;
 
-int autonSelect = 7 ; //Default
+int autonSelect = 0 ; //Default
 int autonMin = 0;
 int autonMax = 8;
 
@@ -179,10 +179,6 @@ void autonDriver(int wt, int lspeed, int rspeed, int liftspeed, bool claw, int C
 wait(wt, msec);
 }
 
-void deploy(){
-  Claw.set(true);
-  tilter.set(false);
-}
 void lift_up(int speed){
   Lift.spin(forward, speed, pct);
  
@@ -272,6 +268,7 @@ void gyroTurn(float target) {
 
 
 
+
 ////////////////////////////////////////////////////////////////EOF////////////////////////////////////////////////////////////////////////////////
 
 
@@ -293,13 +290,50 @@ void autonomous(void) {
 
     case 0: //YELLOW RUSH
   
-    deploy();
-    inchDrive(32, 75, true);
-    Claw.set(false);
-    wait(100, msec);
-    Lift.spin(reverse);
-    inchDrive(35, -75, false);
+    Lift.setBrake(brake);
+    inchDrive(33, 100, false);
+    Claw.set(true);
+    inchDrive(20, -100, true);
+    wait(200, msec);
+    {
+      LFDrive.spin(reverse, 100, pct);
+      LMDrive.spin(reverse, 100, pct);
+      LBDrive.spin(reverse, 100, pct);
+      RFDrive.spin(fwd, 100, pct);
+      RMDrive.spin(fwd, 100, pct);
+      RBDrive.spin(fwd, 100, pct);
+      wait(500,msec);
+      LFDrive.stop();
+      LMDrive.stop();
+      LBDrive.stop();
+      RFDrive.stop();
+      RMDrive.stop();
+      RBDrive.stop();
+    }
+    wait(200, msec);
+    inchDrive(5, -100, false);
+    wait(200, msec);
+    Lift.spin(reverse, 100, pct);
+    {
+      LFDrive.spin(fwd, 70, pct);
+      LMDrive.spin(fwd, 70, pct);
+      LBDrive.spin(fwd, 70, pct);
+      RFDrive.spin(reverse, 70, pct);
+      RMDrive.spin(reverse, 70, pct);
+      RBDrive.spin(reverse, 70, pct);
+      wait(385,msec);
+      LFDrive.stop();
+      LMDrive.stop();
+      LBDrive.stop();
+      RFDrive.stop();
+      RMDrive.stop();
+      RBDrive.stop();
+    }
     Lift.stop();
+    inchDrive(33, 100, false);
+    Claw.set(true);
+    inchDrive(20, -100, true);
+
     break;
 
     case 1: //ABBY SKILLS
@@ -396,7 +430,6 @@ void autonomous(void) {
     break;
 
     case 3: // MIDDLE RUSH
-    deploy();
     inchDrive(42, 75, true);
     Claw.set(false);
     Lift.spin(reverse);
@@ -407,7 +440,6 @@ void autonomous(void) {
 
     //DO NOTHING AUTON
     case 4:
-    deploy();
     wait(15000, msec);
     break;
 
@@ -421,7 +453,6 @@ void autonomous(void) {
     //false= close
     
     //yellow rush
-    deploy();
     inchDrive(32, 75, true);
     Claw.set(false);
     wait(300, msec);
@@ -452,7 +483,6 @@ void autonomous(void) {
     case 6:
 
     //yellow rush
-    deploy();
     inchDrive(32, 75, true);
     Claw.set(false);
     wait(300, msec);
@@ -482,11 +512,9 @@ void autonomous(void) {
     case 7:
     //40 POINT LIFT (EMEGENCY USE) (BY SEAN + NO LIFTING)
 
-    deploy();
     
 
     //lift 
-    deploy();
     inchDrive(32, 75, true);
     wait(100, msec);
     Claw.set(false);
@@ -542,7 +570,6 @@ void autonomous(void) {
     
     //backLift.spin(reverse, 100, pct);   
 
-    deploy();
     //backLift.setVelocity(75, pct);
     //backLift.spinFor(reverse, 700, degrees, false);
     inchDrive(59, 50, false); //Red Mogo //118
@@ -665,7 +692,8 @@ void autonomous(void) {
     gyroTurn(-80); 
     wait(100, msec);
     inchDrive(69, 55, false);
-*/
+    */
+    
     break;
   }
 }
@@ -702,12 +730,6 @@ void usercontrol(void) {
     }
     else if (!Controller1.ButtonB.pressing()) {
       bDown = false;
-    }
-    if(tiltedUp){
-      tilter.set(true);
-    }
-    else if(!tiltedUp){
-      tilter.set(false);
     }
 
     //Drive Code
@@ -758,6 +780,16 @@ void usercontrol(void) {
     }
     else if (Controller1.ButtonR1.pressing()){
       Claw.set(false);
+    }
+
+    //Back Lift
+    if (Controller1.ButtonDown.pressing())
+    {
+    Backlift.set(true);
+    }
+    else if (Controller1.ButtonUp.pressing())
+    {
+    Backlift.set(false);
     }
 
     //Locking Drive
