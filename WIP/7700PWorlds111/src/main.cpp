@@ -8,7 +8,7 @@
 /*    4/15/22: File is Made (Abby)                                                      */
 /*                                                                                      */
 /*    Changes Made:                                                                     */
-/*                                                                                      */
+/*  Need to fix the claw == stronger for Yellow Rush                                    */
 /*                                                                                      */
 /*                                                                                      */
 /*                                                                                      */
@@ -23,7 +23,7 @@
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
 // Lift                 motor         5               
-// RFDrive              motor         10              
+// RFDrive              motor         20              
 // RMDrive              motor         9               
 // RBDrive              motor         8               
 // LFDrive              motor         1               
@@ -45,7 +45,7 @@ float d = 4.0; //Global Wheel Diameter
 float pi = 3.1415926535897932384626;
 float g = 7/5;
 
-int autonSelect = 0 ; //Default
+int autonSelect = 6 ; //Default // THE CASE
 int autonMin = 0;
 int autonMax = 8;
 
@@ -246,16 +246,18 @@ void gyroTurn(float target) {
   Gyro.setRotation(0, degrees);
 
   float speed = 0.0;
-  float kp = 1.0; //1
-  float d = 2.0;
+  float kp = .5; //1
+  float d = 1.0;
+
+  //Each float kp == 1.0 if need to change then make it bigger > than 1
 
   Brain.Screen.clearScreen();
   while (fabs(target - heading) >= d) {
     if (target - heading > 0) {
-      speed = kp * (target - heading) + 10;
+      speed = kp * (target - heading)+5 ;
     }
     if (target - heading < 0) {
-      speed = kp * (target - heading) - 10;
+      speed = kp * (target - heading)-5 ;
     }
     //autonDriver(10, speed, -speed, false);
     Drive(10, speed, -speed);
@@ -292,9 +294,12 @@ void autonomous(void) {
   
     Lift.setBrake(brake);
     inchDrive(33, 100, false);
+    //wait(100, msec);
     Claw.set(true);
+    //wait(150, msec);
     inchDrive(33, -100, true);
     wait(200, msec);
+
     /*
     {
       LFDrive.spin(reverse, 100, pct);
@@ -334,65 +339,70 @@ void autonomous(void) {
     inchDrive(33, 100, false);
     Claw.set(true);
     inchDrive(20, -100, true);
+
 */
+
     break;
 
     case 1: //ABBY SKILLS
     //robot is much faster, changing speed to 50 instead of 75
     //diving inch drive by half
-    inchDrive(15, 75, false);
     //balance();
 
 
-    /*deploy();
-    backLift.setVelocity(75, pct);
-    inchDrive(59, 50, false); //Red Mogo //118
-    wait(300, msec); //Short Neutral Goal
+    //deploy();
+    //kk
+    //backLift.setVelocity(75, pct);
+    
+    
+    inchDrive(59, 75, false); //Red Mogo //118 //59
+    wait(500, msec); //Short Neutral Goal
 
-    gyroTurn(-80); //left turn
-    wait(300, msec);
-    inchDrive(13, 55, false); //26
+
+    gyroTurn(-90); //left turn
+    wait(500, msec);
+    inchDrive(13, 75, false); //26
 
     wait(300, msec);
-    gyroTurn(-80);
+    gyroTurn(-90);
     wait(300, msec);
   
-    inchDrive(34, 55, false); //og 69 
+    inchDrive(34, 75, false); //og 69 
     wait(300, msec);
-    inchDrive(33, -55, false); //46
+    inchDrive(33, -75, false); //46
     wait(300, msec);
 
-    gyroTurn(80); //Tall Neutral Goal
+    gyroTurn(90); //Tall Neutral Goal
     wait(300, msec);
-    inchDrive(20, 55, false); //48
+    inchDrive(20, 75, false); //48
     wait(300, msec);
-    gyroTurn(-80);
+    gyroTurn(-90);
     wait(300, msec);
-    inchDrive(34, 55, false); //57
+    inchDrive(34, 75, false); //57
     wait(300, msec);
-    inchDrive(33, -55, false); //8
+    inchDrive(33, -75, false); //8
     wait(100, msec);
 
-    gyroTurn(80); 
+    gyroTurn(90); 
     wait(300, msec);
-    inchDrive(18, 55, false);
-    gyroTurn(-80);
+    inchDrive(18, 75, false);
+    gyroTurn(-90);
     wait(300, msec);
-    inchDrive(28, 55, false);
+    inchDrive(28, 75, false);
 
     wait(200, msec);
     gyroTurn(-3);
     wait(200, msec);
-    inchDrive(58, -55, false);
+    inchDrive(58, -75, false);
     wait(200, msec);
-    gyroTurn(80); 
+    gyroTurn(90); 
     wait(100, msec);
-    inchDrive(5, 55, false);
+    inchDrive(5, 75, false);
     wait(100, msec);
-    gyroTurn(-80); 
+    gyroTurn(-90); 
     wait(100, msec);
-    inchDrive(69, 55, false);
-    */
+    inchDrive(69, 75, false);
+    
     
     break;  
   
@@ -402,28 +412,28 @@ void autonomous(void) {
     wait(200, msec);
     inchDrive(7, -50, false); /*-50*/ //Back up slightly
     wait(200, msec);
-    gyroTurn(-80); //Turn left 90 degrees
+    gyroTurn(-90); //Turn left 90 degrees
     inchDrive(10, 50, false); /*50*/ //Drive to align with the neutral goal
-    gyroTurn(-80); //Turn left 90 degrees to face the neutral goal
+    gyroTurn(-90); //Turn left 90 degrees to face the neutral goal
     inchDrive(30,50, false); /*50*/ //Push the neutral goal back to the homezone
 
     inchDrive(2,-50, false); /*-50*/ //Back up again
-    gyroTurn(80); //Turn right
+    gyroTurn(90); //Turn right
     inchDrive(25, 50, false); //Align with the middle goal
-    gyroTurn(80); //Face the tall goal
+    gyroTurn(90); //Face the tall goal
     inchDrive(30,  50, false); /*50*/  //Push the tall goal to the other side
 
     inchDrive(4, -50, false); /*-50*/ //Back up again
-    gyroTurn(-80); //Turn left
+    gyroTurn(-90); //Turn left
     inchDrive(25, 50, false); /*50*/ //Align with the second short neutral goal
-    gyroTurn(-80); //Face the second short neutral goal
+    gyroTurn(-90); //Face the second short neutral goal
     inchDrive(27, 50, false);/*50*/ //Push the second short neutral goal over
 
     inchDrive(27, -50, false); //Back up to the blue goal
     //backLift.spin(reverse, 100, pct);
     wait(700, msec);
     //backLift.stop();
-    gyroTurn(-80);
+    gyroTurn(-90);
     inchDrive(10, -30, false); //Pick up the blue goal
     //backLift.spin(forward);
     inchDrive(30, 100, false); //Drive to the other side of the field
@@ -485,27 +495,30 @@ void autonomous(void) {
 
     //yellow rush
     inchDrive(32, 75, true);
-    Claw.set(false);
+    Claw.set(true);
     wait(300, msec);
-    Lift.spin(reverse);
-    inchDrive(26, -50, false);
+    Lift.setBrake(hold);
+    wait(300, msec);
+    inchDrive(26, -100, false);
     Lift.stop();
+    wait(100, msec);
     gyroTurn(-45);
     inchDrive(0, 75, true);
     inchDrive(1, 75, true);
-    Claw.set(true);
+    Claw.set(false);
     
     //middle rush
     //inchDrive(2,-75, true);
     wait(200, msec);
-    gyroTurn(86);
-    Claw.set(true);
-  
+    gyroTurn(90);
+
     wait(200, msec);
-    inchDrive(42, 75, true);
-    Claw.set(false);
-    Lift.spin(reverse);
-    inchDrive(38, -50, false);
+    inchDrive(38, 100, true);
+    wait(300, msec);
+    Claw.set(true);
+    Lift.setBrake(hold);
+    wait(300, msec);
+    inchDrive(38, -100, false);
     Lift.stop();
 
     break;
@@ -663,21 +676,21 @@ void autonomous(void) {
 
     //third yellow
     
-   /*
+   
 
     inchDrive(20, 55, false); //48
     wait(300, msec);
-    gyroTurn(-80);
+    gyroTurn(-90);
     wait(300, msec);
     inchDrive(34, 55, false); //57
     wait(300, msec);
     inchDrive(33, -55, false); //8
     wait(100, msec);
 
-    gyroTurn(80); 
+    gyroTurn(90); 
     wait(300, msec);
     inchDrive(18, 55, false);
-    gyroTurn(-80);
+    gyroTurn(-90);
     wait(300, msec);
     inchDrive(28, 55, false);
 
@@ -686,14 +699,14 @@ void autonomous(void) {
     wait(200, msec);
     inchDrive(58, -55, false);
     wait(200, msec);
-    gyroTurn(80); 
+    gyroTurn(90); 
     wait(100, msec);
     inchDrive(5, 55, false);
     wait(100, msec);
-    gyroTurn(-80); 
+    gyroTurn(-90); 
     wait(100, msec);
     inchDrive(69, 55, false);
-    */
+    
     
     break;
   }
