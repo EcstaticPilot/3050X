@@ -471,7 +471,7 @@ void autonomous(void) {
     //wait(100, msec);
     Claw.set(true);
     //wait(150, msec);
-    inchDrive(33, -100, true);
+    inchDrive(25, -100, true);
     wait(200, msec);
     gyroTurn(45);
     inchDrive(7, 75, false);
@@ -504,7 +504,7 @@ void autonomous(void) {
     //wait(100, msec);
     Claw.set(true);
     //wait(150, msec);
-    inchDrive(33, -100, true);
+    inchDrive(25, -100, true);
     wait(200, msec);
     gyroTurn(-45);
     inchDrive(7, 75, false);
