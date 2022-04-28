@@ -22,17 +22,17 @@
 // ---- START VEXCODE CONFIGURED DEVICES ----
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
-// Lift                 motor         5               
+// Lift                 motor         1               
 // RFDrive              motor         20              
-// RMDrive              motor         9               
-// RBDrive              motor         8               
-// LFDrive              motor         1               
-// LMDrive              motor         4               
-// LBDrive              motor         3               
+// RMDrive              motor         18              
+// RBDrive              motor         19              
+// LFDrive              motor         11              
+// LMDrive              motor         13              
+// LBDrive              motor         12              
 // Controller1          controller                    
 // Claw                 digital_out   A               
 // Backlift             digital_out   B               
-// Gyro                 inertial      7               
+// Gyro                 inertial      14              
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
@@ -201,7 +201,9 @@ void inchDrive(float target, int speed, bool claw) {
   while (fabs(c) <= fabs(target)) {
 
     LBDrive.spin(forward, speed, pct);
+    LMDrive.spin(forward, speed, pct);
     RBDrive.spin(forward, speed, pct);
+    RMDrive.spin(forward, speed, pct);
     LFDrive.spin(forward, speed, pct);
     RFDrive.spin(forward, speed, pct);
     Brain.Screen.printAt(1, 40, "inchdrive");
@@ -464,65 +466,70 @@ void autonomous(void) {
     //false= close
     
     //yellow rush
-    inchDrive(32, 75, true);
-    Claw.set(false);
-    wait(300, msec);
-    Lift.spin(reverse);
-    inchDrive(26, -50, false);
-    Lift.stop();
-    gyroTurn(45);
-    inchDrive(0, 75, true);
-    inchDrive(1, 75, true);
+    Lift.setBrake(brake);
+    inchDrive(33, 100, false);
+    //wait(100, msec);
     Claw.set(true);
+    //wait(150, msec);
+    inchDrive(33, -100, true);
+    wait(200, msec);
+    gyroTurn(45);
+    inchDrive(7, 75, false);
+    Claw.set(false);
+    wait(100, msec);
+    inchDrive(5, -75, false);
+    
     
     //middle rush
     //inchDrive(2,-75, true);
     wait(200, msec);
     gyroTurn(-86);
-    Claw.set(true);
-  
+
     wait(200, msec);
-    inchDrive(42, 75, true);
-    Claw.set(false);
-    Lift.spin(reverse);
-    inchDrive(38, -50, false);
-    Lift.stop();
+
+    inchDrive(42, 75, false);
+  
+    Claw.set(true);
    
+    inchDrive(38, -75, true);
+
     break;
 
 
     case 6:
 
     //yellow rush
-    inchDrive(32, 75, true);
+    Lift.setBrake(brake);
+    inchDrive(33, 100, false);
+    //wait(100, msec);
     Claw.set(true);
-    wait(300, msec);
-    Lift.setBrake(hold);
-    wait(300, msec);
-    inchDrive(26, -100, false);
-    Lift.stop();
-    wait(100, msec);
+    //wait(150, msec);
+    inchDrive(33, -100, true);
+    wait(200, msec);
     gyroTurn(-45);
-    inchDrive(0, 75, true);
-    inchDrive(1, 75, true);
+    inchDrive(7, 75, false);
     Claw.set(false);
+    wait(100, msec);
+    inchDrive(5, -75, false);
+    
     
     //middle rush
     //inchDrive(2,-75, true);
     wait(200, msec);
-    gyroTurn(90);
+    gyroTurn(86);
 
     wait(200, msec);
-    inchDrive(38, 100, true);
-    wait(300, msec);
+
+    inchDrive(42, 75, false);
+  
     Claw.set(true);
-    Lift.setBrake(hold);
-    wait(300, msec);
-    inchDrive(38, -100, false);
-    Lift.stop();
+   
+    inchDrive(38, -75, true);
 
     break;
 
+    //SOMETHING ELSE
+    
     case 7:
     //40 POINT LIFT (EMEGENCY USE) (BY SEAN + NO LIFTING)
 
@@ -530,7 +537,7 @@ void autonomous(void) {
 
     //lift 
     inchDrive(32, 75, true);
-    wait(100, msec);
+    wait(200, msec);
     Claw.set(false);
     wait(300, msec);
     Lift.spin(reverse);
@@ -553,7 +560,7 @@ void autonomous(void) {
 
     inchDrive(5, 75, false);
 
-    wait(100, msec);
+    wait(200, msec);
 
     Claw.set(true);    
 
