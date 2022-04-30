@@ -8,7 +8,7 @@
 /*    4/15/22: File is Made (Abby)                                                      */
 /*                                                                                      */
 /*    Changes Made:                                                                     */
-/*  Need to fix the claw == stronger for Yellow Rush                                    */
+/*    4/29 Voltage Drive (Both Match Auton Sides (Work)                                 */
 /*                                                                                      */
 /*                                                                                      */
 /*                                                                                      */
@@ -45,7 +45,7 @@ float d = 4.0; //Global Wheel Diameter
 float pi = 3.1415926535897932384626;
 float g = 7/5;
 
-int autonSelect = 6 ; //Default // THE CASE
+int autonSelect = 6; //Default // THE CASE
 int autonMin = 0;
 int autonMax = 8;
 
