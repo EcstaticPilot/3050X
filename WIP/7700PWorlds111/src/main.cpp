@@ -64,8 +64,8 @@ int autonMax = 8;
 
 //CLAW:
 
-  //TRUE = OPEN
-  //FALSE = CLOSE
+  //TRUE = CLOSE
+  //FALSE = OPEN
 
 //GYRO:
 
@@ -179,10 +179,8 @@ void autonDriver(int wt, int lspeed, int rspeed, int liftspeed, bool claw, int C
 wait(wt, msec);
 }
 
-void lift_up(int speed){
+void lift_up(int speed, int wt){
   Lift.spin(forward, speed, pct);
- 
-  wait(500, msec);
   //Lift.stop();
 }
 
@@ -240,7 +238,7 @@ void Drive(int wt, int lspeed, int rspeed,
 
 void gyroTurn(float target) {
   while (Gyro.isCalibrating()) {
-    // wait for Gyro Calibration , sleep but awwllow other tasks to run
+    // wait for Gyro Calibration , sleep but allow other tasks to run
     //90 = right, -90 = left
     this_thread::sleep_for(20);
   }
@@ -460,8 +458,7 @@ void autonomous(void) {
 
     case 5:
 
-    //testing
-
+  
     //true = open
     //false= close
     
@@ -494,11 +491,10 @@ void autonomous(void) {
     inchDrive(38, -75, true);
 
     break;
-
-
+    
     case 6:
 
-    //yellow rush
+    //yellow rush rushing through mmy butthole
     Lift.setBrake(brake);
     inchDrive(33, 100, false);
     //wait(100, msec);
@@ -507,11 +503,10 @@ void autonomous(void) {
     inchDrive(25, -100, true);
     wait(200, msec);
     gyroTurn(-45);
-    inchDrive(7, 75, false);
+    inchDrive(7, 75, false); 
     Claw.set(false);
     wait(100, msec);
     inchDrive(5, -75, false);
-    
     
     //middle rush
     //inchDrive(2,-75, true);
@@ -520,7 +515,7 @@ void autonomous(void) {
 
     wait(200, msec);
 
-    inchDrive(42, 75, false);
+    inchDrive(42, 75, false); 
   
     Claw.set(true);
    
@@ -529,12 +524,11 @@ void autonomous(void) {
     break;
 
     //SOMETHING ELSE
-    
+    //j like deex nuts
+
     case 7:
     //40 POINT LIFT (EMEGENCY USE) (BY SEAN + NO LIFTING)
-
-    
-
+   
     //lift 
     inchDrive(32, 75, true);
     wait(200, msec);
@@ -542,8 +536,6 @@ void autonomous(void) {
     wait(300, msec);
     Lift.spin(reverse);
     
-  
-
     gyroTurn(-75);
     wait(100, msec);
     inchDrive(25, 75, false);
@@ -553,7 +545,7 @@ void autonomous(void) {
     inchDrive(23 , 75, false);
     wait(400, msec);
     
-    lift_up(100);
+    lift_up(100, 100);
     wait(1900, msec);
 
     Lift.setBrake(hold);
@@ -568,7 +560,6 @@ void autonomous(void) {
 
     inchDrive(10, -75, false);
 
-
     lift_down(100);
     wait(2000, msec);
 
@@ -581,18 +572,29 @@ void autonomous(void) {
     */
     break;
 
-
     case 8:
 
     //ABBY LIFTING SKILLS
 
     //lift back lift revserse
 
-    
+    //TRUE = CLOSE
+    //FALSE = OPEN
+
     //backLift.spin(reverse, 100, pct);   
 
     //backLift.setVelocity(75, pct);
     //backLift.spinFor(reverse, 700, degrees, false);
+
+    lift_up(100, 10);
+    
+    wait(700, msec);
+
+    Lift.setBrake(hold);
+
+    inchDrive(8, 75, true);
+
+
     inchDrive(59, 50, false); //Red Mogo //118
     wait(300, msec); //Short Neutral Goal
 
@@ -609,32 +611,32 @@ void autonomous(void) {
 
     //yellow lift 
 
-    Claw.set(false);
+    Claw.set(true);
     wait(300, msec);
     Lift.spin(reverse);
 
-    inchDrive(16, 55, false); 
+    inchDrive(16, 55, true); 
     wait(100, msec);
 
-    gyroTurn(58);    
+    gyroTurn(58);   
     wait(100, msec);
-    inchDrive(15, 75, false);
+    inchDrive(15, 75, true);
 
-    wait(100, msec);
-    gyroTurn(-58); 
+    wait(100, msec); 
+    gyroTurn(-58);
 
     wait(100,  msec);
 
-    lift_up(100);
+    lift_up(100, 100);
     wait(700, msec);
 
     Lift.setBrake(hold);
 
-    inchDrive(8, 75, false);
+    inchDrive(8, 75, true);
 
     wait(100, msec);
 
-    Claw.set(true); 
+    Claw.set(false); 
 
 
     //2nd yellow goal
@@ -656,7 +658,7 @@ void autonomous(void) {
 
     //claw grabbing
 
-    Claw.set(false);
+    Claw.set(true);
 
     wait(300, msec);
 
@@ -668,9 +670,9 @@ void autonomous(void) {
 
     wait(300, msec);
 
-    inchDrive(30, 55, false);
+    inchDrive(30, 55, true);
     
-    lift_up(100);
+    lift_up(100, 100);
     wait(700, msec);
 
     Lift.setBrake(hold);
@@ -679,7 +681,7 @@ void autonomous(void) {
 
     wait(100, msec);
 
-    Claw.set(true); 
+    Claw.set(false); 
 
     //third yellow
     
@@ -754,6 +756,31 @@ void usercontrol(void) {
     }
 
     //Drive Code
+    //Voltage Drive
+    
+    if(!reversed){
+      Drive(10, Controller1.Axis3.position(pct)*120, Controller1.Axis2.position(pct)*120,true);
+      
+      /*LBDrive.spin(forward, Controller1.Axis3.position(pct)*120, voltageUnits::mV);
+      LFDrive.spin(forward, Controller1.Axis3.position(pct)*120, voltageUnits::mV);
+      LMDrive.spin(forward, Controller1.Axis3.position(pct)*120, voltageUnits::mV);
+      RBDrive.spin(forward, Controller1.Axis2.position(pct)*120, voltageUnits::mV);
+      RFDrive.spin(forward, Controller1.Axis2.position(pct)*120, voltageUnits::mV);
+      RMDrive.spin(forward, Controller1.Axis2.position(pct)*120, voltageUnits::mV);
+      */
+    }
+    else if(reversed){
+      Drive(10, -(Controller1.Axis2.position(pct)*120), -(Controller1.Axis3.position(pct)*120),true);
+
+      /*LBDrive.spin(reverse, Controller1.Axis2.position(pct)*120, voltageUnits::mV);
+      LFDrive.spin(reverse, Controller1.Axis2.position(pct)*120, voltageUnits::mV);
+      LMDrive.spin(reverse, Controller1.Axis2.position(pct)*120, voltageUnits::mV);
+      RBDrive.spin(reverse, Controller1.Axis3.position(pct)*120, voltageUnits::mV);
+      RFDrive.spin(reverse, Controller1.Axis3.position(pct)*120, voltageUnits::mV);
+      RMDrive.spin(reverse, Controller1.Axis3.position(pct)*120, voltageUnits::mV);
+      */
+    }
+    /*
     if(!reversed){
       LBDrive.spin(forward, Controller1.Axis3.position(pct), pct);
       LFDrive.spin(forward, Controller1.Axis3.position(pct), pct);
@@ -770,6 +797,7 @@ void usercontrol(void) {
       RFDrive.spin(reverse, Controller1.Axis3.position(pct), pct);
       RMDrive.spin(reverse, Controller1.Axis3.position(pct), pct);
     }
+    */
       
       //Lift Code
     if((Controller1.ButtonL1.pressing() && !reversed) || (Controller1.ButtonUp.pressing() && reversed)){
