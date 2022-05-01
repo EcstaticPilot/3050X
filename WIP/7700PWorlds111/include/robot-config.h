@@ -14,6 +14,7 @@ extern controller Controller1;
 extern digital_out Claw;
 extern digital_out Backlift;
 extern inertial Gyro;
+extern motor ringIntake;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.

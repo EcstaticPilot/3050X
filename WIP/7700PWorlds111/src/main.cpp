@@ -33,6 +33,7 @@
 // Claw                 digital_out   A               
 // Backlift             digital_out   B               
 // Gyro                 inertial      14              
+// ringIntake           motor         2               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
@@ -724,10 +725,14 @@ void autonomous(void) {
 
 void usercontrol(void) {
 
-   bool reversed = false;
-   bool tiltedUp = false;
+   bool 
+      reversed = false;
+      tiltedUp = false;
    bool aDown = 0; //Variable for when you're trying to reverse
    bool bDown = 0; //Variable for when you're locking the drive
+   bool rightPressing = false;
+   bool leftPressing = false;
+   
    Lift.setBrake(hold);
 
   while (1) {
@@ -839,6 +844,27 @@ void usercontrol(void) {
     else if (Controller1.ButtonUp.pressing())
     {
     Backlift.set(false);
+    }
+
+    //Ring Intake
+    //toggle
+
+    if (Controller1.ButtonLeft.pressing() && !leftPressing){
+      ringIntake.spin(fwd, 100, pct);
+      leftPressing = true;
+    }
+
+    else if (Controller1.ButtonLeft.pressing()) {
+      leftPressing = false;
+    }
+
+    if (Controller1.ButtonRight.pressing() && !rightPressing){
+      ringIntake.spin(reverse, 100, pct);
+      rightPressing = true;
+    }
+
+    else if(Controller1.ButtonRight.pressing() && !rightPressing){
+      rightPressing = false;
     }
 
     //Locking Drive
