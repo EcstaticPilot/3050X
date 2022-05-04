@@ -19,7 +19,7 @@ controller Controller1 = controller(primary);
 digital_out Claw = digital_out(Brain.ThreeWirePort.A);
 digital_out Backlift = digital_out(Brain.ThreeWirePort.B);
 inertial Gyro = inertial(PORT14);
-motor ringIntake = motor(PORT2, ratio18_1, false);
+motor ringIntake = motor(PORT2, ratio18_1, true);
 
 // VEXcode generated functions
 // define variable for remote controller enable/disable

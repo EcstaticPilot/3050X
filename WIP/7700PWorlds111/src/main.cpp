@@ -61,6 +61,7 @@ int autonMax = 8;
   //CASE 6 = YELLOW RUSH + MIDDLE RUSH (DEPOSITING TO LEFT // USED ON LEFT  SIDE)
   //CASE 7 = 40 POINT LIFT (EMERGENCY USE)
   //CASE 8 = ABBY LIFTING SKILLS
+  //CASE 9 = HALF AUTON WIN POINT
 
 
 //CLAW:
@@ -217,13 +218,14 @@ void Drive(int wt, int lspeed, int rspeed,
            bool driveVolts = false) { // bool = optional var
   if (driveVolts == true) {
     lspeed*=120;
-    lspeed*=120;
+    rspeed*=120;
     LBDrive.spin(forward, lspeed , voltageUnits::mV);
     LFDrive.spin(forward, lspeed , voltageUnits::mV);
+    LMDrive.spin(forward, lspeed, voltageUnits::mV);
     RBDrive.spin(forward, rspeed , voltageUnits::mV);
     RFDrive.spin(forward, rspeed , voltageUnits::mV);
     RMDrive.spin(forward, rspeed, voltageUnits::mV);
-    LMDrive.spin(forward, rspeed, voltageUnits::mV);
+    
 
   } else {
 
@@ -686,8 +688,7 @@ void autonomous(void) {
 
     //third yellow
     
-   
-
+  
     inchDrive(20, 55, false); //48
     wait(300, msec);
     gyroTurn(-90);
@@ -717,21 +718,29 @@ void autonomous(void) {
     wait(100, msec);
     inchDrive(69, 55, false);
     
-    
     break;
+
+    case 9:
+
+    //half auton win point
+    Claw.set(true);
+    wait(100, msec);
+    inchDrive(15, 100, false);
+    wait(100, msec);
+    Claw.set(false);
+
+   break;
+
   }
 }
 
 
 void usercontrol(void) {
 
-   bool 
-      reversed = false;
-      tiltedUp = false;
+   bool reversed = false;
+   bool tiltedUp = false;
    bool aDown = 0; //Variable for when you're trying to reverse
    bool bDown = 0; //Variable for when you're locking the drive
-   bool rightPressing = false;
-   bool leftPressing = false;
    
    Lift.setBrake(hold);
 
@@ -764,26 +773,26 @@ void usercontrol(void) {
     //Voltage Drive
     
     if(!reversed){
-      Drive(10, Controller1.Axis3.position(pct)*120, Controller1.Axis2.position(pct)*120,true);
+      // Drive(10, Controller1.Axis3.position(pct), Controller1.Axis2.position(pct),true);
       
-      /*LBDrive.spin(forward, Controller1.Axis3.position(pct)*120, voltageUnits::mV);
+      LBDrive.spin(forward, Controller1.Axis3.position(pct)*120, voltageUnits::mV);
       LFDrive.spin(forward, Controller1.Axis3.position(pct)*120, voltageUnits::mV);
       LMDrive.spin(forward, Controller1.Axis3.position(pct)*120, voltageUnits::mV);
       RBDrive.spin(forward, Controller1.Axis2.position(pct)*120, voltageUnits::mV);
       RFDrive.spin(forward, Controller1.Axis2.position(pct)*120, voltageUnits::mV);
       RMDrive.spin(forward, Controller1.Axis2.position(pct)*120, voltageUnits::mV);
-      */
+      
     }
     else if(reversed){
-      Drive(10, -(Controller1.Axis2.position(pct)*120), -(Controller1.Axis3.position(pct)*120),true);
+      // Drive(10, -(Controller1.Axis2.position(pct)), -(Controller1.Axis3.position(pct)),true);
 
-      /*LBDrive.spin(reverse, Controller1.Axis2.position(pct)*120, voltageUnits::mV);
+      LBDrive.spin(reverse, Controller1.Axis2.position(pct)*120, voltageUnits::mV);
       LFDrive.spin(reverse, Controller1.Axis2.position(pct)*120, voltageUnits::mV);
       LMDrive.spin(reverse, Controller1.Axis2.position(pct)*120, voltageUnits::mV);
       RBDrive.spin(reverse, Controller1.Axis3.position(pct)*120, voltageUnits::mV);
       RFDrive.spin(reverse, Controller1.Axis3.position(pct)*120, voltageUnits::mV);
       RMDrive.spin(reverse, Controller1.Axis3.position(pct)*120, voltageUnits::mV);
-      */
+      
     }
     /*
     if(!reversed){
@@ -849,23 +858,16 @@ void usercontrol(void) {
     //Ring Intake
     //toggle
 
-    if (Controller1.ButtonLeft.pressing() && !leftPressing){
-      ringIntake.spin(fwd, 100, pct);
-      leftPressing = true;
-    }
-
-    else if (Controller1.ButtonLeft.pressing()) {
-      leftPressing = false;
-    }
-
-    if (Controller1.ButtonRight.pressing() && !rightPressing){
+    if (Controller1.ButtonLeft.pressing()){
       ringIntake.spin(reverse, 100, pct);
-      rightPressing = true;
+      
     }
 
-    else if(Controller1.ButtonRight.pressing() && !rightPressing){
-      rightPressing = false;
+    if (Controller1.ButtonRight.pressing()){
+      ringIntake.spin(forward, 100, pct);
+      
     }
+
 
     //Locking Drive
     if (Controller1.ButtonX.pressing()){
