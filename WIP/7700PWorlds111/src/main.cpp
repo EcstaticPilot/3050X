@@ -46,9 +46,9 @@ float d = 4.0; //Global Wheel Diameter
 float pi = 3.1415926535897932384626;
 float g = 7/5;
 
-int autonSelect = 6; //Default // THE CASE
+int autonSelect = 0; //Default // THE CASE
 int autonMin = 0;
-int autonMax = 8;
+int autonMax = 20;
 
 //GUI:
 
@@ -57,12 +57,16 @@ int autonMax = 8;
   //CASE 2 = 80 POINT SEAN SKILLS
   //CASE 3 = MIDDLE RUSH
   //CASE 4 = DO NOTHING AUTON
-  //CASE 5 = YELLOW RUSH + MIDDLE RUSH (DEPOSITING TO RIGHT // USED ON RIGHT SIDE)
-  //CASE 6 = YELLOW RUSH + MIDDLE RUSH (DEPOSITING TO LEFT // USED ON LEFT  SIDE)
+  //CASE 5 = YELLOW RUSH + MIDDLE RUSH (DEPOSITING TO LEFT // USED ON LEFT SIDE)
+  //CASE 6 = YELLOW RUSH + MIDDLE RUSH (DEPOSITING TO RIGHT // USED ON RIGHT  SIDE)
   //CASE 7 = 40 POINT LIFT (EMERGENCY USE)
   //CASE 8 = ABBY LIFTING SKILLS
   //CASE 9 = HALF AUTON WIN POINT
-
+  //CASE 10: BACK EMERGENCY YELLOW RUSH
+  //CASE 11: WIN POINT (YELLOW RUSH +  AND RINGS) ON // RIGHT SIDE
+  //CASE 12: WIN POINT (YELLOW RUSH + AND RINGS) ON // LEFT SIDE
+  //CASE 13: EVERYTHING RUSH (MIDDLE, YELLOW, WINPOINT + RINGS) // RIGHT SIDE
+  //CASE 14: EVERYTHING RUSH (MIDDLE, YELLOW, WINPOINT + RINGS) // LEFT SIDE
 
 //CLAW:
 
@@ -300,7 +304,7 @@ void autonomous(void) {
     //wait(100, msec);
     Claw.set(true);
     //wait(150, msec);
-    inchDrive(33, -100, true);
+    inchDrive(38, -100, true);
     wait(200, msec);
 
     /*
@@ -460,56 +464,27 @@ void autonomous(void) {
     //YELLOW RUSH + MIDDLE RUSH (DEPOSITING TO RIGHT // USED ON RIGHT SIDE)
 
     case 5:
-
   
-    //true = open
-    //false= close
+    //true = close
+    //false= open
     
     //yellow rush
     Lift.setBrake(brake);
     inchDrive(33, 100, false);
     //wait(100, msec);
     Claw.set(true);
+    wait(200, msec);
     //wait(150, msec);
-    inchDrive(25, -100, true);
-    wait(200, msec);
-    gyroTurn(45);
-    inchDrive(7, 75, false);
-    Claw.set(false);
-    wait(100, msec);
-    inchDrive(5, -75, false);
-    
-    
-    //middle rush
-    //inchDrive(2,-75, true);
-    wait(200, msec);
-    gyroTurn(-86);
-
-    wait(200, msec);
-
-    inchDrive(42, 75, false);
-  
-    Claw.set(true);
-   
     inchDrive(38, -75, true);
-
-    break;
-    
-    case 6:
-
-    //yellow rush rushing through mmy butthole
-    Lift.setBrake(brake);
-    inchDrive(33, 100, false);
-    //wait(100, msec);
-    Claw.set(true);
-    //wait(150, msec);
-    inchDrive(25, -100, true);
     wait(200, msec);
     gyroTurn(-45);
-    inchDrive(7, 75, false); 
-    Claw.set(false);
+    wait(400, msec);
+    inchDrive(5, 75, false);
     wait(100, msec);
+    Claw.set(false);
+    wait(200, msec);
     inchDrive(5, -75, false);
+    
     
     //middle rush
     //inchDrive(2,-75, true);
@@ -518,10 +493,52 @@ void autonomous(void) {
 
     wait(200, msec);
 
-    inchDrive(42, 75, false); 
-  
+    inchDrive(45, 75, false); //42
+
+    wait(200, msec);
+
+    //true = close
+    //false= open
+
     Claw.set(true);
+
+    wait(300, msec);
    
+    inchDrive(38, -75, true);
+
+    break;
+    
+    case 6:
+    //true = close
+    //false= open
+    //yellow rush rushing through my butthole
+    Lift.setBrake(brake);
+    inchDrive(33, 100, false);
+    //wait(100, msec);
+    Claw.set(true);
+    wait(200, msec);
+    //wait(150, msec);
+    inchDrive(38, -75, true);
+    wait(200, msec);
+    gyroTurn(45);
+    wait(400, msec);
+    inchDrive(5, 75, false);
+    wait(100, msec);
+    Claw.set(false);
+    wait(200, msec);
+    inchDrive(5, -75, false);
+    
+    //middle rush
+    //inchDrive(2,-75, true);
+    wait(200, msec);
+    gyroTurn(-86);
+    wait(200, msec);
+    inchDrive(45, 75, false); //42
+    wait(200, msec);
+    //true = close
+    //false= open
+    Claw.set(true);
+    wait(300, msec);
     inchDrive(38, -75, true);
 
     break;
@@ -731,6 +748,176 @@ void autonomous(void) {
 
    break;
 
+
+    case 10:
+   //closes Backlift.set(false);
+   inchDrive(33, -75, false);
+   Backlift.set(false);
+   inchDrive(33, 75, false);
+   wait(500, msec);
+
+
+    break;
+
+    case 11: //win Point
+    //yellow rush
+
+    Lift.setBrake(brake);
+    inchDrive(33, 100, false);
+    //wait(100, msec);
+    Claw.set(true);
+    wait(200, msec);
+    inchDrive(23, -75, true);
+    wait(300, msec);
+    gyroTurn(-90);
+    wait(300, msec);
+    Backlift.set(true);
+    wait(100, msec);
+    inchDrive(15, -75, false);
+    wait(300, msec);
+    Claw.set(true);
+    wait(100, msec);
+    Backlift.set(false);
+    wait(200, msec);
+    
+    ringIntake.spin(forward, 100, pct);
+    inchDrive(7, 75, false);
+
+    break;
+
+
+    case 12:
+
+    Lift.setBrake(brake);
+    inchDrive(33, 100, false);
+    //wait(100, msec);
+    Claw.set(true);
+    wait(200, msec);
+    inchDrive(23, -75, true);
+    wait(300, msec);
+    gyroTurn(90);
+    wait(300, msec);
+    Backlift.set(true);
+    wait(100, msec);
+    inchDrive(15, -75, false);
+    wait(300, msec);
+    Claw.set(true);
+    wait(100, msec);
+    Backlift.set(false);
+    wait(200, msec);
+    
+    ringIntake.spin(forward, 100, pct);
+    inchDrive(7, 75, false);
+
+    break;
+
+    case 13: //RIGHT SIDE
+
+    //GYRO:
+
+  //RIGHT = 90
+  //LEFT = -90
+    Lift.setBrake(brake);
+    inchDrive(33, 100, false);
+    //wait(100, msec);
+    Claw.set(true);
+    wait(200, msec);
+    //wait(150, msec);
+    inchDrive(38, -75, true);
+    wait(200, msec);
+    gyroTurn(45);
+    wait(400, msec);
+    inchDrive(5, 75, false);
+    wait(100, msec);
+    Claw.set(false);
+    wait(200, msec);
+    inchDrive(5, -75, false);
+    
+    //middle rush
+    //inchDrive(2,-75, true);
+    wait(200, msec);
+    gyroTurn(-86);
+    wait(200, msec);
+    inchDrive(45, 75, false); //42
+    wait(200, msec);
+    //true = close
+    //false= open
+    Claw.set(true);
+    wait(300, msec);
+    inchDrive(22, -75, true);
+
+    wait(500, msec);
+
+    gyroTurn(-40);
+    wait(300, msec);
+    Backlift.set(true);
+    wait(100, msec);
+    inchDrive(15, -75, false);
+    wait(300, msec);
+    Claw.set(true);
+    wait(100, msec);
+    Backlift.set(false);
+    wait(200, msec);
+    
+    ringIntake.spin(forward, 100, pct);
+    inchDrive(7, 75, false);
+
+    
+    break;
+
+
+    case 14: //LEFT SIDE
+
+    //RIGHT = 90
+  //LEFT = -90
+    Lift.setBrake(brake);
+    inchDrive(33, 100, false);
+    //wait(100, msec);
+    Claw.set(true);
+    wait(200, msec);
+    //wait(150, msec);
+    inchDrive(38, -75, true);
+    wait(200, msec);
+    gyroTurn(-45);
+    wait(400, msec);
+    inchDrive(5, 75, false);
+    wait(100, msec);
+    Claw.set(false);
+    wait(200, msec);
+    inchDrive(5, -75, false);
+    
+    //middle rush
+    //inchDrive(2,-75, true);
+    wait(200, msec);
+    gyroTurn(86);
+    wait(200, msec);
+    inchDrive(45, 75, false); //42
+    wait(200, msec);
+    //true = close
+    //false= open
+    Claw.set(true);
+    wait(300, msec);
+    inchDrive(22, -75, true);
+
+    wait(500, msec);
+
+    gyroTurn(40);
+    wait(300, msec);
+    Backlift.set(true);
+    wait(100, msec);
+    inchDrive(15, -75, false);
+    wait(300, msec);
+    Claw.set(true);
+    wait(100, msec);
+    Backlift.set(false);
+    wait(200, msec);
+    
+    ringIntake.spin(forward, 100, pct);
+    inchDrive(7, 75, false);
+
+
+    break;
+
   }
 }
 
@@ -741,6 +928,7 @@ void usercontrol(void) {
    bool tiltedUp = false;
    bool aDown = 0; //Variable for when you're trying to reverse
    bool bDown = 0; //Variable for when you're locking the drive
+   bool backLifttoggle = false;
    
    Lift.setBrake(hold);
 
@@ -846,13 +1034,22 @@ void usercontrol(void) {
     }
 
     //Back Lift
-    if (Controller1.ButtonDown.pressing())
+    //up arrow toggles back lift if the back lift is open close it if its closed open it  ll down arrow stops intake
+    if (Controller1.ButtonUp.pressing()) // opens
     {
-    Backlift.set(true);
+      backLifttoggle = !backLifttoggle;
+
+      Backlift.set(backLifttoggle);
+
+      while (Controller1.ButtonUp.pressing()) {
+        wait(10, msec);
+      }
+
     }
-    else if (Controller1.ButtonUp.pressing())
+
+    if (Controller1.ButtonDown.pressing()) //ringIntake
     {
-    Backlift.set(false);
+      ringIntake.stop();
     }
 
     //Ring Intake
