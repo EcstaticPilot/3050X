@@ -23,7 +23,7 @@
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
 // Lift                 motor         1               
-// RFDrive              motor         20              
+// RFDrive              motor         16              
 // RMDrive              motor         18              
 // RBDrive              motor         19              
 // LFDrive              motor         11              
@@ -46,7 +46,7 @@ float d = 4.0; //Global Wheel Diameter
 float pi = 3.1415926535897932384626;
 float g = 7/5;
 
-int autonSelect = 0; //Default // THE CASE
+int autonSelect = 13; //Default // THE CASE
 int autonMin = 0;
 int autonMax = 20;
 
@@ -141,7 +141,6 @@ void pre_auton(void) {
   Brain.Screen.printAt(20, 50, "RF Temp %f ", RFDrive.temperature(pct));
   Brain.Screen.printAt(20, 60, "RB Temp % f", RBDrive.temperature(pct));
   Brain.Screen.printAt(20, 70 , "RU Temp % f", RMDrive.temperature(pct));
-  
 }
 
 void brakeDrive(){
@@ -173,7 +172,6 @@ void setCoast(){
 
 void autonDriver(int wt, int lspeed, int rspeed, int liftspeed, bool claw, int Clawspin, int moggs) 
 {
-
   LBDrive.spin(forward, lspeed, pct);
   RBDrive.spin(forward, rspeed, pct);
   LFDrive.spin(forward, lspeed, pct);
@@ -181,7 +179,7 @@ void autonDriver(int wt, int lspeed, int rspeed, int liftspeed, bool claw, int C
   Lift.spin(forward, liftspeed, pct);
   Claw.set(claw);
   
-  //backlift.spin(forward, moggs, pct);
+ //backlift.spin(forward, moggs, pct);
 wait(wt, msec);
 }
 
@@ -194,7 +192,6 @@ void lift_down(int speed){
   Lift.spin(reverse, speed, pct);
   wait(500, msec);
   Lift.stop();
-  
 }
 
 void inchDrive(float target, int speed, bool claw) {
@@ -275,10 +272,26 @@ void gyroTurn(float target) {
   //Brain.Screen.clearScreen();
 }
 
+void clawOpen(){
+
+  Claw.set(false);
+}
+
+void clawClose(){
+
+  Claw.set(true);
+}
 
 
+void backLiftopen(){
+  Backlift.set(true);
+}
 
-////////////////////////////////////////////////////////////////EOF////////////////////////////////////////////////////////////////////////////////
+void backLiftclose(){
+  Backlift.set(false);
+}
+
+//////////////////////////////////////////////////////////////////////////EOF//////////////////////////////////////////////////////////////////////
 
 
 
@@ -410,9 +423,7 @@ void autonomous(void) {
     wait(100, msec);
     inchDrive(69, 75, false);
     
-    
     break;  
-  
    
     case 2: // SEAN SKILLS 3-12-22 Skills
     inchDrive(60, 40, false); /* og = 40 */ //Push the red alliance goal to the other sidess
@@ -489,7 +500,7 @@ void autonomous(void) {
     //middle rush
     //inchDrive(2,-75, true);
     wait(200, msec);
-    gyroTurn(86);
+    gyroTurn(83);
 
     wait(200, msec);
 
@@ -531,7 +542,7 @@ void autonomous(void) {
     //middle rush
     //inchDrive(2,-75, true);
     wait(200, msec);
-    gyroTurn(-86);
+    gyroTurn(-81);
     wait(200, msec);
     inchDrive(45, 75, false); //42
     wait(200, msec);
@@ -780,8 +791,12 @@ void autonomous(void) {
     Backlift.set(false);
     wait(200, msec);
     
-    ringIntake.spin(forward, 100, pct);
-    inchDrive(7, 75, false);
+    ringIntake.spin(reverse, 100, pct);
+    inchDrive(6, 75, false);
+
+    Backlift.set(true);
+    wait(200, msec);
+    inchDrive(5, 75, false);
 
     break;
 
@@ -806,8 +821,12 @@ void autonomous(void) {
     Backlift.set(false);
     wait(200, msec);
     
-    ringIntake.spin(forward, 100, pct);
-    inchDrive(7, 75, false);
+    ringIntake.spin(reverse, 100, pct);
+    inchDrive(6, 75, false);
+
+    Backlift.set(true);
+    wait(200, msec);
+    inchDrive(5, 75, false);
 
     break;
 
@@ -815,8 +834,8 @@ void autonomous(void) {
 
     //GYRO:
 
-  //RIGHT = 90
-  //LEFT = -90
+   //RIGHT = 90
+   //LEFT = -90
     Lift.setBrake(brake);
     inchDrive(33, 100, false);
     //wait(100, msec);
@@ -836,7 +855,7 @@ void autonomous(void) {
     //middle rush
     //inchDrive(2,-75, true);
     wait(200, msec);
-    gyroTurn(-86);
+    gyroTurn(-83);
     wait(200, msec);
     inchDrive(45, 75, false); //42
     wait(200, msec);
@@ -848,18 +867,18 @@ void autonomous(void) {
 
     wait(500, msec);
 
-    gyroTurn(-40);
+    gyroTurn(-50);
     wait(300, msec);
     Backlift.set(true);
     wait(100, msec);
-    inchDrive(15, -75, false);
+    inchDrive(20, -75, false);
     wait(300, msec);
     Claw.set(true);
     wait(100, msec);
     Backlift.set(false);
     wait(200, msec);
     
-    ringIntake.spin(forward, 100, pct);
+    ringIntake.spin(reverse, 100, pct);
     inchDrive(7, 75, false);
 
     
@@ -869,7 +888,7 @@ void autonomous(void) {
     case 14: //LEFT SIDE
 
     //RIGHT = 90
-  //LEFT = -90
+    //LEFT = -90
     Lift.setBrake(brake);
     inchDrive(33, 100, false);
     //wait(100, msec);
@@ -889,7 +908,7 @@ void autonomous(void) {
     //middle rush
     //inchDrive(2,-75, true);
     wait(200, msec);
-    gyroTurn(86);
+    gyroTurn(83);
     wait(200, msec);
     inchDrive(45, 75, false); //42
     wait(200, msec);
@@ -912,11 +931,10 @@ void autonomous(void) {
     Backlift.set(false);
     wait(200, msec);
     
-    ringIntake.spin(forward, 100, pct);
+    ringIntake.spin(reverse, 100, pct);
     inchDrive(7, 75, false);
 
-
-    break;
+   break;
 
   }
 }
@@ -1053,16 +1071,14 @@ void usercontrol(void) {
     }
 
     //Ring Intake
-    //toggle
+    //Toggle
 
     if (Controller1.ButtonLeft.pressing()){
       ringIntake.spin(reverse, 100, pct);
-      
     }
 
     if (Controller1.ButtonRight.pressing()){
       ringIntake.spin(forward, 100, pct);
-      
     }
 
 
@@ -1073,7 +1089,6 @@ void usercontrol(void) {
     if (Controller1.ButtonY.pressing()){
       setCoast();
     }
-
     wait(20, msec); 
                   
   }
