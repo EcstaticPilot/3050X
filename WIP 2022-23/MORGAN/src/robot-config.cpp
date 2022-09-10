@@ -19,6 +19,7 @@ motor RB = motor(PORT5, ratio18_1, true);
 motor Intake1 = motor(PORT9, ratio18_1, true);
 motor Roller = motor(PORT7, ratio18_1, false);
 inertial Gyro = inertial(PORT2);
+digital_out Endgame1 = digital_out(Brain.ThreeWirePort.B);
 
 // VEXcode generated functions
 // define variable for remote controller enable/disable

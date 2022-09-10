@@ -14,6 +14,7 @@ extern motor RB;
 extern motor Intake1;
 extern motor Roller;
 extern inertial Gyro;
+extern digital_out Endgame1;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
