@@ -9,16 +9,16 @@ brain  Brain;
 
 // VEXcode device constructors
 controller Controller1 = controller(primary);
-motor F1 = motor(PORT1, ratio6_1, false);
-motor F2 = motor(PORT8, ratio6_1, true);
-digital_out Injector = digital_out(Brain.ThreeWirePort.A);
-motor LF = motor(PORT18, ratio18_1, false);
-motor LB = motor(PORT12, ratio18_1, false);
-motor RF = motor(PORT10, ratio18_1, true);
-motor RB = motor(PORT5, ratio18_1, true);
-motor Intake1 = motor(PORT9, ratio18_1, true);
-motor Roller = motor(PORT7, ratio18_1, false);
-inertial Gyro = inertial(PORT2);
+motor F1 = motor(PORT6, ratio6_1, false);
+motor F2 = motor(PORT5, ratio6_1, true);
+digital_out Injector = digital_out(Brain.ThreeWirePort.H);
+motor LF = motor(PORT10, ratio18_1, false);
+motor LB = motor(PORT8, ratio18_1, false);
+motor RF = motor(PORT9, ratio18_1, true);
+motor RB = motor(PORT7, ratio18_1, true);
+motor Intake1 = motor(PORT21, ratio18_1, true);
+motor Roller = motor(PORT20, ratio18_1, false);
+inertial Gyro = inertial(PORT11);
 digital_out Endgame1 = digital_out(Brain.ThreeWirePort.B);
 
 // VEXcode generated functions

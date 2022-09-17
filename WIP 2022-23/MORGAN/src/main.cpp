@@ -12,16 +12,16 @@
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
 // Controller1          controller                    
-// F1                   motor         1               
-// F2                   motor         8               
-// Injector             digital_out   A               
-// LF                   motor         18              
-// LB                   motor         12              
-// RF                   motor         10              
-// RB                   motor         5               
-// Intake1              motor         9               
-// Roller               motor         7               
-// Gyro                 inertial      2               
+// F1                   motor         6               
+// F2                   motor         5               
+// Injector             digital_out   H               
+// LF                   motor         10              
+// LB                   motor         8               
+// RF                   motor         9               
+// RB                   motor         7               
+// Intake1              motor         21              
+// Roller               motor         20              
+// Gyro                 inertial      11              
 // Endgame1             digital_out   B               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
