@@ -41,7 +41,7 @@ int Y = 60;           // Flywheel target speed set with button Y
 int X = 100;          // Flywheel target speed set with button X
 
 float Dtraveled = 0;
-float Pi = 3.14159;
+float Pi = 3.14159265358979;
 float D = 3.25;
 float C = Pi * D;
 
@@ -222,7 +222,8 @@ void spinRoller(float speed, float time) {
 }
 
 // Accelerates the flywheel to speed, and Flashes green when ready to launch
-/*void Flywheel(int T){ //T is target speed in percent
+// maddie is so mean A;SLDKFJL;ASKDFJ
+void Flywheel(int T){ //T is target speed in percent
 cancel1=false;
 int Fspeed=F2.velocity(percent);
 while((Fspeed<T-5 or Fspeed>T+5)&&!cancel1){
@@ -244,7 +245,7 @@ void launch(){ //used for launching the disc with the piston when ready
     Injector.set(true);
     wait(0.5,sec);
     Injector.set(false); //pushes disc into the wheel to launch and resets
-position Brain.Screen.clearScreen();
+  Brain.Screen.clearScreen();
     }
   if(Controller1.ButtonRight.pressing()){
     F1.stop(brake); //used to enable launch cancellation
@@ -252,9 +253,7 @@ position Brain.Screen.clearScreen();
     Brain.Screen.clearScreen();
   }
 
-}
-
- */
+}//maddie is mean ;DLKJFA;LKJ
 
 void flywheelMonitor() {
   double current1 = F1.current();
