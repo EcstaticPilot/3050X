@@ -222,7 +222,7 @@ void spinRoller(float speed, float time) {
 }
 
 // Accelerates the flywheel to speed, and Flashes green when ready to launch
-// maddie is so mean A;SLDKFJL;ASKDFJ
+// d i n o s a u r
 void Flywheel(int T){ //T is target speed in percent
 cancel1=false;
 int Fspeed=F2.velocity(percent);
@@ -253,7 +253,7 @@ void launch(){ //used for launching the disc with the piston when ready
     Brain.Screen.clearScreen();
   }
 
-}//maddie is mean ;DLKJFA;LKJ
+}//d i n o s a u r
 
 void flywheelMonitor() {
   double current1 = F1.current();
@@ -348,8 +348,10 @@ void usercontrol(void) {
       Roller.stop(brake);
     }
     // flywheel
-    /* if(Controller1.ButtonR2.pressing()){ //refer to the variable definitions
-   to change target speed if(abs(Fspeed-50)<20){ F1.spin(reverse,
+    //i like umbrellas
+     if(Controller1.ButtonR2.pressing()){ //refer to the variable definitions
+   //to change the target speed
+   if(abs(Fspeed-50)<20){ F1.spin(reverse,
    Fspeed+(50-Fspeed), percent); F2.spin(forward, Fspeed+(50-Fspeed), percent);
      }
      if(!(abs(Fspeed-50)<20)){
@@ -359,7 +361,7 @@ void usercontrol(void) {
      if(!(Fspeed<50-5 or Fspeed>50+5)){
        Brain.Screen.drawRectangle(0,0,480,272,"green");
      }
-   }*/
+   }//i like umbrellas
     if (Controller1.ButtonL1.pressing()) {
       pistonToggle();
       Brain.Screen.clearScreen();
