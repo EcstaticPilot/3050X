@@ -8,6 +8,11 @@
 /*----------------------------------------------------------------------------*/
 
 // ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// Gyro1                inertial      1               
+// Motor                motor         2               
+// Controller1          controller                    
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
@@ -18,6 +23,33 @@ using namespace vex;
 competition Competition;
 
 // define your global instances of motors and other devices here
+
+void drive(int mspeed, int wt)
+{
+  Motor.spin(forward, mspeed, percent);
+  wait(wt,msec);
+}
+
+void gyroTurn(float target)
+{
+float heading=Gyro1.rotation();//heading();; //initialize a variable for heading
+float accuracy=2.0; //how accurate to make the turn in degrees
+float error=target-heading;
+float kp=5.0;
+float speed=kp*error;
+
+while(fabs(error)>=accuracy)
+{
+  speed=kp*error;
+  drive(speed, 10); //turn right at half speed
+  heading=Gyro1.rotation();//heading();  //measure the heading of the robot
+  error=target-heading;  //calculate error
+  Brain.Screen.printAt(1, 40, "error = %.2f degrees",error);
+  Brain.Screen.printAt(1, 60, "speed = %.2f percent",speed);
+
+}
+drive(0, 0);  //stop the drive
+}
 
 /*---------------------------------------------------------------------------*/
 /*                          Pre-Autonomous Functions                         */
@@ -87,9 +119,23 @@ int main() {
   // Set up callbacks for autonomous and driver control periods.
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
-
+  
   // Run the pre-autonomous function.
   pre_auton();
+  Brain.Screen.printAt(1, 90, "a to reset gyro");
+gyroTurn(45);
+Brain.Screen.printAt(1, 100, "First turn complete");
+wait(5000, msec);
+gyroTurn(90);
+Brain.Screen.printAt(1, 100, "Second turn complete, wait five seconds");
+wait(5000, msec);
+
+while(true) {
+  if (Controller1.ButtonA.pressing()){
+    Gyro1.setHeading(0.0, degrees);
+  }
+  wait(100, msec);
+}
 
   // Prevent main from exiting with an infinite loop.
   while (true) {
