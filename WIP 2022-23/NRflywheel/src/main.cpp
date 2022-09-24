@@ -338,7 +338,7 @@ void pre_auton(void) {
 
 void autonomous(void) {
   thread odometeryTracking = thread(odometery);
-  
+  turretSpinTo(-45);
 }
 
 /*---------------------------------------------------------------------------*/
