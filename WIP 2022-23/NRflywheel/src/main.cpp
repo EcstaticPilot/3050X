@@ -10,29 +10,28 @@
 // ---- START VEXCODE CONFIGURED DEVICES ----
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
-// Controller1          controller                    
-// F1                   motor         2               
-// F2                   motor         15              
-// Injector             digital_out   A               
-// LF                   motor         21              
-// LB                   motor         12              
-// RF                   motor         20              
-// RB                   motor         4               
-// Intake1              motor         1               
-// turret               motor         19              
-// gyro1                inertial      13              
-// RotationL            rotation      9               
-// RotationB            rotation      3               
-// turretG              inertial      14              
-// Color                optical       7               
-// BumperL              bumper        B               
-// BumperR              bumper        C               
+// Controller1          controller
+// F1                   motor         2
+// F2                   motor         15
+// Injector             digital_out   A
+// LF                   motor         21
+// LB                   motor         12
+// RF                   motor         20
+// RB                   motor         4
+// Intake1              motor         1
+// turret               motor         19
+// gyro1                inertial      13
+// RotationL            rotation      9
+// RotationB            rotation      3
+// turretG              inertial      14
+// Color                optical       7
+// BumperL              bumper        B
+// BumperR              bumper        C
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
 #include <math.h>
 
-double absV(double input) { return (sqrt(input * input)); }
 double targetSpeed = 0.0;
 using namespace vex;
 // 100 digits of pi because I like Pi𝝿
@@ -82,10 +81,6 @@ bool turretToggle = false;
   }
                }*/
 
-  void toggleTurret(){
-    turretToggle=!turretToggle;
- 
-  }
 void controlFlywheel1(double target) {
   double speed = F1.velocity(percent);
 
@@ -144,7 +139,7 @@ int odometery() {
 
     double globalAngle =
         averageHeading +
-        ((absV(localX) < .001) ? pi / 2 : atan(localY / localX)) +
+        ((fabs(localX) < .001) ? pi / 2 : atan(localY / localX)) +
         ((localX < 0) ? pi : 0);
     x = x + globalDist * cos(globalAngle);
     y = y + globalDist * sin(globalAngle);
@@ -224,37 +219,74 @@ void flywheelMonitor() {
   Brain.Screen.printAt(1, 80, "F2 current = %.1f   Temp = %.1f   ", current2,
                        t2);
   Brain.Screen.printAt(1, 100, "Battery Capacity  = %.1f      ", b);
-}
-double targetAngle;
+} //
+
 // turret Pid spin to with gyro angle
 int turretSpinTo(double targetAngle) {
   double kp = 1;
-  double ki = .00000;
+  double ki = 0;
   double kd = .5;
   double sum = 0;
   double prevError = 0;
-  double error=targetAngle;
-  double accuracy=1;
- // while(true){
-  
-  while (fabs(error)>accuracy) {
+  double error = targetAngle - turretG.orientation(yaw, degrees);
+  double accuracy = 1;
+  // while(true){
+
+  while (fabs(error) > accuracy) {
     error = targetAngle - turretG.orientation(yaw, degrees);
     turret.spin(fwd, (error * kp) + (ki * sum) + (kd * (error - prevError)),
                 percent);
-    
+
     wait(10, msec);
     prevError = error;
     sum = sum + error;
-    if(BumperL.pressing()||BumperR.pressing()){turret.stop();
-    break;
+    if (BumperL.pressing() || BumperR.pressing()) {
+      turret.stop();
+      break;
     }
   }
- if(fabs(error)<accuracy){turret.stop(); }
-//  }
-  
+  if (fabs(error) < accuracy) {
+    turret.stop();
+  }
+  //  }
+
   return 0;
 }
+void toggleTurret() {turretSpinTo(0); }
 
+double TargetAngle;
+
+int turretStable() {
+  double kp = 1;
+  double ki = 0;
+  double kd = .5;
+  double sum = 0;
+  double speed;
+  double prevError = 0;
+  double error = TargetAngle - turretG.orientation(yaw, degrees);
+  double accuracy = 1;
+  // while(true){
+
+  while (true) {
+    error = TargetAngle - turretG.orientation(yaw, degrees);
+    speed = (error * kp) + (ki * sum) + (kd * (error - prevError));
+    if(speed<0&&!!BumperL.pressing()){turret.spin(fwd, speed, percent);}
+    if(speed>0&&!!BumperR.pressing()){turret.spin(fwd, speed, percent);}
+    
+
+    wait(10, msec);
+  
+    prevError = error;
+    sum = sum + error;
+   
+  }
+  if (fabs(error) < accuracy) {
+    turret.stop();
+  }
+  //  }
+
+  return 0;
+}
 void pistonToggle() {
 
   Injector.set(true);
@@ -263,9 +295,11 @@ void pistonToggle() {
 }
 void pistonToggleReady() {
   Brain.Screen.drawRectangle(120, 190, 60, 60, orange);
-  waitUntil(F1.velocity(percent) < targetSpeed + .25 && F1.velocity(percent) > targetSpeed - .25);
+  waitUntil(F1.velocity(percent) < targetSpeed + .25 &&
+            F1.velocity(percent) > targetSpeed - .25);
   wait(10, msec);
-  waitUntil(F1.velocity(percent) < targetSpeed + .25 && F1.velocity(percent) > targetSpeed - .25);
+  waitUntil(F1.velocity(percent) < targetSpeed + .25 &&
+            F1.velocity(percent) > targetSpeed - .25);
   Brain.Screen.drawRectangle(120, 190, 60, 60, black);
 
   Injector.set(true);
@@ -302,10 +336,9 @@ void pre_auton(void) {
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
-void autonomous(void) { thread odometeryTracking = thread(odometery); 
-turretSpinTo(45);
-wait(1, sec);
-turretSpinTo(-45);
+void autonomous(void) {
+  thread odometeryTracking = thread(odometery);
+  turretSpinTo(-45);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -320,26 +353,28 @@ turretSpinTo(-45);
 
 void usercontrol(void) {
   thread ControllerPrinting = thread(ControllerPrint);
+  thread turretStablization=thread(turretStable);
   bool alg = true;
   int offset = 0;
   gyro1.calibrate();
   turretG.calibrate();
-  waitUntil(!gyro1.isCalibrating()&&!turretG.isCalibrating());
+  waitUntil(!gyro1.isCalibrating() && !turretG.isCalibrating());
   while (true) {
-   // if(Color.isNearObject()){
-  //    turretSpinTo(0);
-    
- //   }
-    if (Controller1.ButtonA.pressing()) {
+    // if(Color.isNearObject()){
+    //    turretSpinTo(0);
+
+    //   }
+    TargetAngle=0
+;    if (Controller1.ButtonA.pressing()) {
       targetSpeed = 0;
     }
 
-    if (Controller1.ButtonL2.pressing()&&!BumperL.pressing()) {
+    if (Controller1.ButtonL2.pressing() && !BumperL.pressing()) {
       // offset++;
       turret.spin(reverse, 30, pct);
       wait(10, msec);
     }
-    if (Controller1.ButtonR2.pressing()&&!BumperR.pressing()) {
+    if (Controller1.ButtonR2.pressing() && !BumperR.pressing()) {
       // offset--;
       turret.spin(forward, 30, pct);
       wait(10, msec);
@@ -347,11 +382,11 @@ void usercontrol(void) {
     if (!Controller1.ButtonR2.pressing() && !Controller1.ButtonL2.pressing()) {
       turret.stop(brake);
     }
-/*
-     offset = offset + .5 * (Controller1.ButtonL2.pressing() -
-                            Controller1.ButtonR2.pressing());
+    /*
+         offset = offset + .5 * (Controller1.ButtonL2.pressing() -
+                                Controller1.ButtonR2.pressing());
 
-*/
+    */
 
     if (Controller1.ButtonL1.pressing()) {
       targetSpeed = targetSpeed - 0.5;
@@ -369,7 +404,7 @@ void usercontrol(void) {
     if (Controller1.ButtonUp.pressing())
       targetSpeed = 90;
     Brain.Screen.printAt(1, 20, "target speed = %.2f ", targetSpeed);
-   
+
     if (alg) {
       controlFlywheelSpeed(targetSpeed);
       Brain.Screen.printAt(1, 120, "controlled speed    ");
@@ -380,19 +415,16 @@ void usercontrol(void) {
 
     if (intakeOn) {
       Intake1.spin(forward, 130, rpm);
-
-    } 
-    if(!intakeOn){
-      if(Color.color()==red&&Color.isNearObject()){
-              Intake1.spin(forward, 130, rpm);
-      } 
-      else {
-      
-      
-      Intake1.stop();}
     }
-      
-    
+    if (!intakeOn) {
+      if (Color.color() == red && Color.isNearObject()) {
+        Intake1.spin(forward, 130, rpm);
+      } else {
+
+        Intake1.stop();
+      }
+    }
+
     if (F1.velocity(percent) < targetSpeed + 1 &&
         F1.velocity(percent) > targetSpeed - 1) {
       Brain.Screen.drawRectangle(60, 190, 60, 60, green);
@@ -460,7 +492,7 @@ int main() {
   Controller1.ButtonLeft.pressed(pistonToggle);
   Controller1.ButtonRight.pressed(pistonToggleReady);
   
-  
+
   // Run the pre-autonomous function.
   pre_auton();
 
