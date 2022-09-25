@@ -10,23 +10,23 @@
 // ---- START VEXCODE CONFIGURED DEVICES ----
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
-// Controller1          controller
-// F1                   motor         2
-// F2                   motor         15
-// Injector             digital_out   A
-// LF                   motor         21
-// LB                   motor         12
-// RF                   motor         20
-// RB                   motor         4
-// Intake1              motor         1
-// turret               motor         19
-// gyro1                inertial      13
-// RotationL            rotation      9
-// RotationB            rotation      3
-// turretG              inertial      14
-// Color                optical       7
-// BumperL              bumper        B
-// BumperR              bumper        C
+// Controller1          controller                    
+// F1                   motor         2               
+// F2                   motor         15              
+// Injector             digital_out   A               
+// LF                   motor         21              
+// LB                   motor         12              
+// RF                   motor         20              
+// RB                   motor         4               
+// Intake1              motor         1               
+// turret               motor         19              
+// gyro1                inertial      10              
+// RotationL            rotation      9               
+// RotationB            rotation      3               
+// turretG              inertial      14              
+// Color                optical       7               
+// BumperL              bumper        B               
+// BumperR              bumper        C               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
@@ -35,8 +35,7 @@
 double targetSpeed = 0.0;
 using namespace vex;
 // 100 digits of pi because I like Pi𝝿
-long double pi =
-    3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679;
+long double pi = 3.14159265358979323;
 // A global instance of competition
 competition Competition;
 void flywheelMonitor();
@@ -94,6 +93,7 @@ void controlFlywheel1(double target) {
 double x = 0, y = 0; // declare global x and y
 
 int odometery() {
+
   double prevHeading = gyro1.heading();
   double deltaHeading = 0; // change in heading
   double absoluteOrientation = pi;
@@ -252,9 +252,9 @@ int turretSpinTo(double targetAngle) {
 
   return 0;
 }
-void toggleTurret() {turretSpinTo(0); }
+void toggleTurret() { turretSpinTo(0); }
 
-double TargetAngle;
+double TargetAngle=0;
 
 int turretStable() {
   double kp = 1;
@@ -270,15 +270,17 @@ int turretStable() {
   while (true) {
     error = TargetAngle - turretG.orientation(yaw, degrees);
     speed = (error * kp) + (ki * sum) + (kd * (error - prevError));
-   /* if(speed<0&&!!BumperL.pressing()){turret.spin(fwd, speed, percent);}
-    if(speed>0&&!!BumperR.pressing()){*/turret.spin(fwd, speed, percent);//}
+     if(speed<0&&!BumperR.pressing()){turret.spin(fwd, speed, percent);}
+     if(speed>0&&!BumperL.pressing()){
+    turret.spin(fwd, speed, percent); }
+    Brain.Screen.printAt(1, 160, "error = %.2f" ,error);
+     Brain.Screen.printAt(1, 180, "targetA = %.2f" ,TargetAngle);
+     Brain.Screen.printAt(1, 200, "speed = %.2f" ,speed);
+    this_thread::sleep_for(5);
     
 
-    wait(10, msec);
-  
     prevError = error;
     sum = sum + error;
-   
   }
   if (fabs(error) < accuracy) {
     turret.stop();
@@ -322,7 +324,9 @@ void toggleIntake() { intakeOn = !intakeOn; }
 
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
-
+  gyro1.calibrate();
+  turretG.calibrate();
+  waitUntil(!gyro1.isCalibrating() && !turretG.isCalibrating());
   vexcodeInit();
 }
 
@@ -338,7 +342,7 @@ void pre_auton(void) {
 
 void autonomous(void) {
   thread odometeryTracking = thread(odometery);
-  turretSpinTo(-45);
+  turretSpinTo(0);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -353,19 +357,17 @@ void autonomous(void) {
 
 void usercontrol(void) {
   thread ControllerPrinting = thread(ControllerPrint);
- // thread turretStablization=thread(turretStable);
+  thread turretStablization = thread(turretStable);
   bool alg = true;
-  int offset = 0;
-  gyro1.calibrate();
-  turretG.calibrate();
-  waitUntil(!gyro1.isCalibrating() && !turretG.isCalibrating());
+        int offset = 0;
+  
   while (true) {
     // if(Color.isNearObject()){
     //    turretSpinTo(0);
 
     //   }
-    TargetAngle=0
-;    if (Controller1.ButtonA.pressing()) {
+    TargetAngle = 0;
+    if (Controller1.ButtonA.pressing()) {
       targetSpeed = 0;
     }
 
@@ -379,9 +381,9 @@ void usercontrol(void) {
       turret.spin(forward, 30, pct);
       wait(10, msec);
     }
-    if (!Controller1.ButtonR2.pressing() && !Controller1.ButtonL2.pressing()) {
-      turret.stop(brake);
-    }
+   // if (!Controller1.ButtonR2.pressing() && !Controller1.ButtonL2.pressing()) {
+//      turret.stop(brake);
+ //   }
     /*
          offset = offset + .5 * (Controller1.ButtonL2.pressing() -
                                 Controller1.ButtonR2.pressing());
@@ -483,7 +485,7 @@ void usercontrol(void) {
 // Main will set up the competition functions and callbacks.
 //
 int main() {
-
+ 
   // Set up callbacks for autonomous and driver control periods.
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
@@ -491,13 +493,12 @@ int main() {
   Controller1.ButtonB.pressed(toggleIntake);
   Controller1.ButtonLeft.pressed(pistonToggle);
   Controller1.ButtonRight.pressed(pistonToggleReady);
-  
 
   // Run the pre-autonomous function.
   pre_auton();
 
   // Prevent main from exiting with an infinite loop.
-  while (true) {
+  while (true) {  
     wait(100, msec);
   }
 }
