@@ -270,8 +270,8 @@ int turretStable() {
   while (true) {
     error = TargetAngle - turretG.orientation(yaw, degrees);
     speed = (error * kp) + (ki * sum) + (kd * (error - prevError));
-    if(speed<0&&!!BumperL.pressing()){turret.spin(fwd, speed, percent);}
-    if(speed>0&&!!BumperR.pressing()){turret.spin(fwd, speed, percent);}
+   /* if(speed<0&&!!BumperL.pressing()){turret.spin(fwd, speed, percent);}
+    if(speed>0&&!!BumperR.pressing()){*/turret.spin(fwd, speed, percent);//}
     
 
     wait(10, msec);
@@ -353,7 +353,7 @@ void autonomous(void) {
 
 void usercontrol(void) {
   thread ControllerPrinting = thread(ControllerPrint);
-  thread turretStablization=thread(turretStable);
+ // thread turretStablization=thread(turretStable);
   bool alg = true;
   int offset = 0;
   gyro1.calibrate();
