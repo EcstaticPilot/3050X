@@ -31,7 +31,7 @@
 
 #include "vex.h"
 #include <math.h>
-
+double TargetAngle = 0;
 double targetSpeed = 0.0;
 using namespace vex;
 // 100 digits of pi because I like Pi𝝿
@@ -159,8 +159,8 @@ int ControllerPrint() {
     Controller1.Screen.setCursor(2, 1);
     Controller1.Screen.print("tSpeed= %.2f  ", targetSpeed);
     Controller1.Screen.setCursor(3, 1);
-    Controller1.Screen.print("tAngle= %.2f  ",
-                             turretG.orientation(yaw, degrees));
+    Controller1.Screen.print("tAngle= %.2f %.2f ",
+                             turretG.orientation(yaw, degrees),TargetAngle);
     if (Brain.timer(sec) == 15) {
       Controller1.rumble(".");
     } // 2 minute mark
@@ -258,22 +258,19 @@ int turretSpinTo(double targetAngle) {
 }
 bool loading = true;
 void toggleTurret() {
-
-  if (loading) {
-    turretSpinTo(0);
-
-  } else {
-    turretSpinTo(gyro1.orientation(yaw, degrees));
-  }
   loading = !loading;
+  Controller1.rumble(".");
 }
 
-double TargetAngle = 0;
+
 
 int turretStable() {
 
   while (true) {
-    turretSpinTo(0);
+    if(!loading){turretSpinTo(TargetAngle);
+    }
+    if(loading){turretSpinTo(gyro1.orientation(yaw, degrees));
+    }
     this_thread::sleep_for(10);
   }
   //  }
@@ -349,7 +346,7 @@ void autonomous(void) {
 
 void usercontrol(void) {
   thread ControllerPrinting = thread(ControllerPrint);
-  // thread turretStablization = thread(turretStable);
+   thread turretStablization = thread(turretStable);
   bool alg = true;
   int offset = 0;
   gyro1.calibrate();
@@ -410,7 +407,7 @@ void usercontrol(void) {
       controlFlywheel1(targetSpeed);
       Brain.Screen.printAt(1, 120, "not controlled     ");
     }
-
+    
     if (intakeOn) {
       Intake1.spin(forward, 130, rpm);
     }
