@@ -266,16 +266,16 @@ void toggleTurret() {
 
 
 
-int turretStable() {
+void turretStable() {
 
   while (true) {
   turretSpinTo(TargetAngle);
  
-    this_thread::sleep_for(10);
+    wait(10, msec);
   }
   //  }
 
-  return 0;
+  
 }
 void pistonToggle() {
 
@@ -490,7 +490,7 @@ int main() {
   // Set up callbacks for autonomous and driver control periods.
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
-  Controller1.ButtonDown.pressed(toggleTurret);
+  Controller1.ButtonDown.pressed(turretStable);
   Controller1.ButtonB.pressed(toggleIntake);
   Controller1.ButtonLeft.pressed(pistonToggle);
   Controller1.ButtonRight.pressed(pistonToggleReady);
