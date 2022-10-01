@@ -2,7 +2,7 @@
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
 /*    Module:       main.cpp                                                  */
-/*    Author:       NR 7700                                                   */
+/*    Author:       NR 7700P                                                  */
 /*    Created:      May 13, 2022                                              */
 /*    Description:  code of Nikhil Ramanuja                                   */
 /*----------------------------------------------------------------------------*/
@@ -10,23 +10,23 @@
 // ---- START VEXCODE CONFIGURED DEVICES ----
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
-// Controller1          controller                    
-// F1                   motor         2               
-// F2                   motor         15              
-// Injector             digital_out   A               
-// LF                   motor         21              
-// LB                   motor         12              
-// RF                   motor         20              
-// RB                   motor         4               
-// Intake1              motor         1               
-// turret               motor         19              
-// gyro1                inertial      10              
-// RotationL            rotation      9               
-// RotationB            rotation      3               
-// turretG              inertial      14              
-// Color                optical       7               
-// BumperL              bumper        B               
-// BumperR              bumper        C               
+// Controller1          controller
+// F1                   motor         2
+// F2                   motor         15
+// Injector             digital_out   A
+// LF                   motor         21
+// LB                   motor         12
+// RF                   motor         20
+// RB                   motor         4
+// Intake1              motor         1
+// turret               motor         19
+// gyro1                inertial      10
+// RotationL            rotation      9
+// RotationB            rotation      3
+// turretG              inertial      14
+// Color                optical       7
+// BumperL              bumper        B
+// BumperR              bumper        C
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
@@ -158,6 +158,9 @@ int ControllerPrint() {
     Controller1.Screen.print("speed= %.2f   ", speed);
     Controller1.Screen.setCursor(2, 1);
     Controller1.Screen.print("tSpeed= %.2f  ", targetSpeed);
+    Controller1.Screen.setCursor(3, 1);
+    Controller1.Screen.print("tAngle= %.2f  ",
+                             turretG.orientation(yaw, degrees));
     if (Brain.timer(sec) == 15) {
       Controller1.rumble(".");
     } // 2 minute mark
@@ -225,17 +228,21 @@ void flywheelMonitor() {
 int turretSpinTo(double targetAngle) {
   double kp = 1;
   double ki = 0;
-  double kd = .5;
+  double kd = 0;
   double sum = 0;
   double prevError = 0;
   double error = targetAngle - turretG.orientation(yaw, degrees);
-  double accuracy = 1;
+  double accuracy = .1;
   // while(true){
-
+  double speed;
   while (fabs(error) > accuracy) {
     error = targetAngle - turretG.orientation(yaw, degrees);
-    turret.spin(fwd, (error * kp) + (ki * sum) + (kd * (error - prevError)),
-                percent);
+    speed = (error * kp) + (ki * sum) + (kd * (error - prevError));
+    if ((speed < 0 && !BumperL.pressing()) ||
+        (speed > 0 && !BumperR.pressing())) {
+          turret.spin(fwd, speed, percent);
+    }
+    
 
     wait(10, msec);
     prevError = error;
@@ -252,38 +259,25 @@ int turretSpinTo(double targetAngle) {
 
   return 0;
 }
-void toggleTurret() { turretSpinTo(0); }
+bool loading = true;
+void toggleTurret() {
 
-double TargetAngle=0;
+  if (loading) {
+    turretSpinTo(0);
+
+  } else {
+    turretSpinTo(gyro1.orientation(yaw, degrees));
+  }
+  loading = !loading;
+}
+
+double TargetAngle = 0;
 
 int turretStable() {
-  double kp = 1;
-  double ki = 0;
-  double kd = .5;
-  double sum = 0;
-  double speed;
-  double prevError = 0;
-  double error = TargetAngle - turretG.orientation(yaw, degrees);
-  double accuracy = 1;
-  // while(true){
 
   while (true) {
-    error = TargetAngle - turretG.orientation(yaw, degrees);
-    speed = (error * kp) + (ki * sum) + (kd * (error - prevError));
-     if(speed<0&&!BumperR.pressing()){turret.spin(fwd, speed, percent);}
-     if(speed>0&&!BumperL.pressing()){
-    turret.spin(fwd, speed, percent); }
-    Brain.Screen.printAt(1, 160, "error = %.2f" ,error);
-     Brain.Screen.printAt(1, 180, "targetA = %.2f" ,TargetAngle);
-     Brain.Screen.printAt(1, 200, "speed = %.2f" ,speed);
-    this_thread::sleep_for(5);
-    
-
-    prevError = error;
-    sum = sum + error;
-  }
-  if (fabs(error) < accuracy) {
-    turret.stop();
+    turretSpinTo(0);
+    this_thread::sleep_for(10);
   }
   //  }
 
@@ -359,8 +353,10 @@ void usercontrol(void) {
   thread ControllerPrinting = thread(ControllerPrint);
   thread turretStablization = thread(turretStable);
   bool alg = true;
-        int offset = 0;
-  
+  int offset = 0;
+  gyro1.calibrate();
+  turretG.calibrate();
+  waitUntil(!gyro1.isCalibrating() && !turretG.isCalibrating());
   while (true) {
     // if(Color.isNearObject()){
     //    turretSpinTo(0);
@@ -370,20 +366,22 @@ void usercontrol(void) {
     if (Controller1.ButtonA.pressing()) {
       targetSpeed = 0;
     }
+    /*
+        if (Controller1.ButtonL2.pressing() && !BumperL.pressing()) {
+          // offset++;
+          turret.spin(reverse, 30, pct);
+          wait(10, msec);
+        }
+        if (Controller1.ButtonR2.pressing() && !BumperR.pressing()) {
+          // offset--;
+          turret.spin(forward, 30, pct);
+          wait(10, msec);
+        }*/
 
-    if (Controller1.ButtonL2.pressing() && !BumperL.pressing()) {
-      // offset++;
-      turret.spin(reverse, 30, pct);
-      wait(10, msec);
-    }
-    if (Controller1.ButtonR2.pressing() && !BumperR.pressing()) {
-      // offset--;
-      turret.spin(forward, 30, pct);
-      wait(10, msec);
-    }
-   // if (!Controller1.ButtonR2.pressing() && !Controller1.ButtonL2.pressing()) {
-//      turret.stop(brake);
- //   }
+    // if (!Controller1.ButtonR2.pressing() && !Controller1.ButtonL2.pressing())
+    // {
+    //      turret.stop(brake);
+    //   }
     /*
          offset = offset + .5 * (Controller1.ButtonL2.pressing() -
                                 Controller1.ButtonR2.pressing());
@@ -477,7 +475,7 @@ void usercontrol(void) {
       turretSpinTo(targetAngle);
     }
     turretG.orientation(yaw, degrees);*/
- 
+
     wait(10, msec);
   }
 }
@@ -485,7 +483,7 @@ void usercontrol(void) {
 // Main will set up the competition functions and callbacks.
 //
 int main() {
- 
+
   // Set up callbacks for autonomous and driver control periods.
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
@@ -498,7 +496,7 @@ int main() {
   pre_auton();
 
   // Prevent main from exiting with an infinite loop.
-  while (true) {  
+  while (true) {
     wait(100, msec);
   }
 }
