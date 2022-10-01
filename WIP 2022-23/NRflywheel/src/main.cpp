@@ -477,7 +477,7 @@ void usercontrol(void) {
       turretSpinTo(targetAngle);
     }
     turretG.orientation(yaw, degrees);*/
-
+ 
     wait(10, msec);
   }
 }
