@@ -240,17 +240,14 @@ int turretSpinTo(double targetAngle) {
     speed = (error * kp) + (ki * sum) + (kd * (error - prevError));
     if ((speed < 0 && !BumperL.pressing()) ||
         (speed > 0 && !BumperR.pressing())) {
-          turret.spin(fwd, speed, percent);
+      turret.spin(fwd, speed, percent);
+    } else {
+      turret.stop();
     }
-    
 
     wait(10, msec);
     prevError = error;
     sum = sum + error;
-    if (BumperL.pressing() || BumperR.pressing()) {
-      turret.stop();
-      break;
-    }
   }
   if (fabs(error) < accuracy) {
     turret.stop();
@@ -317,11 +314,12 @@ void toggleIntake() { intakeOn = !intakeOn; }
 /*---------------------------------------------------------------------------*/
 
 void pre_auton(void) {
+  vexcodeInit();
   // Initializing Robot Configuration. DO NOT REMOVE!
   gyro1.calibrate();
   turretG.calibrate();
   waitUntil(!gyro1.isCalibrating() && !turretG.isCalibrating());
-  vexcodeInit();
+  
 }
 
 /*---------------------------------------------------------------------------*/
@@ -351,7 +349,7 @@ void autonomous(void) {
 
 void usercontrol(void) {
   thread ControllerPrinting = thread(ControllerPrint);
-  thread turretStablization = thread(turretStable);
+  // thread turretStablization = thread(turretStable);
   bool alg = true;
   int offset = 0;
   gyro1.calibrate();
@@ -362,7 +360,7 @@ void usercontrol(void) {
     //    turretSpinTo(0);
 
     //   }
-    TargetAngle = 0;
+   
     if (Controller1.ButtonA.pressing()) {
       targetSpeed = 0;
     }
