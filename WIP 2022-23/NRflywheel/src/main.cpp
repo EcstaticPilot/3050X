@@ -258,8 +258,10 @@ int turretSpinTo(double targetAngle) {
 }
 bool loading = true;
 void toggleTurret() {
-  loading = !loading;
-  Controller1.rumble(".");
+//  loading = !loading;
+ // wait(10, msec);
+ // turretSpinTo(TargetAngle);
+ // Controller1.rumble(".");
 }
 
 
@@ -267,10 +269,8 @@ void toggleTurret() {
 int turretStable() {
 
   while (true) {
-    if(!loading){turretSpinTo(TargetAngle);
-    }
-    if(loading){turretSpinTo(gyro1.orientation(yaw, degrees));
-    }
+  turretSpinTo(TargetAngle);
+ 
     this_thread::sleep_for(10);
   }
   //  }
@@ -353,6 +353,11 @@ void usercontrol(void) {
   turretG.calibrate();
   waitUntil(!gyro1.isCalibrating() && !turretG.isCalibrating());
   while (true) {
+    /*if(!loading)TargetAngle=5
+    ;
+    else {
+    TargetAngle=gyro1.orientation(yaw, degrees);
+    }*/
     // if(Color.isNearObject()){
     //    turretSpinTo(0);
 
@@ -377,18 +382,21 @@ void usercontrol(void) {
     // {
     //      turret.stop(brake);
     //   }
-    /*
-         offset = offset + .5 * (Controller1.ButtonL2.pressing() -
-                                Controller1.ButtonR2.pressing());
-
-    */
-
+    
+  if (Controller1.ButtonL2.pressing()) {
+      TargetAngle -= 0.5;
+      wait(10, msec);
+    }
+    if (Controller1.ButtonR2.pressing()) {
+      TargetAngle += 0.5;
+      wait(10, msec);
+    }
     if (Controller1.ButtonL1.pressing()) {
-      targetSpeed = targetSpeed - 0.5;
+      targetSpeed -=0.5;
       wait(10, msec);
     }
     if (Controller1.ButtonR1.pressing()) {
-      targetSpeed = targetSpeed + 0.5;
+      targetSpeed +=0.5;
       wait(10, msec);
     }
 
