@@ -81,7 +81,7 @@ bool turretToggle = false;
                }*/
 
 void controlFlywheel1(double target) {
-  double speed = F1.velocity(percent);
+  double speed = F1.velocity(pct);
 
   spinFlywheel((target - speed) + target);
   Brain.Screen.printAt(180, 40, "fwdrive %.1f  ", target);
@@ -154,13 +154,12 @@ int ControllerPrint() {
 
   while (1) {
     Controller1.Screen.setCursor(1, 1);
-    double speed = F1.velocity(percent);
-    Controller1.Screen.print("speed= %.2f   ", speed);
+    double speed = F1.velocity(pct);
+    Controller1.Screen.print("tSpd=%.2f Spd=%.2f   ", speed,targetSpeed);
     Controller1.Screen.setCursor(2, 1);
-    Controller1.Screen.print("tSpeed= %.2f  ", targetSpeed);
+    Controller1.Screen.print("pos= (%.1f,%.1f)", x,y);
     Controller1.Screen.setCursor(3, 1);
-    Controller1.Screen.print("tAngle= %.2f %.2f ",
-                             turretG.orientation(yaw, degrees),TargetAngle);
+    Controller1.Screen.print("gAngle= %.2f", atan(y / x));
     if (Brain.timer(sec) == 15) {
       Controller1.rumble(".");
     } // 2 minute mark
@@ -180,7 +179,7 @@ int ControllerPrint() {
 
 void controlFlywheelSpeed(double target) {
   double kI = .025;
-  double speed = F1.velocity(percent);
+  double speed = F1.velocity(pct);
   double error = target - speed;
   double fwDrive = FWDrive + kI * error;
   // :D
@@ -204,7 +203,7 @@ void controlFlywheelSpeed(double target) {
 }
 
 void spinFlywheel(double speed) {
-  speed = speed * 120; // speed is in percentage so convert to mV 100% = 12000
+  speed = speed * 120; // speed is in pctage so convert to mV 100% = 12000
                        // mV
   F1.spin(forward, speed, voltageUnits::mV);
   F2.spin(forward, speed, voltageUnits::mV);
@@ -228,7 +227,7 @@ void flywheelMonitor() {
 int turretSpinTo(double targetAngle) {
   double kp = 1;
   double ki = 0;
-  double kd = 0;
+  double kd = .01;
   double sum = 0;
   double prevError = 0;
   double error = targetAngle - turretG.orientation(yaw, degrees);
@@ -240,14 +239,19 @@ int turretSpinTo(double targetAngle) {
     speed = (error * kp) + (ki * sum) + (kd * (error - prevError));
     if ((speed < 0 && !BumperL.pressing()) ||
         (speed > 0 && !BumperR.pressing())) {
-      turret.spin(fwd, speed, percent);
+      turret.spin(fwd, speed, pct);
     } else {
-      turret.stop();
+      if (speed > 0) {
+        turret.spin(fwd, -5, rpm);
+      }
+      if (speed < 0) {
+        turret.spin(fwd, -5, pct);
+      }
     }
 
     wait(10, msec);
     prevError = error;
-    sum = sum + error;
+    sum += error;
   }
   if (fabs(error) < accuracy) {
     turret.stop();
@@ -258,24 +262,20 @@ int turretSpinTo(double targetAngle) {
 }
 bool loading = true;
 void toggleTurret() {
-//  loading = !loading;
- // wait(10, msec);
- // turretSpinTo(TargetAngle);
- // Controller1.rumble(".");
+  //  loading = !loading;
+  // wait(10, msec);
+  // turretSpinTo(TargetAngle);
+  // Controller1.rumble(".");
 }
-
-
 
 void turretStable() {
 
   while (true) {
-  turretSpinTo(TargetAngle);
- 
+    turretSpinTo(TargetAngle);
+
     wait(10, msec);
   }
   //  }
-
-  
 }
 void pistonToggle() {
 
@@ -285,11 +285,11 @@ void pistonToggle() {
 }
 void pistonToggleReady() {
   Brain.Screen.drawRectangle(120, 190, 60, 60, orange);
-  waitUntil(F1.velocity(percent) < targetSpeed + .25 &&
-            F1.velocity(percent) > targetSpeed - .25);
+  waitUntil(F1.velocity(pct) < targetSpeed + .25 &&
+            F1.velocity(pct) > targetSpeed - .25);
   wait(10, msec);
-  waitUntil(F1.velocity(percent) < targetSpeed + .25 &&
-            F1.velocity(percent) > targetSpeed - .25);
+  waitUntil(F1.velocity(pct) < targetSpeed + .25 &&
+            F1.velocity(pct) > targetSpeed - .25);
   Brain.Screen.drawRectangle(120, 190, 60, 60, black);
 
   Injector.set(true);
@@ -316,7 +316,6 @@ void pre_auton(void) {
   gyro1.calibrate();
   turretG.calibrate();
   waitUntil(!gyro1.isCalibrating() && !turretG.isCalibrating());
-  
 }
 
 /*---------------------------------------------------------------------------*/
@@ -346,7 +345,7 @@ void autonomous(void) {
 
 void usercontrol(void) {
   thread ControllerPrinting = thread(ControllerPrint);
-   thread turretStablization = thread(turretStable);
+  thread turretStablization = thread(turretStable);
   bool alg = true;
   int offset = 0;
   gyro1.calibrate();
@@ -362,7 +361,7 @@ void usercontrol(void) {
     //    turretSpinTo(0);
 
     //   }
-   
+
     if (Controller1.ButtonA.pressing()) {
       targetSpeed = 0;
     }
@@ -382,8 +381,8 @@ void usercontrol(void) {
     // {
     //      turret.stop(brake);
     //   }
-    
-  if (Controller1.ButtonL2.pressing()) {
+
+    if (Controller1.ButtonL2.pressing()) {
       TargetAngle -= 0.5;
       wait(10, msec);
     }
@@ -392,11 +391,11 @@ void usercontrol(void) {
       wait(10, msec);
     }
     if (Controller1.ButtonL1.pressing()) {
-      targetSpeed -=0.5;
+      targetSpeed -= 0.5;
       wait(10, msec);
     }
     if (Controller1.ButtonR1.pressing()) {
-      targetSpeed +=0.5;
+      targetSpeed += 0.5;
       wait(10, msec);
     }
 
@@ -415,7 +414,7 @@ void usercontrol(void) {
       controlFlywheel1(targetSpeed);
       Brain.Screen.printAt(1, 120, "not controlled     ");
     }
-    
+
     if (intakeOn) {
       Intake1.spin(forward, 130, rpm);
     }
@@ -428,8 +427,8 @@ void usercontrol(void) {
       }
     }
 
-    if (F1.velocity(percent) < targetSpeed + 1 &&
-        F1.velocity(percent) > targetSpeed - 1) {
+    if (F1.velocity(pct) < targetSpeed + 1 &&
+        F1.velocity(pct) > targetSpeed - 1) {
       Brain.Screen.drawRectangle(60, 190, 60, 60, green);
 
     } else {
@@ -437,10 +436,10 @@ void usercontrol(void) {
     }
     flywheelMonitor();
     // tank drive code
-    LF.spin(forward, Controller1.Axis3.position(), percent);
-    RF.spin(forward, Controller1.Axis2.position(), percent);
-    LB.spin(forward, Controller1.Axis3.position(), percent);
-    RB.spin(forward, Controller1.Axis2.position(), percent);
+    LF.spin(forward, Controller1.Axis3.position(), pct);
+    RF.spin(forward, Controller1.Axis2.position(), pct);
+    LB.spin(forward, Controller1.Axis3.position(), pct);
+    RB.spin(forward, Controller1.Axis2.position(), pct);
     if (Controller1.Axis2.position() == 0 &&
         Controller1.Axis3.position() == 0) {
       LF.stop(hold);
