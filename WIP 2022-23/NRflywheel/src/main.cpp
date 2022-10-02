@@ -31,6 +31,7 @@
 
 #include "vex.h"
 #include <math.h>
+
 double TargetAngle = 0;
 double targetSpeed = 0.0;
 using namespace vex;
@@ -155,11 +156,11 @@ int ControllerPrint() {
   while (1) {
     Controller1.Screen.setCursor(1, 1);
     double speed = F1.velocity(pct);
-    Controller1.Screen.print("tSpd=%.2f Spd=%.2f   ", speed,targetSpeed);
+    Controller1.Screen.print("tSpd=%.2f Spd=%.2f   ", speed, targetSpeed);
     Controller1.Screen.setCursor(2, 1);
-    Controller1.Screen.print("pos= (%.1f,%.1f)", x,y);
+    Controller1.Screen.print("pos= (%.1f,%.1f)", x, y);
     Controller1.Screen.setCursor(3, 1);
-    Controller1.Screen.print("gAngle= %.2f", atan(y / x));
+    Controller1.Screen.print("gAngle= %.2f", atan2(y, x) * (180 / pi));
     if (Brain.timer(sec) == 15) {
       Controller1.rumble(".");
     } // 2 minute mark
@@ -241,12 +242,14 @@ int turretSpinTo(double targetAngle) {
         (speed > 0 && !BumperR.pressing())) {
       turret.spin(fwd, speed, pct);
     } else {
+      /*
       if (speed > 0) {
         turret.spin(fwd, -5, rpm);
       }
       if (speed < 0) {
         turret.spin(fwd, -5, pct);
-      }
+      }*/
+      turret.stop(hold);
     }
 
     wait(10, msec);
@@ -426,7 +429,13 @@ void usercontrol(void) {
         Intake1.stop();
       }
     }
-
+    Color.setLightPower(100);
+    if (Color.isNearObject()) {
+      Color.setLight(ledState::on);
+    }
+    if (!Color.isNearObject()) {
+      Color.setLight(ledState::off);
+    }
     if (F1.velocity(pct) < targetSpeed + 1 &&
         F1.velocity(pct) > targetSpeed - 1) {
       Brain.Screen.drawRectangle(60, 190, 60, 60, green);
