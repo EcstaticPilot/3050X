@@ -126,7 +126,7 @@ int odometery() {
     absoluteOrientation = (360 - gyro1.heading(degrees)) * pi / 180.0;
     deltaHeading =
         absoluteOrientation - prevHeading; // calculate change in heading
-    double averageHeading = prevHeading + deltaHeading / 2;
+    double averageHeading = (prevHeading + deltaHeading) / 2;
     prevHeading = absoluteOrientation;
 
     if (deltaHeading == 0) {
@@ -140,10 +140,10 @@ int odometery() {
 
     double globalAngle =
         averageHeading +
-        ((fabs(localX) < .001) ? pi / 2 : atan(localY / localX)) +
+        ((fabs(localX) < .001) ? pi / 2 : atan2(localY ,localX)) +
         ((localX < 0) ? pi : 0);
-    x = x + globalDist * cos(globalAngle);
-    y = y + globalDist * sin(globalAngle);
+    x += globalDist * cos(globalAngle);
+    y += globalDist * sin(globalAngle);
     this_thread::sleep_for(5);
   }
   return 0;
