@@ -10,23 +10,24 @@
 // ---- START VEXCODE CONFIGURED DEVICES ----
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
-// Controller1          controller
-// F1                   motor         2
-// F2                   motor         15
-// Injector             digital_out   A
-// LF                   motor         21
-// LB                   motor         12
-// RF                   motor         20
-// RB                   motor         4
-// Intake1              motor         1
-// turret               motor         19
-// gyro1                inertial      10
-// RotationL            rotation      9
-// RotationB            rotation      3
-// turretG              inertial      14
-// Color                optical       7
-// BumperL              bumper        B
-// BumperR              bumper        C
+// Controller1          controller                    
+// F1                   motor         2               
+// F2                   motor         15              
+// Injector             digital_out   A               
+// LF                   motor         21              
+// LB                   motor         12              
+// RF                   motor         20              
+// RB                   motor         4               
+// Intake1              motor         1               
+// turret               motor         19              
+// gyro1                inertial      11              
+// RotationL            rotation      9               
+// RotationB            rotation      3               
+// turretG              inertial      14              
+// Color                optical       7               
+// BumperL              bumper        B               
+// BumperR              bumper        C               
+// TurretE              rotation      17              
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
@@ -102,16 +103,19 @@ int odometery() {
   double localY;            // local y to use in loop
   double lRad = 1.375;      // radius of tracking wheel
   double bRad = 1.375;      // radius of tracking wheel
-  double Sl = 4.5;          // distance of left wheel to tracking center
-  double Sb = 3;            // distance of back wheel to tracking center
+  double Sl = 3.75;          // distance of left wheel to tracking center
+  double Sb = 2.6;            // distance of back wheel to tracking center
   double lEncoder = 0;      // declaring encoder variable left
   double bEncoder = 0;      // declaring encoder variable back
   double distL = 0;         // distance left encoder has traveled
   double distB = 0;         // distance back encoder has traveled
   double prevLE = lEncoder; // create previous encoder value left
   double prevBE = bEncoder; // create previous encoder value back
-  while (1) {
+      Controller1.rumble(".");
+      RotationL.resetPosition();
+      RotationB.resetPosition();
 
+  while (1) {
     lEncoder = RotationL.position(degrees);
     bEncoder = RotationB.position(degrees);
 
@@ -119,8 +123,8 @@ int odometery() {
     // convert encoder distance into distance traveled
     distB = ((bEncoder - prevBE) * pi / 180) * bRad;
     // convert encoder distance into disntance traveled
-
-    prevLE = lEncoder; // create previous encoder value left
+          
+ prevLE = lEncoder; // create previous encoder value left
     prevBE = bEncoder; // create previous encoder value back
 
     absoluteOrientation = (360 - gyro1.heading(degrees)) * pi / 180.0;
@@ -133,8 +137,8 @@ int odometery() {
       localX = distL;
       localY = distB;
     } else {
-      localX = 2.0 * sin(deltaHeading / 2.0) * (distB / deltaHeading + Sb);
-      localY = 2.0 * sin(deltaHeading / 2.0) * (distL / deltaHeading + Sl);
+      localX = 2.0 * sin(deltaHeading / 2.0) * (distL / deltaHeading + Sl);
+      localY = 2.0 * sin(deltaHeading / 2.0) * (distB / deltaHeading + Sb);
     }
     double globalDist = sqrt(localX * localX + localY * localY);
 
@@ -156,11 +160,11 @@ int ControllerPrint() {
   while (1) {
     Controller1.Screen.setCursor(1, 1);
     double speed = F1.velocity(pct);
-    Controller1.Screen.print("tSpd=%.2f Spd=%.2f   ", speed, targetSpeed);
+    Controller1.Screen.print("Spd=%.2f tSpd=%.2f   ", speed, targetSpeed);
     Controller1.Screen.setCursor(2, 1);
     Controller1.Screen.print("pos= (%.1f,%.1f)", x, y);
     Controller1.Screen.setCursor(3, 1);
-    Controller1.Screen.print("gAngle= %.2f", atan2(y, x) * (180 / pi));
+    Controller1.Screen.print("distL=%.2f distB=%.2f ",RotationL.position(degrees));
     if (Brain.timer(sec) == 15) {
       Controller1.rumble(".");
     } // 2 minute mark
@@ -238,7 +242,7 @@ int turretSpinTo(double targetAngle) {
   while (fabs(error) > accuracy) {
     error = targetAngle - turretG.orientation(yaw, degrees);
     speed = (error * kp) + (ki * sum) + (kd * (error - prevError));
-    if ((speed < 0 && !BumperL.pressing()) ||
+    if ((speed < 0 && TurretE.angle()) ||
         (speed > 0 && !BumperR.pressing())) {
       turret.spin(fwd, speed, pct);
     } else {
@@ -316,6 +320,7 @@ void toggleIntake() { intakeOn = !intakeOn; }
 void pre_auton(void) {
   vexcodeInit();
   // Initializing Robot Configuration. DO NOT REMOVE!
+  thread odometeryTracking = thread(odometery);
   gyro1.calibrate();
   turretG.calibrate();
   waitUntil(!gyro1.isCalibrating() && !turretG.isCalibrating());
@@ -332,7 +337,7 @@ void pre_auton(void) {
 /*---------------------------------------------------------------------------*/
 
 void autonomous(void) {
-  thread odometeryTracking = thread(odometery);
+  
   turretSpinTo(0);
 }
 
@@ -498,7 +503,7 @@ int main() {
   // Set up callbacks for autonomous and driver control periods.
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
-  Controller1.ButtonDown.pressed(turretStable);
+  //Controller1.ButtonDown.pressed(turretStable);
   Controller1.ButtonB.pressed(toggleIntake);
   Controller1.ButtonLeft.pressed(pistonToggle);
   Controller1.ButtonRight.pressed(pistonToggleReady);

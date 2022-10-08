@@ -18,13 +18,14 @@ motor RF = motor(PORT20, ratio18_1, true);
 motor RB = motor(PORT4, ratio18_1, false);
 motor Intake1 = motor(PORT1, ratio18_1, true);
 motor turret = motor(PORT19, ratio18_1, false);
-inertial gyro1 = inertial(PORT10);
+inertial gyro1 = inertial(PORT11);
 rotation RotationL = rotation(PORT9, false);
 rotation RotationB = rotation(PORT3, false);
 inertial turretG = inertial(PORT14);
 optical Color = optical(PORT7);
 bumper BumperL = bumper(Brain.ThreeWirePort.B);
 bumper BumperR = bumper(Brain.ThreeWirePort.C);
+rotation TurretE = rotation(PORT17, false);
 
 // VEXcode generated functions
 // define variable for remote controller enable/disable
