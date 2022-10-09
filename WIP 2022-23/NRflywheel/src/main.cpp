@@ -21,7 +21,7 @@
 // Intake1              motor         1               
 // turret               motor         19              
 // gyro1                inertial      11              
-// RotationL            rotation      9               
+// RotationL            rotation      6               
 // RotationB            rotation      3               
 // turretG              inertial      14              
 // Color                optical       7               
@@ -93,10 +93,7 @@ void controlFlywheel1(double target) {
 // ODOMETERY
 
 double x = 0, y = 0; // declare global x and y
-
-int odometery() {
-
-  double prevHeading = gyro1.heading();
+double prevHeading = gyro1.heading();
   double deltaHeading = 0; // change in heading
   double absoluteOrientation = pi;
   double localX;            // local x to use in loop
@@ -111,6 +108,9 @@ int odometery() {
   double distB = 0;         // distance back encoder has traveled
   double prevLE = lEncoder; // create previous encoder value left
   double prevBE = bEncoder; // create previous encoder value back
+int odometery() {
+
+  
       Controller1.rumble(".");
       RotationL.resetPosition();
       RotationB.resetPosition();
@@ -123,7 +123,7 @@ int odometery() {
     // convert encoder distance into distance traveled
     distB = ((bEncoder - prevBE) * pi / 180) * bRad;
     // convert encoder distance into disntance traveled
-          
+    
  prevLE = lEncoder; // create previous encoder value left
     prevBE = bEncoder; // create previous encoder value back
 
@@ -165,7 +165,7 @@ int odometery() {
 // printstuff to controller
 int ControllerPrint() {
   Brain.Timer.reset();
-
+// AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
   while (1) {
     Controller1.Screen.setCursor(1, 1);
     double speed = F1.velocity(pct);
@@ -173,7 +173,7 @@ int ControllerPrint() {
     Controller1.Screen.setCursor(2, 1);
     Controller1.Screen.print("pos= (%.1f,%.1f)", x, y);
     Controller1.Screen.setCursor(3, 1);
-    Controller1.Screen.print("distL=%.2f distB=%.2f ",RotationL.position(degrees));
+    Controller1.Screen.print("gAngle=%.2f ",(atan2(y,x))*180/pi);
     if (Brain.timer(sec) == 15) {
       Controller1.rumble(".");
     } // 2 minute mark
@@ -251,10 +251,10 @@ int turretSpinTo(double targetAngle) {
   while (fabs(error) > accuracy) {
     error = targetAngle - turretG.orientation(yaw, degrees);
     speed = (error * kp) + (ki * sum) + (kd * (error - prevError));
-    if ((speed < 0 && TurretE.angle()) ||
-        (speed > 0 && !BumperR.pressing())) {
+    if ((speed < 0 && TurretE.angle()>90)) speed=0;
+        if( (speed > 0 && TurretE.angle()>190)) speed=0;
       turret.spin(fwd, speed, pct);
-    } else {
+    
       /*
       if (speed > 0) {
         turret.spin(fwd, -5, rpm);
@@ -262,8 +262,7 @@ int turretSpinTo(double targetAngle) {
       if (speed < 0) {
         turret.spin(fwd, -5, pct);
       }*/
-      turret.stop(hold);
-    }
+     
 
     wait(10, msec);
     prevError = error;
@@ -433,11 +432,11 @@ void usercontrol(void) {
     }
 
     if (intakeOn) {
-      Intake1.spin(forward, 130, rpm);
+      Intake1.spin(forward, 150, rpm);
     }
     if (!intakeOn) {
       if (Color.color() == red && Color.isNearObject()) {
-        Intake1.spin(forward, 130, rpm);
+        Intake1.spin(forward, 150, rpm);
       } else {
 
         Intake1.stop();
