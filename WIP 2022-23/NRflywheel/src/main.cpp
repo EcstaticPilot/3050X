@@ -130,27 +130,36 @@ int odometery() {
     absoluteOrientation = (360 - gyro1.heading(degrees)) * pi / 180.0;
     deltaHeading =
         absoluteOrientation - prevHeading; // calculate change in heading
-    double averageHeading = (prevHeading + deltaHeading) / 2;
+   
     prevHeading = absoluteOrientation;
 
     if (deltaHeading == 0) {
-      localX = distL;
-      localY = distB;
+      localX = distB;
+      localY = distL;
     } else {
-      localX = 2.0 * sin(deltaHeading / 2.0) * (distL / deltaHeading + Sl);
-      localY = 2.0 * sin(deltaHeading / 2.0) * (distB / deltaHeading + Sb);
+      localX = 2.0 * sin(deltaHeading / 2.0) * (distB / deltaHeading + Sb);
+      localY = 2.0 * sin(deltaHeading / 2.0) * (distL / deltaHeading + Sl);
     }
-    double globalDist = sqrt(localX * localX + localY * localY);
+     double averageHeading = absoluteOrientation - (deltaHeading / 2);
+ //  double globalDist = sqrt(localX * localX + localY * localY);
 
-    double globalAngle =
-        averageHeading +
-        ((fabs(localX) < .001) ? pi / 2 : atan2(localY ,localX)) +
-        ((localX < 0) ? pi : 0);
-    x += globalDist * cos(globalAngle);
-    y += globalDist * sin(globalAngle);
+  //  double globalAngle =averageHeading +((fabs(localX) < .001) ? pi / 2 : atan2(localY ,localX)) +((localX < 0) ? pi : 0);
+     double deltaX = (localY * cos(averageHeading)) - (localX * sin(averageHeading));
+       double deltaY = (localX * cos(averageHeading)) - (localY * sin(averageHeading));
+         while(absoluteOrientation >= 2 * M_PI) {
+     absoluteOrientation -= 2 * M_PI;
+    }
+    
+    while(absoluteOrientation < 0) {
+     absoluteOrientation += 2 * M_PI;
+    }
+    x += deltaX;
+    y += deltaY;
+    //x += globalDist * cos(globalAngle);
+    //y += globalDist * sin(globalAngle);
     this_thread::sleep_for(5);
   }
-  return 0;
+  return 1;
 }
 
 // printstuff to controller
