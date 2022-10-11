@@ -238,9 +238,10 @@ void flywheelMonitor() {
 } //
 
 // turret Pid spin to with gyro angle
-int turretSpinTo(double targetAngle) {
+int turretSpinTo(double targetAngle,bool global) {
   double kp = 1;
   double ki = 0;
+  
   double kd = .01;
   double sum = 0;
   double prevError = 0;
@@ -249,7 +250,12 @@ int turretSpinTo(double targetAngle) {
   // while(true){
   double speed;
   while (fabs(error) > accuracy) {
-    error = targetAngle - turretG.orientation(yaw, degrees);
+    if(global){error = targetAngle - turretG.orientation(yaw, degrees);
+    }else {
+    double turretEncoderAngle = (TurretE.angle()>180?TurretE.angle()-360:TurretE.angle()>180);
+    error = targetAngle - turretEncoderAngle;
+    }
+    
     speed = (error * kp) + (ki * sum) + (kd * (error - prevError));
     if ((speed < 0 && TurretE.angle()>90)) speed=0;
         if( (speed > 0 && TurretE.angle()>190)) speed=0;
@@ -286,7 +292,7 @@ void toggleTurret() {
 void turretStable() {
 
   while (true) {
-    turretSpinTo(TargetAngle);
+    turretSpinTo(TargetAngle,false);
 
     wait(10, msec);
   }
@@ -346,7 +352,7 @@ void pre_auton(void) {
 
 void autonomous(void) {
   
-  turretSpinTo(0);
+  turretSpinTo(0,false);
 }
 
 /*---------------------------------------------------------------------------*/
