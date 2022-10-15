@@ -1,3 +1,44 @@
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// Controller1          controller                    
+// F1                   motor         2               
+// F2                   motor         15              
+// Injector             digital_out   A               
+// LF                   motor         21              
+// LB                   motor         12              
+// RF                   motor         20              
+// RB                   motor         4               
+// Intake1              motor         1               
+// turret               motor         19              
+// gyro1                inertial      11              
+// RotationL            rotation      6               
+// RotationB            rotation      3               
+// turretG              inertial      14              
+// Color                optical       7               
+// TurretE              rotation      17              
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// Controller1          controller                    
+// F1                   motor         2               
+// F2                   motor         15              
+// Injector             digital_out   A               
+// LF                   motor         21              
+// LB                   motor         12              
+// RF                   motor         20              
+// RB                   motor         4               
+// Intake1              motor         1               
+// turret               motor         19              
+// gyro1                inertial      11              
+// RotationL            rotation      6               
+// RotationB            rotation      3               
+// turretG              inertial      14              
+// Color                optical       7               
+// BumperR              bumper        C               
+// TurretE              rotation      17              
+// ---- END VEXCODE CONFIGURED DEVICES ----
 
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
@@ -252,7 +293,7 @@ int turretSpinTo(double targetAngle,bool global) {
   while (fabs(error) > accuracy) {
     if(global){error = targetAngle - turretG.orientation(yaw, degrees);
     }else {
-    double turretEncoderAngle = (TurretE.angle()>180?TurretE.angle()-360:TurretE.angle()>180);
+    double turretEncoderAngle = (TurretE.angle()>180?TurretE.angle()-360:TurretE.angle());
     error = targetAngle - turretEncoderAngle;
     }
     
@@ -283,7 +324,7 @@ int turretSpinTo(double targetAngle,bool global) {
 }
 bool loading = true;
 void toggleTurret() {
-  //  loading = !loading;
+    loading = !loading;
   // wait(10, msec);
   // turretSpinTo(TargetAngle);
   // Controller1.rumble(".");
@@ -292,7 +333,10 @@ void toggleTurret() {
 void turretStable() {
 
   while (true) {
-    turretSpinTo(TargetAngle,false);
+    if(loading)
+      turretSpinTo(0, false);
+    else 
+      turretSpinTo(atan2(y, x),true); 
 
     wait(10, msec);
   }

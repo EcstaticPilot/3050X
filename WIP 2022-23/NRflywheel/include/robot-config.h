@@ -18,8 +18,6 @@ extern rotation RotationL;
 extern rotation RotationB;
 extern inertial turretG;
 extern optical Color;
-extern bumper BumperL;
-extern bumper BumperR;
 extern rotation TurretE;
 
 /**

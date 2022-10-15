@@ -23,8 +23,6 @@ rotation RotationL = rotation(PORT6, false);
 rotation RotationB = rotation(PORT3, false);
 inertial turretG = inertial(PORT14);
 optical Color = optical(PORT7);
-bumper BumperL = bumper(Brain.ThreeWirePort.B);
-bumper BumperR = bumper(Brain.ThreeWirePort.C);
 rotation TurretE = rotation(PORT17, false);
 
 // VEXcode generated functions
