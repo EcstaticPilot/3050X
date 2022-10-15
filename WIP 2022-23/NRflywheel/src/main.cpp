@@ -345,7 +345,7 @@ void turretStable() {
 void pistonToggle() {
 
   Injector.set(true);
-  wait(.5, sec);
+  wait(200, msec);
   Injector.set(false);
 }
 void pistonToggleReady() {
@@ -358,7 +358,7 @@ void pistonToggleReady() {
   Brain.Screen.drawRectangle(120, 190, 60, 60, black);
 
   Injector.set(true);
-  wait(.5, sec);
+  wait(200, msec);
   Injector.set(false);
   Brain.Screen.drawRectangle(120, 190, 60, 60, black);
 }
@@ -565,7 +565,7 @@ int main() {
   Controller1.ButtonB.pressed(toggleIntake);
   Controller1.ButtonLeft.pressed(pistonToggle);
   Controller1.ButtonRight.pressed(pistonToggleReady);
-
+  Controller1.ButtonDown.pressed(void (*callback)();)
   // Run the pre-autonomous function.
   pre_auton();
 
