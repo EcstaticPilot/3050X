@@ -565,7 +565,7 @@ int main() {
   Controller1.ButtonB.pressed(toggleIntake);
   Controller1.ButtonLeft.pressed(pistonToggle);
   Controller1.ButtonRight.pressed(pistonToggleReady);
-  Controller1.ButtonDown.pressed(void (*callback)();)
+  //Controller1.ButtonDown.pressed(void (*callback)();)
   // Run the pre-autonomous function.
   pre_auton();
 
