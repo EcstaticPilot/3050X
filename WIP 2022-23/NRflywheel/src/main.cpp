@@ -154,11 +154,11 @@ int odometery() {
     prevHeading = absoluteOrientation;
 
     if (deltaHeading == 0) {
-      localX = distB;
-      localY = distL;
+      localY = distB;
+      localX = distL;
     } else {
-      localX = 2.0 * sin(deltaHeading / 2.0) * (distB / deltaHeading + Sb);
-      localY = 2.0 * sin(deltaHeading / 2.0) * (distL / deltaHeading + Sl);
+      localY = 2.0 * sin(deltaHeading / 2.0) * (distB / deltaHeading + Sb);
+      localX = 2.0 * sin(deltaHeading / 2.0) * (distL / deltaHeading + Sl);
     }
     double averageHeading = absoluteOrientation - (deltaHeading / 2);
     //  double globalDist = sqrt(localX * localX + localY * localY);
@@ -267,7 +267,7 @@ int turretSpinTo(double targetAngle, bool global) {
   double kp = 1;
   double ki = 0;
 
-  double kd = .01;
+  double kd = .3;
   double sum = 0;
   double prevError = 0;
   double error = targetAngle - turretG.orientation(yaw, degrees);
@@ -275,18 +275,19 @@ int turretSpinTo(double targetAngle, bool global) {
   // while(true){
   double speed;
   while (fabs(error) > accuracy) {
+     double turretEncoderAngle =
+         -1* (TurretE.angle() > 180 ? TurretE.angle() - 360 : TurretE.angle());
     if (global) {
       error = targetAngle - turretG.orientation(yaw, degrees);
     } else {
-      double turretEncoderAngle =
-          (TurretE.angle() > 180 ? TurretE.angle() - 360 : TurretE.angle());
+     
       error = targetAngle - turretEncoderAngle;
     }
 
     speed = (error * kp) + (ki * sum) + (kd * (error - prevError));
-    if ((speed < 0 && TurretE.angle() > 90))
+    if ((speed < 0 && turretEncoderAngle*-1 > 90))
       speed = 0;
-    if ((speed > 0 && TurretE.angle() > 190))
+    if ((speed > 0 && turretEncoderAngle*-1 > 190))
       speed = 0;
     turret.spin(fwd, speed, pct);
 
@@ -320,10 +321,10 @@ void toggleTurret() {
 int turretStable() {
 
   while (true) {
-    if (loading)
+ //   if (loading)
       turretSpinTo(0, false);
-    else
-      turretSpinTo(TargetAngle, true);
+ //   else
+ //     turretSpinTo(TargetAngle, true);
 
     this_thread::sleep_for(10);
   }
@@ -332,7 +333,7 @@ int turretStable() {
 void pistonToggle() {
 
   Injector.set(true);
-  wait(200, msec);
+  wait(500, msec);
   Injector.set(false);
 }
 void pistonToggleReady() {
@@ -345,7 +346,7 @@ void pistonToggleReady() {
   Brain.Screen.drawRectangle(120, 190, 60, 60, black);
 
   Injector.set(true);
-  wait(200, msec);
+  wait(500, msec);
   Injector.set(false);
   Brain.Screen.drawRectangle(120, 190, 60, 60, black);
 }
@@ -472,7 +473,7 @@ void usercontrol(void) {
     }
     if (!intakeOn) {
       if (Color.color() == red && Color.isNearObject()) {
-        Intake1.spin(forward, 150, rpm);
+        Intake1.spin(forward, 200, rpm);
       } else {
 
         Intake1.stop();
@@ -498,13 +499,14 @@ void usercontrol(void) {
     RF.spin(forward, Controller1.Axis2.position(), pct);
     LB.spin(forward, Controller1.Axis3.position(), pct);
     RB.spin(forward, Controller1.Axis2.position(), pct);
-    if (Controller1.Axis2.position() == 0 &&
+  /*  if (Controller1.Axis2.position() == 0 &&
         Controller1.Axis3.position() == 0) {
       LF.stop(hold);
       RF.stop(hold);
       LB.stop(hold);
       RB.stop(hold);
-    }
+    }*/
+
     /*
     if (turretToggle == false) {
 
