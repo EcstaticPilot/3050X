@@ -53,12 +53,14 @@
 
 #include "vex.h"
 #include <math.h>
-
+#include "vision.h"
+#include "robot-config.h"
 double TargetAngle = 0;
 double targetSpeed = 0.0;
 using namespace vex;
 // 100 digits of pi because I like Pi𝝿
 long double pi = 3.14159265358979323;
+
 // A global instance of competition
 competition Competition;
 void flywheelMonitor();
@@ -189,7 +191,7 @@ int odometery() {
 int ControllerPrint() {
 
   Brain.Timer.reset();
-  // AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+  // AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
   while (1) {
     Controller1.Screen.setCursor(1, 1);
     double speed = F1.velocity(pct);
@@ -312,19 +314,20 @@ int turretSpinTo(double targetAngle, bool global) {
 }
 bool loading = true;
 void toggleTurret() {
+
   loading = !loading;
   // wait(10, msec);
   // turretSpinTo(TargetAngle);
-  // Controller1.rumble(".");
+   Controller1.rumble(".");
 }
 
 int turretStable() {
 
   while (true) {
- //   if (loading)
+    if (loading)
       turretSpinTo(0, false);
- //   else
- //     turretSpinTo(TargetAngle, true);
+   else
+      turretSpinTo(TargetAngle, true);
 
     this_thread::sleep_for(10);
   }
