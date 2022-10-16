@@ -131,6 +131,7 @@ double distL = 0;         // distance left encoder has traveled
 double distB = 0;         // distance back encoder has traveled
 double prevLE = lEncoder; // create previous encoder value left
 double prevBE = bEncoder; // create previous encoder value back
+
 int odometery() {
 
   Controller1.rumble(".");
@@ -199,7 +200,8 @@ int ControllerPrint() {
     Controller1.Screen.setCursor(2, 1);
     Controller1.Screen.print("pos= (%.1f,%.1f)", x, y);
     Controller1.Screen.setCursor(3, 1);
-    Controller1.Screen.print("gAngle=%.2f ", (atan2(y, x)) * 180 / pi);
+  //  Controller1.Screen.print("gAngle=%.2f ", (atan2(y, x)) * 180 / pi);
+  Controller1.Screen.print("lE=%.1f bE=%.1f)", lEncoder, bEncoder);
     if (Brain.timer(sec) == 15) {
       Controller1.rumble(".");
     } // 2 minute mark
