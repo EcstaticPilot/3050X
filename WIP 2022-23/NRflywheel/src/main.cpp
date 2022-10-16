@@ -1,44 +1,3 @@
-// ---- START VEXCODE CONFIGURED DEVICES ----
-// Robot Configuration:
-// [Name]               [Type]        [Port(s)]
-// Controller1          controller                    
-// F1                   motor         2               
-// F2                   motor         15              
-// Injector             digital_out   A               
-// LF                   motor         21              
-// LB                   motor         12              
-// RF                   motor         20              
-// RB                   motor         4               
-// Intake1              motor         1               
-// turret               motor         19              
-// gyro1                inertial      11              
-// RotationL            rotation      6               
-// RotationB            rotation      3               
-// turretG              inertial      14              
-// Color                optical       7               
-// TurretE              rotation      17              
-// ---- END VEXCODE CONFIGURED DEVICES ----
-// ---- START VEXCODE CONFIGURED DEVICES ----
-// Robot Configuration:
-// [Name]               [Type]        [Port(s)]
-// Controller1          controller                    
-// F1                   motor         2               
-// F2                   motor         15              
-// Injector             digital_out   A               
-// LF                   motor         21              
-// LB                   motor         12              
-// RF                   motor         20              
-// RB                   motor         4               
-// Intake1              motor         1               
-// turret               motor         19              
-// gyro1                inertial      11              
-// RotationL            rotation      6               
-// RotationB            rotation      3               
-// turretG              inertial      14              
-// Color                optical       7               
-// BumperR              bumper        C               
-// TurretE              rotation      17              
-// ---- END VEXCODE CONFIGURED DEVICES ----
 
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
@@ -51,24 +10,24 @@
 // ---- START VEXCODE CONFIGURED DEVICES ----
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
-// Controller1          controller                    
-// F1                   motor         2               
-// F2                   motor         15              
-// Injector             digital_out   A               
-// LF                   motor         21              
-// LB                   motor         12              
-// RF                   motor         20              
-// RB                   motor         4               
-// Intake1              motor         1               
-// turret               motor         19              
-// gyro1                inertial      11              
-// RotationL            rotation      6               
-// RotationB            rotation      3               
-// turretG              inertial      14              
-// Color                optical       7               
-// BumperL              bumper        B               
-// BumperR              bumper        C               
-// TurretE              rotation      17              
+// Controller1          controller
+// F1                   motor         2
+// F2                   motor         15
+// Injector             digital_out   A
+// LF                   motor         21
+// LB                   motor         12
+// RF                   motor         20
+// RB                   motor         4
+// Intake1              motor         1
+// turret               motor         19
+// gyro1                inertial      11
+// RotationL            rotation      6
+// RotationB            rotation      3
+// turretG              inertial      14
+// Color                optical       7
+// BumperL              bumper        B
+// BumperR              bumper        C
+// TurretE              rotation      17
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
@@ -135,26 +94,25 @@ void controlFlywheel1(double target) {
 
 double x = 0, y = 0; // declare global x and y
 double prevHeading = gyro1.heading();
-  double deltaHeading = 0; // change in heading
-  double absoluteOrientation = pi;
-  double localX;            // local x to use in loop
-  double localY;            // local y to use in loop
-  double lRad = 1.375;      // radius of tracking wheel
-  double bRad = 1.375;      // radius of tracking wheel
-  double Sl = 3.75;          // distance of left wheel to tracking center
-  double Sb = 2.6;            // distance of back wheel to tracking center
-  double lEncoder = 0;      // declaring encoder variable left
-  double bEncoder = 0;      // declaring encoder variable back
-  double distL = 0;         // distance left encoder has traveled
-  double distB = 0;         // distance back encoder has traveled
-  double prevLE = lEncoder; // create previous encoder value left
-  double prevBE = bEncoder; // create previous encoder value back
+double deltaHeading = 0; // change in heading
+double absoluteOrientation = pi;
+double localX;            // local x to use in loop
+double localY;            // local y to use in loop
+double lRad = 1.375;      // radius of tracking wheel
+double bRad = 1.375;      // radius of tracking wheel
+double Sl = 3.75;         // distance of left wheel to tracking center
+double Sb = 2.6;          // distance of back wheel to tracking center
+double lEncoder = 0;      // declaring encoder variable left
+double bEncoder = 0;      // declaring encoder variable back
+double distL = 0;         // distance left encoder has traveled
+double distB = 0;         // distance back encoder has traveled
+double prevLE = lEncoder; // create previous encoder value left
+double prevBE = bEncoder; // create previous encoder value back
 int odometery() {
 
-  
-      Controller1.rumble(".");
-      RotationL.resetPosition();
-      RotationB.resetPosition();
+  Controller1.rumble(".");
+  RotationL.resetPosition();
+  RotationB.resetPosition();
 
   while (1) {
     lEncoder = RotationL.position(degrees);
@@ -164,14 +122,14 @@ int odometery() {
     // convert encoder distance into distance traveled
     distB = ((bEncoder - prevBE) * pi / 180) * bRad;
     // convert encoder distance into disntance traveled
-    
- prevLE = lEncoder; // create previous encoder value left
+
+    prevLE = lEncoder; // create previous encoder value left
     prevBE = bEncoder; // create previous encoder value back
 
     absoluteOrientation = (360 - gyro1.heading(degrees)) * pi / 180.0;
     deltaHeading =
         absoluteOrientation - prevHeading; // calculate change in heading
-   
+
     prevHeading = absoluteOrientation;
 
     if (deltaHeading == 0) {
@@ -181,23 +139,26 @@ int odometery() {
       localX = 2.0 * sin(deltaHeading / 2.0) * (distB / deltaHeading + Sb);
       localY = 2.0 * sin(deltaHeading / 2.0) * (distL / deltaHeading + Sl);
     }
-     double averageHeading = absoluteOrientation - (deltaHeading / 2);
- //  double globalDist = sqrt(localX * localX + localY * localY);
+    double averageHeading = absoluteOrientation - (deltaHeading / 2);
+    //  double globalDist = sqrt(localX * localX + localY * localY);
 
-  //  double globalAngle =averageHeading +((fabs(localX) < .001) ? pi / 2 : atan2(localY ,localX)) +((localX < 0) ? pi : 0);
-     double deltaX = (localY * cos(averageHeading)) - (localX * sin(averageHeading));
-       double deltaY = (localX * cos(averageHeading)) - (localY * sin(averageHeading));
-         while(absoluteOrientation >= 2 * M_PI) {
-     absoluteOrientation -= 2 * M_PI;
+    //  double globalAngle =averageHeading +((fabs(localX) < .001) ? pi / 2 :
+    //  atan2(localY ,localX)) +((localX < 0) ? pi : 0);
+    double deltaX =
+        (localY * cos(averageHeading)) - (localX * sin(averageHeading));
+    double deltaY =
+        (localX * cos(averageHeading)) - (localY * sin(averageHeading));
+    while (absoluteOrientation >= 2 * M_PI) {
+      absoluteOrientation -= 2 * M_PI;
     }
-    
-    while(absoluteOrientation < 0) {
-     absoluteOrientation += 2 * M_PI;
+
+    while (absoluteOrientation < 0) {
+      absoluteOrientation += 2 * M_PI;
     }
     x += deltaX;
     y += deltaY;
-    //x += globalDist * cos(globalAngle);
-    //y += globalDist * sin(globalAngle);
+    // x += globalDist * cos(globalAngle);
+    // y += globalDist * sin(globalAngle);
     this_thread::sleep_for(5);
   }
   return 1;
@@ -206,7 +167,7 @@ int odometery() {
 // printstuff to controller
 int ControllerPrint() {
   Brain.Timer.reset();
-// AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+  // AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
   while (1) {
     Controller1.Screen.setCursor(1, 1);
     double speed = F1.velocity(pct);
@@ -214,7 +175,7 @@ int ControllerPrint() {
     Controller1.Screen.setCursor(2, 1);
     Controller1.Screen.print("pos= (%.1f,%.1f)", x, y);
     Controller1.Screen.setCursor(3, 1);
-    Controller1.Screen.print("gAngle=%.2f ",(atan2(y,x))*180/pi);
+    Controller1.Screen.print("gAngle=%.2f ", (atan2(y, x)) * 180 / pi);
     if (Brain.timer(sec) == 15) {
       Controller1.rumble(".");
     } // 2 minute mark
@@ -233,7 +194,7 @@ int ControllerPrint() {
 }
 
 void controlFlywheelSpeed(double target) {
-  double kI = .025;
+  double kI = .04;
   double speed = F1.velocity(pct);
   double error = target - speed;
   double fwDrive = FWDrive + kI * error;
@@ -270,7 +231,7 @@ void flywheelMonitor() {
   double t1 = F1.temperature(celsius);
   double t2 = F2.temperature(celsius);
   double b = Brain.Battery.capacity();
-  Brain.Screen.setFillColor(white);
+
   Brain.Screen.printAt(1, 60, "F1 current = %.1f   Temp = %.1f   ", current1,
                        t1);
   Brain.Screen.printAt(1, 80, "F2 current = %.1f   Temp = %.1f   ", current2,
@@ -279,10 +240,10 @@ void flywheelMonitor() {
 } //
 
 // turret Pid spin to with gyro angle
-int turretSpinTo(double targetAngle,bool global) {
+int turretSpinTo(double targetAngle, bool global) {
   double kp = 1;
   double ki = 0;
-  
+
   double kd = .01;
   double sum = 0;
   double prevError = 0;
@@ -291,25 +252,28 @@ int turretSpinTo(double targetAngle,bool global) {
   // while(true){
   double speed;
   while (fabs(error) > accuracy) {
-    if(global){error = targetAngle - turretG.orientation(yaw, degrees);
-    }else {
-    double turretEncoderAngle = (TurretE.angle()>180?TurretE.angle()-360:TurretE.angle());
-    error = targetAngle - turretEncoderAngle;
+    if (global) {
+      error = targetAngle - turretG.orientation(yaw, degrees);
+    } else {
+      double turretEncoderAngle =
+          (TurretE.angle() > 180 ? TurretE.angle() - 360 : TurretE.angle());
+      error = targetAngle - turretEncoderAngle;
     }
-    
+
     speed = (error * kp) + (ki * sum) + (kd * (error - prevError));
-    if ((speed < 0 && TurretE.angle()>90)) speed=0;
-        if( (speed > 0 && TurretE.angle()>190)) speed=0;
-      turret.spin(fwd, speed, pct);
-    
-      /*
-      if (speed > 0) {
-        turret.spin(fwd, -5, rpm);
-      }
-      if (speed < 0) {
-        turret.spin(fwd, -5, pct);
-      }*/
-     
+    if ((speed < 0 && TurretE.angle() > 90))
+      speed = 0;
+    if ((speed > 0 && TurretE.angle() > 190))
+      speed = 0;
+    turret.spin(fwd, speed, pct);
+
+    /*
+    if (speed > 0) {
+      turret.spin(fwd, -5, rpm);
+    }
+    if (speed < 0) {
+      turret.spin(fwd, -5, pct);
+    }*/
 
     wait(10, msec);
     prevError = error;
@@ -324,7 +288,7 @@ int turretSpinTo(double targetAngle,bool global) {
 }
 bool loading = true;
 void toggleTurret() {
-    loading = !loading;
+  loading = !loading;
   // wait(10, msec);
   // turretSpinTo(TargetAngle);
   // Controller1.rumble(".");
@@ -333,10 +297,10 @@ void toggleTurret() {
 void turretStable() {
 
   while (true) {
-    if(loading)
+    if (loading)
       turretSpinTo(0, false);
-    else 
-      turretSpinTo(atan2(y, x),true); 
+    else
+      turretSpinTo(atan2(y, x), true);
 
     wait(10, msec);
   }
@@ -394,10 +358,7 @@ void pre_auton(void) {
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
-void autonomous(void) {
-  
-  turretSpinTo(0,false);
-}
+void autonomous(void) { turretSpinTo(0, false); }
 
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
@@ -561,11 +522,11 @@ int main() {
   // Set up callbacks for autonomous and driver control periods.
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
-  //Controller1.ButtonDown.pressed(turretStable);
+  // Controller1.ButtonDown.pressed(turretStable);
   Controller1.ButtonB.pressed(toggleIntake);
   Controller1.ButtonLeft.pressed(pistonToggle);
   Controller1.ButtonRight.pressed(pistonToggleReady);
-  //Controller1.ButtonDown.pressed(void (*callback)();)
+  // Controller1.ButtonDown.pressed(void (*callback)();)
   // Run the pre-autonomous function.
   pre_auton();
 
