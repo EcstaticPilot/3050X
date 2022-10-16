@@ -429,8 +429,7 @@ void usercontrol(void) {
     //      turret.stop(brake);
     //   }
  
- //button controls
- //available buttons: X Y A
+
     if (Controller1.ButtonL2.pressing()) {
       TargetAngle -= 0.5;
       wait(10, msec);
@@ -447,7 +446,8 @@ void usercontrol(void) {
       targetSpeed += 0.5;
       wait(10, msec);
     }
-
+     //button controls
+ //available buttons: X Y A
     if (Controller1.ButtonUp.pressing()&&targetSpeed<100){
       targetSpeed += 5;
       wait(10, msec);
@@ -552,7 +552,7 @@ int main() {
   Controller1.ButtonB.pressed(toggleIntake);
   Controller1.ButtonLeft.pressed(pistonToggle);
   Controller1.ButtonRight.pressed(pistonToggleReady);
-  
+  Controller1.ButtonX.pressed(toggleTurret);
   // Run the pre-autonomous function.
   pre_auton();
 
