@@ -1,3 +1,24 @@
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// Controller1          controller
+// F1                   motor         2
+// F2                   motor         15
+// Injector             digital_out   A
+// LF                   motor         21
+// LB                   motor         12
+// RF                   motor         20
+// RB                   motor         4
+// Intake1              motor         1
+// turret               motor         19
+// gyro1                inertial      11
+// RotationL            rotation      6
+// RotationB            rotation      3
+// turretG              inertial      14
+// Color                optical       7
+// TurretE              rotation      17
+// Vision5              vision        5
+// ---- END VEXCODE CONFIGURED DEVICES ----
 
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
@@ -166,6 +187,7 @@ int odometery() {
 
 // printstuff to controller
 int ControllerPrint() {
+
   Brain.Timer.reset();
   // AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
   while (1) {
@@ -188,6 +210,7 @@ int ControllerPrint() {
     if (Brain.timer(sec) == 105) {
       Controller1.rumble("....");
     } // 30 second mark
+
     this_thread::sleep_for(50);
   }
   return (0);
@@ -294,17 +317,17 @@ void toggleTurret() {
   // Controller1.rumble(".");
 }
 
-void turretStable() {
+int turretStable() {
 
   while (true) {
     if (loading)
       turretSpinTo(0, false);
     else
-      turretSpinTo(atan2(y, x), true);
+      turretSpinTo(TargetAngle, true);
 
-    wait(10, msec);
+    this_thread::sleep_for(10);
   }
-  //  }
+  return 0;
 }
 void pistonToggle() {
 
@@ -374,7 +397,6 @@ void usercontrol(void) {
   thread ControllerPrinting = thread(ControllerPrint);
   thread turretStablization = thread(turretStable);
   bool alg = true;
-  int offset = 0;
   gyro1.calibrate();
   turretG.calibrate();
   waitUntil(!gyro1.isCalibrating() && !turretG.isCalibrating());
@@ -389,9 +411,7 @@ void usercontrol(void) {
 
     //   }
 
-    if (Controller1.ButtonA.pressing()) {
-      targetSpeed = 0;
-    }
+  
     /*
         if (Controller1.ButtonL2.pressing() && !BumperL.pressing()) {
           // offset++;
@@ -408,7 +428,9 @@ void usercontrol(void) {
     // {
     //      turret.stop(brake);
     //   }
-
+ 
+ //button controls
+ //available buttons: X Y A
     if (Controller1.ButtonL2.pressing()) {
       TargetAngle -= 0.5;
       wait(10, msec);
@@ -426,12 +448,15 @@ void usercontrol(void) {
       wait(10, msec);
     }
 
-    if (Controller1.ButtonY.pressing())
-      targetSpeed = 34;
-    if (Controller1.ButtonX.pressing())
-      targetSpeed = 70;
-    if (Controller1.ButtonUp.pressing())
-      targetSpeed = 90;
+    if (Controller1.ButtonUp.pressing()&&targetSpeed<100){
+      targetSpeed += 5;
+      wait(10, msec);
+    }
+    if (Controller1.ButtonDown.pressing()&&targetSpeed>0){
+      targetSpeed -= 5;
+      wait(10, msec);
+    }  
+    
     Brain.Screen.printAt(1, 20, "target speed = %.2f ", targetSpeed);
 
     if (alg) {
@@ -523,10 +548,11 @@ int main() {
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
   // Controller1.ButtonDown.pressed(turretStable);
+
   Controller1.ButtonB.pressed(toggleIntake);
   Controller1.ButtonLeft.pressed(pistonToggle);
   Controller1.ButtonRight.pressed(pistonToggleReady);
-  // Controller1.ButtonDown.pressed(void (*callback)();)
+  
   // Run the pre-autonomous function.
   pre_auton();
 

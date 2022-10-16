@@ -24,6 +24,9 @@ rotation RotationB = rotation(PORT3, false);
 inertial turretG = inertial(PORT14);
 optical Color = optical(PORT7);
 rotation TurretE = rotation(PORT17, false);
+/*vex-vision-config:begin*/
+vision Vision5 = vision (PORT5, 50);
+/*vex-vision-config:end*/
 
 // VEXcode generated functions
 // define variable for remote controller enable/disable
