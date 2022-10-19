@@ -53,14 +53,12 @@
 
 #include "vex.h"
 #include <math.h>
-#include "vision.h"
-#include "robot-config.h"
+
 double TargetAngle = 0;
 double targetSpeed = 0.0;
 using namespace vex;
 // 100 digits of pi because I like Pi𝝿
 long double pi = 3.14159265358979323;
-
 // A global instance of competition
 competition Competition;
 void flywheelMonitor();
@@ -131,7 +129,6 @@ double distL = 0;         // distance left encoder has traveled
 double distB = 0;         // distance back encoder has traveled
 double prevLE = lEncoder; // create previous encoder value left
 double prevBE = bEncoder; // create previous encoder value back
-
 int odometery() {
 
   Controller1.rumble(".");
@@ -157,11 +154,11 @@ int odometery() {
     prevHeading = absoluteOrientation;
 
     if (deltaHeading == 0) {
-      localY = distB;
-      localX = distL;
+      localX = distB;
+      localY = distL;
     } else {
-      localY = 2.0 * sin(deltaHeading / 2.0) * (distB / deltaHeading + Sb);
-      localX = 2.0 * sin(deltaHeading / 2.0) * (distL / deltaHeading + Sl);
+      localX = 2.0 * sin(deltaHeading / 2.0) * (distB / deltaHeading + Sb);
+      localY = 2.0 * sin(deltaHeading / 2.0) * (distL / deltaHeading + Sl);
     }
     double averageHeading = absoluteOrientation - (deltaHeading / 2);
     //  double globalDist = sqrt(localX * localX + localY * localY);
@@ -192,7 +189,7 @@ int odometery() {
 int ControllerPrint() {
 
   Brain.Timer.reset();
-  // AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+  // AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
   while (1) {
     Controller1.Screen.setCursor(1, 1);
     double speed = F1.velocity(pct);
@@ -200,8 +197,7 @@ int ControllerPrint() {
     Controller1.Screen.setCursor(2, 1);
     Controller1.Screen.print("pos= (%.1f,%.1f)", x, y);
     Controller1.Screen.setCursor(3, 1);
-  //  Controller1.Screen.print("gAngle=%.2f ", (atan2(y, x)) * 180 / pi);
-  Controller1.Screen.print("lE=%.1f bE=%.1f)", lEncoder, bEncoder);
+    Controller1.Screen.print("gAngle=%.2f ", (atan2(y, x)) * 180 / pi);
     if (Brain.timer(sec) == 15) {
       Controller1.rumble(".");
     } // 2 minute mark
@@ -271,7 +267,7 @@ int turretSpinTo(double targetAngle, bool global) {
   double kp = 1;
   double ki = 0;
 
-  double kd = .3;
+  double kd = .01;
   double sum = 0;
   double prevError = 0;
   double error = targetAngle - turretG.orientation(yaw, degrees);
@@ -279,19 +275,18 @@ int turretSpinTo(double targetAngle, bool global) {
   // while(true){
   double speed;
   while (fabs(error) > accuracy) {
-     double turretEncoderAngle =
-         -1* (TurretE.angle() > 180 ? TurretE.angle() - 360 : TurretE.angle());
     if (global) {
       error = targetAngle - turretG.orientation(yaw, degrees);
     } else {
-     
+      double turretEncoderAngle =
+          (TurretE.angle() > 180 ? TurretE.angle() - 360 : TurretE.angle());
       error = targetAngle - turretEncoderAngle;
     }
 
     speed = (error * kp) + (ki * sum) + (kd * (error - prevError));
-    if ((speed < 0 && turretEncoderAngle*-1 > 90))
+    if ((speed < 0 && TurretE.angle() > 90))
       speed = 0;
-    if ((speed > 0 && turretEncoderAngle*-1 > 190))
+    if ((speed > 0 && TurretE.angle() > 190))
       speed = 0;
     turret.spin(fwd, speed, pct);
 
@@ -316,11 +311,10 @@ int turretSpinTo(double targetAngle, bool global) {
 }
 bool loading = true;
 void toggleTurret() {
-
   loading = !loading;
   // wait(10, msec);
   // turretSpinTo(TargetAngle);
-   Controller1.rumble(".");
+  // Controller1.rumble(".");
 }
 
 int turretStable() {
@@ -328,7 +322,7 @@ int turretStable() {
   while (true) {
     if (loading)
       turretSpinTo(0, false);
-   else
+    else
       turretSpinTo(TargetAngle, true);
 
     this_thread::sleep_for(10);
@@ -338,7 +332,7 @@ int turretStable() {
 void pistonToggle() {
 
   Injector.set(true);
-  wait(500, msec);
+  wait(200, msec);
   Injector.set(false);
 }
 void pistonToggleReady() {
@@ -351,7 +345,7 @@ void pistonToggleReady() {
   Brain.Screen.drawRectangle(120, 190, 60, 60, black);
 
   Injector.set(true);
-  wait(500, msec);
+  wait(200, msec);
   Injector.set(false);
   Brain.Screen.drawRectangle(120, 190, 60, 60, black);
 }
@@ -478,7 +472,7 @@ void usercontrol(void) {
     }
     if (!intakeOn) {
       if (Color.color() == red && Color.isNearObject()) {
-        Intake1.spin(forward, 200, rpm);
+        Intake1.spin(forward, 150, rpm);
       } else {
 
         Intake1.stop();
@@ -504,14 +498,13 @@ void usercontrol(void) {
     RF.spin(forward, Controller1.Axis2.position(), pct);
     LB.spin(forward, Controller1.Axis3.position(), pct);
     RB.spin(forward, Controller1.Axis2.position(), pct);
-  /*  if (Controller1.Axis2.position() == 0 &&
+    if (Controller1.Axis2.position() == 0 &&
         Controller1.Axis3.position() == 0) {
       LF.stop(hold);
       RF.stop(hold);
       LB.stop(hold);
       RB.stop(hold);
-    }*/
-
+    }
     /*
     if (turretToggle == false) {
 
