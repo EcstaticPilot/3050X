@@ -72,11 +72,11 @@ Discarded input sections
 
  .text          0x00000000        0x0 build/src/main.o
  .text._Z5driveiid
-                0x00000000       0xb8 build/src/main.o
+                0x00000000       0xd8 build/src/main.o
  .ARM.exidx.text._Z5driveiid
                 0x00000000        0x8 build/src/main.o
  .text._Z9inchDrivedddd
-                0x00000000      0x160 build/src/main.o
+                0x00000000      0x168 build/src/main.o
  .ARM.exidx.text._Z9inchDrivedddd
                 0x00000000        0x8 build/src/main.o
  .text._Z16controlFlywheel1d

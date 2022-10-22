@@ -53,6 +53,7 @@ void drive (int lSpeed,int rSpeed,double wt){
     RF.spin(forward, rSpeed, pct);
     LB.spin(forward, lSpeed, pct);
     RB.spin(forward, rSpeed, pct);
+    wait(wt, msec);
 }
 void inchDrive(double dist, double speedMod = 1,double
   stopTime=99999999999999999, double accuracy = 0.5) { 
