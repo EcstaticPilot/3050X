@@ -5,7 +5,7 @@
 /*    Author:       NR 7700                                                   */
 /*    Created:      July, 2022                                              */
 /*    Description:  code of Nikhil Ramanuja , now owned by Ashley now owned by
- * morgan                                 */
+ * morgan now owned by 7700e                                */
 /*----------------------------------------------------------------------------*/
 
 // ---- START VEXCODE CONFIGURED DEVICES ----
@@ -16,7 +16,7 @@
 // F2                   motor         5               
 // Injector             digital_out   H               
 // LF                   motor         10              
-// LB                   motor         8               
+// LB                   motor         17              
 // RF                   motor         9               
 // RB                   motor         7               
 // Intake1              motor         21              
@@ -31,14 +31,13 @@
 using namespace vex;
 competition Competition;
 
-
 int driveFactor = 1;
 int GyroT = 0;
-int fDesiredSpeed = 0;\
+int fDesiredSpeed = 0;
 int Fspeed = F2.velocity(percent);
-int B = 30;           // Flywheel target speed set with button B
-int Y = 60;           // Flywheel target speed set with button Y
-int X = 100;          // Flywheel target speed set with button X
+int B = 30;  // Flywheel target speed set with button B
+int Y = 60;  // Flywheel target speed set with button Y
+int X = 100; // Flywheel target speed set with button X
 
 float Dtraveled = 0;
 float Pi = 3.14159265358979;
@@ -90,23 +89,25 @@ void controlFlywheelSpeed(double target) {
 }
 void rollerStop() { Roller.stop(brake); }
 
-void xDrive(int strafeX, int driveY, int turn, int wt) {
+void xDrive(int strafeX, int driveY, int Turn, int wt) {
   // x drive code
-  LF.spin(forward, driveY + strafeX + turn, percent);
-  RF.spin(forward, driveY - strafeX - turn, percent);
-  LB.spin(forward, driveY - strafeX + turn, percent);
-  RB.spin(forward, driveY + strafeX - turn, percent);
+  LF.spin(forward, driveY + strafeX + Turn, percent);
+  RF.spin(forward, driveY - strafeX - Turn, percent);
+  LB.spin(forward, driveY - strafeX + Turn, percent);
+  RB.spin(forward, driveY + strafeX - Turn, percent);
   wait(wt, msec);
 }
-// void inchDrive(float D, int V){ //D is distance in inches, function needs
-// testing LF.setVelocity(V, percent); RF.setVelocity(V, percent);
-// RB.setVelocity(V, percent);
-// LB.setVelocity(V, percent);
-// RF.rotateFor(forward,(1.125)*(0.707*D)/(3.14159*3.25),rev,false);
-// LF.rotateFor(forward,(1.125)*(0.707*D)/(3.14159*3.25),rev,false);
-// RB.rotateFor(forward,(1.125)*(0.707*D)/(3.14159*3.25),rev,false);
-// LB.rotateFor(forward,(1.125)*(0.707*D)/(3.14159*3.25),rev,true);
-//}
+//no
+ void inchDrive(float D, int V){ //D is distance in inches, function needs testing
+ LF.setVelocity(V, percent); RF.setVelocity(V, percent);
+ RB.setVelocity(V, percent);
+ LB.setVelocity(V, percent);
+ RF.rotateFor(forward,(1.125)*(0.707*D)/(3.14159*3.25),rev,false);
+ LF.rotateFor(forward,(1.125)*(0.707*D)/(3.14159*3.25),rev,false);
+ RB.rotateFor(forward,(1.125)*(0.707*D)/(3.14159*3.25),rev,false);
+ LB.rotateFor(forward,(1.125)*(0.707*D)/(3.14159*3.25),rev,true);
+}
+//no
 void driveBrake() {
   LF.stop(brake);
   RF.stop(brake);
@@ -215,45 +216,44 @@ void gyroTurn(bool dir,
 
 // define your global instances of motors and other devices here
 
-void spinRoller(float speed, float time) {
+void spinRoller(float speed, float Time) {
   Roller.spin(forward, speed, percent);
-  wait(time, msec);
+  wait(Time, msec);
   Roller.stop(brake);
 }
 
 // Accelerates the flywheel to speed, and Flashes green when ready to launch
 // d i n o s a u r
-void Flywheel(int T){ //T is target speed in percent
-cancel1=false;
-int Fspeed=F2.velocity(percent);
-while((Fspeed<T-5 or Fspeed>T+5)&&!cancel1){
-F1.spin(reverse, Fspeed+(T-Fspeed), percent);
-F2.spin(forward, Fspeed+(T-Fspeed), percent);
-if(Controller1.ButtonRight.pressing()){
-  cancel1=true;
-}
-}
-if(cancel1==true){
-Brain.Screen.drawRectangle(0,0,480,272,"red");
-}
-else{
-Brain.Screen.drawRectangle(0,0,480,272,"green");
-}
-}
-void launch(){ //used for launching the disc with the piston when ready
-  if(Controller1.ButtonR1.pressing()){
-    Injector.set(true);
-    wait(0.5,sec);
-    Injector.set(false); //pushes disc into the wheel to launch and resets
-  Brain.Screen.clearScreen();
+void Flywheel(int T) { // T is target speed in percent
+  cancel1 = false;
+  int Fspeed = F2.velocity(percent);
+  while ((Fspeed < T - 5 or Fspeed > T + 5) && !cancel1) {
+    F1.spin(reverse, Fspeed + (T - Fspeed), percent);
+    F2.spin(forward, Fspeed + (T - Fspeed), percent);
+    if (Controller1.ButtonRight.pressing()) {
+      cancel1 = true;
     }
-  if(Controller1.ButtonRight.pressing()){
-    F1.stop(brake); //used to enable launch cancellation
+  }
+  if (cancel1 == true) {
+    Brain.Screen.drawRectangle(0, 0, 480, 272, "red");
+  } else {
+    Brain.Screen.drawRectangle(0, 0, 480, 272, "green");
+  }
+}
+void launch() { // used for launching the disc with the piston when ready
+  if (Controller1.ButtonR1.pressing()) {
+    Injector.set(true);
+    wait(0.5, sec);
+    Injector.set(false); // pushes disc into the wheel to launch and resets
+    Brain.Screen.clearScreen();
+  }
+  if (Controller1.ButtonRight.pressing()) {
+    F1.stop(brake); // used to enable launch cancellation
     F2.stop(brake);
     Brain.Screen.clearScreen();
   }
 
-}// d i n o s a u r
+} // d i n o s a u r
 
 void flywheelMonitor() {
   double current1 = F1.current();
@@ -299,13 +299,7 @@ void toggleIntake() {
   intakeSpin();
 }
 
-void endgame_release() {
-
-Endgame1.set(true);
-
-
-
-}
+void endgame_release() { Endgame1.set(true); } //used for expansion pneumatics control
 
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
@@ -331,10 +325,9 @@ void autonomous(void) { // needs testing
   pistonToggle();
 }
 
-
 void usercontrol(void) {
 
-  Controller1.ButtonL2.pressed(toggleIntake);
+  Controller1.ButtonRight.pressed(toggleIntake);
   Controller1.ButtonUp.pressed(endgame_release);
 
   while (true) {
@@ -348,20 +341,23 @@ void usercontrol(void) {
       Roller.stop(brake);
     }
     // flywheel
-    //i like umbrellas
-     if(Controller1.ButtonR2.pressing()){ //refer to the variable definitions
-   //to change the target speed
-   if(abs(Fspeed-50)<20){ F1.spin(reverse,
-   Fspeed+(50-Fspeed), percent); F2.spin(forward, Fspeed+(50-Fspeed), percent);
-     }
-     if(!(abs(Fspeed-50)<20)){
-     F1.spin(reverse,Fspeed+(50-Fspeed)/abs(50-Fspeed)*20,percent);
-     F2.spin(reverse,Fspeed+(50-Fspeed)/abs(50-Fspeed)*20,percent);
-     }
-     if(!(Fspeed<50-5 or Fspeed>50+5)){
-       Brain.Screen.drawRectangle(0,0,480,272,"green");
-     }
-   }//i like umbrellas
+    // i like umbrellas
+    if (Controller1.ButtonR2.pressing()) { // refer to the variable definitions
+      // to change the target speed
+      if (abs(Fspeed - 50) < 20) {
+        F1.spin(reverse, Fspeed + (50 - Fspeed), percent);
+        F2.spin(forward, Fspeed + (50 - Fspeed), percent);
+      }
+      if (!(abs(Fspeed - 50) < 20)) {
+        F1.spin(reverse, Fspeed + (50 - Fspeed) / abs(50 - Fspeed) * 20,
+                percent);
+        F2.spin(reverse, Fspeed + (50 - Fspeed) / abs(50 - Fspeed) * 20,
+                percent);
+      }
+      if (!(Fspeed < 50 - 5 or Fspeed > 50 + 5)) {
+        Brain.Screen.drawRectangle(0, 0, 480, 272, "green");
+      }
+    } // i like umbrellas
     if (Controller1.ButtonL1.pressing()) {
       pistonToggle();
       Brain.Screen.clearScreen();
@@ -380,7 +376,7 @@ void usercontrol(void) {
       F2.stop(coast);
       targetSpeed = 0;
       Brain.Screen.clearScreen();
-    }
+    } 
     // x drive code
 
     if (Controller1.ButtonB.pressing()) {
@@ -409,3 +405,4 @@ int main() {
     wait(100, msec);
   }
 }
+// hello
