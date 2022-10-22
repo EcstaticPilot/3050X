@@ -67,10 +67,10 @@ void inchDrive(double dist, double speedMod = 1,double
   double Ki = 0.5;      // Integral
   double Kd = 13.33336; // Derivative
   double sum = 0;
-  Brain.Timer.reset();
+
   while ((fabs(error) > accuracy ||
           fabs(speed) > 10)) {
-  float Time = Brain.timer(msec);
+ 
   // && !(wallStop && errors[0] == errors[1] &&
                                // errors[1] == errors[2] && errors[2] ==
                               //  errors[3] && errors[0] != dist)) {
@@ -82,9 +82,7 @@ void inchDrive(double dist, double speedMod = 1,double
     drive(speed * speedMod, speed * speedMod, 10);
 
     prevError = error;
-    if(Time>stopTime){
-      break;
-    }
+    
   }
                }
 

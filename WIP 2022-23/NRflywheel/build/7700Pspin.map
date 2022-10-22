@@ -76,7 +76,7 @@ Discarded input sections
  .ARM.exidx.text._Z5driveiid
                 0x00000000        0x8 build/src/main.o
  .text._Z9inchDrivedddd
-                0x00000000      0x180 build/src/main.o
+                0x00000000      0x160 build/src/main.o
  .ARM.exidx.text._Z9inchDrivedddd
                 0x00000000        0x8 build/src/main.o
  .text._Z16controlFlywheel1d
