@@ -119,7 +119,6 @@ int odometery() {
   Controller1.rumble(".");
   RotationL.resetPosition();
   RotationB.resetPosition();
-
   while (1) {
     lEncoder = RotationL.position(degrees);
     bEncoder = RotationB.position(degrees);
