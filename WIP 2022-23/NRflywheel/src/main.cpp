@@ -1,31 +1,10 @@
-// ---- START VEXCODE CONFIGURED DEVICES ----
-// Robot Configuration:
-// [Name]               [Type]        [Port(s)]
-// Controller1          controller
-// F1                   motor         2
-// F2                   motor         15
-// Injector             digital_out   A
-// LF                   motor         21
-// LB                   motor         12
-// RF                   motor         20
-// RB                   motor         4
-// Intake1              motor         1
-// turret               motor         19
-// gyro1                inertial      11
-// RotationL            rotation      6
-// RotationB            rotation      3
-// turretG              inertial      14
-// Color                optical       7
-// TurretE              rotation      17
-// Vision5              vision        5
-// ---- END VEXCODE CONFIGURED DEVICES ----
 
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
 /*    Module:       main.cpp                                                  */
 /*    Author:       NR 7700P                                                  */
 /*    Created:      May 13, 2022                                              */
-/*    Description:  code of Nikhil Ramanuja                                   */
+/*    Description:  code of Nikhil Ramanuja 7700P turret bot vex spin up      */
 /*----------------------------------------------------------------------------*/
 
 // ---- START VEXCODE CONFIGURED DEVICES ----
@@ -150,7 +129,7 @@ int odometery() {
     absoluteOrientation = (360 - gyro1.heading(degrees)) * pi / 180.0;
     deltaHeading =
         absoluteOrientation - prevHeading; // calculate change in heading
-
+double averageHeading = (prevHeading+absoluteOrientation)/2;
     prevHeading = absoluteOrientation;
 
     if (deltaHeading == 0) {
@@ -160,7 +139,7 @@ int odometery() {
       localX = 2.0 * sin(deltaHeading / 2.0) * (distB / deltaHeading + Sb);
       localY = 2.0 * sin(deltaHeading / 2.0) * (distL / deltaHeading + Sl);
     }
-    double averageHeading = absoluteOrientation - (deltaHeading / 2);
+    
     //  double globalDist = sqrt(localX * localX + localY * localY);
 
     //  double globalAngle =averageHeading +((fabs(localX) < .001) ? pi / 2 :
