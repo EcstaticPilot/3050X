@@ -34,23 +34,29 @@
 #include <math.h>
 
 double TargetAngle = 0;
-double targetSpeed = 0.0;
+double TargetSpeed = 0.0;
 using namespace vex;
 // 100 digits of pi because I like Pi𝝿
 long double pi = 3.14159265358979323;
 // A global instance of competition
 competition Competition;
+
 void flywheelMonitor();
 void spinFlywheel(double);
 // define your global instances of motors and other devices here
 double OldError = 0.0;
 double TBHval = 0.0;
 double FWDrive = 0.0;
-bool turretToggle = false;
-/*void inchDrive(double dist, double Speed = 1,double
-  stopTime=99999999999999999, double accuracy = 0.5) { LeftBack.setRotation(0,
-  rev); RightBack.setRotation(0, rev);
-
+bool TurretToggle = false;
+void drive (int lSpeed,int rSpeed,double wt){
+    LF.spin(forward, lSpeed, pct);
+    RF.spin(forward, rSpeed, pct);
+    LB.spin(forward, lSpeed, pct);
+    RB.spin(forward, rSpeed, pct);
+}
+void inchDrive(double dist, double speedMod = 1,double
+  stopTime=99999999999999999, double accuracy = 0.5) { 
+   double startPos =RotationL.position(deg);
   dist = -dist;
 
   double currDist = 0;
@@ -62,25 +68,25 @@ bool turretToggle = false;
   double Kd = 13.33336; // Derivative
   double sum = 0;
   Brain.Timer.reset();
-  while ((abs(error) > accuracy ||
-          abs(speed) > 10)) {
+  while ((fabs(error) > accuracy ||
+          fabs(speed) > 10)) {
   float Time = Brain.timer(msec);
   // && !(wallStop && errors[0] == errors[1] &&
                                // errors[1] == errors[2] && errors[2] ==
                               //  errors[3] && errors[0] != dist)) {
-    currDist = LeftBack.rotation(rev) * pi * diameter;
+    currDist = (RotationL.position(deg)-startPos)*(pi/180);
     error = dist - currDist;
     sum = sum * 0.8 + error;
     speed = Kp * error + Ki * sum + Kd * (error - prevError);
 
-    drive(speed * Speed, speed * Speed, 10);
+    drive(speed * speedMod, speed * speedMod, 10);
 
     prevError = error;
     if(Time>stopTime){
       break;
     }
   }
-               }*/
+               }
 
 void controlFlywheel1(double target) {
   double speed = F1.velocity(pct);
@@ -92,7 +98,7 @@ void controlFlywheel1(double target) {
 }
 // ODOMETERY
 
-double x = 0, y = 0; // declare global x and y
+double X = 0, Y = 0; // declare global x and y
 double prevHeading = gyro1.heading();
 double deltaHeading = 0; // change in heading
 double absoluteOrientation = pi;
@@ -108,6 +114,7 @@ double distL = 0;         // distance left encoder has traveled
 double distB = 0;         // distance back encoder has traveled
 double prevLE = lEncoder; // create previous encoder value left
 double prevBE = bEncoder; // create previous encoder value back
+double averageHeading;
 int odometery() {
 
   Controller1.rumble(".");
@@ -129,7 +136,7 @@ int odometery() {
     absoluteOrientation = (360 - gyro1.heading(degrees)) * pi / 180.0;
     deltaHeading =
         absoluteOrientation - prevHeading; // calculate change in heading
-double averageHeading = (prevHeading+absoluteOrientation)/2;
+averageHeading = (prevHeading+absoluteOrientation)/2;
     prevHeading = absoluteOrientation;
 
     if (deltaHeading == 0) {
@@ -155,8 +162,8 @@ double averageHeading = (prevHeading+absoluteOrientation)/2;
     while (absoluteOrientation < 0) {
       absoluteOrientation += 2 * M_PI;
     }
-    x += deltaX;
-    y += deltaY;
+    X += deltaX;
+    Y += deltaY;
     // x += globalDist * cos(globalAngle);
     // y += globalDist * sin(globalAngle);
     this_thread::sleep_for(5);
@@ -172,11 +179,11 @@ int ControllerPrint() {
   while (1) {
     Controller1.Screen.setCursor(1, 1);
     double speed = F1.velocity(pct);
-    Controller1.Screen.print("Spd=%.2f tSpd=%.2f   ", speed, targetSpeed);
+    Controller1.Screen.print("Spd=%.2f tSpd=%.2f   ", speed, TargetSpeed);
     Controller1.Screen.setCursor(2, 1);
-    Controller1.Screen.print("pos= (%.1f,%.1f)", x, y);
+    Controller1.Screen.print("pos= (%.1f,%.1f)", X, Y);
     Controller1.Screen.setCursor(3, 1);
-    Controller1.Screen.print("gAngle=%.2f ", (atan2(y, x)) * 180 / pi);
+    Controller1.Screen.print("gAngle=%.2f ", (atan2(Y, X)) * 180 / pi);
     if (Brain.timer(sec) == 15) {
       Controller1.rumble(".");
     } // 2 minute mark
@@ -316,11 +323,11 @@ void pistonToggle() {
 }
 void pistonToggleReady() {
   Brain.Screen.drawRectangle(120, 190, 60, 60, orange);
-  waitUntil(F1.velocity(pct) < targetSpeed + .25 &&
-            F1.velocity(pct) > targetSpeed - .25);
+  waitUntil(F1.velocity(pct) < TargetSpeed + .25 &&
+            F1.velocity(pct) > TargetSpeed - .25);
   wait(10, msec);
-  waitUntil(F1.velocity(pct) < targetSpeed + .25 &&
-            F1.velocity(pct) > targetSpeed - .25);
+  waitUntil(F1.velocity(pct) < TargetSpeed + .25 &&
+            F1.velocity(pct) > TargetSpeed - .25);
   Brain.Screen.drawRectangle(120, 190, 60, 60, black);
 
   Injector.set(true);
@@ -418,31 +425,31 @@ void usercontrol(void) {
       wait(10, msec);
     }
     if (Controller1.ButtonL1.pressing()) {
-      targetSpeed -= 0.5;
+      TargetSpeed -= 0.5;
       wait(10, msec);
     }
     if (Controller1.ButtonR1.pressing()) {
-      targetSpeed += 0.5;
+      TargetSpeed += 0.5;
       wait(10, msec);
     }
      //button controls
  //available buttons: X Y A
-    if (Controller1.ButtonUp.pressing()&&targetSpeed<100){
-      targetSpeed += 5;
+    if (Controller1.ButtonUp.pressing()&&TargetSpeed<100){
+      TargetSpeed += 5;
       wait(10, msec);
     }
-    if (Controller1.ButtonDown.pressing()&&targetSpeed>0){
-      targetSpeed -= 5;
+    if (Controller1.ButtonDown.pressing()&&TargetSpeed>0){
+      TargetSpeed -= 5;
       wait(10, msec);
     }  
     
-    Brain.Screen.printAt(1, 20, "target speed = %.2f ", targetSpeed);
+    Brain.Screen.printAt(1, 20, "target speed = %.2f ", TargetSpeed);
 
     if (alg) {
-      controlFlywheelSpeed(targetSpeed);
+      controlFlywheelSpeed(TargetSpeed);
       Brain.Screen.printAt(1, 120, "controlled speed    ");
     } else {
-      controlFlywheel1(targetSpeed);
+      controlFlywheel1(TargetSpeed);
       Brain.Screen.printAt(1, 120, "not controlled     ");
     }
 
@@ -464,8 +471,8 @@ void usercontrol(void) {
     if (!Color.isNearObject()) {
       Color.setLight(ledState::off);
     }
-    if (F1.velocity(pct) < targetSpeed + 1 &&
-        F1.velocity(pct) > targetSpeed - 1) {
+    if (F1.velocity(pct) < TargetSpeed + 1 &&
+        F1.velocity(pct) > TargetSpeed - 1) {
       Brain.Screen.drawRectangle(60, 190, 60, 60, green);
 
     } else {
