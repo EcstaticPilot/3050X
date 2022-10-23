@@ -6,28 +6,27 @@
 /*    Created:      May 13, 2022                                              */
 /*    Description:  code of Nikhil Ramanuja 7700P turret bot vex spin up      */
 /*----------------------------------------------------------------------------*/
-
+//vex::vision::signature BGOAL = vex::vision::signature (1, -1855, 2553, 349, 2243, 10039, 6141, 1, 0);
 // ---- START VEXCODE CONFIGURED DEVICES ----
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
-// Controller1          controller
-// F1                   motor         2
-// F2                   motor         15
-// Injector             digital_out   A
-// LF                   motor         21
-// LB                   motor         12
-// RF                   motor         20
-// RB                   motor         4
-// Intake1              motor         1
-// turret               motor         19
-// gyro1                inertial      11
-// RotationL            rotation      6
-// RotationB            rotation      3
-// turretG              inertial      14
-// Color                optical       7
-// BumperL              bumper        B
-// BumperR              bumper        C
-// TurretE              rotation      17
+// Controller1          controller                    
+// F1                   motor         2               
+// F2                   motor         15              
+// Injector             digital_out   A               
+// LF                   motor         21              
+// LB                   motor         12              
+// RF                   motor         20              
+// RB                   motor         4               
+// Intake1              motor         1               
+// turret               motor         19              
+// gyro1                inertial      11              
+// RotationL            rotation      6               
+// RotationB            rotation      3               
+// turretG              inertial      14              
+// Color                optical       7               
+// TurretE              rotation      17              
+// Vision5              vision        5               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
@@ -113,7 +112,7 @@ double distL = 0;         // distance left encoder has traveled
 double distB = 0;         // distance back encoder has traveled
 double prevLE = lEncoder; // create previous encoder value left
 double prevBE = bEncoder; // create previous encoder value back
-double averageHeading;
+double averageHeading;    // 
 int odometery() {
 
   Controller1.rumble(".");
@@ -248,30 +247,30 @@ void flywheelMonitor() {
 
 // turret Pid spin to with gyro angle
 int turretSpinTo(double targetAngle, bool global) {
-  double kp = 1;
+  double kp = .5;
   double ki = 0;
 
-  double kd = .01;
+  double kd = .00;
   double sum = 0;
   double prevError = 0;
   double error = targetAngle - turretG.orientation(yaw, degrees);
-  double accuracy = .1;
+  double accuracy = 1;
   // while(true){
   double speed;
   while (fabs(error) > accuracy) {
+    double turretEncoderAngle =
+          (TurretE.angle() > 180 ? TurretE.angle() - 360 : TurretE.angle());
     if (global) {
       error = targetAngle - turretG.orientation(yaw, degrees);
     } else {
-      double turretEncoderAngle =
-          (TurretE.angle() > 180 ? TurretE.angle() - 360 : TurretE.angle());
       error = targetAngle - turretEncoderAngle;
     }
 
     speed = (error * kp) + (ki * sum) + (kd * (error - prevError));
-    if ((speed < 0 && TurretE.angle() > 90))
+    /*if ((speed > 0 && turretEncoderAngle < -90))
       speed = 0;
-    if ((speed > 0 && TurretE.angle() > 190))
-      speed = 0;
+    if ((speed < 0 && turretEncoderAngle > 90))
+      speed = 0;*/
     turret.spin(fwd, speed, pct);
 
     /*
@@ -295,6 +294,7 @@ int turretSpinTo(double targetAngle, bool global) {
 }
 bool loading = true;
 void toggleTurret() {
+  Controller1.rumble(".");
   loading = !loading;
   // wait(10, msec);
   // turretSpinTo(TargetAngle);
@@ -302,15 +302,14 @@ void toggleTurret() {
 }
 
 int turretStable() {
-
+loading=true;
   while (true) {
     if (loading)
       turretSpinTo(0, false);
     else
-      turretSpinTo(TargetAngle, true);
+      turretSpinTo(0, true);
 
-    this_thread::sleep_for(10);
-  }
+    this_thread::sleep_for(5);  }
   return 0;
 }
 void pistonToggle() {
@@ -484,10 +483,10 @@ void usercontrol(void) {
     RB.spin(forward, Controller1.Axis2.position(), pct);
     if (Controller1.Axis2.position() == 0 &&
         Controller1.Axis3.position() == 0) {
-      LF.stop(hold);
-      RF.stop(hold);
-      LB.stop(hold);
-      RB.stop(hold);
+      LF.stop(coast);
+      RF.stop(coast);
+      LB.stop(coast);
+      RB.stop(coast);
     }
     /*
     if (turretToggle == false) {

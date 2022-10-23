@@ -8,6 +8,7 @@ using code = vision::code;
 brain  Brain;
 
 // VEXcode device constructors
+controller Controller1 = controller(primary);
 motor F1 = motor(PORT2, ratio6_1, true);
 motor F2 = motor(PORT15, ratio6_1, false);
 digital_out Injector = digital_out(Brain.ThreeWirePort.A);
@@ -26,7 +27,6 @@ rotation TurretE = rotation(PORT17, false);
 /*vex-vision-config:begin*/
 vision Vision5 = vision (PORT5, 50);
 /*vex-vision-config:end*/
-controller Controller1 = controller(primary);
 
 // VEXcode generated functions
 // define variable for remote controller enable/disable
