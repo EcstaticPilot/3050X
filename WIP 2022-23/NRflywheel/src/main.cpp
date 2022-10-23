@@ -260,17 +260,17 @@ int turretSpinTo(double targetAngle, bool global) {
   while (fabs(error) > accuracy) {
     double turretEncoderAngle =
           (TurretE.angle() > 180 ? TurretE.angle() - 360 : TurretE.angle());
-    if (global) {
+    //if (global) {
       error = targetAngle - turretG.orientation(yaw, degrees);
-    } else {
-      error = targetAngle - turretEncoderAngle;
-    }
+   // } else {
+   //   error = targetAngle - turretEncoderAngle;
+  //  }
 
     speed = (error * kp) + (ki * sum) + (kd * (error - prevError));
-    /*if ((speed > 0 && turretEncoderAngle < -90))
+    if ((speed > 0 && turretEncoderAngle < -90))
       speed = 0;
     if ((speed < 0 && turretEncoderAngle > 90))
-      speed = 0;*/
+      speed = 0;
     turret.spin(fwd, speed, pct);
 
     /*
