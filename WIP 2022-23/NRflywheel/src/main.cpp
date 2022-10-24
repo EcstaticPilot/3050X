@@ -1,3 +1,25 @@
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// Controller1          controller                    
+// F1                   motor         2               
+// F2                   motor         15              
+// Injector             digital_out   A               
+// LF                   motor         21              
+// LB                   motor         12              
+// RF                   motor         20              
+// RB                   motor         4               
+// Intake1              motor         1               
+// turret               motor         19              
+// gyro1                inertial      11              
+// RotationL            rotation      6               
+// RotationB            rotation      3               
+// turretG              inertial      14              
+// Color                optical       7               
+// TurretE              rotation      17              
+// Vision5              vision        5               
+// turretOptical        optical       8               
+// ---- END VEXCODE CONFIGURED DEVICES ----
 
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
@@ -346,6 +368,14 @@ void toggleIntake() { intakeOn = !intakeOn; }
 /*---------------------------------------------------------------------------*/
 
 void pre_auton(void) {
+  if(!(RB.installed()&&LB.installed()&&RF.installed()&&LF.installed()&& //drive motors
+  F1.installed()&&F2.installed() //flywheel
+  &&Intake1.installed()&&turret.installed() //turret and intake
+  &&gyro1.installed()&&RotationL.installed()&&RotationB.installed() //odom stuff
+  &&turretG.installed()&&TurretE.installed()&&Vision5.installed()&&turretOptical.installed()&& //turret sensors
+  Color.installed())) //roler sensor
+    Controller1.rumble("---------------");
+  
   vexcodeInit();
   // Initializing Robot Configuration. DO NOT REMOVE!
   thread odometeryTracking = thread(odometery);
