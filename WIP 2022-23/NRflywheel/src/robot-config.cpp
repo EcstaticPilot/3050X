@@ -17,7 +17,7 @@ motor LB = motor(PORT12, ratio18_1, true);
 motor RF = motor(PORT20, ratio18_1, true);
 motor RB = motor(PORT4, ratio18_1, false);
 motor Intake1 = motor(PORT1, ratio18_1, true);
-motor turret = motor(PORT19, ratio18_1, false);
+motor turret = motor(PORT19, ratio18_1, true);
 inertial gyro1 = inertial(PORT11);
 rotation RotationL = rotation(PORT6, false);
 rotation RotationB = rotation(PORT3, false);
@@ -25,9 +25,9 @@ inertial turretG = inertial(PORT14);
 optical Color = optical(PORT7);
 rotation TurretE = rotation(PORT17, false);
 /*vex-vision-config:begin*/
-vision Vision5 = vision (PORT5, 50);
+vision Vision16 = vision (PORT16, 50);
 /*vex-vision-config:end*/
-optical turretOptical = optical(PORT8);
+optical turretOptical = optical(PORT9);
 
 // VEXcode generated functions
 // define variable for remote controller enable/disable

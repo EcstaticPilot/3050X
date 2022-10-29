@@ -26,7 +26,8 @@
 // turretG              inertial      14              
 // Color                optical       7               
 // TurretE              rotation      17              
-// Vision5              vision        5               
+// Vision16             vision        16              
+// turretOptical        optical       9               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
@@ -258,10 +259,10 @@ void flywheelMonitor() {
 
 // turret Pid spin to with gyro angle
 int turretSpinTo(double targetAngle, bool global) {
-  double kp = .5;
+  double kp = 1;
   double ki = 0;
 
-  double kd = .00;
+  double kd = .01;
   double sum = 0;
   double prevError = 0;
   double error = targetAngle - turretG.orientation(yaw, degrees);
@@ -271,17 +272,17 @@ int turretSpinTo(double targetAngle, bool global) {
   while (fabs(error) > accuracy) {
     double turretEncoderAngle =
           (TurretE.angle() > 180 ? TurretE.angle() - 360 : TurretE.angle());
-    //if (global) {
+    if (global) {
       error = targetAngle - turretG.orientation(yaw, degrees);
-   // } else {
-   //   error = targetAngle - turretEncoderAngle;
-  //  }
+    } else {
+      error = targetAngle - turretEncoderAngle;
+    }
 
     speed = (error * kp) + (ki * sum) + (kd * (error - prevError));
-    if ((speed > 0 && turretEncoderAngle < -90))
+   /* if ((speed > 0 && turretEncoderAngle < -90))
       speed = 0;
     if ((speed < 0 && turretEncoderAngle > 90))
-      speed = 0;
+      speed = 0;*/
     turret.spin(fwd, speed, pct);
 
     /*
@@ -315,10 +316,10 @@ void toggleTurret() {
 int turretStable() {
 loading=true;
   while (true) {
-    if (loading)
+  //  if (loading)
       turretSpinTo(0, false);
-    else
-      turretSpinTo(0, true);
+  //  else
+    //  turretSpinTo(0, true);
 
     this_thread::sleep_for(5);  }
   return 0;
@@ -326,7 +327,7 @@ loading=true;
 void pistonToggle() {
 
   Injector.set(true);
-  wait(200, msec);
+  wait(100, msec);
   Injector.set(false);
 }
 void pistonToggleReady() {
@@ -339,12 +340,14 @@ void pistonToggleReady() {
   Brain.Screen.drawRectangle(120, 190, 60, 60, black);
 
   Injector.set(true);
-  wait(200, msec);
+  wait(100, msec);
   Injector.set(false);
   Brain.Screen.drawRectangle(120, 190, 60, 60, black);
 }
 bool intakeOn = false;
 void toggleIntake() { intakeOn = !intakeOn; }
+bool driveDir=0;
+void driveSwitch(){driveDir=!driveDir;}
 
 /*---------------------------------------------------------------------------*/
 /*                          Pre-Autonomous Functions                         */
@@ -361,9 +364,9 @@ void pre_auton(void) {
   F1.installed()&&F2.installed() //flywheel
   &&Intake1.installed()&&turret.installed() //turret and intake
   &&gyro1.installed()&&RotationL.installed()&&RotationB.installed() //odom stuff
-  &&turretG.installed()&&TurretE.installed()&&Vision5.installed()&&turretOptical.installed()&& //turret sensors
+  &&turretG.installed()&&TurretE.installed()&&Vision16.installed()&&turretOptical.installed()&& //turret sensors
   Color.installed())) //roler sensor
-    Controller1.rumble("---------------");
+    Controller1.rumble("--------------------------------------------------------------------------------------");
   
   vexcodeInit();
   // Initializing Robot Configuration. DO NOT REMOVE!
@@ -496,10 +499,19 @@ void usercontrol(void) {
     }
     flywheelMonitor();
     // tank drive code
+    if(driveDir){
+    
     LF.spin(forward, Controller1.Axis3.position(), pct);
     RF.spin(forward, Controller1.Axis2.position(), pct);
     LB.spin(forward, Controller1.Axis3.position(), pct);
     RB.spin(forward, Controller1.Axis2.position(), pct);
+    }
+    else if (!driveDir) {
+    LF.spin(reverse, Controller1.Axis2.position(), pct);
+    RF.spin(reverse, Controller1.Axis3.position(), pct);
+    LB.spin(reverse, Controller1.Axis2.position(), pct);
+    RB.spin(reverse, Controller1.Axis3.position(), pct);
+    }
     if (Controller1.Axis2.position() == 0 &&
         Controller1.Axis3.position() == 0) {
       LF.stop(coast);
