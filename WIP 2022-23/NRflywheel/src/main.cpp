@@ -54,6 +54,10 @@ void drive (int lSpeed,int rSpeed,double wt){
     LB.spin(forward, lSpeed, pct);
     RB.spin(forward, rSpeed, pct);
     wait(wt, msec);
+  LF.stop();
+    RF.stop();
+    LB.stop();
+    RB.stop();
 }
 void inchDrive(double dist, double speedMod = 1,double
   stopTime=99999999999999999, double accuracy = 0.5) { 
@@ -75,7 +79,7 @@ void inchDrive(double dist, double speedMod = 1,double
   // && !(wallStop && errors[0] == errors[1] &&
                                // errors[1] == errors[2] && errors[2] ==
                               //  errors[3] && errors[0] != dist)) {
-    currDist = (RotationL.position(deg)-startPos)*(pi/180);
+    currDist = (RotationL.position(deg)-startPos)*(pi/180)*(2.75/2);
     error = dist - currDist;
     sum = sum * 0.8 + error;
     speed = Kp * error + Ki * sum + Kd * (error - prevError);
@@ -383,11 +387,16 @@ void pre_auton(void) {
 /*  This task is used to control your robot during the autonomous phase of   */
 /*  a VEX Competition.                                                       */
 /*                                                                           */
-/*  You must modify the code to add your own robot specific commands here.   */
+/*  You must modify the code to add your own robot specific commands here .   */
 /*---------------------------------------------------------------------------*/
 
-void autonomous(void) { turretSpinTo(0, false); }
+void autonomous(void) { spinFlywheel(100);
+ wait(3, sec);
+ Injector.set(!Injector.value());
+ wait(300, msec);
+ Injector.set(!Injector.value());
 
+}
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
 /*                              User Control Task                            */
@@ -501,16 +510,16 @@ void usercontrol(void) {
     // tank drive code
     if(driveDir){
     
-    LF.spin(forward, Controller1.Axis3.position(), pct);
-    RF.spin(forward, Controller1.Axis2.position(), pct);
-    LB.spin(forward, Controller1.Axis3.position(), pct);
-    RB.spin(forward, Controller1.Axis2.position(), pct);
+    LF.spin(forward, Controller1.Axis3.position()*120, voltageUnits::mV);
+    RF.spin(forward, Controller1.Axis2.position()*120, voltageUnits::mV);
+    LB.spin(forward, Controller1.Axis3.position()*120, voltageUnits::mV);
+    RB.spin(forward, Controller1.Axis2.position()*120, voltageUnits::mV);
     }
     else if (!driveDir) {
-    LF.spin(reverse, Controller1.Axis2.position(), pct);
-    RF.spin(reverse, Controller1.Axis3.position(), pct);
-    LB.spin(reverse, Controller1.Axis2.position(), pct);
-    RB.spin(reverse, Controller1.Axis3.position(), pct);
+    LF.spin(reverse, Controller1.Axis2.position()*120, voltageUnits::mV);
+    RF.spin(reverse, Controller1.Axis3.position()*120, voltageUnits::mV);
+    LB.spin(reverse, Controller1.Axis2.position()*120, voltageUnits::mV);
+    RB.spin(reverse, Controller1.Axis3.position()*120, voltageUnits::mV);
     }
     if (Controller1.Axis2.position() == 0 &&
         Controller1.Axis3.position() == 0) {
@@ -565,7 +574,7 @@ int main() {
 
   Controller1.ButtonB.pressed(toggleIntake);
   Controller1.ButtonLeft.pressed(pistonToggle);
-  Controller1.ButtonRight.pressed(pistonToggleReady);
+  Controller1.ButtonRight.pressed(driveSwitch);
   Controller1.ButtonX.pressed(toggleTurret);
   // Run the pre-autonomous function.
   pre_auton();
