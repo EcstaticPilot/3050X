@@ -1,25 +1,3 @@
-// ---- START VEXCODE CONFIGURED DEVICES ----
-// Robot Configuration:
-// [Name]               [Type]        [Port(s)]
-// Controller1          controller                    
-// F1                   motor         2               
-// F2                   motor         15              
-// Injector             digital_out   A               
-// LF                   motor         21              
-// LB                   motor         12              
-// RF                   motor         20              
-// RB                   motor         4               
-// Intake1              motor         1               
-// turret               motor         19              
-// gyro1                inertial      11              
-// RotationL            rotation      6               
-// RotationB            rotation      3               
-// turretG              inertial      14              
-// Color                optical       7               
-// TurretE              rotation      17              
-// Vision5              vision        5               
-// turretOptical        optical       8               
-// ---- END VEXCODE CONFIGURED DEVICES ----
 
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
@@ -112,9 +90,9 @@ void controlFlywheel1(double target) {
   double speed = F1.velocity(pct);
 
   spinFlywheel((target - speed) + target);
-  Brain.Screen.printAt(180, 40, "fwdrive %.1f  ", target);
+ // Brain.Screen.printAt(180, 40, "fwdrive %.1f  ", target);
 
-  Brain.Screen.printAt(1, 40, " speed = %.2f ", speed);
+ // Brain.Screen.printAt(1, 40, " speed = %.2f ", speed);
 }
 // ODOMETERY
 
@@ -136,11 +114,24 @@ double prevLE = lEncoder; // create previous encoder value left
 double prevBE = bEncoder; // create previous encoder value back
 double averageHeading;    // 
 int odometery() {
-
+   double deltaX =
+        (localY * cos(averageHeading)) - (localX * sin(averageHeading));
+    double deltaY =
+        (localX * cos(averageHeading)) - (localY * sin(averageHeading));
   Controller1.rumble(".");
   RotationL.resetPosition();
   RotationB.resetPosition();
   while (1) {
+    Brain.Screen.printAt(1, 20, " prevHeading = %.2f ", prevHeading);
+    Brain.Screen.printAt(1, 40, " deltaHeading = %.2f ", deltaHeading);
+    Brain.Screen.printAt(1, 60, " absoluteOrientation = %.2f ", absoluteOrientation);
+    Brain.Screen.printAt(1, 80, " localX = %.2f localY = %.2f ", localX, localY);
+    Brain.Screen.printAt(1, 100, " lEncoder = %.2f bEncoder = %.2f", lEncoder, bEncoder);
+    Brain.Screen.printAt(1, 120, " distL = %.2f distB = %.2f ", distL,distB);
+    Brain.Screen.printAt(1, 140, " deltaX = %.2f deltaY = %.2f", deltaX, deltaY);
+   Brain.Screen.printAt(1, 160, " averageHeading = %.2f ", averageHeading);
+   
+
     lEncoder = RotationL.position(degrees);
     bEncoder = RotationB.position(degrees);
 
@@ -170,9 +161,9 @@ averageHeading = (prevHeading+absoluteOrientation)/2;
 
     //  double globalAngle =averageHeading +((fabs(localX) < .001) ? pi / 2 :
     //  atan2(localY ,localX)) +((localX < 0) ? pi : 0);
-    double deltaX =
+    deltaX =
         (localY * cos(averageHeading)) - (localX * sin(averageHeading));
-    double deltaY =
+    deltaY =
         (localX * cos(averageHeading)) - (localY * sin(averageHeading));
     while (absoluteOrientation >= 2 * M_PI) {
       absoluteOrientation -= 2 * M_PI;
@@ -227,7 +218,7 @@ void controlFlywheelSpeed(double target) {
   double error = target - speed;
   double fwDrive = FWDrive + kI * error;
   // :D
-  Brain.Screen.printAt(1, 40, " speed = %.2f ", speed);
+ // Brain.Screen.printAt(1, 40, " speed = %.2f ", speed);
   // Keep drive between 0 to 100%
   if (fwDrive > 100)
     fwDrive = 100;
@@ -239,7 +230,7 @@ void controlFlywheelSpeed(double target) {
     TBHval = fwDrive;
   }
 
-  Brain.Screen.printAt(180, 40, "fwdrive %.1f  ", fwDrive);
+//  Brain.Screen.printAt(180, 40, "fwdrive %.1f  ", fwDrive);
   spinFlywheel(fwDrive);
 
   FWDrive = fwDrive;
@@ -256,15 +247,13 @@ void spinFlywheel(double speed) {
 void flywheelMonitor() {
   double current1 = F1.current();
   double current2 = F2.current();
-  double t1 = F1.temperature(celsius);
-  double t2 = F2.temperature(celsius);
+  double t1 = F1.temperature(fahrenheit);
+  double t2 = F2.temperature(fahrenheit);
   double b = Brain.Battery.capacity();
 
-  Brain.Screen.printAt(1, 60, "F1 current = %.1f   Temp = %.1f   ", current1,
-                       t1);
-  Brain.Screen.printAt(1, 80, "F2 current = %.1f   Temp = %.1f   ", current2,
-                       t2);
-  Brain.Screen.printAt(1, 100, "Battery Capacity  = %.1f      ", b);
+  //Brain.Screen.printAt(1, 60, "F1 current = %.1f   Temp = %.1f   ", current1, t1);
+  //Brain.Screen.printAt(1, 80, "F2 current = %.1f   Temp = %.1f   ", current2, t2);
+ // Brain.Screen.printAt(1, 100, "Battery Capacity  = %.1f      ", b);
 } //
 
 // turret Pid spin to with gyro angle
@@ -470,14 +459,14 @@ void usercontrol(void) {
       wait(10, msec);
     }  
     
-    Brain.Screen.printAt(1, 20, "target speed = %.2f ", TargetSpeed);
+    //Brain.Screen.printAt(1, 20, "target speed = %.2f ", TargetSpeed);
 
     if (alg) {
       controlFlywheelSpeed(TargetSpeed);
-      Brain.Screen.printAt(1, 120, "controlled speed    ");
+     // Brain.Screen.printAt(1, 120, "controlled speed    ");
     } else {
       controlFlywheel1(TargetSpeed);
-      Brain.Screen.printAt(1, 120, "not controlled     ");
+     // Brain.Screen.printAt(1, 120, "not controlled     ");
     }
 
     if (intakeOn) {
