@@ -23,7 +23,7 @@
 // Claw                 digital_out   A               
 // RFDrive              motor         10              
 // mogolift             motor         19              
-// ClawSpin             motor         14              
+// ClawSpin             motor         16              
 // Claw2                digital_out   B               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
@@ -87,7 +87,7 @@ void motorCurrent() {
    */
 }
 
-void autonDriver(int wt, int lspeed, int rspeed, int liftspeed, bool claw) {
+void autonDriver1(int wt, int lspeed, int rspeed, int liftspeed, bool claw) {
 
   LBDrive.spin(forward, lspeed, pct);
   RBDrive.spin(forward, rspeed, pct);
@@ -129,7 +129,7 @@ void inchDrive(float target, int speed, bool claw) {
   Brain.Screen.clearScreen();
 }
 
-void gyroTurn(float target, bool claw, float &facing) {
+/*void gyroTurn(float target, bool claw, float &facing) {
   while (Gyro.isCalibrating()) {
     // Wait for Gyro Calibration , Sleep but Allow other tasks to run
     //90 = right, -90 = left
@@ -160,9 +160,44 @@ void gyroTurn(float target, bool claw, float &facing) {
   brakedrive();
   //Brain.Screen.clearScreen();
 }
+*/
+void gyroTurn1(float target, int Lspeed, int Rspeed, bool claw)
+{
+  while(Gyro.isCalibrating())
+{
+  // Wait for Gyro Calibration , Sleep but Allow other tasks to run
+    this_thread::sleep_for(20);
+}
+  float heading4 = 0;
+  Gyro.setRotation(0, degrees); 
+ 
+float speed=0.0 ;
+float kp = 2.0;
+  while (fabs(heading4)<= target) 
+{
+    speed=kp*(target-heading4);
+    autonDriver1(10 , speed, -speed, 0, claw);
+    
+    wait(10,msec);
+    heading4=Gyro.rotation(degrees); 
+  }
+  autonDriver1(0, 0, 0, 0, true);
+}
 
+void autonDriver2(int wt, int lspeed, int rspeed, int liftspeed, bool claw, int Clawspin, int moggs) 
+{
 
-
+  LBDrive.spin(forward, lspeed, pct);
+  RBDrive.spin(forward, rspeed, pct);
+  LFDrive.spin(forward, lspeed, pct);
+  RFDrive.spin(forward, rspeed, pct); 
+  LLift.spin(forward, liftspeed, pct);
+  RLift.spin(forward, liftspeed, pct);
+  Claw.set(claw);
+  ClawSpin.spin(forward, Clawspin, pct);
+  mogolift.spin(forward, moggs, pct);
+wait(wt, msec);
+}
 void balance() {
   float pitch = Gyro.pitch(deg);
   float oldpitch = pitch;
@@ -188,7 +223,7 @@ void balance() {
 void pre_auton(void) { wait(2000, msec); }
 
 void autonomous(void) {
-  float facing=0;
+ // float facing=0;
   while (Gyro.isCalibrating()) {
 
     wait(20, msec);
@@ -258,17 +293,23 @@ void autonomous(void) {
  // claw true is open, false is closed
  //Claw.set(true);
  // Claw2.set(true);
+ //negative the speed and not the turning angle
+ gyroTurn1(90, -75, 75, false);
+ 
+
   inchDrive(2, 75,  false);
   inchDrive(0, 50, false);
 
   inchDrive(118, 75, false);
   wait(500, msec);
-  gyroTurn(-90, false,facing);
+  gyroTurn1(90, -75, 75, false);
+  //gyroTurn(-90, false,facing);
   wait(400, msec);
   inchDrive(26, 75, false);
 
   wait(200, msec);
-  gyroTurn(-90, false, facing);
+  gyroTurn1(90, -75, 75, false);
+  //gyroTurn(-90, false, facing);
   wait(400, msec);
   
   inchDrive(69, 75, false);
@@ -277,11 +318,13 @@ void autonomous(void) {
   wait(500, msec);
   
 //really frikin big one in the middle if yk yk ;)
-  gyroTurn(90, false ,facing);
+ gyroTurn1(90, 75, -75, false);
+  //gyroTurn(90, false ,facing);
   wait(400, msec);
   inchDrive(48, 75, false);
   wait(500, msec);
-  gyroTurn(90, false ,facing);
+  gyroTurn1(90, 75, -75, false);
+  //gyroTurn(90, false ,facing);
   wait(500, msec);
   inchDrive(57, 75, false);
   wait(500, msec);
@@ -289,30 +332,32 @@ void autonomous(void) {
   wait(100, msec);
 
   //third yellow
-  gyroTurn(-90, false ,facing);
+  gyroTurn1(90, -75, 75, false);
+ // gyroTurn(-90, false ,facing);
   wait(100, msec);
   inchDrive(50, 75, false);
   wait(100, msec);
-  gyroTurn(-90, false ,facing);
+  gyroTurn1(90, -75, 75, false);
+  //gyroTurn(-90, false ,facing);
   wait(100, msec);
   inchDrive(70, 75, false);
   wait(500, msec);
-
-
-
 
   //red goal
 
   inchDrive(108, -75, false);
   wait(500, msec);
-  gyroTurn(90, false ,facing);
+  gyroTurn1(90, 75, -75, false);
+  //gyroTurn(90, false ,facing);
   wait(500, msec);
   inchDrive(25, 75, false);
   wait(500, msec);
-  gyroTurn(-90, false ,facing);
+  gyroTurn1(90, -75, 75, false);
+  //gyroTurn(-90, false ,facing);
   wait(500, msec);
   inchDrive(108, 75, false);
   wait(500, msec);
+  
 }
 
 void driverControl() {

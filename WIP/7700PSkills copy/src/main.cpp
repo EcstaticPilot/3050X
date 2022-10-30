@@ -179,6 +179,7 @@ Brain.Screen.printAt( 20, 80,"Motor Temp%f ",RFDrive.temperature(pct));
  inchDrive(122, 75, false);
  wait(500, msec);
  gyroTurn(100, -75, 75, true);
+gyroTurn(float target, int Lspeed, int Rspeed, bool claw)
  inchDrive(100, 75, false);
  wait(500, msec);
  gyroTurn(80, 75, -75, true);

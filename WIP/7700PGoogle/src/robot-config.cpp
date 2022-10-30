@@ -15,10 +15,10 @@ controller Controller1 = controller(primary);
 motor LFDrive = motor(PORT15, ratio18_1, false);
 inertial Gyro = inertial(PORT13);
 motor RLift = motor(PORT9, ratio18_1, false);
-digital_out Claw = digital_out(Brain.ThreeWirePort.A);
+digital_out Claw = digital_out(Brain.ThreeWirePort.C);
 motor RFDrive = motor(PORT10, ratio18_1, true);
 motor mogolift = motor(PORT19, ratio18_1, true);
-motor ClawSpin = motor(PORT14, ratio18_1, false);
+motor ClawSpin = motor(PORT16, ratio18_1, false);
 digital_out Claw2 = digital_out(Brain.ThreeWirePort.B);
 
 // VEXcode generated functions
