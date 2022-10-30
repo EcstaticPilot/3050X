@@ -261,12 +261,6 @@ void flywheelMonitor() {
  // Brain.Screen.printAt(1, 100, "Battery Capacity  = %.1f      ", b);
 } //
 
-void vision_sensor() {
-
-  Brain.Screen.print(SIG_1);
-
-}
-
 // turret Pid spin to with gyro angle
 int turretSpinTo(double targetAngle, bool global) {
   double kp = 1;
@@ -451,11 +445,11 @@ void usercontrol(void) {
  
 
     if (Controller1.ButtonL2.pressing()) {
-      TargetAngle -= 0.5;
+      TargetAngle -= 1;
       wait(10, msec);
     }
     if (Controller1.ButtonR2.pressing()) {
-      TargetAngle += 0.5;
+      TargetAngle += 1;
       wait(10, msec);
     }
     if (Controller1.ButtonL1.pressing()) {
