@@ -5,6 +5,7 @@ extern brain Brain;
 using signature = vision::signature;
 
 // VEXcode devices
+extern controller Controller1;
 extern motor F1;
 extern motor F2;
 extern digital_out Injector;
@@ -20,15 +21,15 @@ extern rotation RotationB;
 extern inertial turretG;
 extern optical Color;
 extern rotation TurretE;
-extern signature Vision5__SIG_1;
-extern signature Vision5__SIG_2;
-extern signature Vision5__SIG_3;
-extern signature Vision5__SIG_4;
-extern signature Vision5__SIG_5;
-extern signature Vision5__SIG_6;
-extern signature Vision5__SIG_7;
-extern vision Vision5;
-extern controller Controller1;
+extern signature Vision16__SIG_1;
+extern signature Vision16__SIG_2;
+extern signature Vision16__SIG_3;
+extern signature Vision16__SIG_4;
+extern signature Vision16__SIG_5;
+extern signature Vision16__SIG_6;
+extern signature Vision16__SIG_7;
+extern vision Vision16;
+extern optical turretOptical;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
