@@ -118,11 +118,12 @@ double distB = 0;         // distance back encoder has traveled
 double prevLE = lEncoder; // create previous encoder value left
 double prevBE = bEncoder; // create previous encoder value back
 double averageHeading;    // 
-int odometery() {
-   double deltaX =
+double deltaX =
         (localY * cos(averageHeading)) - (localX * sin(averageHeading));
     double deltaY =
         (localX * cos(averageHeading)) - (localY * sin(averageHeading));
+int odometery() {
+   
   Controller1.rumble(".");
   RotationL.resetPosition();
   RotationB.resetPosition();
@@ -148,10 +149,10 @@ int odometery() {
     prevLE = lEncoder; // create previous encoder value left
     prevBE = bEncoder; // create previous encoder value back
 
-    absoluteOrientation = (360 - gyro1.heading(degrees)) * pi / 180.0;
+    absoluteOrientation = gyro1.heading(degrees) * pi / 180.0;
     deltaHeading =
         absoluteOrientation - prevHeading; // calculate change in heading
-averageHeading = (prevHeading+absoluteOrientation)/2;
+averageHeading = prevHeading+(deltaHeading)/2;
     prevHeading = absoluteOrientation;
 
     if (deltaHeading == 0) {
@@ -192,7 +193,7 @@ int ControllerPrint() {
   Brain.Timer.reset();
   // AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
   while (1) {
-    Controller1.Screen.setCursor(1, 1);
+    /*Controller1.Screen.setCursor(1, 1);
     double speed = F1.velocity(pct);
     Controller1.Screen.print("Spd=%.2f tSpd=%.2f   ", speed, TargetSpeed);
     Controller1.Screen.setCursor(2, 1);
@@ -211,8 +212,19 @@ int ControllerPrint() {
     if (Brain.timer(sec) == 105) {
       Controller1.rumble("....");
     } // 30 second mark
+        
+         
+    this_thread::sleep_for(50);*/
 
-    this_thread::sleep_for(50);
+     Brain.Screen.printAt(1, 20, " prevHeading = %.2f ", prevHeading);
+    Brain.Screen.printAt(1, 40, " deltaHeading = %.2f ", deltaHeading);
+    Brain.Screen.printAt(1, 60, " absoluteOrientation = %.2f ", absoluteOrientation);
+    Brain.Screen.printAt(1, 80, " localX = %.2f localY = %.2f ", localX, localY);
+    Brain.Screen.printAt(1, 100, " lEncoder = %.2f bEncoder = %.2f", lEncoder, bEncoder);
+    Brain.Screen.printAt(1, 120, " distL = %.2f distB = %.2f ", distL,distB);
+    Brain.Screen.printAt(1, 140, " deltaX = %.2f deltaY = %.2f", deltaX, deltaY);
+   Brain.Screen.printAt(1, 160, " averageHeading = %.2f ", averageHeading);
+   this_thread::sleep_for(1000);
   }
   return (0);
 }
@@ -319,11 +331,45 @@ void toggleTurret() {
 
 int turretStable() {
 loading=true;
+ // while (true) {
+  double kp = 1;
+  double ki = 0;
+
+  double kd = .01;
+  double sum = 0;
+  double prevError = 0;
+  double error = TargetAngle - turretG.orientation(yaw, degrees);
+  //double accuracy = 1;
+  // while(true){
+  double speed;
   while (true) {
-  //  if (loading)
-      turretSpinTo(0, false);
-  //  else
-    //  turretSpinTo(0, true);
+    double turretEncoderAngle =
+          (TurretE.angle() > 180 ? TurretE.angle() - 360 : TurretE.angle());
+    if (!loading) {
+      error = TargetAngle - turretG.orientation(yaw, degrees);
+    } else {
+      error = 0 - turretEncoderAngle;
+    }
+
+    speed = (error * kp) + (ki * sum) + (kd * (error - prevError));
+    if ((speed > 0 && turretEncoderAngle < -90))
+      speed = 0;
+    if ((speed < 0 && turretEncoderAngle > 90))
+      speed = 0;
+    turret.spin(fwd, speed, pct);
+
+    /*
+    if (speed > 0) {
+      turret.spin(fwd, -5, rpm);
+    }
+    if (speed < 0) {
+      turret.spin(fwd, -5, pct);
+    }*/
+
+    wait(10, msec);
+    prevError = error;
+    sum += error;
+  
 
     this_thread::sleep_for(5);  }
   return 0;
@@ -445,11 +491,11 @@ void usercontrol(void) {
  
 
     if (Controller1.ButtonL2.pressing()) {
-      TargetAngle -= 1;
+      TargetAngle -= 0.5;
       wait(10, msec);
     }
     if (Controller1.ButtonR2.pressing()) {
-      TargetAngle += 1;
+      TargetAngle += 0.5;
       wait(10, msec);
     }
     if (Controller1.ButtonL1.pressing()) {
