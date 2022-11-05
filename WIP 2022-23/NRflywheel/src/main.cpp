@@ -154,23 +154,11 @@ int odometery() {
         absoluteOrientation - prevHeading; // calculate change in heading
 averageHeading = prevHeading+(deltaHeading)/2;
     prevHeading = absoluteOrientation;
-
-    if (deltaHeading == 0) {
-      localX = distB;
-      localY = distL;
-    } else {
-      localX = 2.0 * sin(deltaHeading / 2.0) * (distB / deltaHeading + Sb);
-      localY = 2.0 * sin(deltaHeading / 2.0) * (distL / deltaHeading + Sl);
-    }
     
-    //  double globalDist = sqrt(localX * localX + localY * localY);
-
-    //  double globalAngle =averageHeading +((fabs(localX) < .001) ? pi / 2 :
-    //  atan2(localY ,localX)) +((localX < 0) ? pi : 0);
     deltaX =
-        (localY * cos(averageHeading)) - (localX * sin(averageHeading));
+        (distL * sin(averageHeading)) + (distB * cos(averageHeading));
     deltaY =
-        (localX * cos(averageHeading)) - (localY * sin(averageHeading));
+        (distL * cos(averageHeading)) - (distB * sin(averageHeading));
     while (absoluteOrientation >= 2 * M_PI) {
       absoluteOrientation -= 2 * M_PI;
     }
@@ -193,7 +181,7 @@ int ControllerPrint() {
   Brain.Timer.reset();
   // AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
   while (1) {
-    /*Controller1.Screen.setCursor(1, 1);
+    Controller1.Screen.setCursor(1, 1);
     double speed = F1.velocity(pct);
     Controller1.Screen.print("Spd=%.2f tSpd=%.2f   ", speed, TargetSpeed);
     Controller1.Screen.setCursor(2, 1);
@@ -212,10 +200,11 @@ int ControllerPrint() {
     if (Brain.timer(sec) == 105) {
       Controller1.rumble("....");
     } // 30 second mark
-        
-         
-    this_thread::sleep_for(50);*/
-
+    this_thread::sleep_for(50);
+  }
+  }
+    
+/*
      Brain.Screen.printAt(1, 20, " prevHeading = %.2f ", prevHeading);
     Brain.Screen.printAt(1, 40, " deltaHeading = %.2f ", deltaHeading);
     Brain.Screen.printAt(1, 60, " absoluteOrientation = %.2f ", absoluteOrientation);
@@ -227,7 +216,7 @@ int ControllerPrint() {
    this_thread::sleep_for(1000);
   }
   return (0);
-}
+} */
 
 void controlFlywheelSpeed(double target) {
   double kI = .04;
@@ -278,7 +267,7 @@ int turretSpinTo(double targetAngle, bool global) {
   double kp = 1;
   double ki = 0;
 
-  double kd = .01;
+  double kd = .5;
   double sum = 0;
   double prevError = 0;
   double error = targetAngle - turretG.orientation(yaw, degrees);
@@ -335,7 +324,7 @@ loading=true;
   double kp = 1;
   double ki = 0;
 
-  double kd = .01;
+  double kd = .5;
   double sum = 0;
   double prevError = 0;
   double error = TargetAngle - turretG.orientation(yaw, degrees);
@@ -348,7 +337,7 @@ loading=true;
     if (!loading) {
       error = TargetAngle - turretG.orientation(yaw, degrees);
     } else {
-      error = 0 - turretEncoderAngle;
+      error = turretEncoderAngle;
     }
 
     speed = (error * kp) + (ki * sum) + (kd * (error - prevError));
