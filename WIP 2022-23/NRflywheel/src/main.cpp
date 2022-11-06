@@ -41,30 +41,21 @@ long double pi = 3.14159265358979323;
 // A global instance of competition
 competition Competition;
 
-
 void vision_sensor() {
-
 Vision16.takeSnapshot(Vision16__SIG_1);
-
 if (Vision16.largestObject.exists == true) {
   double goal_position = Vision16.largestObject.centerX;
 
   // ----------------(too far left)64--------------|--centered(30)--|----------------(too far right)64--------------
 
   if (goal_position < 158-94) {
-
     // turn turret right; we're too far left
-
   }
   if (goal_position > 158-64) {
-
     // turn turret left; we're too far right
-
   }
   else {
-
     // okay cool you're just right
-
   }
 
 }
@@ -92,7 +83,7 @@ void inchDrive(double dist, double speedMod = 1,double
   stopTime=99999999999999999, double accuracy = 0.5) { 
    double startPos =RotationL.position(deg);
   dist = -dist;
-
+  
   double currDist = 0;
   double speed;
   double error = dist;
@@ -307,7 +298,7 @@ int turretSpinTo(double targetAngle, bool global) {
     double turretEncoderAngle =
           (TurretE.angle() > 180 ? TurretE.angle() - 360 : TurretE.angle());
     if (global) {
-      error = targetAngle - turretG.orientation(yaw, degrees);
+      error = -(targetAngle - turretG.orientation(yaw, degrees));
     } else {
       error = targetAngle - turretEncoderAngle;
     }
