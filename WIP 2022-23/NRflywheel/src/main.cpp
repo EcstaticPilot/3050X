@@ -32,7 +32,7 @@
 
 #include "vex.h"
 #include <math.h>
-
+//#include "sylib.hpp"
 double TargetAngle = 0;
 double TargetSpeed = 0.0;
 using namespace vex;
@@ -40,6 +40,26 @@ using namespace vex;
 long double pi = 3.14159265358979323;
 // A global instance of competition
 competition Competition;
+
+void vision_sensor() {
+Vision16.takeSnapshot(Vision16__SIG_1);
+if (Vision16.largestObject.exists == true) {
+  double goal_position = Vision16.largestObject.centerX;
+
+  // ----------------(too far left)64--------------|--centered(30)--|----------------(too far right)64--------------
+
+  if (goal_position < 158-94) {
+    // turn turret right; we're too far left
+  }
+  if (goal_position > 158-64) {
+    // turn turret left; we're too far right
+  }
+  else {
+    // okay cool you're just right
+  }
+
+}
+}
 
 void flywheelMonitor();
 void spinFlywheel(double);
@@ -63,7 +83,7 @@ void inchDrive(double dist, double speedMod = 1,double
   stopTime=99999999999999999, double accuracy = 0.5) { 
    double startPos =RotationL.position(deg);
   dist = -dist;
-
+  
   double currDist = 0;
   double speed;
   double error = dist;
@@ -278,7 +298,7 @@ int turretSpinTo(double targetAngle, bool global) {
     double turretEncoderAngle =
           (TurretE.angle() > 180 ? TurretE.angle() - 360 : TurretE.angle());
     if (global) {
-      error = targetAngle - turretG.orientation(yaw, degrees);
+      error = -(targetAngle - turretG.orientation(yaw, degrees));
     } else {
       error = targetAngle - turretEncoderAngle;
     }
@@ -311,8 +331,8 @@ int turretSpinTo(double targetAngle, bool global) {
 }
 bool loading = true;
 void toggleTurret() {
-  Controller1.rumble(".");
-  loading = !loading;
+  Controller1.rumble("."); 
+  loading = !loading; 
   // wait(10, msec);
   // turretSpinTo(TargetAngle);
   // Controller1.rumble(".");
@@ -399,6 +419,7 @@ void driveSwitch(){driveDir=!driveDir;}
 /*---------------------------------------------------------------------------*/
 
 void pre_auton(void) {
+  //sylib::initialize();
   if(!(RB.installed()&&LB.installed()&&RF.installed()&&LF.installed()&& //drive motors
   F1.installed()&&F2.installed() //flywheel
   &&Intake1.installed()&&turret.installed() //turret and intake
@@ -406,7 +427,7 @@ void pre_auton(void) {
   &&turretG.installed()&&TurretE.installed()&&Vision16.installed()&&turretOptical.installed()&& //turret sensors
   Color.installed())) //roler sensor
     Controller1.rumble("--------------------------------------------------------------------------------------");
-  
+
   vexcodeInit();
   // Initializing Robot Configuration. DO NOT REMOVE!
   thread odometeryTracking = thread(odometery);
