@@ -521,7 +521,7 @@ void usercontrol(void) {
     }
     if (!intakeOn) {
       if (Color.color() == red && Color.isNearObject()) {
-        Intake1.spin(forward, 150, rpm);
+        Intake1.spin(forward, 200, rpm);
       } else {
 
         Intake1.stop();
