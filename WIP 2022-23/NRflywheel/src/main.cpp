@@ -32,7 +32,7 @@
 
 #include "vex.h"
 #include <math.h>
-
+//#include "sylib.hpp"
 double TargetAngle = 0;
 double TargetSpeed = 0.0;
 using namespace vex;
@@ -428,6 +428,7 @@ void driveSwitch(){driveDir=!driveDir;}
 /*---------------------------------------------------------------------------*/
 
 void pre_auton(void) {
+  //sylib::initialize();
   if(!(RB.installed()&&LB.installed()&&RF.installed()&&LF.installed()&& //drive motors
   F1.installed()&&F2.installed() //flywheel
   &&Intake1.installed()&&turret.installed() //turret and intake
@@ -435,7 +436,7 @@ void pre_auton(void) {
   &&turretG.installed()&&TurretE.installed()&&Vision16.installed()&&turretOptical.installed()&& //turret sensors
   Color.installed())) //roler sensor
     Controller1.rumble("--------------------------------------------------------------------------------------");
-  
+
   vexcodeInit();
   // Initializing Robot Configuration. DO NOT REMOVE!
   thread odometeryTracking = thread(odometery);
