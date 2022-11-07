@@ -207,7 +207,7 @@ int ControllerPrint() {
     Controller1.Screen.setCursor(2, 1);
     Controller1.Screen.print("pos= (%.1f,%.1f)", X, Y);
     Controller1.Screen.setCursor(3, 1);
-    Controller1.Screen.print("gAngle=%.2f ", (atan2(Y, X)) * 180 / pi);
+    Controller1.Screen.print("gAngle=%.2f ", TargetAngle);
     if (Brain.timer(sec) == 15) {
       Controller1.rumble(".");
     } // 2 minute mark
@@ -464,6 +464,8 @@ void autonomous(void) { spinFlywheel(100);
 /*---------------------------------------------------------------------------*/
 
 void usercontrol(void) {
+  X=0;
+  Y=-122.63;
   thread ControllerPrinting = thread(ControllerPrint);
   thread turretStablization = thread(turretStable);
   bool alg = true;
@@ -471,6 +473,7 @@ void usercontrol(void) {
   turretG.calibrate();
   waitUntil(!gyro1.isCalibrating() && !turretG.isCalibrating());
   while (true) {
+    TargetAngle=atan2(Y,X)*(180/M_PI)+90;
     /*if(!loading)TargetAngle=5
     ;
     else {
@@ -541,7 +544,7 @@ void usercontrol(void) {
       Intake1.spin(forward, 150, rpm);
     }
     if (!intakeOn) {
-      if (Color.color() == red && Color.isNearObject()) {
+      if (Color.color() == blue && Color.isNearObject()) {
         Intake1.spin(forward, 200, rpm);
       } else {
 
