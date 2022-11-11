@@ -42,22 +42,20 @@ long double pi = 3.14159265358979323;
 competition Competition;
 
 void vision_sensor() {
+
+float error = 0.0;
+float accuracy = 10;
+
 Vision16.takeSnapshot(Vision16__SIG_1);
+
 if (Vision16.largestObject.exists == true) {
   double goal_position = Vision16.largestObject.centerX;
+// 158 is the x-coordinate for the center of the vision sensor
+error = goal_position - 158;
 
-  // ----------------(too far left)64--------------|--centered(30)--|----------------(too far right)64--------------
-
-  if (goal_position < 158-94) {
-    // turn turret right; we're too far left
+  while (fabs(error) < accuracy) {
+    
   }
-  if (goal_position > 158-64) {
-    // turn turret left; we're too far right
-  }
-  else {
-    // okay cool you're just right
-  }
-
 }
 }
 
