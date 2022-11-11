@@ -33,7 +33,7 @@
 #include "vex.h"
 #include <math.h>
 //#include "sylib.hpp"
-double TargetAngle = 0;
+double GoalAngle = 0;
 double TargetSpeed = 0.0;
 using namespace vex;
 // 100 digits of pi because I like Pi𝝿
@@ -205,7 +205,7 @@ int ControllerPrint() {
     Controller1.Screen.setCursor(2, 1);
     Controller1.Screen.print("pos= (%.1f,%.1f)", X, Y);
     Controller1.Screen.setCursor(3, 1);
-    Controller1.Screen.print("gAngle=%.2f ", TargetAngle);
+    Controller1.Screen.print("gAngle=%.2f ", GoalAngle);
     if (Brain.timer(sec) == 15) {
       Controller1.rumble(".");
     } // 2 minute mark
@@ -345,7 +345,7 @@ loading=true;
   double kd = .5;
   double sum = 0;
   double prevError = 0;
-  double error = TargetAngle - turretG.orientation(yaw, degrees);
+  double error = GoalAngle - turretG.orientation(yaw, degrees);
   //double accuracy = 1;
   // while(true){
   double speed;
@@ -353,7 +353,7 @@ loading=true;
     double turretEncoderAngle =
           (TurretE.angle() > 180 ? TurretE.angle() - 360 : TurretE.angle());
     if (!loading) {
-      error = TargetAngle - turretG.orientation(yaw, degrees);
+      error = GoalAngle - turretG.orientation(yaw, degrees);
     } else {
       error = turretEncoderAngle;
     }
@@ -463,7 +463,7 @@ void autonomous(void) { spinFlywheel(100);
 
 void usercontrol(void) {
   X=0;
-  Y=-122.63;
+  Y=0;
   thread ControllerPrinting = thread(ControllerPrint);
   thread turretStablization = thread(turretStable);
   bool alg = true;
@@ -471,7 +471,8 @@ void usercontrol(void) {
   turretG.calibrate();
   waitUntil(!gyro1.isCalibrating() && !turretG.isCalibrating());
   while (true) {
-    TargetAngle=atan2(Y,X)*(180/M_PI)+90;
+    //target goal
+    GoalAngle=atan2(0-Y,122-X)*(180/M_PI);
     /*if(!loading)TargetAngle=5
     ;
     else {
@@ -501,14 +502,14 @@ void usercontrol(void) {
     //   }
  
 
-    if (Controller1.ButtonL2.pressing()) {
-      TargetAngle -= 0.5;
+    /*if (Controller1.ButtonL2.pressing()) {
+      GoalAngle -= 0.5;
       wait(10, msec);
     }
     if (Controller1.ButtonR2.pressing()) {
-      TargetAngle += 0.5;
+      GoalAngle += 0.5;
       wait(10, msec);
-    }
+    }*/
     if (Controller1.ButtonL1.pressing()) {
       TargetSpeed -= 0.5;
       wait(10, msec);
