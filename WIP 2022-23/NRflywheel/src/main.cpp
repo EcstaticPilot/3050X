@@ -346,7 +346,7 @@ loading=true;
   double sum = 0;
   double prevError = 0;
   
-  double error = GoalAngle - turretG.orientation(yaw, degrees);
+  double error = -GoalAngle - turretG.orientation(yaw, degrees);
   //double accuracy = 1;
   // while(true){
   double speed;
@@ -354,7 +354,7 @@ loading=true;
     double turretEncoderAngle =
           (TurretE.angle() > 180 ? TurretE.angle() - 360 : TurretE.angle());
     if (!loading) {
-      error = GoalAngle - turretG.orientation(yaw, degrees);
+      error = -GoalAngle - turretG.orientation(yaw, degrees);
     } else {
       error = turretEncoderAngle;
     }
