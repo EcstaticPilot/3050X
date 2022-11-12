@@ -11,23 +11,23 @@
 // ---- START VEXCODE CONFIGURED DEVICES ----
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
-// Controller1          controller
-// F1                   motor         2
-// F2                   motor         15
-// Injector             digital_out   A
-// LF                   motor         21
-// LB                   motor         12
-// RF                   motor         20
-// RB                   motor         4
-// Intake1              motor         1
-// turret               motor         19
-// gyro1                inertial      11
-// RotationL            rotation      6
-// RotationB            rotation      3
-// turretG              inertial      14
-// Color                optical       7
-// TurretE              rotation      17
-// turretOptical        optical       9
+// Controller1          controller                    
+// F1                   motor         2               
+// F2                   motor         15              
+// Injector             digital_out   A               
+// LF                   motor         21              
+// LB                   motor         12              
+// RF                   motor         20              
+// RB                   motor         4               
+// Intake1              motor         1               
+// turret               motor         19              
+// gyro1                inertial      11              
+// RotationL            rotation      6               
+// RotationB            rotation      3               
+// turretG              inertial      14              
+// Color                optical       7               
+// TurretE              rotation      17              
+// turretOptical        optical       9               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
@@ -345,10 +345,8 @@ void toggleTurret() {
 int turretStable() {
   loading = true;
   // while (true) {
-  double kp = 1.2;
-  double ki = 0;
-
-  double kd = .5;
+  // safe working valuse double kp = 1; double ki = 0;double kd = 0.3;
+  double kp = 1; double ki = 0;double kd = 0.4;
   double sum = 0;
   double prevError = 0;
 
@@ -504,7 +502,7 @@ void usercontrol(void) {
   turretG.setHeading(180, degrees);
   while (true) {
 
-    GoalAngle = atan2(X, 122 - Y) * (180 / M_PI);
+    GoalAngle = atan2(X, 110 - Y) * (180 / M_PI);
     /*if(!loading)TargetAngle=5
     ;
     else {
