@@ -148,6 +148,7 @@ int odometery() {
   RotationL.resetPosition();
   RotationB.resetPosition();
   while (1) {
+    /*
     Brain.Screen.printAt(1, 20, " prevHeading = %.2f ", prevHeading);
     Brain.Screen.printAt(1, 40, " deltaHeading = %.2f ", deltaHeading);
     Brain.Screen.printAt(1, 60, " absoluteOrientation = %.2f ",
@@ -159,7 +160,7 @@ int odometery() {
     Brain.Screen.printAt(1, 120, " distL = %.2f distB = %.2f ", distL, distB);
     Brain.Screen.printAt(1, 140, " deltaX = %.2f deltaY = %.2f", deltaX,
                          deltaY);
-    Brain.Screen.printAt(1, 160, " averageHeading = %.2f ", averageHeading);
+    Brain.Screen.printAt(1, 160, " averageHeading = %.2f ", averageHeading);*/
 
     lEncoder = RotationL.position(degrees);
     bEncoder = RotationB.position(degrees);
@@ -412,13 +413,21 @@ void toggleIntake() { intakeOn = !intakeOn; }
 bool driveDir = 0;
 void driveSwitch() { driveDir = !driveDir; }
 void teamSwitch() {
-  if (team == "red")
+  Controller1.rumble(".");
+  Brain.Screen.clearScreen();
+  if (team == "red"){
     team = "blue";
-  Brain.Screen.clearScreen(blue);
+
+    Brain.Screen.setFillColor(blue);
+  }
   if (team == "blue") {
     team = "red";
-    Brain.Screen.clearScreen(red);
+   
+    Brain.Screen.setFillColor(red);
+  
   }
+  Brain.Screen.drawRectangle(20, 50, 100, 100);
+  Brain.Screen.printAt(1, 20,false,"%s", team.c_str());
 }
 /*---------------------------------------------------------------------------*/
 /*                          Pre-Autonomous Functions                         */
@@ -429,8 +438,9 @@ void teamSwitch() {
 /*  function is only called once after the V5 has been powered on and        */
 /*  not every time that the robot is disabled.                               */
 /*---------------------------------------------------------------------------*/
-
+bool flag = false;
 void pre_auton(void) {
+
   // sylib::initialize();
   vexcodeInit();
   if (!(RB.installed() && LB.installed() && RF.installed() &&
@@ -451,6 +461,7 @@ void pre_auton(void) {
   turretG.calibrate();
   waitUntil(!gyro1.isCalibrating() && !turretG.isCalibrating());
   Brain.Screen.pressed(teamSwitch);
+
 }
 
 /*---------------------------------------------------------------------------*/
@@ -464,6 +475,7 @@ void pre_auton(void) {
 /*---------------------------------------------------------------------------*/
 
 void autonomous(void) {
+  bool flag=true;
   spinFlywheel(100);
   wait(3, sec);
   Injector.set(!Injector.value());
