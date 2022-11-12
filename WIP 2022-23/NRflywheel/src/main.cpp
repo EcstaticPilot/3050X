@@ -339,12 +339,13 @@ void toggleTurret() {
 int turretStable() {
 loading=true;
  // while (true) {
-  double kp = 1;
+  double kp = 1.2;
   double ki = 0;
 
   double kd = .5;
   double sum = 0;
   double prevError = 0;
+  
   double error = GoalAngle - turretG.orientation(yaw, degrees);
   //double accuracy = 1;
   // while(true){
@@ -470,9 +471,10 @@ void usercontrol(void) {
   gyro1.calibrate();
   turretG.calibrate();
   waitUntil(!gyro1.isCalibrating() && !turretG.isCalibrating());
+  turretG.setHeading(180, degrees);
   while (true) {
     //target goal
-    GoalAngle=atan2(0-Y,122-X)*(180/M_PI);
+    GoalAngle=atan2(X,122-Y)*(180/M_PI);
     /*if(!loading)TargetAngle=5
     ;
     else {
