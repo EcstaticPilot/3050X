@@ -24,9 +24,6 @@ rotation RotationB = rotation(PORT3, true);
 inertial turretG = inertial(PORT14);
 optical Color = optical(PORT7);
 rotation TurretE = rotation(PORT17, false);
-/*vex-vision-config:begin*/
-vision Vision16 = vision (PORT16, 50);
-/*vex-vision-config:end*/
 optical turretOptical = optical(PORT9);
 
 // VEXcode generated functions
