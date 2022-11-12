@@ -364,9 +364,9 @@ int turretStable() {
     }
 
     speed = (error * kp) + (ki * sum) + (kd * (error - prevError));
-    if ((speed > 0 && turretEncoderAngle < -90))
+    if ((speed > 0 && turretEncoderAngle < -150))
       speed = 0;
-    if ((speed < 0 && turretEncoderAngle > 90))
+    if ((speed < 0 && turretEncoderAngle > 85))
       speed = 0;
     turret.spin(fwd, speed, pct);
 
