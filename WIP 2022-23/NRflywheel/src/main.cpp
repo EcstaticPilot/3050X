@@ -36,6 +36,7 @@
 
 //#include "sylib.hpp"
 double GoalAngle = 0;
+bool loading = true;
 double TargetSpeed = 0.0;
 using namespace vex;
 // 100 digits of pi because I like Pi𝝿
@@ -196,6 +197,28 @@ int odometery() {
   }
   return 1;
 }
+void pistonToggle() {
+
+  Injector.set(true);
+  wait(100, msec);
+  Injector.set(false);
+}
+
+
+void fireDisc(){
+  loading=false;
+  TargetSpeed=0;//need to create formula
+  waitUntil((fabs(-GoalAngle - turretG.orientation(yaw, degrees))<.5)&&(fabs(F1.velocity(pct)-TargetSpeed ) <  .25));
+  if(turretOptical.isNearObject()){
+  pistonToggle();
+  fireDisc();
+  }
+  else {
+  loading=true;
+  TargetSpeed=0;
+  }
+}
+
 
 // printstuff to controller
 int ControllerPrint() {
@@ -333,7 +356,7 @@ int turretSpinTo(double targetAngle, bool global) {
 
   return 0;
 }
-bool loading = true;
+
 void toggleTurret() {
   Controller1.rumble(".");
   loading = !loading;
@@ -386,12 +409,7 @@ int turretStable() {
   }
   return 0;
 }
-void pistonToggle() {
 
-  Injector.set(true);
-  wait(100, msec);
-  Injector.set(false);
-}
 void pistonToggleReady() {
   Brain.Screen.drawRectangle(120, 190, 60, 60, orange);
   waitUntil(F1.velocity(pct) < TargetSpeed + .25 &&
@@ -661,6 +679,7 @@ int main() {
   Controller1.ButtonLeft.pressed(pistonToggleReady);
   Controller1.ButtonRight.pressed(driveSwitch);
   Controller1.ButtonX.pressed(toggleTurret);
+  //Controller1.ButtonX.pressed(fireDisc);
   // Run the pre-autonomous function.
   pre_auton();
 
