@@ -660,7 +660,7 @@ int main() {
   // Controller1.ButtonDown.pressed(turretStable);
 
   Controller1.ButtonB.pressed(toggleIntake);
-  Controller1.ButtonLeft.pressed(pistonToggle);
+  Controller1.ButtonLeft.pressed(pistonToggleReady);
   Controller1.ButtonRight.pressed(driveSwitch);
   Controller1.ButtonX.pressed(toggleTurret);
   // Run the pre-autonomous function.
