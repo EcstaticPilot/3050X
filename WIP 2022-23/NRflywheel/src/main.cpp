@@ -205,20 +205,7 @@ void pistonToggle() {
   }
 }
 
-void fireDisc() {
-  loading = false;
-  TargetSpeed = 0; // need to create formula
-  waitUntil((fabs(-GoalAngle - turretG.orientation(yaw, degrees)) < .5) &&
-            (fabs(F1.velocity(pct) - TargetSpeed) < .25));
-  pistonToggle();
-  if (turretOptical.isNearObject())
-    fireDisc();
-  else {
 
-    loading = true;
-    TargetSpeed = 0;
-  }
-}
 
 // printstuff to controller
 int ControllerPrint() {
@@ -362,7 +349,7 @@ void toggleTurret() {
   // turretSpinTo(TargetAngle);
   // Controller1.rumble(".");
 }
-
+bool VisionReady=false;
 int turretStable() {
   loading = true;
   // while (true) {
@@ -381,17 +368,24 @@ int turretStable() {
     double turretEncoderAngle =
         (TurretE.angle() > 180 ? TurretE.angle() - 360 : TurretE.angle());
     if (!loading) {
-      if (fabs(GoalAngle - turretG.orientation(yaw, degrees)) < 10) {
-        Vision16.takeSnapshot(BGOAL);
+      if (fabs(GoalAngle - turretG.orientation(yaw, degrees)) < 10) {//if goal is within limits
+        Vision16.takeSnapshot(BGOAL);//use vision sensor
         error = -Vision16.largestObject.centerX;
         kp = 0.5;
         kd = 0;
+        if(fabs(error)<15){//if error is low global bool vision is ready
+         VisionReady=true;
+        }
+        else {//else vision is not ready
+        VisionReady=false;
+        }
       } else {
         error = -GoalAngle - turretG.orientation(yaw, degrees);
         kp = 1;
         kd = 0.4;
+        VisionReady=false;//vision is not ready
       }
-    } else {
+    } else {//if not loading go to zero
 
       error = turretEncoderAngle;
     }
@@ -418,6 +412,20 @@ int turretStable() {
     this_thread::sleep_for(5);
   }
   return 0;
+}
+void fireDisc() {
+  loading = false;
+  TargetSpeed = 0; // need to create formula
+  waitUntil(VisionReady &&
+            (fabs(F1.velocity(pct) - TargetSpeed) < .25));
+  pistonToggle();
+  if (turretOptical.isNearObject())
+    fireDisc();
+  else {
+
+    loading = true;
+    TargetSpeed = 0;
+  }
 }
 
 void pistonToggleReady() {
