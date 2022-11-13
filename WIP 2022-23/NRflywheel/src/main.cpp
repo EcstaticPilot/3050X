@@ -241,13 +241,13 @@ int ControllerPrint() {
     } // 1:30 mark
     if (Brain.timer(sec) == 75)
       Controller1.rumble("...");
-   // 1 minute mark
-  if (Brain.timer(sec) == 105) {
-    Controller1.rumble("....");
-  } // 30 second mark
+    // 1 minute mark
+    if (Brain.timer(sec) == 105) {
+      Controller1.rumble("....");
+    } // 30 second mark
 
-  this_thread::sleep_for(50);
-}
+    this_thread::sleep_for(50);
+  }
 }
 
 /*
@@ -353,8 +353,6 @@ void turretSpinTo(double targetAngle, bool global) {
     turret.stop();
   }
   //  }
-
-
 }
 
 void toggleTurret() {
@@ -383,10 +381,18 @@ int turretStable() {
     double turretEncoderAngle =
         (TurretE.angle() > 180 ? TurretE.angle() - 360 : TurretE.angle());
     if (!loading) {
-     // if (fabs(double))
-      error = -GoalAngle - turretG.orientation(yaw, degrees);
+      if (fabs(GoalAngle - turretG.orientation(yaw, degrees)) < 10) {
+        Vision16.takeSnapshot(BGOAL);
+        error = -Vision16.largestObject.centerX;
+        kp = 0.5;
+        kd = 0;
+      } else {
+        error = -GoalAngle - turretG.orientation(yaw, degrees);
+        kp = 1;
+        kd = 0.4;
+      }
     } else {
-     
+
       error = turretEncoderAngle;
     }
 
@@ -594,8 +600,7 @@ void usercontrol(void) {
       Intake1.spin(forward, 150, rpm);
     } else {
 
-      if ((team == "blue" ? Color.color() == blue : Color.color() == red) &&
-          Color.isNearObject())
+      if (Color.color() == blue && Color.isNearObject())
         Intake1.spin(forward, 200, rpm);
       else
         Intake1.stop();
