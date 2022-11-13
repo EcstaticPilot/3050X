@@ -11,23 +11,23 @@
 // ---- START VEXCODE CONFIGURED DEVICES ----
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
-// Controller1          controller                    
-// F1                   motor         2               
-// F2                   motor         15              
-// Injector             digital_out   A               
-// LF                   motor         21              
-// LB                   motor         12              
-// RF                   motor         20              
-// RB                   motor         4               
-// Intake1              motor         1               
-// turret               motor         19              
-// gyro1                inertial      11              
-// RotationL            rotation      6               
-// RotationB            rotation      3               
-// turretG              inertial      14              
-// Color                optical       7               
-// TurretE              rotation      17              
-// turretOptical        optical       9               
+// Controller1          controller
+// F1                   motor         2
+// F2                   motor         15
+// Injector             digital_out   A
+// LF                   motor         21
+// LB                   motor         12
+// RF                   motor         20
+// RB                   motor         4
+// Intake1              motor         1
+// turret               motor         19
+// gyro1                inertial      11
+// RotationL            rotation      6
+// RotationB            rotation      3
+// turretG              inertial      14
+// Color                optical       7
+// TurretE              rotation      17
+// turretOptical        optical       9
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
@@ -198,27 +198,27 @@ int odometery() {
   return 1;
 }
 void pistonToggle() {
-
-  Injector.set(true);
-  wait(100, msec);
-  Injector.set(false);
+  if (turretOptical.isNearObject()) {
+    Injector.set(true);
+    wait(100, msec);
+    Injector.set(false);
+  }
 }
 
-
-void fireDisc(){
-  loading=false;
-  TargetSpeed=0;//need to create formula
-  waitUntil((fabs(-GoalAngle - turretG.orientation(yaw, degrees))<.5)&&(fabs(F1.velocity(pct)-TargetSpeed ) <  .25));
-  if(turretOptical.isNearObject()){
+void fireDisc() {
+  loading = false;
+  TargetSpeed = 0; // need to create formula
+  waitUntil((fabs(-GoalAngle - turretG.orientation(yaw, degrees)) < .5) &&
+            (fabs(F1.velocity(pct) - TargetSpeed) < .25));
   pistonToggle();
-  fireDisc();
-  }
+  if (turretOptical.isNearObject())
+    fireDisc();
   else {
-  loading=true;
-  TargetSpeed=0;
+
+    loading = true;
+    TargetSpeed = 0;
   }
 }
-
 
 // printstuff to controller
 int ControllerPrint() {
@@ -239,15 +239,15 @@ int ControllerPrint() {
     if (Brain.timer(sec) == 45) {
       Controller1.rumble("..");
     } // 1:30 mark
-    if (Brain.timer(sec) == 75) {
+    if (Brain.timer(sec) == 75)
       Controller1.rumble("...");
-    } // 1 minute mark
-    if (Brain.timer(sec) == 105) {
-      Controller1.rumble("....");
-    } // 30 second mark
+   // 1 minute mark
+  if (Brain.timer(sec) == 105) {
+    Controller1.rumble("....");
+  } // 30 second mark
 
-    this_thread::sleep_for(50);
-  }
+  this_thread::sleep_for(50);
+}
 }
 
 /*
@@ -310,7 +310,7 @@ void flywheelMonitor() {
 } //
 
 // turret Pid spin to with gyro angle
-int turretSpinTo(double targetAngle, bool global) {
+void turretSpinTo(double targetAngle, bool global) {
   double kp = 1;
   double ki = 0;
 
@@ -354,7 +354,7 @@ int turretSpinTo(double targetAngle, bool global) {
   }
   //  }
 
-  return 0;
+
 }
 
 void toggleTurret() {
@@ -369,7 +369,9 @@ int turretStable() {
   loading = true;
   // while (true) {
   // safe working valuse double kp = 1; double ki = 0;double kd = 0.3;
-  double kp = 1; double ki = 0;double kd = 0.4;
+  double kp = 1;
+  double ki = 0;
+  double kd = 0.4;
   double sum = 0;
   double prevError = 0;
 
@@ -381,8 +383,10 @@ int turretStable() {
     double turretEncoderAngle =
         (TurretE.angle() > 180 ? TurretE.angle() - 360 : TurretE.angle());
     if (!loading) {
+     // if (fabs(double))
       error = -GoalAngle - turretG.orientation(yaw, degrees);
     } else {
+     
       error = turretEncoderAngle;
     }
 
@@ -418,10 +422,11 @@ void pistonToggleReady() {
   waitUntil(F1.velocity(pct) < TargetSpeed + .25 &&
             F1.velocity(pct) > TargetSpeed - .25);
   Brain.Screen.drawRectangle(120, 190, 60, 60, black);
-
-  Injector.set(true);
-  wait(100, msec);
-  Injector.set(false);
+  if (turretOptical.isNearObject()) {
+    Injector.set(true);
+    wait(100, msec);
+    Injector.set(false);
+  }
   Brain.Screen.drawRectangle(120, 190, 60, 60, black);
 }
 bool intakeOn = false;
@@ -431,19 +436,18 @@ void driveSwitch() { driveDir = !driveDir; }
 void teamSwitch() {
   Controller1.rumble(".");
   Brain.Screen.clearScreen();
-  if (team == "red"){
+  if (team == "red") {
     team = "blue";
 
     Brain.Screen.setFillColor(blue);
   }
   if (team == "blue") {
     team = "red";
-   
+
     Brain.Screen.setFillColor(red);
-  
   }
   Brain.Screen.drawRectangle(20, 50, 100, 100);
-  Brain.Screen.printAt(1, 20,false,"%s", team.c_str());
+  Brain.Screen.printAt(1, 20, false, "%s", team.c_str());
 }
 /*---------------------------------------------------------------------------*/
 /*                          Pre-Autonomous Functions                         */
@@ -477,7 +481,6 @@ void pre_auton(void) {
   turretG.calibrate();
   waitUntil(!gyro1.isCalibrating() && !turretG.isCalibrating());
   Brain.Screen.pressed(teamSwitch);
-
 }
 
 /*---------------------------------------------------------------------------*/
@@ -491,7 +494,7 @@ void pre_auton(void) {
 /*---------------------------------------------------------------------------*/
 
 void autonomous(void) {
-  bool flag=true;
+  bool flag = true;
   spinFlywheel(100);
   wait(3, sec);
   Injector.set(!Injector.value());
@@ -679,7 +682,7 @@ int main() {
   Controller1.ButtonLeft.pressed(pistonToggleReady);
   Controller1.ButtonRight.pressed(driveSwitch);
   Controller1.ButtonX.pressed(toggleTurret);
-  //Controller1.ButtonX.pressed(fireDisc);
+  // Controller1.ButtonX.pressed(fireDisc);
   // Run the pre-autonomous function.
   pre_auton();
 
