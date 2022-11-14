@@ -370,7 +370,7 @@ int turretStable() {
     if (!loading) {
       if (fabs(GoalAngle - turretG.orientation(yaw, degrees)) < 10) {//if goal is within limits
         Vision16.takeSnapshot(BGOAL);//use vision sensor
-        error = -Vision16.largestObject.centerX;
+        error = 158-Vision16.largestObject.centerX;
         kp = 0.5;
         kd = 0;
         if(fabs(error)<15){//if error is low global bool vision is ready
