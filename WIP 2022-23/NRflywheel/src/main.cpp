@@ -370,10 +370,14 @@ int turretStable() {
     if (!loading) {
       if (fabs(GoalAngle - turretG.orientation(yaw, degrees)) < 10) {//if goal is within limits
         Vision16.takeSnapshot(BGOAL);//use vision sensor
-        error = 158-Vision16.largestObject.centerX;
-        kp = 0.5;
+      
+        error = Vision16.largestObject.centerX-158;
+    
+        Brain.Screen.printAt(1, 100, "error  = %.1f      ", error);
+        Brain.Screen.printAt(1, 160, "vision  = %.1f      ", Vision16.largestObject.centerX);
+        kp = 0.2;
         kd = 0;
-        if(fabs(error)<15){//if error is low global bool vision is ready
+        if(fabs(error)<10){//if error is low global bool vision is ready
          VisionReady=true;
         }
         else {//else vision is not ready
@@ -388,6 +392,10 @@ int turretStable() {
     } else {//if not loading go to zero
 
       error = turretEncoderAngle;
+       kp = 1;
+        kd = 0.4;
+        VisionReady=false;//vision is not ready
+      
     }
 
     speed = (error * kp) + (ki * sum) + (kd * (error - prevError));
