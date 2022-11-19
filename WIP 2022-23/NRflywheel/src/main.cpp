@@ -33,7 +33,7 @@
 #include "vex.h"
 #include "vision.h"
 #include <math.h>
-
+#include "stdio.h"
 //#include "sylib.hpp"
 double GoalAngle = 0;
 bool loading = true;
@@ -41,7 +41,7 @@ double TargetSpeed = 0.0;
 using namespace vex;
 // 100 digits of pi because I like Pi𝝿
 long double pi = 3.14159265358979323;
-std::string team = "blue";
+//std::string team = "blue";
 // A global instance of competition
 
 competition Competition;
@@ -50,11 +50,11 @@ void vision_sensor() {
 
   float error = 0.0;
   float accuracy = 10;
-  if (team == "blue") {
+ // if (team == "blue") {
     Vision16.takeSnapshot(BGOAL);
-  } else {
+  //} else {
     Vision16.takeSnapshot(RGOAL);
-  }
+  //}
 
   if (Vision16.largestObject.exists == true) {
     double goal_position = Vision16.largestObject.centerX;
@@ -219,7 +219,7 @@ int ControllerPrint() {
     Controller1.Screen.setCursor(2, 1);
     Controller1.Screen.print("pos= (%.1f,%.1f)", X, Y);
     Controller1.Screen.setCursor(3, 1);
-    Controller1.Screen.print("gAngle=%.2f ", GoalAngle);
+    Controller1.Screen.print("distance=%.2f ", sqrt(X*X+Y*Y));
     if (Brain.timer(sec) == 15) {
       Controller1.rumble(".");
     } // 2 minute mark
@@ -368,6 +368,7 @@ int turretStable() {
     double turretEncoderAngle =
         (TurretE.angle() > 180 ? TurretE.angle() - 360 : TurretE.angle());
     if (!loading) {
+    /*
       if (fabs(GoalAngle - turretG.orientation(yaw, degrees)) < 10) {//if goal is within limits
         Vision16.takeSnapshot(BGOAL);//use vision sensor
       
@@ -383,12 +384,12 @@ int turretStable() {
         else {//else vision is not ready
         VisionReady=false;
         }
-      } else {
+      } else {*/
         error = -GoalAngle - turretG.orientation(yaw, degrees);
-        kp = 1;
-        kd = 0.4;
-        VisionReady=false;//vision is not ready
-      }
+        kp=0.8;
+      kd=0.2;
+    //    VisionReady=false;//vision is not ready
+  //    }
     } else {//if not loading go to zero
 
       error = turretEncoderAngle;
@@ -424,7 +425,7 @@ int turretStable() {
 void fireDisc() {
   loading = false;
   TargetSpeed = 0; // need to create formula
-  waitUntil(VisionReady &&
+  waitUntil((fabs(GoalAngle-turretG.orientation(yaw, degrees))<2) &&
             (fabs(F1.velocity(pct) - TargetSpeed) < .25));
   pistonToggle();
   if (turretOptical.isNearObject())
@@ -435,7 +436,20 @@ void fireDisc() {
     TargetSpeed = 0;
   }
 }
+void fireDiscWithSpd(int speed) {
+  loading = false;
+   // need to create formula
+  waitUntil(VisionReady &&
+            (fabs(F1.velocity(pct) - speed) < .25));
+  pistonToggle();
+  if (turretOptical.isNearObject())
+    fireDisc();
+  else {
 
+    loading = true;
+    TargetSpeed = 0;
+  }
+}
 void pistonToggleReady() {
   Brain.Screen.drawRectangle(120, 190, 60, 60, orange);
   waitUntil(F1.velocity(pct) < TargetSpeed + .25 &&
@@ -457,7 +471,7 @@ bool driveDir = 0;
 void driveSwitch() { driveDir = !driveDir; }
 void teamSwitch() {
   Controller1.rumble(".");
-  Brain.Screen.clearScreen();
+ /* Brain.Screen.clearScreen();
   if (team == "red") {
     team = "blue";
 
@@ -467,9 +481,9 @@ void teamSwitch() {
     team = "red";
 
     Brain.Screen.setFillColor(red);
-  }
+  }*/
   Brain.Screen.drawRectangle(20, 50, 100, 100);
-  Brain.Screen.printAt(1, 20, false, "%s", team.c_str());
+  //Brain.Screen.printAt(1, 20, false, "%s", team.c_str());
 }
 /*---------------------------------------------------------------------------*/
 /*                          Pre-Autonomous Functions                         */
@@ -515,13 +529,59 @@ void pre_auton(void) {
 /*  You must modify the code to add your own robot specific commands here .   */
 /*---------------------------------------------------------------------------*/
 
+void rotate(double dir, double &facing, double accuracy = 1) { 
+   double currDir = gyro1.rotation(degrees); 
+   double speed = 100; 
+   double error = dir; 
+   double prevError = dir; 
+   double Kd = 1; 
+   double Ki = 0.2; 
+   double sum = 0; 
+   double Kp = .8; 
+
+   facing += dir;                                   // change facing 
+   dir = currDir + facing - gyro1.rotation(degrees); // rotation offset 
+
+   // continues rotating until its within accuracy degrees from the target and 
+   // the speed of the motors isn't too fast 
+   while (fabs(error) > accuracy || fabs(speed) > 10) { 
+     error = dir - gyro1.rotation(degrees); 
+     speed = Kp * error + Ki * sum + Kd * (error - prevError); 
+     LB.spin(reverse, speed / 3, percent); 
+     RB.spin(forward, speed / 3, percent); 
+     RF.spin(forward, speed / 3, percent); 
+     LF.spin(reverse, speed / 3, percent); 
+
+     wait(10, msec); 
+     prevError = error; 
+     sum = sum * 0.5 + error; 
+   } 
+
+   LF.stop(brake); 
+   RF.stop(brake); 
+   RB.stop(brake); 
+   LB.stop(brake); 
+ }
+
 void autonomous(void) {
-  bool flag = true;
-  spinFlywheel(100);
-  wait(3, sec);
-  Injector.set(!Injector.value());
-  wait(300, msec);
-  Injector.set(!Injector.value());
+  
+  inchDrive(0.2);
+  rotate() // turn towards roller
+  inchDrive(26); // drive to roller
+  drive(100, -100, 50); // face roller
+
+  Intake1.spin(forward, 12, volt); // spin roller
+  waitUntil(Color.color() == red); 
+  Intake1.stop();
+
+  drive(100, -100, 110); // turn parallel to center line
+  inchDrive(33); // move to disc trio + consume first disc
+  //inchDrive()
+
+  
+
+  fireDisc();
+
 }
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
@@ -589,7 +649,7 @@ void usercontrol(void) {
       TargetSpeed += 0.5;
       wait(10, msec);
     }
-    Vision16.takeSnapshot(BGOAL, 1);
+   
 
     // button controls
     // available buttons: X Y A
