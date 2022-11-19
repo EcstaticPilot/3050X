@@ -579,21 +579,19 @@ void rotate(double dir, double accuracy = 1) {
    RB.stop(brake); 
    LB.stop(brake); 
  }
-//
-
-
-
-
-
-
-
-
-
-
-
 
 void autonomous(void) {
  // thread turretStablization = thread(turretStable);
+
+ inchDrive(0.3);
+ rotate(90);
+ inchDrive(24);
+ rotate(90);
+ inchDrive(0.1);
+ Intake1.spin(forward, 100, pct);
+ waitUntil(Color.color() == red);
+ Intake1.stop();
+
  turretSpinTo(atan2(X-110, 110 - Y) * (180 / M_PI), true);
       GoalAngle = atan2(X-110, 110 - Y) * (180 / M_PI);
   loading=false;
