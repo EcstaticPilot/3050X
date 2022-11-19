@@ -1,3 +1,25 @@
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// Controller1          controller
+// F1                   motor         2
+// F2                   motor         15
+// Injector             digital_out   A
+// LF                   motor         18
+// LB                   motor         12
+// RF                   motor         20
+// RB                   motor         4
+// Intake1              motor         1
+// turret               motor         21
+// gyro1                inertial      11
+// RotationL            rotation      5
+// RotationB            rotation      3
+// turretG              inertial      14
+// Color                optical       7
+// TurretE              rotation      17
+// turretOptical        optical       9
+// Controller2          controller
+// ---- END VEXCODE CONFIGURED DEVICES ----
 
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
@@ -11,29 +33,30 @@
 // ---- START VEXCODE CONFIGURED DEVICES ----
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
-// Controller1          controller                    
-// F1                   motor         2               
-// F2                   motor         15              
-// Injector             digital_out   A               
-// LF                   motor         18              
-// LB                   motor         12              
-// RF                   motor         20              
-// RB                   motor         4               
-// Intake1              motor         1               
-// turret               motor         21              
-// gyro1                inertial      11              
-// RotationL            rotation      5               
-// RotationB            rotation      3               
-// turretG              inertial      14              
-// Color                optical       7               
-// TurretE              rotation      17              
-// turretOptical        optical       9               
+// Controller1          controller
+// F1                   motor         2
+// F2                   motor         15
+// Injector             digital_out   A
+// LF                   motor         18
+// LB                   motor         12
+// RF                   motor         20
+// RB                   motor         4
+// Intake1              motor         1
+// turret               motor         21
+// gyro1                inertial      11
+// RotationL            rotation      5
+// RotationB            rotation      3
+// turretG              inertial      14
+// Color                optical       7
+// TurretE              rotation      17
+// turretOptical        optical       9
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
+#include "stdio.h"
 #include "vex.h"
 #include "vision.h"
 #include <math.h>
-#include "stdio.h"
+
 //#include "sylib.hpp"
 double GoalAngle = 0;
 bool loading = true;
@@ -41,7 +64,7 @@ double TargetSpeed = 0.0;
 using namespace vex;
 // 100 digits of pi because I like Pi𝝿
 long double pi = 3.14159265358979323;
-//std::string team = "blue";
+// std::string team = "blue";
 // A global instance of competition
 
 competition Competition;
@@ -50,10 +73,10 @@ void vision_sensor() {
 
   float error = 0.0;
   float accuracy = 10;
- // if (team == "blue") {
-    Vision16.takeSnapshot(BGOAL);
+  // if (team == "blue") {
+  Vision16.takeSnapshot(BGOAL);
   //} else {
-    Vision16.takeSnapshot(RGOAL);
+  Vision16.takeSnapshot(RGOAL);
   //}
 
   if (Vision16.largestObject.exists == true) {
@@ -87,11 +110,10 @@ void drive(int lSpeed, int rSpeed, double wt) {
 void inchDrive(double dist, double speedMod = 1,
                double stopTime = 99999999999999999, double accuracy = 0.5) {
   double startPos = RotationL.position(deg);
-  dist = -dist;
 
   double currDist = 0;
   double speed;
-  double error = dist;
+  double error = -dist;
   double prevError = error;
   double Kp = 16.667;   // Porportional
   double Ki = 0.5;      // Integral
@@ -105,17 +127,19 @@ void inchDrive(double dist, double speedMod = 1,
     //  errors[3] && errors[0] != dist)) {
     currDist = (RotationL.position(deg) - startPos) * (pi / 180) * (2.75 / 2);
     error = dist - currDist;
-    sum = sum * 0.8 + error;
+
     speed = Kp * error + Ki * sum + Kd * (error - prevError);
 
     drive(speed * speedMod, speed * speedMod, 10);
 
     prevError = error;
+    sum = sum * 0.8 + error;
+    wait(10, msec);
   }
-  LF.stop(brake); 
-   RF.stop(brake); 
-   RB.stop(brake); 
-   LB.stop(brake); 
+  LF.stop(brake);
+  RF.stop(brake);
+  RB.stop(brake);
+  LB.stop(brake);
 }
 
 void controlFlywheel1(double target) {
@@ -200,18 +224,10 @@ int odometery() {
   }
   return 1;
 }
-void up(){
-  X= 130;
-}
-void down(){
-  X=0;
-}
-void right(){
-  Y=0;
-}
-void left(){
-  Y=130;
-}
+void up() { X = 130; }
+void down() { X = 0; }
+void rightB() { Y = 0; }
+void leftB() { Y = 130; }
 void pistonToggle() {
   if (turretOptical.isNearObject()) {
     Injector.set(true);
@@ -219,8 +235,6 @@ void pistonToggle() {
     Injector.set(false);
   }
 }
-
-
 
 // printstuff to controller
 int ControllerPrint() {
@@ -234,7 +248,8 @@ int ControllerPrint() {
     Controller1.Screen.setCursor(2, 1);
     Controller1.Screen.print("pos= (%.1f,%.1f)", X, Y);
     Controller1.Screen.setCursor(3, 1);
-    Controller1.Screen.print("distance=%.2f ", sqrt(X*X+Y*Y));
+    Controller1.Screen.print("time=%.2f ", Brain.timer(sec));
+
     if (Brain.timer(sec) == 15) {
       Controller1.rumble(".");
     } // 2 minute mark
@@ -266,31 +281,41 @@ averageHeading); this_thread::sleep_for(1000);
   return (0);
 } */
 
-void controlFlywheelSpeed(double target) {
-  double kI = .04;
-  double speed = F1.velocity(pct);
-  double error = target - speed;
-  double fwDrive = FWDrive + kI * error;
-  // :D
-  // Brain.Screen.printAt(1, 40, " speed = %.2f ", speed);
-  // Keep drive between 0 to 100%
-  if (fwDrive > 100)
-    fwDrive = 100;
-  if (fwDrive < 0)
-    fwDrive = 0;
-  // Check for zero crossing
-  if (error * OldError < 0) {
-    fwDrive = 0.5 * (fwDrive + TBHval);
-    TBHval = fwDrive;
+int controlFlywheelSpeed() {
+  double kI = .06;
+  while (true) {
+
+    double speed = F1.velocity(pct);
+    double error = TargetSpeed - speed;
+    double fwDrive = FWDrive + kI * error;
+    // :D
+    // Brain.Screen.printAt(1, 40, " speed = %.2f ", speed);
+    // Keep drive between 0 to 100%
+
+    if (error > 20) {
+      fwDrive = 100;
+    }
+
+    else {
+      if (fwDrive > 100)
+        fwDrive = 100;
+      if (fwDrive <= 0)
+        fwDrive = 0;
+      // Check for zero crossing
+      if (error * OldError < 0) {
+        fwDrive = 0.5 * (fwDrive + TBHval);
+        TBHval = fwDrive;
+      }
+    }
+
+    //  Brain.Screen.printAt(180, 40, "fwdrive %.1f  ", fwDrive);
+    spinFlywheel(fwDrive);
+
+    FWDrive = fwDrive;
+    OldError = error;
   }
-
-  //  Brain.Screen.printAt(180, 40, "fwdrive %.1f  ", fwDrive);
-  spinFlywheel(fwDrive);
-
-  FWDrive = fwDrive;
-  OldError = error;
+  return 1;
 }
-
 void spinFlywheel(double speed) {
   speed = speed * 120; // speed is in pctage so convert to mV 100% = 12000
                        // mV
@@ -365,7 +390,7 @@ void toggleTurret() {
   // Controller1.rumble(".");
 }
 
-bool VisionReady=false;
+bool VisionReady = false;
 int turretStable() {
   Controller1.rumble("..");
   loading = true;
@@ -385,35 +410,33 @@ int turretStable() {
     double turretEncoderAngle =
         (TurretE.angle() > 180 ? TurretE.angle() - 360 : TurretE.angle());
     if (!loading) {
-    /*
-      if (fabs(GoalAngle - turretG.orientation(yaw, degrees)) < 10) {//if goal is within limits
-        Vision16.takeSnapshot(BGOAL);//use vision sensor
-      
-        error = Vision16.largestObject.centerX-158;
-    
-        Brain.Screen.printAt(1, 100, "error  = %.1f      ", error);
-        Brain.Screen.printAt(1, 160, "vision  = %.1f      ", Vision16.largestObject.centerX);
-        kp = 0.2;
-        kd = 0;
-        if(fabs(error)<10){//if error is low global bool vision is ready
-         VisionReady=true;
-        }
-        else {//else vision is not ready
-        VisionReady=false;
-        }
-      } else {*/
-        error = -GoalAngle - turretG.orientation(yaw, degrees);
-        kp=0.8;
-      kd=0.2;
-    //    VisionReady=false;//vision is not ready
-  //    }
-    } else {//if not loading go to zero
+      /*
+        if (fabs(GoalAngle - turretG.orientation(yaw, degrees)) < 10) {//if goal
+        is within limits Vision16.takeSnapshot(BGOAL);//use vision sensor
+
+          error = Vision16.largestObject.centerX-158;
+
+          Brain.Screen.printAt(1, 100, "error  = %.1f      ", error);
+          Brain.Screen.printAt(1, 160, "vision  = %.1f      ",
+        Vision16.largestObject.centerX); kp = 0.2; kd = 0;
+          if(fabs(error)<10){//if error is low global bool vision is ready
+           VisionReady=true;
+          }
+          else {//else vision is not ready
+          VisionReady=false;
+          }
+        } else {*/
+      error = -GoalAngle - turretG.orientation(yaw, degrees);
+      kp = 0.8;
+      kd = 0.2;
+      //    VisionReady=false;//vision is not ready
+      //    }
+    } else { // if not loading go to zero
 
       error = turretEncoderAngle;
-       kp = 1;
-        kd = 0.4;
-        VisionReady=false;//vision is not ready
-      
+      kp = 1;
+      kd = 0.4;
+      VisionReady = false; // vision is not ready
     }
 
     speed = (error * kp) + (ki * sum) + (kd * (error - prevError));
@@ -431,7 +454,6 @@ int turretStable() {
       turret.spin(fwd, -5, pct);
     }*/
 
-  
     prevError = error;
     sum += error;
 
@@ -442,7 +464,7 @@ int turretStable() {
 void fireDisc() {
   loading = false;
   TargetSpeed = 0; // need to create formula
-  waitUntil((fabs(GoalAngle-turretG.orientation(yaw, degrees))<2) &&
+  waitUntil((fabs(GoalAngle - turretG.orientation(yaw, degrees)) < 2) &&
             (fabs(F1.velocity(pct) - TargetSpeed) < .25));
   pistonToggle();
   if (turretOptical.isNearObject())
@@ -455,9 +477,8 @@ void fireDisc() {
 }
 void fireDiscWithSpd(int speed) {
   loading = false;
-   // need to create formula
-  waitUntil(VisionReady &&
-            (fabs(F1.velocity(pct) - speed) < .25));
+  // need to create formula
+  waitUntil(VisionReady && (fabs(F1.velocity(pct) - speed) < .25));
   pistonToggle();
   if (turretOptical.isNearObject())
     fireDisc();
@@ -488,19 +509,19 @@ bool driveDir = 0;
 void driveSwitch() { driveDir = !driveDir; }
 void teamSwitch() {
   Controller1.rumble(".");
- /* Brain.Screen.clearScreen();
-  if (team == "red") {
-    team = "blue";
+  /* Brain.Screen.clearScreen();
+   if (team == "red") {
+     team = "blue";
 
-    Brain.Screen.setFillColor(blue);
-  }
-  if (team == "blue") {
-    team = "red";
+     Brain.Screen.setFillColor(blue);
+   }
+   if (team == "blue") {
+     team = "red";
 
-    Brain.Screen.setFillColor(red);
-  }*/
+     Brain.Screen.setFillColor(red);
+   }*/
   Brain.Screen.drawRectangle(20, 50, 100, 100);
-  //Brain.Screen.printAt(1, 20, false, "%s", team.c_str());
+  // Brain.Screen.printAt(1, 20, false, "%s", team.c_str());
 }
 /*---------------------------------------------------------------------------*/
 /*                          Pre-Autonomous Functions                         */
@@ -546,61 +567,63 @@ void pre_auton(void) {
 /*  You must modify the code to add your own robot specific commands here .   */
 /*---------------------------------------------------------------------------*/
 
-void rotate(double dir, double accuracy = 1) { 
-  // double currDir = gyro1.rotation(degrees); 
-   double speed = 100; 
-   double error = dir; 
-   double prevError = dir; 
-   double Kd = 1; 
-   double Ki = 0.2; 
-   double sum = 0; 
-   double Kp = .8; 
+void rotate(double dir, double accuracy = 1) {
+  // double currDir = gyro1.rotation(degrees);
+  double speed = 100;
+  double error = dir;
+  double prevError = dir;
+  double Kd = 1;
+  double Ki = 0.2;
+  double sum = 0;
+  double Kp = .8;
 
-                               // change facing 
-   //dir = currDir - gyro1.rotation(degrees); // rotation offset 
+  // change facing
+  // dir = currDir - gyro1.rotation(degrees); // rotation offset
 
-   // continues rotating until its within accuracy degrees from the target and 
-   // the speed of the motors isn't too fast 
-   while (fabs(error) > accuracy || fabs(speed) > 10) { 
-     error = dir - gyro1.rotation(degrees); 
-     speed = (Kp * error )+ (Ki * sum) + (Kd * (error - prevError)); 
-     LB.spin(fwd, speed / 3, percent); 
-     RB.spin(reverse, speed / 3, percent); 
-     RF.spin(reverse, speed / 3, percent); 
-     LF.spin(fwd, speed / 3, percent); 
+  // continues rotating until its within accuracy degrees from the target and
+  // the speed of the motors isn't too fast
+  while (fabs(error) > accuracy || fabs(speed) > 10) {
+    error = dir - gyro1.rotation(degrees);
+    speed = (Kp * error) + (Ki * sum) + (Kd * (error - prevError));
+    LB.spin(fwd, speed / 3, percent);
+    RB.spin(reverse, speed / 3, percent);
+    RF.spin(reverse, speed / 3, percent);
+    LF.spin(fwd, speed / 3, percent);
 
-     wait(10, msec); 
-     prevError = error; 
-     sum = sum * 0.5 + error; 
-   } 
+    wait(10, msec);
+    prevError = error;
+    sum = sum * 0.5 + error;
+  }
 
-   LF.stop(brake); 
-   RF.stop(brake); 
-   RB.stop(brake); 
-   LB.stop(brake); 
- }
+  LF.stop(brake);
+  RF.stop(brake);
+  RB.stop(brake);
+  LB.stop(brake);
+}
 
 void autonomous(void) {
- // thread turretStablization = thread(turretStable);
+  // thread turretStablization = thread(turretStable);
 
- inchDrive(0.3);
- rotate(90);
- inchDrive(24);
- rotate(90);
- inchDrive(0.1);
- Intake1.spin(forward, 100, pct);
- waitUntil(Color.color() == red);
- Intake1.stop();
+  inchDrive(0.3);
+  rotate(90);
+  inchDrive(24);
+  rotate(90);
+  inchDrive(0.1);
+  Intake1.spin(forward, 100, pct);
+  waitUntil(Color.color() == red);
+  Intake1.stop();
 
- turretSpinTo(atan2(X-110, 110 - Y) * (180 / M_PI), true);
-      GoalAngle = atan2(X-110, 110 - Y) * (180 / M_PI);
-  loading=false;
-  spinFlywheel(100); loading=false;
-  waitUntil(F1.velocity(pct)>97);
-  pistonToggle(); loading=false;
-  waitUntil(F1.velocity(pct)>99);
-  pistonToggle(); loading=false;
-
+  turretSpinTo(atan2(X - 110, 110 - Y) * (180 / M_PI), true);
+  GoalAngle = atan2(X - 110, 110 - Y) * (180 / M_PI);
+  loading = false;
+  spinFlywheel(100);
+  loading = false;
+  waitUntil(F1.velocity(pct) > 97);
+  pistonToggle();
+  loading = false;
+  waitUntil(F1.velocity(pct) > 99);
+  pistonToggle();
+  loading = false;
 }
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
@@ -616,7 +639,9 @@ void usercontrol(void) {
   X = 75;
   Y = 0;
   thread ControllerPrinting = thread(ControllerPrint);
- 
+  thread turretStablization = thread(turretStable);
+  thread flywheelgo = thread(controlFlywheelSpeed);
+
   bool alg = true;
   gyro1.calibrate();
   turretG.calibrate();
@@ -624,7 +649,7 @@ void usercontrol(void) {
   turretG.setHeading(180, degrees);
   while (true) {
 
-    GoalAngle = atan2(X-110, 110 - Y) * (180 / M_PI);
+    GoalAngle = atan2(X - 110, 110 - Y) * (180 / M_PI);
     /*if(!loading)TargetAngle=5
     ;
     else {
@@ -660,115 +685,118 @@ void usercontrol(void) {
       GoalAngle += 0.5;
       wait(10, msec);
     }*/
-    if (Controller1.ButtonL1.pressing()) {
-      TargetSpeed -= 0.5;
+    if (Controller2.ButtonL1.pressing() || Controller2.ButtonL2.pressing()) {
+      TargetSpeed -= 0.5 * (Controller2.ButtonL1.pressing() +
+                            Controller2.ButtonL2.pressing());
       wait(10, msec);
     }
-    if (Controller1.ButtonR1.pressing()) {
-      TargetSpeed += 0.5;
+    if (Controller2.ButtonR1.pressing() || Controller2.ButtonR2.pressing()) {
+      TargetSpeed += 0.5 * (Controller2.ButtonR1.pressing() +
+                            Controller2.ButtonR2.pressing());
       wait(10, msec);
-    }
-   
+      // button controls
+      // available buttons: X Y A
+      /* if (Controller1.ButtonUp.pressing() && TargetSpeed < 100) {
+         TargetSpeed += 5;
+         wait(10, msec);
+       }
+       if (Controller1.ButtonDown.pressing() && TargetSpeed > 0) {
+         TargetSpeed -= 5;
+         wait(10, msec);
+       }*/
 
-    // button controls
-    // available buttons: X Y A
-    if (Controller1.ButtonUp.pressing() && TargetSpeed < 100) {
-      TargetSpeed += 5;
-      wait(10, msec);
-    }
-    if (Controller1.ButtonDown.pressing() && TargetSpeed > 0) {
-      TargetSpeed -= 5;
-      wait(10, msec);
-    }
-
-    // Brain.Screen.printAt(1, 20, "target speed = %.2f ", TargetSpeed);
-
-    if (alg) {
-      controlFlywheelSpeed(TargetSpeed);
-      // Brain.Screen.printAt(1, 120, "controlled speed    ");
-    } else {
-      controlFlywheel1(TargetSpeed);
-      // Brain.Screen.printAt(1, 120, "not controlled     ");
-    }
-
-    if (intakeOn) {
-      Intake1.spin(forward, 150, rpm);
-    } else {
-
-      if (Color.color() == blue && Color.isNearObject())
-        Intake1.spin(forward, 200, rpm);
-      else
-        Intake1.stop();
-    }
-    Color.setLightPower(100);
-    if (Color.isNearObject())
-      Color.setLight(ledState::on);
-    else
-      Color.setLight(ledState::off);
-
-    if (F1.velocity(pct) < TargetSpeed + 1 &&
-        F1.velocity(pct) > TargetSpeed - 1) {
-      Brain.Screen.drawRectangle(60, 190, 60, 60, green);
-
-    } else {
-      Brain.Screen.drawRectangle(60, 190, 60, 60, red);
-    }
-    flywheelMonitor();
-    // tank drive code
-    if (driveDir) {
-
-      LF.spin(forward, Controller1.Axis3.position() * 120, voltageUnits::mV);
-      RF.spin(forward, Controller1.Axis2.position() * 120, voltageUnits::mV);
-      LB.spin(forward, Controller1.Axis3.position() * 120, voltageUnits::mV);
-      RB.spin(forward, Controller1.Axis2.position() * 120, voltageUnits::mV);
-    } else if (!driveDir) {
-      LF.spin(reverse, Controller1.Axis2.position() * 120, voltageUnits::mV);
-      RF.spin(reverse, Controller1.Axis3.position() * 120, voltageUnits::mV);
-      LB.spin(reverse, Controller1.Axis2.position() * 120, voltageUnits::mV);
-      RB.spin(reverse, Controller1.Axis3.position() * 120, voltageUnits::mV);
-    }
-    if (Controller1.Axis2.position() == 0 &&
-        Controller1.Axis3.position() == 0) {
-      LF.stop(coast);
-      RF.stop(coast);
-      LB.stop(coast);
-      RB.stop(coast);
-    }
-    /*
-    if (turretToggle == false) {
-
-      if (gyro1.heading() - turretG.heading() > 90 &&
-          gyro1.heading() - turretG.heading() < 270) {
-        turretSpinTo(offset);
-      } else if (gyro1.heading() - turretG.heading() > 90) {
-        turretSpinTo(gyro1.heading() + 90);
-      } else if (gyro1.heading() - turretG.heading() < 270) {
-        turretSpinTo(gyro1.heading() - 90);
+      // Brain.Screen.printAt(1, 20, "target speed = %.2f ", TargetSpeed);
+      if (Controller2.ButtonX.pressing()) {
+        TargetSpeed = 0;
       }
-    } else {
+      if (Controller2.ButtonA.pressing()) {
+        TargetSpeed = 75;
+      }
+      if (Controller2.ButtonB.pressing()) {
+        TargetSpeed = 85;
+      }
+      if (Controller2.ButtonY.pressing()) {
+        TargetSpeed = 100;
+      }
 
-      if (gyro1.heading() < turretG.heading() + 1 &&
-          gyro1.heading() > turretG.heading() + 1) {
-        turret.stop(hold);
+      if (intakeOn) {
+        Intake1.spin(forward, 150, rpm);
       } else {
-        turretSpinTo(gyro1.heading());
-      }
-    }*/
-    /*if (targetAngle != turretAngle) {
-      if (targetAngle > 95) {
-        targetAngle = 95;
-      }
-      if (targetAngle < -75) {
-        targetAngle = 75;
-      }
-      turretSpinTo(targetAngle);
-    }
-    turretG.orientation(yaw, degrees);*/
 
-    wait(10, msec);
+        if (Color.color() == blue && Color.isNearObject())
+          Intake1.spin(forward, 200, rpm);
+        else
+          Intake1.stop();
+      }
+      Color.setLightPower(100);
+      if (Color.isNearObject())
+        Color.setLight(ledState::on);
+      else
+        Color.setLight(ledState::off);
+
+      if (F1.velocity(pct) < TargetSpeed + 1 &&
+          F1.velocity(pct) > TargetSpeed - 1) {
+        Brain.Screen.drawRectangle(60, 190, 60, 60, green);
+
+      } else {
+        Brain.Screen.drawRectangle(60, 190, 60, 60, red);
+      }
+      flywheelMonitor();
+      // tank drive code
+      if (driveDir) {
+
+        LF.spin(forward, Controller1.Axis3.position() * 120, voltageUnits::mV);
+        RF.spin(forward, Controller1.Axis2.position() * 120, voltageUnits::mV);
+        LB.spin(forward, Controller1.Axis3.position() * 120, voltageUnits::mV);
+        RB.spin(forward, Controller1.Axis2.position() * 120, voltageUnits::mV);
+      } else if (!driveDir) {
+        LF.spin(reverse, Controller1.Axis2.position() * 120, voltageUnits::mV);
+        RF.spin(reverse, Controller1.Axis3.position() * 120, voltageUnits::mV);
+        LB.spin(reverse, Controller1.Axis2.position() * 120, voltageUnits::mV);
+        RB.spin(reverse, Controller1.Axis3.position() * 120, voltageUnits::mV);
+      }
+      if (Controller1.Axis2.position() == 0 &&
+          Controller1.Axis3.position() == 0) {
+        LF.stop(coast);
+        RF.stop(coast);
+        LB.stop(coast);
+        RB.stop(coast);
+      }
+      /*
+      if (turretToggle == false) {
+
+        if (gyro1.heading() - turretG.heading() > 90 &&
+            gyro1.heading() - turretG.heading() < 270) {
+          turretSpinTo(offset);
+        } else if (gyro1.heading() - turretG.heading() > 90) {
+          turretSpinTo(gyro1.heading() + 90);
+        } else if (gyro1.heading() - turretG.heading() < 270) {
+          turretSpinTo(gyro1.heading() - 90);
+        }
+      } else {
+
+        if (gyro1.heading() < turretG.heading() + 1 &&
+            gyro1.heading() > turretG.heading() + 1) {
+          turret.stop(hold);
+        } else {
+          turretSpinTo(gyro1.heading());
+        }
+      }*/
+      /*if (targetAngle != turretAngle) {
+        if (targetAngle > 95) {
+          targetAngle = 95;
+        }
+        if (targetAngle < -75) {
+          targetAngle = 75;
+        }
+        turretSpinTo(targetAngle);
+      }
+      turretG.orientation(yaw, degrees);*/
+
+      wait(10, msec);
+    }
   }
 }
-
 // Main will set up the competition functions and callbacks.
 //
 int main() {
@@ -782,6 +810,10 @@ int main() {
   Controller1.ButtonLeft.pressed(pistonToggleReady);
   Controller1.ButtonRight.pressed(driveSwitch);
   Controller1.ButtonX.pressed(toggleTurret);
+  Controller2.ButtonUp.pressed(up);
+  Controller2.ButtonDown.pressed(down);
+  Controller2.ButtonLeft.pressed(leftB);
+  Controller2.ButtonRight.pressed(rightB);
   // Controller1.ButtonX.pressed(fireDisc);
   // Run the pre-autonomous function.
   pre_auton();
