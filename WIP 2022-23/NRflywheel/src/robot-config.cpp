@@ -25,6 +25,7 @@ inertial turretG = inertial(PORT14);
 optical Color = optical(PORT7);
 rotation TurretE = rotation(PORT17, false);
 optical turretOptical = optical(PORT9);
+controller Controller2 = controller(partner);
 
 // VEXcode generated functions
 // define variable for remote controller enable/disable
