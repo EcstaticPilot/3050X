@@ -566,7 +566,7 @@ void rotate(double dir, double &facing, double accuracy = 1) {
 void autonomous(void) {
   
   inchDrive(0.2);
-  rotate() // turn towards roller
+ // rotate() // turn towards roller
   inchDrive(26); // drive to roller
   drive(100, -100, 50); // face roller
 
