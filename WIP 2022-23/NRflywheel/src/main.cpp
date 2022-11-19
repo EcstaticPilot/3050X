@@ -22,7 +22,7 @@
 // Intake1              motor         1               
 // turret               motor         21              
 // gyro1                inertial      11              
-// RotationL            rotation      6               
+// RotationL            rotation      5               
 // RotationB            rotation      3               
 // turretG              inertial      14              
 // Color                optical       7               
@@ -112,6 +112,10 @@ void inchDrive(double dist, double speedMod = 1,
 
     prevError = error;
   }
+  LF.stop(brake); 
+   RF.stop(brake); 
+   RB.stop(brake); 
+   LB.stop(brake); 
 }
 
 void controlFlywheel1(double target) {
@@ -123,8 +127,7 @@ void controlFlywheel1(double target) {
   // Brain.Screen.printAt(1, 40, " speed = %.2f ", speed);
 }
 // ODOMETERY
-
-double X = 0, Y = 0; // declare global x and y
+double X = 75, Y = 0; // declare global x and y
 double prevHeading = gyro1.heading();
 double deltaHeading = 0; // change in heading
 double absoluteOrientation = pi;
@@ -196,6 +199,18 @@ int odometery() {
     this_thread::sleep_for(5);
   }
   return 1;
+}
+void up(){
+  X= 130;
+}
+void down(){
+  X=0;
+}
+void right(){
+  Y=0;
+}
+void left(){
+  Y=130;
 }
 void pistonToggle() {
   if (turretOptical.isNearObject()) {
@@ -312,7 +327,7 @@ void turretSpinTo(double targetAngle, bool global) {
     double turretEncoderAngle =
         (TurretE.angle() > 180 ? TurretE.angle() - 360 : TurretE.angle());
     if (global) {
-      error = -(targetAngle - turretG.orientation(yaw, degrees));
+      error = -targetAngle - turretG.orientation(yaw, degrees);
     } else {
       error = targetAngle - turretEncoderAngle;
     }
@@ -349,8 +364,10 @@ void toggleTurret() {
   // turretSpinTo(TargetAngle);
   // Controller1.rumble(".");
 }
+
 bool VisionReady=false;
 int turretStable() {
+  Controller1.rumble("..");
   loading = true;
   // while (true) {
   // safe working valuse double kp = 1; double ki = 0;double kd = 0.3;
@@ -414,11 +431,11 @@ int turretStable() {
       turret.spin(fwd, -5, pct);
     }*/
 
-    wait(10, msec);
+  
     prevError = error;
     sum += error;
 
-    this_thread::sleep_for(5);
+    this_thread::sleep_for(10);
   }
   return 0;
 }
@@ -529,8 +546,8 @@ void pre_auton(void) {
 /*  You must modify the code to add your own robot specific commands here .   */
 /*---------------------------------------------------------------------------*/
 
-void rotate(double dir, double &facing, double accuracy = 1) { 
-   double currDir = gyro1.rotation(degrees); 
+void rotate(double dir, double accuracy = 1) { 
+  // double currDir = gyro1.rotation(degrees); 
    double speed = 100; 
    double error = dir; 
    double prevError = dir; 
@@ -539,18 +556,18 @@ void rotate(double dir, double &facing, double accuracy = 1) {
    double sum = 0; 
    double Kp = .8; 
 
-   facing += dir;                                   // change facing 
-   dir = currDir + facing - gyro1.rotation(degrees); // rotation offset 
+                               // change facing 
+   //dir = currDir - gyro1.rotation(degrees); // rotation offset 
 
    // continues rotating until its within accuracy degrees from the target and 
    // the speed of the motors isn't too fast 
    while (fabs(error) > accuracy || fabs(speed) > 10) { 
      error = dir - gyro1.rotation(degrees); 
-     speed = Kp * error + Ki * sum + Kd * (error - prevError); 
-     LB.spin(reverse, speed / 3, percent); 
-     RB.spin(forward, speed / 3, percent); 
-     RF.spin(forward, speed / 3, percent); 
-     LF.spin(reverse, speed / 3, percent); 
+     speed = (Kp * error )+ (Ki * sum) + (Kd * (error - prevError)); 
+     LB.spin(fwd, speed / 3, percent); 
+     RB.spin(reverse, speed / 3, percent); 
+     RF.spin(reverse, speed / 3, percent); 
+     LF.spin(fwd, speed / 3, percent); 
 
      wait(10, msec); 
      prevError = error; 
@@ -562,25 +579,29 @@ void rotate(double dir, double &facing, double accuracy = 1) {
    RB.stop(brake); 
    LB.stop(brake); 
  }
+//
+
+
+
+
+
+
+
+
+
+
+
 
 void autonomous(void) {
-  
-  inchDrive(0.2);
- // rotate() // turn towards roller
-  inchDrive(26); // drive to roller
-  drive(100, -100, 50); // face roller
-
-  Intake1.spin(forward, 12, volt); // spin roller
-  waitUntil(Color.color() == red); 
-  Intake1.stop();
-
-  drive(100, -100, 110); // turn parallel to center line
-  inchDrive(33); // move to disc trio + consume first disc
-  //inchDrive()
-
-  
-
-  fireDisc();
+ // thread turretStablization = thread(turretStable);
+ turretSpinTo(atan2(X-110, 110 - Y) * (180 / M_PI), true);
+      GoalAngle = atan2(X-110, 110 - Y) * (180 / M_PI);
+  loading=false;
+  spinFlywheel(100); loading=false;
+  waitUntil(F1.velocity(pct)>97);
+  pistonToggle(); loading=false;
+  waitUntil(F1.velocity(pct)>99);
+  pistonToggle(); loading=false;
 
 }
 /*---------------------------------------------------------------------------*/
@@ -594,10 +615,10 @@ void autonomous(void) {
 /*---------------------------------------------------------------------------*/
 
 void usercontrol(void) {
-  X = 0;
+  X = 75;
   Y = 0;
   thread ControllerPrinting = thread(ControllerPrint);
-  thread turretStablization = thread(turretStable);
+ 
   bool alg = true;
   gyro1.calibrate();
   turretG.calibrate();
@@ -605,7 +626,7 @@ void usercontrol(void) {
   turretG.setHeading(180, degrees);
   while (true) {
 
-    GoalAngle = atan2(X, 110 - Y) * (180 / M_PI);
+    GoalAngle = atan2(X-110, 110 - Y) * (180 / M_PI);
     /*if(!loading)TargetAngle=5
     ;
     else {
