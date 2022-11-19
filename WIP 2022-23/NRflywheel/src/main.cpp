@@ -407,6 +407,7 @@ int turretStable() {
   // while(true){
   double speed;
   while (true) {
+     GoalAngle = atan2(X - 110, 110 - Y) * (180 / M_PI);
     double turretEncoderAngle =
         (TurretE.angle() > 180 ? TurretE.angle() - 360 : TurretE.angle());
     if (!loading) {
@@ -649,42 +650,13 @@ void usercontrol(void) {
   turretG.setHeading(180, degrees);
   while (true) {
 
-    GoalAngle = atan2(X - 110, 110 - Y) * (180 / M_PI);
-    /*if(!loading)TargetAngle=5
-    ;
-    else {
-    TargetAngle=gyro1.orientation(yaw, degrees);
-    }*/
-    // if(Color.isNearObject()){
-    //    turretSpinTo(0);
-
-    //   }
-
+   
+ 
     /*
-        if (Controller1.ButtonL2.pressing() && !BumperL.pressing()) {
-          // offset++;
-          turret.spin(reverse, 30, pct);
-          wait(10, msec);
-        }
-        if (Controller1.ButtonR2.pressing() && !BumperR.pressing()) {
-          // offset--;
-          turret.spin(forward, 30, pct);
-          wait(10, msec);
-        }*/
 
-    // if (!Controller1.ButtonR2.pressing() && !Controller1.ButtonL2.pressing())
-    // {
-    //      turret.stop(brake);
-    //   }
+    CONTROLLER 2 SPEED CONTROL
 
-    /*if (Controller1.ButtonL2.pressing()) {
-      GoalAngle -= 0.5;
-      wait(10, msec);
-    }
-    if (Controller1.ButtonR2.pressing()) {
-      GoalAngle += 0.5;
-      wait(10, msec);
-    }*/
+    */
     if (Controller2.ButtonL1.pressing() || Controller2.ButtonL2.pressing()) {
       TargetSpeed -= 0.5 * (Controller2.ButtonL1.pressing() +
                             Controller2.ButtonL2.pressing());
@@ -694,18 +666,7 @@ void usercontrol(void) {
       TargetSpeed += 0.5 * (Controller2.ButtonR1.pressing() +
                             Controller2.ButtonR2.pressing());
       wait(10, msec);
-      // button controls
-      // available buttons: X Y A
-      /* if (Controller1.ButtonUp.pressing() && TargetSpeed < 100) {
-         TargetSpeed += 5;
-         wait(10, msec);
-       }
-       if (Controller1.ButtonDown.pressing() && TargetSpeed > 0) {
-         TargetSpeed -= 5;
-         wait(10, msec);
-       }*/
 
-      // Brain.Screen.printAt(1, 20, "target speed = %.2f ", TargetSpeed);
       if (Controller2.ButtonX.pressing()) {
         TargetSpeed = 0;
       }
@@ -718,7 +679,11 @@ void usercontrol(void) {
       if (Controller2.ButtonY.pressing()) {
         TargetSpeed = 100;
       }
+/*
 
+INTAKE
+
+*/
       if (intakeOn) {
         Intake1.spin(forward, 150, rpm);
       } else {
@@ -733,17 +698,12 @@ void usercontrol(void) {
         Color.setLight(ledState::on);
       else
         Color.setLight(ledState::off);
+/*
 
-      if (F1.velocity(pct) < TargetSpeed + 1 &&
-          F1.velocity(pct) > TargetSpeed - 1) {
-        Brain.Screen.drawRectangle(60, 190, 60, 60, green);
+TANK DRIVE CODE
 
-      } else {
-        Brain.Screen.drawRectangle(60, 190, 60, 60, red);
-      }
-      flywheelMonitor();
-      // tank drive code
-      if (driveDir) {
+*/
+ if (driveDir) {
 
         LF.spin(forward, Controller1.Axis3.position() * 120, voltageUnits::mV);
         RF.spin(forward, Controller1.Axis2.position() * 120, voltageUnits::mV);
