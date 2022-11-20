@@ -360,12 +360,6 @@ int controlFlywheelSpeed() {
   }
   return 1;
 }
-void spinFlywheel(double speed) {
-  speed = speed * 120; // speed is in pctage so convert to mV 100% = 12000
-                       // mV
-  F1.spin(forward, speed, voltageUnits::mV);
-  F2.spin(forward, speed, voltageUnits::mV);
-}
 
 void flywheelMonitor() {
   double current1 = F1.current();
@@ -684,42 +678,7 @@ if you're going too fast
   drive_brake();
 }
 
-void autonomous(void) {
-  // thread turretStablization = thread(turretStable);
-/*
 
-  inchDrive(0.3);
-  rotate(90);
-  inchDrive(24);
-  rotate(180);
-  inchDrive(0.1);
-  Intake1.spin(forward, 100, pct);
-  waitUntil(Color.color() == blue);
-  Intake1.stop();&*/
-
-  /*
-   inchDrive(0.3);
-   rotate(-90);
-   inchDrive(24);
-   rotate(-90);
-   inchDrive(0.1);
-   Intake1.spin(forward, 100, pct);
-   waitUntil(Color.color() == red);
-   Intake1.stop();
-   */
-
-  turretSpinTo(atan2(X - 110, 110 - Y) * (180 / M_PI), true);
-  GoalAngle = atan2(X - 115, 115 - Y) * (180 / M_PI);
-  loading = false;
-  spinFlywheel(100);
-  loading = false;
-  waitUntil(F1.velocity(pct) > 99&&F1.velocity(pct)<101);
-  pistonToggle();
-  loading = false;
-   waitUntil(F1.velocity(pct) > 99&&F1.velocity(pct)<101);
-  pistonToggle();
-  loading = false;
-}
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
 /*                              User Control Task */
@@ -852,6 +811,43 @@ void usercontrol(void) {
 
     wait(10, msec);
   }
+}
+
+void autonomous(void) {
+  // thread turretStablization = thread(turretStable);
+/*
+
+  inchDrive(0.3);
+  rotate(90);
+  inchDrive(24);
+  rotate(180);
+  inchDrive(0.1);
+  Intake1.spin(forward, 100, pct);
+  waitUntil(Color.color() == blue);
+  Intake1.stop();&*/
+
+  /*
+   inchDrive(0.3);
+   rotate(-90);
+   inchDrive(24);
+   rotate(-90);
+   inchDrive(0.1);
+   Intake1.spin(forward, 100, pct);
+   waitUntil(Color.color() == red);
+   Intake1.stop();
+   */
+
+  turretSpinTo(atan2(X - 110, 110 - Y) * (180 / M_PI), true);
+  GoalAngle = atan2(X - 115, 115 - Y) * (180 / M_PI);
+  loading = false;
+  spinFlywheel(100);
+  loading = false;
+  waitUntil(F1.velocity(pct) > 99&&F1.velocity(pct)<101);
+  pistonToggle();
+  loading = false;
+  waitUntil(F1.velocity(pct) > 99&&F1.velocity(pct)<101);
+  pistonToggle();
+  loading = false;
 }
 
 // Main will set up the competition functions and callbacks.
