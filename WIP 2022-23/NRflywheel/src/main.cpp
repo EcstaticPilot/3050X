@@ -1,93 +1,3 @@
-// ---- START VEXCODE CONFIGURED DEVICES ----
-// Robot Configuration:
-// [Name]               [Type]        [Port(s)]
-// Controller1          controller
-// F1                   motor         2
-// F2                   motor         15
-// Injector             digital_out   A
-// LF                   motor         18
-// LB                   motor         12
-// RF                   motor         20
-// RB                   motor         4
-// Intake1              motor         1
-// turret               motor         21
-// gyro1                inertial      11
-// RotationL            rotation      5
-// RotationB            rotation      3
-// turretG              inertial      14
-// Color                optical       7
-// TurretE              rotation      17
-// turretOptical        optical       9
-// Controller2          controller
-// ---- END VEXCODE CONFIGURED DEVICES ----
-// ---- START VEXCODE CONFIGURED DEVICES ----
-// Robot Configuration:
-// [Name]               [Type]        [Port(s)]
-// Controller1          controller
-// F1                   motor         2
-// F2                   motor         15
-// Injector             digital_out   A
-// LF                   motor         18
-// LB                   motor         12
-// RF                   motor         20
-// RB                   motor         4
-// Intake1              motor         1
-// turret               motor         21
-// gyro1                inertial      11
-// RotationL            rotation      5
-// RotationB            rotation      3
-// turretG              inertial      14
-// Color                optical       7
-// TurretE              rotation      17
-// turretOptical        optical       9
-// Controller2          controller
-// Vision16             vision        6
-// ---- END VEXCODE CONFIGURED DEVICES ----
-// ---- START VEXCODE CONFIGURED DEVICES ----
-// Robot Configuration:
-// [Name]               [Type]        [Port(s)]
-// Controller1          controller
-// F1                   motor         2
-// F2                   motor         15
-// Injector             digital_out   A
-// LF                   motor         18
-// LB                   motor         12
-// RF                   motor         20
-// RB                   motor         4
-// Intake1              motor         1
-// turret               motor         21
-// gyro1                inertial      11
-// RotationL            rotation      5
-// RotationB            rotation      3
-// turretG              inertial      14
-// Color                optical       7
-// TurretE              rotation      17
-// turretOptical        optical       9
-// Controller2          controller
-// Vision               vision        6
-// ---- END VEXCODE CONFIGURED DEVICES ----
-// ---- START VEXCODE CONFIGURED DEVICES ----
-// Robot Configuration:
-// [Name]               [Type]        [Port(s)]
-// Controller1          controller
-// F1                   motor         2
-// F2                   motor         15
-// Injector             digital_out   A
-// LF                   motor         18
-// LB                   motor         12
-// RF                   motor         20
-// RB                   motor         4
-// Intake1              motor         1
-// turret               motor         21
-// gyro1                inertial      11
-// RotationL            rotation      5
-// RotationB            rotation      3
-// turretG              inertial      14
-// Color                optical       7
-// TurretE              rotation      17
-// turretOptical        optical       9
-// Controller2          controller
-// ---- END VEXCODE CONFIGURED DEVICES ----
 
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
@@ -126,46 +36,31 @@
 #include <math.h>
 
 //#include "sylib.hpp"
-double GoalAngle;
-float offset = 0;
-bool loading = true;
-double TargetSpeed = 0.0;
+
 using namespace vex;
 // 100 digits of pi because I like Pi𝝿
-long double pi = 3.14159265358979323;
-float C = pi * 3.25;
+
 // std::string team = "blue";
 // A global instance of competition
 
 competition Competition;
 
-void vision_sensor() {
-
-  float error = 0.0;
-  float accuracy = 10;
-  // if (team == "blue") {
-  Vision16.takeSnapshot(BGOAL);
-  //} else {
-  Vision16.takeSnapshot(RGOAL);
-  //}
-
-  if (Vision16.largestObject.exists == true) {
-    double goal_position = Vision16.largestObject.centerX;
-    // 158 is the x-coordinate for the center of the vision sensor
-    error = goal_position - 158;
-
-    while (fabs(error) < accuracy) {
-    }
-  }
-}
-
 void flywheelMonitor();
 void spinFlywheel(double);
-// define your global instances of motors and other devices here
+
+
 double OldError = 0.0;
 double TBHval = 0.0;
+
 double FWDrive = 0.0;
+double GoalAngle;
+float offset = 0;
+bool loading = true;
+double TargetSpeed = 0.0;
+long double pi = 3.14159265358979323;
+float C = pi * 3.25;
 bool TurretToggle = false;
+
 void drive(int lSpeed, int rSpeed, double wt) {
   LF.spin(forward, lSpeed, pct);
   RF.spin(forward, rSpeed, pct);
@@ -185,26 +80,20 @@ void drive_brake() {
   LB.stop(brake);
   RB.stop(brake);
 }
+/*
 
-void controlFlywheel1(double target) {
-  double speed = F1.velocity(pct);
+ODOMETRY
 
-  spinFlywheel((target - speed) + target);
-  // Brain.Screen.printAt(180, 40, "fwdrive %.1f  ", target);
+*/
 
-  // Brain.Screen.printAt(1, 40, " speed = %.2f ", speed);
-}
-// ODOMETERY
-double X = 75, Y = 0; // declare global x and y
+double X = 75;double Y = 0; // declare global x and y
+
+int odometery() {
 double prevHeading = gyro1.heading();
 double deltaHeading = 0; // change in heading
-double absoluteOrientation = pi;
-double localX;            // local x to use in loop
-double localY;            // local y to use in loop
+double absoluteOrientation = M_PI;
 double lRad = 1.375;      // radius of tracking wheel
 double bRad = 1.375;      // radius of tracking wheel
-double Sl = 3.75;         // distance of left wheel to tracking center
-double Sb = 2.6;          // distance of back wheel to tracking center
 double lEncoder = 0;      // declaring encoder variable left
 double bEncoder = 0;      // declaring encoder variable back
 double distL = 0;         // distance left encoder has traveled
@@ -212,40 +101,24 @@ double distB = 0;         // distance back encoder has traveled
 double prevLE = lEncoder; // create previous encoder value left
 double prevBE = bEncoder; // create previous encoder value back
 double averageHeading;    //
-double deltaX = (localY * cos(averageHeading)) - (localX * sin(averageHeading));
-double deltaY = (localX * cos(averageHeading)) - (localY * sin(averageHeading));
-int odometery() {
-
+double deltaX;
+double deltaY;
   Controller1.rumble(".");
   RotationL.resetPosition();
   RotationB.resetPosition();
   while (1) {
-    /*
-    Brain.Screen.printAt(1, 20, " prevHeading = %.2f ", prevHeading);
-    Brain.Screen.printAt(1, 40, " deltaHeading = %.2f ", deltaHeading);
-    Brain.Screen.printAt(1, 60, " absoluteOrientation = %.2f ",
-                         absoluteOrientation);
-    Brain.Screen.printAt(1, 80, " localX = %.2f localY = %.2f ", localX,
-                         localY);
-    Brain.Screen.printAt(1, 100, " lEncoder = %.2f bEncoder = %.2f", lEncoder,
-                         bEncoder);
-    Brain.Screen.printAt(1, 120, " distL = %.2f distB = %.2f ", distL, distB);
-    Brain.Screen.printAt(1, 140, " deltaX = %.2f deltaY = %.2f", deltaX,
-                         deltaY);
-    Brain.Screen.printAt(1, 160, " averageHeading = %.2f ", averageHeading);*/
-
     lEncoder = RotationL.position(degrees);
     bEncoder = RotationB.position(degrees);
 
-    distL = ((lEncoder - prevLE) * pi / 180) * lRad;
+    distL = ((lEncoder - prevLE) * M_PI / 180) * lRad;
     // convert encoder distance into distance traveled
-    distB = ((bEncoder - prevBE) * pi / 180) * bRad;
+    distB = ((bEncoder - prevBE) * M_PI / 180) * bRad;
     // convert encoder distance into disntance traveled
 
     prevLE = lEncoder; // create previous encoder value left
     prevBE = bEncoder; // create previous encoder value back
 
-    absoluteOrientation = gyro1.heading(degrees) * pi / 180.0;
+    absoluteOrientation = gyro1.heading(degrees) * M_PI / 180.0;
     deltaHeading =
         absoluteOrientation - prevHeading; // calculate change in heading
     averageHeading = prevHeading + (deltaHeading) / 2;
@@ -262,29 +135,21 @@ int odometery() {
     }
     X += deltaX;
     Y += deltaY;
-    // x += globalDist * cos(globalAngle);
-    // y += globalDist * sin(globalAngle);
+
     this_thread::sleep_for(5);
   }
   return 1;
 }
-void up() { X = 130; }
-void down() { X = 0; }
-void rightB() { Y = 0; }
-void leftB() { Y = 130; }
-void pistonToggle() {
-  if (turretOptical.isNearObject()) {
-    Injector.set(true);
-    wait(100, msec);
-    Injector.set(false);
-  }
-}
 
-// printstuff to controller
+/*
+
+CONTROLLER PRINTING
+
+*/
 int ControllerPrint() {
 
   Brain.Timer.reset();
-  // AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+  
   while (1) {
     Controller2.Screen.setCursor(1, 1);
     double speed = F1.velocity(pct);
@@ -312,26 +177,25 @@ int ControllerPrint() {
 }
 
 /*
-     Brain.Screen.printAt(1, 20, " prevHeading = %.2f ", prevHeading);
-    Brain.Screen.printAt(1, 40, " deltaHeading = %.2f ", deltaHeading);
-    Brain.Screen.printAt(1, 60, " absoluteOrientation = %.2f ",
-absoluteOrientation); Brain.Screen.printAt(1, 80, " localX = %.2f localY = %.2f
-", localX, localY); Brain.Screen.printAt(1, 100, " lEncoder = %.2f bEncoder =
-%.2f", lEncoder, bEncoder); Brain.Screen.printAt(1, 120, " distL = %.2f distB =
-%.2f ", distL,distB); Brain.Screen.printAt(1, 140, " deltaX = %.2f deltaY =
-%.2f", deltaX, deltaY); Brain.Screen.printAt(1, 160, " averageHeading = %.2f ",
-averageHeading); this_thread::sleep_for(1000);
-  }
-  return (0);
-} */
+
+FLYWHEEL CONTROL
+
+*/
+
+void spinFlywheel(double speed) {
+  speed = speed * 120; // speed is in pctage so convert to mV 100% = 12000
+                       // mV
+  F1.spin(forward, speed, voltageUnits::mV);
+  F2.spin(forward, speed, voltageUnits::mV);
+}
 
 int controlFlywheelSpeed() {
-  double kI = .04;
+  double kp = .04;
   while (true) {
-    /*
+    
         double speed = F1.velocity(pct);
         double error = TargetSpeed - speed;
-        double fwDrive = FWDrive + kI * error;
+     //   double fwDrive = FWDrive + kI * error;
         // :D
         // Brain.Screen.printAt(1, 40, " speed = %.2f ", speed);
         // Keep drive between 0 to 100%
@@ -353,7 +217,7 @@ int controlFlywheelSpeed() {
       //  }
               */
     //  Brain.Screen.printAt(180, 40, "fwdrive %.1f  ", fwDrive);
-    spinFlywheel(TargetSpeed);
+    spinFlywheel(TargetSpeed+kp*error);
 
     // FWDrive = fwDrive;
     // OldError = error;
@@ -361,20 +225,12 @@ int controlFlywheelSpeed() {
   return 1;
 }
 
-void flywheelMonitor() {
-  double current1 = F1.current();
-  double current2 = F2.current();
-  double t1 = F1.temperature(fahrenheit);
-  double t2 = F2.temperature(fahrenheit);
-  double b = Brain.Battery.capacity();
+/*
 
-  // Brain.Screen.printAt(1, 60, "F1 current = %.1f   Temp = %.1f   ", current1,
-  // t1); Brain.Screen.printAt(1, 80, "F2 current = %.1f   Temp = %.1f   ",
-  // current2, t2);
-  // Brain.Screen.printAt(1, 100, "Battery Capacity  = %.1f      ", b);
-} //
+TURRET CONTROL
 
-// turret Pid spin to with gyro angle
+*/
+
 void turretSpinTo(double targetAngle, bool global) {
   double kp = 1;
   double ki = 0;
@@ -396,19 +252,8 @@ void turretSpinTo(double targetAngle, bool global) {
     }
 
     speed = (error * kp) + (ki * sum) + (kd * (error - prevError));
-    /* if ((speed > 0 && turretEncoderAngle < -90))
-       speed = 0;
-     if ((speed < 0 && turretEncoderAngle > 90))
-       speed = 0;*/
-    turret.spin(fwd, speed, pct);
 
-    /*
-    if (speed > 0) {
-      turret.spin(fwd, -5, rpm);
-    }
-    if (speed < 0) {
-      turret.spin(fwd, -5, pct);
-    }*/
+    turret.spin(fwd, speed, pct);
 
     wait(10, msec);
     prevError = error;
@@ -423,9 +268,6 @@ void turretSpinTo(double targetAngle, bool global) {
 void toggleTurret() {
   Controller1.rumble(".");
   loading = !loading;
-  // wait(10, msec);
-  // turretSpinTo(TargetAngle);
-  // Controller1.rumble(".");
 }
 
 bool VisionReady = false;
@@ -462,12 +304,16 @@ int turretStable() {
                                Vision16.largestObject.centerX);
           kp = 0.2;
           kd = 0;
+          if(fabs(error)<10)VisionReady=true;
+          else VisionReady=false;
         } else {
+          VisionReady=false;
           error = -(GoalAngle + offset) - turretG.orientation(yaw, degrees);
           kp = 0.8;
           kd = 0.2;
         }
       } else {
+        VisionReady=false;
         error = -(GoalAngle + offset) - turretG.orientation(yaw, degrees);
         kp = 0.8;
         kd = 0.2;
@@ -487,7 +333,7 @@ int turretStable() {
         speed = 0;
       if ((speed < 0 && turretEncoderAngle > 85))
         speed = 0;
-      turret.spin(fwd, speed, pct);
+      turret.spin(fwd, speed*12,volt);
 
       /*
       if (speed > 0) {
@@ -504,6 +350,19 @@ int turretStable() {
      return 1;
   }
  
+/*
+
+PISTON CONTROL
+
+*/
+
+void pistonToggle() {
+  if (turretOptical.isNearObject()) {
+    Injector.set(true);
+    wait(100, msec);
+    Injector.set(false);
+  }
+}
 
 void fireDisc() {
   loading = false;
@@ -519,19 +378,7 @@ void fireDisc() {
     TargetSpeed = 0;
   }
 }
-void fireDiscWithSpd(int speed) {
-  loading = false;
-  // need to create formula
-  waitUntil(VisionReady && (fabs(F1.velocity(pct) - speed) < .25));
-  pistonToggle();
-  if (turretOptical.isNearObject())
-    fireDisc();
-  else {
 
-    loading = true;
-    TargetSpeed = 0;
-  }
-}
 void pistonToggleReady() {
   Brain.Screen.drawRectangle(120, 190, 60, 60, orange);
   waitUntil(F1.velocity(pct) < TargetSpeed + .25 &&
@@ -551,22 +398,7 @@ bool intakeOn = false;
 void toggleIntake() { intakeOn = !intakeOn; }
 bool driveDir = 0;
 void driveSwitch() { driveDir = !driveDir; }
-void teamSwitch() {
-  Controller1.rumble(".");
-  /* Brain.Screen.clearScreen();
-   if (team == "red") {
-     team = "blue";
 
-     Brain.Screen.setFillColor(blue);
-   }
-   if (team == "blue") {
-     team = "red";
-
-     Brain.Screen.setFillColor(red);
-   }*/
-  Brain.Screen.drawRectangle(20, 50, 100, 100);
-  // Brain.Screen.printAt(1, 20, false, "%s", team.c_str());
-}
 /*---------------------------------------------------------------------------*/
 /*                          Pre-omousomous Functions */
 /*                                                                           */
@@ -576,7 +408,7 @@ void teamSwitch() {
 /*  function is only called once after the V5 has been powered on and */
 /*  not every time that the robot is disabled. */
 /*---------------------------------------------------------------------------*/
-bool flag = false;
+
 void pre_auton(void) {
 
   // sylib::initialize();
@@ -599,7 +431,7 @@ void pre_auton(void) {
   gyro1.calibrate();
   turretG.calibrate();
   waitUntil(!gyro1.isCalibrating() && !turretG.isCalibrating());
-  Brain.Screen.pressed(teamSwitch);
+ // Brain.Screen.pressed(teamSwitch);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -678,6 +510,44 @@ if you're going too fast
   drive_brake();
 }
 
+
+
+void autonomous(void) {
+  // thread turretStablization = thread(turretStable);
+/*
+
+  inchDrive(0.3);
+  rotate(90);
+  inchDrive(24);
+  rotate(180);
+  inchDrive(0.1);
+  Intake1.spin(forward, 100, pct);
+  waitUntil(Color.color() == blue);
+  Intake1.stop();&*/
+
+  /*
+   inchDrive(0.3);
+   rotate(-90);
+   inchDrive(24);
+   rotate(-90);
+   inchDrive(0.1);
+   Intake1.spin(forward, 100, pct);
+   waitUntil(Color.color() == red);
+   Intake1.stop();
+   */
+
+  turretSpinTo(atan2(X - 110, 110 - Y) * (180 / M_PI), true);
+  GoalAngle = atan2(X - 115, 115 - Y) * (180 / M_PI);
+  loading = false;
+  spinFlywheel(100);
+  loading = false;
+  waitUntil(F1.velocity(pct) > 99&&F1.velocity(pct)<101);
+  pistonToggle();
+  loading = false;
+  waitUntil(F1.velocity(pct) > 99&&F1.velocity(pct)<101);
+  pistonToggle();
+  loading = false;
+}
 
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
@@ -813,42 +683,6 @@ void usercontrol(void) {
   }
 }
 
-void autonomous(void) {
-  // thread turretStablization = thread(turretStable);
-/*
-
-  inchDrive(0.3);
-  rotate(90);
-  inchDrive(24);
-  rotate(180);
-  inchDrive(0.1);
-  Intake1.spin(forward, 100, pct);
-  waitUntil(Color.color() == blue);
-  Intake1.stop();&*/
-
-  /*
-   inchDrive(0.3);
-   rotate(-90);
-   inchDrive(24);
-   rotate(-90);
-   inchDrive(0.1);
-   Intake1.spin(forward, 100, pct);
-   waitUntil(Color.color() == red);
-   Intake1.stop();
-   */
-
-  turretSpinTo(atan2(X - 110, 110 - Y) * (180 / M_PI), true);
-  GoalAngle = atan2(X - 115, 115 - Y) * (180 / M_PI);
-  loading = false;
-  spinFlywheel(100);
-  loading = false;
-  waitUntil(F1.velocity(pct) > 99&&F1.velocity(pct)<101);
-  pistonToggle();
-  loading = false;
-  waitUntil(F1.velocity(pct) > 99&&F1.velocity(pct)<101);
-  pistonToggle();
-  loading = false;
-}
 
 // Main will set up the competition functions and callbacks.
 //
