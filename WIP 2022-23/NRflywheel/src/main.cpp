@@ -56,7 +56,7 @@ double FWDrive = 0.0;
 double GoalAngle;
 float offset = 0;
 bool loading = true;
-double TargetSpeed = 0.0;
+extern double TargetSpeed;
 long double pi = 3.14159265358979323;
 
 bool TurretToggle = false;
@@ -162,49 +162,6 @@ int ControllerPrint() {
 FLYWHEEL CONTROL
 
 */
-
-void spinFlywheel(double speed) {
-  speed = speed * 120; // speed is in pctage so convert to mV 100% = 12000
-                       // mV
-  F1.spin(forward, speed, voltageUnits::mV);
-  F2.spin(forward, speed, voltageUnits::mV);
-}
-
-int controlFlywheelSpeed() {
-  double kp = .04;
-  while (true) {
-    
-        double speed = F1.velocity(pct);
-        double error = TargetSpeed - speed;
-     //   double fwDrive = FWDrive + kI * error;
-        // :D
-        // Brain.Screen.printAt(1, 40, " speed = %.2f ", speed);
-        // Keep drive between 0 to 100%
-    /*
-        if (error > 20) {
-          fwDrive = 100;
-        }
-
-        else {
-          if (fwDrive > 100)
-            fwDrive = 100;
-          if (fwDrive <= 0)
-            fwDrive = 0;
-          // Check for zero crossing
-          if (error * OldError < 0) {
-            fwDrive = 0.5 * (fwDrive + TBHval);
-            TBHval = fwDrive;
-          }
-      //  }
-              */
-    //  Brain.Screen.printAt(180, 40, "fwdrive %.1f  ", fwDrive);
-    spinFlywheel(TargetSpeed+kp*error);
-
-    // FWDrive = fwDrive;
-    // OldError = error;
-  }
-  return 1;
-}
 
 /*
 
@@ -389,7 +346,7 @@ void driveSwitch() { driveDir = !driveDir; }
 /*  function is only called once after the V5 has been powered on and */
 /*  not every time that the robot is disabled. */
 /*---------------------------------------------------------------------------*/
-
+//extern int controlFlywheelSpeed;
 void pre_auton(void) {
 
   // sylib::initialize();
@@ -408,7 +365,7 @@ void pre_auton(void) {
 
   // Initializing Robot Configuration. DO NOT REMOVE!
   thread odometeryTracking = thread(odometery);
-  thread flywheelgo = thread(controlFlywheelSpeed);
+  
   gyro1.calibrate();
   turretG.calibrate();
   waitUntil(!gyro1.isCalibrating() && !turretG.isCalibrating());
@@ -481,7 +438,7 @@ void usercontrol(void) {
   Y = 0;
   thread ControllerPrinting = thread(ControllerPrint);
   thread turretStablization = thread(turretStable);
-  thread flywheelgo = thread(controlFlywheelSpeed);
+  //thread flywheelgo = thread(controlFlywheelSpeed);
 
   
   turretG.setHeading(180, degrees);
