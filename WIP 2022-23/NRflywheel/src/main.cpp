@@ -34,12 +34,13 @@
 #include "vex.h"
 #include <math.h>
 //including files
-#include "drive.h"
+//#include "drive.cpp"
 #include "flywheel.h"
 #include "odometry.h"
 #include "turret.h"
 #include "discFiring.h"
 using namespace vex;
+
 
 // A global instance of competition
 
@@ -71,7 +72,7 @@ int ControllerPrint() {
     Controller2.Screen.print("pos= (%.1f,%.1f)", X, Y);
     Controller2.Screen.setCursor(3, 1);
     Controller2.Screen.print("time=%.2f ", Brain.timer(sec));
-
+    
     if (Brain.timer(sec) == 15) {
       Controller1.rumble(".");
     } // 2 minute mark
@@ -144,7 +145,7 @@ void autonomous(void) {
   Intake1.spin(forward, 100, pct);
   waitUntil(Color.color() == blue);
   Intake1.stop();&*/
-
+  
    inchDrive(0.3);
    rotate(-90);
    inchDrive(24);
