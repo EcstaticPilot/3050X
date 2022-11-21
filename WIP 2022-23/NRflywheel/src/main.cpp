@@ -32,34 +32,27 @@
 
 #include "stdio.h"
 #include "vex.h"
-#include "vision.h"
 #include <math.h>
-
-//#include "sylib.hpp"
-
+//including files
+#include "drive.h"
+#include "flywheel.h"
+#include "odometry.h"
+#include "turret.h"
+#include "discFiring.h"
 using namespace vex;
-// 100 digits of pi because I like Pi𝝿
 
-// std::string team = "blue";
 // A global instance of competition
 
 competition Competition;
 
-void flywheelMonitor();
-void spinFlywheel(double);
-
-
-double OldError = 0.0;
-double TBHval = 0.0;
-
-double FWDrive = 0.0;
-double GoalAngle;
-float offset = 0;
-bool loading = true;
+//declaring external variables
+extern double GoalAngle;
+extern float offset;
+extern bool loading;
 extern double TargetSpeed;
-long double pi = 3.14159265358979323;
 extern double X,Y;
-bool TurretToggle = false;
+extern bool VisionReady;
+extern bool TurretToggle;
 
 /*
 
@@ -96,199 +89,18 @@ int ControllerPrint() {
   }
 }
 
-/*
-
-FLYWHEEL CONTROL
-
-*/
-
-/*
-
-TURRET CONTROL
-
-*/
-
-void turretSpinTo(double targetAngle, bool global) {
-  double kp = 1;
-  double ki = 0;
-
-  double kd = .5;
-  double sum = 0;
-  double prevError = 0;
-  double error = targetAngle - turretG.orientation(yaw, degrees);
-  double accuracy = 1;
-  // while(true){
-  double speed;
-  while (fabs(error) > accuracy) {
-    double turretEncoderAngle =
-        (TurretE.angle() > 180 ? TurretE.angle() - 360 : TurretE.angle());
-    if (global) {
-      error = -targetAngle - turretG.orientation(yaw, degrees);
-    } else {
-      error = targetAngle - turretEncoderAngle;
-    }
-
-    speed = (error * kp) + (ki * sum) + (kd * (error - prevError));
-
-    turret.spin(fwd, speed, pct);
-
-    wait(10, msec);
-    prevError = error;
-    sum += error;
-  }
-  if (fabs(error) < accuracy) {
-    turret.stop();
-  }
-  //  }
-}
-
-void toggleTurret() {
-  Controller1.rumble(".");
-  loading = !loading;
-}
-
-bool VisionReady = false;
-int turretStable() {
-  Controller1.rumble("..");
-  loading = true;
-  // while (true) {
-  // safe working valuse double kp = 1; double ki = 0;double kd = 0.3;
-  double kp = 1;
-  double ki = 0;
-  double kd = 0.4;
-  double sum = 0;
-  double prevError = 0;
-
-  double error = -(GoalAngle + offset) - turretG.orientation(yaw, degrees);
-  // double accuracy = 1;
-  // while(true){
-  double speed;
-  while (true) {
-    GoalAngle = atan2(X - 115, 115 - Y) * (180 / M_PI);
-    double turretEncoderAngle =
-        (TurretE.angle() > 180 ? TurretE.angle() - 360 : TurretE.angle());
-    if (!loading) {
-
-      if (fabs(GoalAngle + offset - turretG.orientation(yaw, degrees)) <
-          3) {                        // if goal is within limits
-        Vision16.takeSnapshot(RGOAL); // use vision sensor
-        if (Vision16.largestObject.exists) {
-
-          error = Vision16.largestObject.centerX - 158;
-
-          Brain.Screen.printAt(1, 100, "error  = %.1f      ", error);
-          Brain.Screen.printAt(1, 160, "vision  = %.1f      ",
-                               Vision16.largestObject.centerX);
-          kp = 0.2;
-          kd = 0;
-          if(fabs(error)<10)VisionReady=true;
-          else VisionReady=false;
-        } else {
-          VisionReady=false;
-          error = -(GoalAngle + offset) - turretG.orientation(yaw, degrees);
-          kp = 0.8;
-          kd = 0.2;
-        }
-      } else {
-        VisionReady=false;
-        error = -(GoalAngle + offset) - turretG.orientation(yaw, degrees);
-        kp = 0.8;
-        kd = 0.2;
-      }
-      //    VisionReady=false;//vision is not ready
-          }
-      else { // if not loading go to zero
-
-        error = turretEncoderAngle;
-        kp = 1;
-        kd = 0.4;
-        VisionReady = false; // vision is not ready
-      }
-
-      speed = (error * kp) + (ki * sum) + (kd * (error - prevError));
-      if ((speed > 0 && turretEncoderAngle < -150))
-        speed = 0;
-      if ((speed < 0 && turretEncoderAngle > 85))
-        speed = 0;
-      turret.spin(fwd, speed*12,volt);
-
-      /*
-      if (speed > 0) {
-        turret.spin(fwd, -5, rpm);
-      }
-      if (speed < 0) {
-        turret.spin(fwd, -5, pct);
-      }*/
-
-      prevError = error;
-      sum += error;
-      this_thread::sleep_for(10);
-    }
-     return 1;
-  }
- 
-/*
-
-PISTON CONTROL
-
-*/
-
-void pistonToggle() {
-  if (turretOptical.isNearObject()) {
-    Injector.set(true);
-    wait(100, msec);
-    Injector.set(false);
-  }
-}
-
-void fireDisc() {
-  loading = false;
-  TargetSpeed = 0; // need to create formula
-  waitUntil((fabs(GoalAngle - turretG.orientation(yaw, degrees)) < 2) &&
-            (fabs(F1.velocity(pct) - TargetSpeed) < .25));
-  pistonToggle();
-  if (turretOptical.isNearObject())
-    fireDisc();
-  else {
-
-    loading = true;
-    TargetSpeed = 0;
-  }
-}
-
-void pistonToggleReady() {
-  Brain.Screen.drawRectangle(120, 190, 60, 60, orange);
-  waitUntil(F1.velocity(pct) < TargetSpeed + .25 &&
-            F1.velocity(pct) > TargetSpeed - .25);
-  wait(10, msec);
-  waitUntil(F1.velocity(pct) < TargetSpeed + .25 &&
-            F1.velocity(pct) > TargetSpeed - .25);
-  Brain.Screen.drawRectangle(120, 190, 60, 60, black);
-  if (turretOptical.isNearObject()) {
-    Injector.set(true);
-    wait(100, msec);
-    Injector.set(false);
-  }
-  Brain.Screen.drawRectangle(120, 190, 60, 60, black);
-}
-bool intakeOn = false;
-void toggleIntake() { intakeOn = !intakeOn; }
-bool driveDir = 0;
-void driveSwitch() { driveDir = !driveDir; }
-
 /*---------------------------------------------------------------------------*/
-/*                          Pre-omousomous Functions */
+/*                          Pre-autonomousomous Functions                    */
 /*                                                                           */
-/*  You may want to perform some actions before the competition starts. */
-/*  Do them in the following function.  You must return from this function */
-/*  or the autonomous and usercontrol tasks will not be started.  This */
-/*  function is only called once after the V5 has been powered on and */
-/*  not every time that the robot is disabled. */
+/*  You may want to perform some actions before the competition starts.      */
+/*  Do them in the following function.  You must return from this function   */
+/*  or the autonomous and usercontrol tasks will not be started.  This       */
+/*  function is only called once after the V5 has been powered on and        */
+/*  not every time that the robot is disabled.                               */
 /*---------------------------------------------------------------------------*/
-//extern int controlFlywheelSpeed;
+
 void pre_auton(void) {
 
-  // sylib::initialize();
   vexcodeInit();
   if (!(RB.installed() && LB.installed() && RF.installed() &&
         LF.installed() &&                            // drive motors
@@ -296,7 +108,7 @@ void pre_auton(void) {
         && Intake1.installed() && turret.installed() // turret and intake
         && gyro1.installed() && RotationL.installed() &&
         RotationB.installed() // odom stuff
-        && turretG.installed() && TurretE.installed() && Vision16.installed() &&
+        && turretG.installed() && TurretE.installed() &&
         turretOptical.installed() && // turret sensors
         Color.installed()))          // roler sensor
     Controller1.rumble("-------------------------------------------------------"
@@ -308,21 +120,17 @@ void pre_auton(void) {
   gyro1.calibrate();
   turretG.calibrate();
   waitUntil(!gyro1.isCalibrating() && !turretG.isCalibrating());
- // Brain.Screen.pressed(teamSwitch);
 }
 
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
-/*                              Autonomous Task */
+/*                              Autonomous Task                              */
 /*                                                                           */
-/*  This task is used to control your robot during the autonomous phase of */
-/*  a VEX Competition. */
+/*  This task is used to control your robot during the autonomous phase of   */
+/*  a VEX Competition.                                                       */
 /*                                                                           */
-/*  You must modify the code to add your own robot specific commands here . */
+/*  You must modify the code to add your own robot specific commands here .  */
 /*---------------------------------------------------------------------------*/
-
-
-
 
 void autonomous(void) {
   // thread turretStablization = thread(turretStable);
@@ -337,7 +145,6 @@ void autonomous(void) {
   waitUntil(Color.color() == blue);
   Intake1.stop();&*/
 
-  /*
    inchDrive(0.3);
    rotate(-90);
    inchDrive(24);
@@ -346,7 +153,7 @@ void autonomous(void) {
    Intake1.spin(forward, 100, pct);
    waitUntil(Color.color() == red);
    Intake1.stop();
-   */
+   
 
   turretSpinTo(atan2(X - 110, 110 - Y) * (180 / M_PI), true);
   GoalAngle = atan2(X - 115, 115 - Y) * (180 / M_PI);
@@ -367,20 +174,21 @@ void autonomous(void) {
 /*                                                                           */
 /*  This task is used to control your robot during the user control phase of
  */
-/*  a VEX Competition. */
+/*  a VEX Competition.                            */
 /*                                                                           */
 /*  You must modify the code to add your own robot specific commands here. */
 /*---------------------------------------------------------------------------*/
+
+
+bool intakeOn = false;
+void toggleIntake() { intakeOn = !intakeOn; }
+bool driveDir = 0;
+void driveSwitch() { driveDir = !driveDir; }
 
 void usercontrol(void) {
   X = 75;
   Y = 0;
   thread ControllerPrinting = thread(ControllerPrint);
-  thread turretStablization = thread(turretStable);
-  //thread flywheelgo = thread(controlFlywheelSpeed);
-
-  
-  turretG.setHeading(180, degrees);
   while (true) {
 
     /*
@@ -441,6 +249,7 @@ void usercontrol(void) {
     TANK DRIVE CODE
 
     */
+ 
     if (driveDir) {
 
       LF.spin(forward, Controller1.Axis3.position() * 120, voltageUnits::mV);
@@ -460,37 +269,6 @@ void usercontrol(void) {
       LB.stop(coast);
       RB.stop(coast);
     }
-    /*
-    if (turretToggle == false) {
-
-      if (gyro1.heading() - turretG.heading() > 90 &&
-          gyro1.heading() - turretG.heading() < 270) {
-        turretSpinTo(offset);
-      } else if (gyro1.heading() - turretG.heading() > 90) {
-        turretSpinTo(gyro1.heading() + 90);
-      } else if (gyro1.heading() - turretG.heading() < 270) {
-        turretSpinTo(gyro1.heading() - 90);
-      }
-    } else {
-
-      if (gyro1.heading() < turretG.heading() + 1 &&
-          gyro1.heading() > turretG.heading() + 1) {
-        turret.stop(hold);
-      } else {
-        turretSpinTo(gyro1.heading());
-      }
-    }*/
-    /*if (targetAngle != turretAngle) {
-      if (targetAngle > 95) {
-        targetAngle = 95;
-      }
-      if (targetAngle < -75) {
-        targetAngle = 75;
-      }
-      turretSpinTo(targetAngle);
-    }
-    turretG.orientation(yaw, degrees);*/
-
     wait(10, msec);
   }
 }
@@ -503,17 +281,13 @@ int main() {
   // Set up callbacks for autonomous and driver control periods.
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
-  // Controller1.ButtonDown.pressed(turretStable);
 
   Controller1.ButtonB.pressed(toggleIntake);
   Controller1.ButtonLeft.pressed(pistonToggleReady);
   Controller1.ButtonRight.pressed(driveSwitch);
   Controller1.ButtonX.pressed(toggleTurret);
   Controller2.ButtonUp.pressed(pistonToggle);
- // Controller2.ButtonDown.pressed(down);
   Controller2.ButtonLeft.pressed(pistonToggle);
- // Controller2.ButtonRight.pressed(rightB);
-  // Controller1.ButtonX.pressed(fireDisc);
   // Run the pre-autonomous function.
   pre_auton();
 

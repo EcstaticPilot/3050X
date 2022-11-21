@@ -2,7 +2,6 @@
 
 #include "stdio.h"
 #include "vex.h"
-
 #include <math.h>
 
 double TargetSpeed=0;
