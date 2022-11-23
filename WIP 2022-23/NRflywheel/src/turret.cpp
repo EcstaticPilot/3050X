@@ -68,7 +68,7 @@ int turretStable() {
         speed = 0;
       if ((speed < 0 && turretEncoderAngle > 85))
         speed = 0;
-      turret.spin(fwd, speed*12,volt);
+      turret.spin(fwd, speed*120,vex::voltageUnits::mV);
 
       /*
       if (speed > 0) {
