@@ -10,7 +10,7 @@ brain  Brain;
 // VEXcode device constructors
 controller Controller1 = controller(primary);
 //motor F1 = motor(PORT2, ratio6_1, true);
-auto F1 = sylib::Motor(2,600, true);
+auto F1 = sylib::Motor(2,600, true); 
 //motor F2 = motor(PORT15, ratio6_1, false);
 auto F2 = sylib::Motor(15,600, true);
 digital_out Injector = digital_out(Brain.ThreeWirePort.A);
