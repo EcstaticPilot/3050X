@@ -40,7 +40,8 @@ using namespace vex;
 
 
 // A global instance of competition
-
+extern sylib::Motor F1;
+extern sylib::Motor F2;
 competition Competition;
 
 //declaring external variables
@@ -51,6 +52,7 @@ extern double TargetSpeed;
 extern double X,Y;
 extern bool VisionReady;
 extern bool TurretToggle;
+
 /*
 
 FUNCTIONS
@@ -86,7 +88,7 @@ int ControllerPrint() {
   
   while (1) {
     Controller2.Screen.setCursor(1, 1);
-    double speed = F1.velocity(pct);
+    double speed = F1.get_velocity()/600;
     Controller2.Screen.print("Spd=%.2f tSpd=%.2f   ", speed, TargetSpeed);
     Controller2.Screen.setCursor(2, 1);
     Controller2.Screen.print("pos= (%.1f,%.1f)", X, Y);
@@ -124,8 +126,8 @@ void pre_auton(void) {
   sylib::initialize();
   vexcodeInit();
   if (!(RB.installed() && LB.installed() && RF.installed() &&
-        LF.installed() &&                            // drive motors
-        F1.installed() && F2.installed()             // flywheel
+        LF.installed()// &&                            // drive motors
+      //  F1.installed() && F2.installed()             // flywheel
         && Intake1.installed() && turret.installed() // turret and intake
         && gyro1.installed() && RotationL.installed() &&
         RotationB.installed() // odom stuff
@@ -186,10 +188,10 @@ void autonomous(void) {
   loading = false;
   spinFlywheel(100);
   loading = false;
-  waitUntil(F1.velocity(pct) > 99&&F1.velocity(pct)<101);
+  waitUntil(F1.get_velocity()/600 > 99&&F1.get_velocity()/600 <101);
   pistonToggle();
   loading = false;
-  waitUntil(F1.velocity(pct) > 99&&F1.velocity(pct)<101);
+  waitUntil(F1.get_velocity()/600 > 99&&F1.get_velocity()/600 <101);
   pistonToggle();
   loading = false;
 }
