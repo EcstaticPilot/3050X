@@ -33,6 +33,7 @@
 #include "stdio.h"
 #include "vex.h"
 #include <math.h>
+#include "sylib/sylib.h"
 //including files
 
 using namespace vex;
@@ -120,7 +121,7 @@ int ControllerPrint() {
 /*---------------------------------------------------------------------------*/
 
 void pre_auton(void) {
-
+  sylib::initialize();
   vexcodeInit();
   if (!(RB.installed() && LB.installed() && RF.installed() &&
         LF.installed() &&                            // drive motors
