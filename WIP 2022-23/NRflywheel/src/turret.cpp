@@ -123,4 +123,3 @@ void toggleTurret() {
   Controller1.rumble(".");
   loading = !loading;
 }
-    thread turretStablization = thread(turretStable);

@@ -57,4 +57,3 @@ double deltaY;
   }
   return 1;
 }
-thread odometeryTracking = thread(odometery);

@@ -34,12 +34,7 @@
 #include "vex.h"
 #include <math.h>
 //including files
-//#include "drive.cpp"
-#include "flywheel.h"
-#include "odometry.h"
-#include "turret.h"
-#include "discFiring.h"
-#include "drive.h"
+
 using namespace vex;
 
 
@@ -55,6 +50,29 @@ extern double TargetSpeed;
 extern double X,Y;
 extern bool VisionReady;
 extern bool TurretToggle;
+/*
+
+FUNCTIONS
+
+*/
+//drive.cpp
+void drive(int lSpeed, int rSpeed, double wt);
+void drive_brake();
+void rotate(double dir, double accuracy = 1);
+void inchDrive(float dist, float accuracy = 1);
+//flywheel.cpp
+void spinFlywheel(double speed);
+int controlFlywheelSpeed();
+//odometry.cpp
+int odometery();
+//turret.cpp
+void toggleTurret();
+int turretStable();
+void turretSpinTo(double targetAngle, bool global);
+//discFiring.cpp
+void pistonToggle();
+void fireDisc();
+void pistonToggleReady();
 
 /*
 
@@ -122,6 +140,10 @@ void pre_auton(void) {
   gyro1.calibrate();
   turretG.calibrate();
   waitUntil(!gyro1.isCalibrating() && !turretG.isCalibrating());
+  //launch threads
+  thread flywheelgo = thread(controlFlywheelSpeed);
+  thread odometeryTracking = thread(odometery);
+  thread turretStablization = thread(turretStable);
 }
 
 /*---------------------------------------------------------------------------*/

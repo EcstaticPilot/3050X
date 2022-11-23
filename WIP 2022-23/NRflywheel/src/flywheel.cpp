@@ -47,4 +47,3 @@ int controlFlywheelSpeed() {
   }
   return 1;
 }
-thread flywheelgo = thread(controlFlywheelSpeed);
