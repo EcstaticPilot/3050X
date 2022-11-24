@@ -6,7 +6,7 @@
 
 
 float C = M_PI * 3.25;
-
+extern double X,Y;
 void drive(int lSpeed, int rSpeed, double wt) {
   LF.spin(forward, lSpeed, pct);
   RF.spin(forward, rSpeed, pct);
@@ -35,7 +35,7 @@ void rotate(double dir, double accuracy = 1) {
   double Kd = 1;
   double Ki = 0.2;
   double sum = 0;
-  double Kp = .8;
+  double Kp = 1.2;
 
   // change facing
   // dir = currDir - gyro1.rotation(degrees); // rotation offset
@@ -91,4 +91,11 @@ if you're going too fast
 */
   }
   drive_brake();
+}
+
+
+void driveToPoint(float targetX,float targetY,float endOrientation = gyro1.rotation(degrees)){
+ rotate( atan2(X - targetX, targetY - Y) * (180 / M_PI));
+ inchDrive(sqrt((X-targetX)*(X-targetX)+(Y-targetY)*(Y-targetY)));
+ rotate(endOrientation);
 }

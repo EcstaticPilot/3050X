@@ -65,6 +65,7 @@ void drive(int lSpeed, int rSpeed, double wt);
 void drive_brake();
 void rotate(double dir, double accuracy = 1);
 void inchDrive(float dist, float accuracy = 1);
+void driveToPoint(float targetX,float targetY,float endOrientation = gyro1.rotation(degrees));
 // flywheel.cpp
 void spinFlywheel(double speed);
 int controlFlywheelSpeed();
@@ -182,7 +183,7 @@ void autonomous(void) {
   Intake1.spin(forward, 100, pct);
   waitUntil(Color.color() == red);
   Intake1.stop();
-
+  
   turretSpinTo(atan2(X - 110, 110 - Y) * (180 / M_PI), true);
   GoalAngle = atan2(X - 115, 115 - Y) * (180 / M_PI);
   loading = false;

@@ -85,6 +85,10 @@ Discarded input sections
  .text          0x00000000        0x0 build/src/main.o
  .llvm_addrsig  0x00000000       0x20 build/src/main.o
  .text          0x00000000        0x0 build/src/drive.o
+ .text._Z12driveToPointfff
+                0x00000000       0xe0 build/src/drive.o
+ .ARM.exidx.text._Z12driveToPointfff
+                0x00000000        0x8 build/src/drive.o
  .llvm_addrsig  0x00000000        0x5 build/src/drive.o
  .text          0x00000000        0x0 build/src/robot-config.o
  .group         0x00000000        0xc build/src/robot-config.o
@@ -5681,7 +5685,7 @@ LOAD C:\Program Files (x86)\VEX Robotics\VEXcode Pro V5\sdk/vexv5/gcc/libs\libc.
 LOAD C:\Program Files (x86)\VEX Robotics\VEXcode Pro V5\sdk/vexv5/gcc/libs\libm.a
 LOAD C:\Program Files (x86)\VEX Robotics\VEXcode Pro V5\sdk/vexv5/gcc/libs\libgcc.a
 END GROUP
-OUTPUT(build/7700PspinzRedFar.elf elf32-littlearm)
+OUTPUT(build/7700PspinRed.elf elf32-littlearm)
 
 .comment        0x00000000       0x9d
  .comment       0x00000000       0x2d build/src/main.o
