@@ -31,48 +31,50 @@
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "stdio.h"
+#include "sylib/sylib.h"
 #include "vex.h"
 #include <math.h>
-#include "sylib/sylib.h"
-//including files
+
+// including files
 
 using namespace vex;
-
 
 // A global instance of competition
 extern sylib::Motor F1;
 extern sylib::Motor F2;
 competition Competition;
 
-//declaring external variables
+// declaring external variables
 extern double GoalAngle;
 extern float offset;
 extern bool loading;
 extern double TargetSpeed;
-extern double X,Y;
+extern double X, Y;
 extern bool VisionReady;
 extern bool TurretToggle;
+// team switch
+bool IsRed = true;
 
 /*
 
 PROTOTYPES FOR FUNCTIONS
 
 */
-//drive.cpp
+// drive.cpp
 void drive(int lSpeed, int rSpeed, double wt);
 void drive_brake();
 void rotate(double dir, double accuracy = 1);
 void inchDrive(float dist, float accuracy = 1);
-//flywheel.cpp
+// flywheel.cpp
 void spinFlywheel(double speed);
 int controlFlywheelSpeed();
-//odometry.cpp
+// odometry.cpp
 int odometery();
-//turret.cpp
+// turret.cpp
 void toggleTurret();
 int turretStable();
 void turretSpinTo(double targetAngle, bool global);
-//discFiring.cpp
+// discFiring.cpp
 void pistonToggle();
 void fireDisc();
 void pistonToggleReady();
@@ -85,16 +87,16 @@ CONTROLLER PRINTING
 int ControllerPrint() {
 
   Brain.Timer.reset();
-  
+
   while (1) {
     Controller2.Screen.setCursor(1, 1);
-    double speed = F1.get_velocity()/600;
+    double speed = F1.get_velocity() / 600;
     Controller2.Screen.print("Spd=%.2f tSpd=%.2f   ", speed, TargetSpeed);
     Controller2.Screen.setCursor(2, 1);
     Controller2.Screen.print("pos= (%.1f,%.1f)", X, Y);
     Controller2.Screen.setCursor(3, 1);
     Controller2.Screen.print("time=%.2f ", Brain.timer(sec));
-    
+
     if (Brain.timer(sec) == 15) {
       Controller1.rumble(".");
     } // 2 minute mark
@@ -126,8 +128,8 @@ void pre_auton(void) {
   sylib::initialize();
   vexcodeInit();
   if (!(RB.installed() && LB.installed() && RF.installed() &&
-        LF.installed()// &&                            // drive motors
-      //  F1.installed() && F2.installed()             // flywheel
+        LF.installed() // &&                            // drive motors
+        //  F1.installed() && F2.installed()             // flywheel
         && Intake1.installed() && turret.installed() // turret and intake
         && gyro1.installed() && RotationL.installed() &&
         RotationB.installed() // odom stuff
@@ -139,11 +141,10 @@ void pre_auton(void) {
 
   // Initializing Robot Configuration. DO NOT REMOVE!
 
-  
   gyro1.calibrate();
   turretG.calibrate();
   waitUntil(!gyro1.isCalibrating() && !turretG.isCalibrating());
-  //launch threads
+  // launch threads
   thread flywheelgo = thread(controlFlywheelSpeed);
   thread odometeryTracking = thread(odometery);
   thread turretStablization = thread(turretStable);
@@ -160,38 +161,37 @@ void pre_auton(void) {
 /*---------------------------------------------------------------------------*/
 
 void autonomous(void) {
- 
+
   // thread turretStablization = thread(turretStable);
-/*
+  /*
+
+    inchDrive(0.3);
+    rotate(90);
+    inchDrive(24);
+    rotate(180);
+    inchDrive(0.1);
+    Intake1.spin(forward, 100, pct);
+    waitUntil(Color.color() == blue);
+    Intake1.stop();&*/
 
   inchDrive(0.3);
-  rotate(90);
+  rotate(-90);
   inchDrive(24);
-  rotate(180);
+  rotate(-90);
   inchDrive(0.1);
   Intake1.spin(forward, 100, pct);
-  waitUntil(Color.color() == blue);
-  Intake1.stop();&*/
-  
-   inchDrive(0.3);
-   rotate(-90);
-   inchDrive(24);
-   rotate(-90);
-   inchDrive(0.1);
-   Intake1.spin(forward, 100, pct);
-   waitUntil(Color.color() == red);
-   Intake1.stop();
-   
+  waitUntil(Color.color() == red);
+  Intake1.stop();
 
   turretSpinTo(atan2(X - 110, 110 - Y) * (180 / M_PI), true);
   GoalAngle = atan2(X - 115, 115 - Y) * (180 / M_PI);
   loading = false;
   spinFlywheel(100);
   loading = false;
-  waitUntil(F1.get_velocity()/600 > 99&&F1.get_velocity()/600 <101);
+  waitUntil(F1.get_velocity() / 600 > 99 && F1.get_velocity() / 600 < 101);
   pistonToggle();
   loading = false;
-  waitUntil(F1.get_velocity()/600 > 99&&F1.get_velocity()/600 <101);
+  waitUntil(F1.get_velocity() / 600 > 99 && F1.get_velocity() / 600 < 101);
   pistonToggle();
   loading = false;
 }
@@ -207,15 +207,12 @@ void autonomous(void) {
 /*  You must modify the code to add your own robot specific commands here. */
 /*---------------------------------------------------------------------------*/
 
-
 bool intakeOn = false;
 void toggleIntake() { intakeOn = !intakeOn; }
 bool driveDir = 0;
 void driveSwitch() { driveDir = !driveDir; }
 
 void usercontrol(void) {
-  X = 75;
-  Y = 0;
   thread ControllerPrinting = thread(ControllerPrint);
   while (true) {
 
@@ -262,7 +259,8 @@ void usercontrol(void) {
       Intake1.spin(forward, 150, rpm);
     } else {
 
-      if (Color.color() == red  && Color.isNearObject())
+      if ((IsRed ? Color.color() == red : Color.color() == blue) &&
+          Color.isNearObject())
         Intake1.spin(forward, 200, rpm);
       else
         Intake1.stop();
@@ -277,7 +275,7 @@ void usercontrol(void) {
     TANK DRIVE CODE
 
     */
- 
+
     if (driveDir) {
 
       LF.spin(forward, Controller1.Axis3.position() * 120, voltageUnits::mV);
@@ -300,7 +298,6 @@ void usercontrol(void) {
     wait(10, msec);
   }
 }
-
 
 // Main will set up the competition functions and callbacks.
 //

@@ -6,6 +6,8 @@
 
 double X,Y;
 int odometery() {
+  X = 75;//starting position
+  Y = 0;
 double prevHeading = gyro1.heading();
 double deltaHeading = 0; // change in heading
 double absoluteOrientation = M_PI;
