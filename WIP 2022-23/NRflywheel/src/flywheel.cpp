@@ -40,14 +40,9 @@ int controlFlywheelSpeed() {
             fwDrive = 0.5 * (fwDrive + TBHval);
             TBHval = fwDrive;
           }
-      //  }
-              
-    //  Brain.Screen.printAt(180, 40, "fwdrive %.1f  ", fwDrive);
-   // spinFlywheel(TargetSpeed+kp*error);
-
+        }
      FWDrive = fwDrive;
      OldError = error;
   }
   return 1;
-}
 }
