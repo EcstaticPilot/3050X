@@ -32,15 +32,15 @@
 
 #include "stdio.h"
 //#include "sylib/sylib.h"
-
 #include "vex.h"
 #include <math.h>
+#include "robot-config.h"
 // including files
 
 using namespace vex;
 
 // A global instance of competition
-#include "robot-config.h"
+
 competition Competition;
 
 // declaring external variables
@@ -54,10 +54,11 @@ extern bool TurretToggle;
 // team switch
 bool IsRed = true;
 
+
 /*
 controller Controller1 = controller(primary);
 motor F1 = motor(PORT2, ratio6_1, true);
-//auto F1 = sylib::Motor(2,600, true);
+//auto F1 = sylib::Motor(2,600, true); 
 motor F2 = motor(PORT15, ratio6_1, false);
 //auto F2 = sylib::Motor(15,600, true);
 digital_out Injector = digital_out(Brain.ThreeWirePort.A);
@@ -86,8 +87,7 @@ void drive(int lSpeed, int rSpeed, double wt);
 void drive_brake();
 void rotate(double dir, double accuracy = 1);
 void inchDrive(float dist, float accuracy = 1);
-void driveToPoint(float targetX, float targetY,
-                  float endOrientation = gyro1.rotation(degrees));
+void driveToPoint(float targetX,float targetY,float endOrientation = gyro1.rotation(degrees));
 // flywheel.cpp
 void spinFlywheel(double speed);
 int controlFlywheelSpeed();
@@ -113,14 +113,13 @@ int ControllerPrint() {
 
   while (1) {
     Controller2.Screen.setCursor(1, 1);
-
+    
     double speed = F1.velocity(pct);
-    Controller2.Screen.print("Spd=%.2f tSpd=%.1f   ", speed, TargetSpeed);
+    Controller2.Screen.print("Spd=%.2f tSpd=%.2f   ", speed, TargetSpeed);
     Controller2.Screen.setCursor(2, 1);
     Controller2.Screen.print("pos= (%.1f,%.1f)", X, Y);
     Controller2.Screen.setCursor(3, 1);
-    Controller2.Screen.print("distance=%.2f ",
-                             sqrt( ( (75 - X) * (75 - X) + (Y * Y) ) ) );
+    Controller2.Screen.print("time=%.2f ", Brain.timer(sec));
 
     if (Brain.timer(sec) == 15) {
       Controller1.rumble(".");
@@ -150,7 +149,7 @@ int ControllerPrint() {
 /*---------------------------------------------------------------------------*/
 
 void pre_auton(void) {
-  // sylib::initialize();
+  //sylib::initialize();
 
   vexcodeInit();
   Controller1.rumble(".");
@@ -209,16 +208,16 @@ void autonomous(void) {
   Intake1.spin(forward, 100, pct);
   waitUntil(Color.color() == red);
   Intake1.stop();
-
+  
   turretSpinTo(atan2(X - 110, 110 - Y) * (180 / M_PI), true);
   GoalAngle = atan2(X - 115, 115 - Y) * (180 / M_PI);
   loading = false;
   spinFlywheel(100);
   loading = false;
-  waitUntil(F1.velocity(pct) > 99 && F1.velocity(pct) < 101);
+  waitUntil(F1.velocity(pct) > 99 && F1.velocity(pct)  < 101);
   pistonToggle();
   loading = false;
-  waitUntil(F1.velocity(pct) > 99 && F1.velocity(pct) < 101);
+  waitUntil(F1.velocity(pct)  > 99 && F1.velocity(pct)  < 101);
   pistonToggle();
   loading = false;
 }
@@ -338,7 +337,7 @@ int main() {
   Controller1.ButtonLeft.pressed(pistonToggleReady);
   Controller1.ButtonRight.pressed(driveSwitch);
   Controller1.ButtonX.pressed(toggleTurret);
-  Controller2.ButtonUp.pressed(pistonToggleReady);
+  Controller2.ButtonUp.pressed(pistonToggle);
   Controller2.ButtonLeft.pressed(pistonToggle);
   // Run the pre-autonomous function.
   pre_auton();

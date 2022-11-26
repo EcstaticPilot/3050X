@@ -52,16 +52,14 @@ double turretEncoderAngle;
         } else {
           VisionReady = false;
           error = -(GoalAngle + offset) - turretG.orientation(yaw, degrees);
-kp = 1;
- ki = 0;
-kd = 0.4;
+          kp = 0.8;
+          kd = 0.2;
         }
       } else {
         VisionReady = false;
         error = -(GoalAngle + offset) - turretG.orientation(yaw, degrees);
-        kp = 1;
- ki = 0;
-kd = 0.4;
+        kp = 0.8;
+        kd = 0.2;
       }
       //    VisionReady=false;//vision is not ready
     } else { // if not loading go to zero
