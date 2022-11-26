@@ -31,16 +31,17 @@
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "stdio.h"
-//#include "sylib/sylib.h"
+#include "sylib/sylib.h"
 #include "vex.h"
 #include <math.h>
-#include "robot-config.h"
+
 // including files
 
 using namespace vex;
 
 // A global instance of competition
-
+extern sylib::Motor F1;
+extern sylib::Motor F2;
 competition Competition;
 
 // declaring external variables
@@ -90,8 +91,7 @@ int ControllerPrint() {
 
   while (1) {
     Controller2.Screen.setCursor(1, 1);
-    
-    double speed = F1.velocity(pct);
+    double speed = F1.get_velocity() / 600;
     Controller2.Screen.print("Spd=%.2f tSpd=%.2f   ", speed, TargetSpeed);
     Controller2.Screen.setCursor(2, 1);
     Controller2.Screen.print("pos= (%.1f,%.1f)", X, Y);
@@ -126,10 +126,8 @@ int ControllerPrint() {
 /*---------------------------------------------------------------------------*/
 
 void pre_auton(void) {
-  //sylib::initialize();
-
+  sylib::initialize();
   vexcodeInit();
-  Controller1.rumble(".");
   if (!(RB.installed() && LB.installed() && RF.installed() &&
         LF.installed() // &&                            // drive motors
         //  F1.installed() && F2.installed()             // flywheel
@@ -191,10 +189,10 @@ void autonomous(void) {
   loading = false;
   spinFlywheel(100);
   loading = false;
-  waitUntil(F1.velocity(pct) > 99 && F1.velocity(pct)  < 101);
+  waitUntil(F1.get_velocity() / 600 > 99 && F1.get_velocity() / 600 < 101);
   pistonToggle();
   loading = false;
-  waitUntil(F1.velocity(pct)  > 99 && F1.velocity(pct)  < 101);
+  waitUntil(F1.get_velocity() / 600 > 99 && F1.get_velocity() / 600 < 101);
   pistonToggle();
   loading = false;
 }

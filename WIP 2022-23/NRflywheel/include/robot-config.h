@@ -9,8 +9,6 @@ extern controller Controller1;
 extern digital_out Injector;
 extern motor LF;
 extern motor LB;
-extern motor F1;
-extern motor F2;
 extern motor RF;
 extern motor RB;
 extern motor Intake1;
