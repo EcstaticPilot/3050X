@@ -1,7 +1,5 @@
 #include <vex.h>
-#include "sylib/sylib.h"
-extern sylib::Motor F1;
-extern sylib::Motor F2;
+
 extern bool loading;
 extern double TargetSpeed;
 extern double GoalAngle;
@@ -18,7 +16,7 @@ void fireDisc() {
   loading = false;
   TargetSpeed = 0; // need to create formula
   waitUntil(VisionReady &&
-            (fabs(F1.get_velocity()/600 - TargetSpeed) < .25));
+            (fabs(F1.velocity(pct) - TargetSpeed) < .25));
   pistonToggle();
   if (turretOptical.isNearObject())
     fireDisc();
@@ -31,11 +29,11 @@ void fireDisc() {
 
 void pistonToggleReady() {
   Brain.Screen.drawRectangle(120, 190, 60, 60, orange);
-  waitUntil(F1.get_velocity()/600 < TargetSpeed + .25 &&
-            F1.get_velocity()/600 > TargetSpeed - .25);
+  waitUntil(F1.velocity(pct) < TargetSpeed + .25 &&
+            F1.velocity(pct) > TargetSpeed - .25);
   wait(10, msec);
-  waitUntil(F1.get_velocity()/600 < TargetSpeed + .25 &&
-            F1.get_velocity()/600 > TargetSpeed - .25);
+  waitUntil(F1.velocity(pct) < TargetSpeed + .25 &&
+            F1.velocity(pct) > TargetSpeed - .25);
   Brain.Screen.drawRectangle(120, 190, 60, 60, black);
   if (turretOptical.isNearObject()) {
     Injector.set(true);
