@@ -40,10 +40,10 @@
 using namespace vex;
 
 // A global instance of competition
-
-competition Competition;
 extern sylib::Motor F1;
 extern sylib::Motor F2;
+competition Competition;
+
 // declaring external variables
 extern double GoalAngle;
 extern float offset;
@@ -126,9 +126,8 @@ int ControllerPrint() {
 /*---------------------------------------------------------------------------*/
 
 void pre_auton(void) {
-  
-  vexcodeInit();
   sylib::initialize();
+  vexcodeInit();
   if (!(RB.installed() && LB.installed() && RF.installed() &&
         LF.installed() // &&                            // drive motors
         //  F1.installed() && F2.installed()             // flywheel
