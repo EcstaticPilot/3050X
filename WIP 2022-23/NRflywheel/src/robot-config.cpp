@@ -1,5 +1,5 @@
 #include "vex.h"
-
+#include "sylib/sylib.h"
 using namespace vex;
 using signature = vision::signature;
 using code = vision::code;
@@ -8,9 +8,12 @@ using code = vision::code;
 brain  Brain;
 
 // VEXcode device constructors
+
 controller Controller1 = controller(primary);
 motor F1 = motor(PORT2, ratio6_1, true);
+//auto F1 = sylib::Motor(2,600, true); 
 motor F2 = motor(PORT15, ratio6_1, false);
+//auto F2 = sylib::Motor(15,600, true);
 digital_out Injector = digital_out(Brain.ThreeWirePort.A);
 motor LF = motor(PORT18, ratio18_1, false);
 motor LB = motor(PORT12, ratio18_1, true);
