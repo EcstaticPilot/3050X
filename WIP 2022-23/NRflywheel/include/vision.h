@@ -7,5 +7,5 @@ vex::vision::signature SNEHA = vex::vision::signature (4, 0, 0, 0, 0, 0, 0, 3, 0
 vex::vision::signature MORGAN = vex::vision::signature (5, 0, 0, 0, 0, 0, 0, 3, 0);
 vex::vision::signature SIG_6 = vex::vision::signature (6, 0, 0, 0, 0, 0, 0, 3, 0);
 vex::vision::signature SIG_7 = vex::vision::signature (7, 0, 0, 0, 0, 0, 0, 3, 0);
-vex::vision Vision16 = vex::vision (vex::PORT16, 41, BGOAL, DISC, RGOAL, SNEHA, MORGAN, SIG_6, SIG_7);
+vex::vision Vision16 = vex::vision (vex::PORT16, 76, BGOAL, DISC, RGOAL, SNEHA, MORGAN, SIG_6, SIG_7);
 /*vex-vision-config:end*/

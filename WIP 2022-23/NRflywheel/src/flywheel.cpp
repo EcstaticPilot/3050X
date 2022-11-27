@@ -13,7 +13,7 @@ void spinFlywheel(double speed) {
 }
 
 int controlFlywheelSpeed() {
-  double kp = .04;
+  double kp = .025;
   while (true) {
     
         double speed = F1.velocity(pct);
