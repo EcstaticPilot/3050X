@@ -13,7 +13,7 @@ int turretStable() {
   // safe working valuse double kp = 1; double ki = 0;double kd = 0.3;
   double kp = 0.6;
   double ki = 0;
-  double kd = 0.2;
+  double kd = 0.1;
   double sum = 0;
   double prevError = 0;
 
@@ -45,13 +45,13 @@ int turretStable() {
           VisionReady=false;
           error = -(GoalAngle + offset) - turretG.orientation(yaw, degrees);
           kp = 0.6;
-          kd = 0.2;
+          kd = 0.1;
         }
       } else {
         VisionReady=false;
         error = -(GoalAngle + offset) - turretG.orientation(yaw, degrees);
         kp = 0.6;
-        kd = 0.2;
+        kd = 0.1;
       }
       //    VisionReady=false;//vision is not ready
           }
@@ -59,7 +59,7 @@ int turretStable() {
 
         error = turretEncoderAngle;
         kp = .6;
-        kd = 0.2;
+        kd = 0.1;
         VisionReady = false; // vision is not ready
       }
 
@@ -69,15 +69,6 @@ int turretStable() {
       if ((speed < 0 && turretEncoderAngle > 85))
         speed = 0;
       turret.spin(fwd, speed*1.2 , volt);
-      
-
-      /*
-      if (speed > 0) {
-        turret.spin(fwd, -5, rpm);
-      }
-      if (speed < 0) {
-        turret.spin(fwd, -5, pct);
-      }*/
 
       prevError = error;
       sum += error;
