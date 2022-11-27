@@ -13,14 +13,14 @@ void spinFlywheel(double speed) {
 }
 
 int controlFlywheelSpeed() {
-  double kp = .025;
+  double kp = .25;
   while (true) {
     
         double speed = F1.velocity(pct);
         double error = TargetSpeed - speed;
      //   double fwDrive = FWDrive + kI * error;
         // :D
-        // Brain.Screen.printAt(1, 40, " speed = %.2f ", speed);
+         Brain.Screen.printAt(1, 40, " spinning speed = %.2f ", (TargetSpeed-2.5)+kp*error);
         // Keep drive between 0 to 100%
     /*
         if (error > 20) {
@@ -40,7 +40,7 @@ int controlFlywheelSpeed() {
       //  }
               */
     //  Brain.Screen.printAt(180, 40, "fwdrive %.1f  ", fwDrive);
-    spinFlywheel(TargetSpeed+kp*error);
+    spinFlywheel((TargetSpeed-2.5)+kp*error);
 
     // FWDrive = fwDrive;
     // OldError = error;
