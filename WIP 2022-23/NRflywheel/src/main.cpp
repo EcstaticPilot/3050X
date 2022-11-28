@@ -91,7 +91,7 @@ int ControllerPrint() {
     Controller2.Screen.setCursor(2, 1);
     Controller2.Screen.print("pos= (%.1f,%.1f)", X, Y);
     Controller2.Screen.setCursor(3, 1);
-    Controller2.Screen.print("time=%.2f ", Brain.timer(sec));
+    Controller2.Screen.print("distance=%.2f ",sqrt( (115-X)*(115-X)+(115-Y)*(115-Y)));
     
     if (Brain.timer(sec) == 15) {
       Controller1.rumble(".");
@@ -311,7 +311,7 @@ int main() {
   Controller1.ButtonLeft.pressed(pistonToggleReady);
   Controller1.ButtonRight.pressed(driveSwitch);
   Controller1.ButtonX.pressed(toggleTurret);
-  Controller2.ButtonUp.pressed(pistonToggle);
+  Controller2.ButtonUp.pressed(pistonToggleReady);
   Controller2.ButtonLeft.pressed(pistonToggle);
   // Run the pre-autonomous function.
   pre_auton();

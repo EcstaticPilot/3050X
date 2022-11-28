@@ -11,9 +11,9 @@ int turretStable() {
   loading = true;
   // while (true) {
   // safe working valuse double kp = 1; double ki = 0;double kd = 0.3;
-  double kp = 0.6;
+  double kp = 1;
   double ki = 0;
-  double kd = 0.1;
+  double kd = 0.025;
   double sum = 0;
   double prevError = 0;
 
@@ -28,7 +28,7 @@ int turretStable() {
     if (!loading) {
 
       if (fabs(GoalAngle + offset - turretG.orientation(yaw, degrees)) <
-          3) {                        // if goal is within limits
+          20) {                        // if goal is within limits
         Vision16.takeSnapshot(RGOAL); // use vision sensor
         if (Vision16.largestObject.exists) {
 
@@ -44,22 +44,22 @@ int turretStable() {
         } else {
           VisionReady=false;
           error = -(GoalAngle + offset) - turretG.orientation(yaw, degrees);
-          kp = 0.6;
-          kd = 0.1;
+          kp = 0.8;
+          kd = 0.3;
         }
       } else {
         VisionReady=false;
         error = -(GoalAngle + offset) - turretG.orientation(yaw, degrees);
-        kp = 0.6;
-        kd = 0.1;
+        kp = 0.8;
+          kd = 0.3;
       }
       //    VisionReady=false;//vision is not ready
           }
       else { // if not loading go to zero
 
         error = turretEncoderAngle;
-        kp = .6;
-        kd = 0.1;
+        kp = 0.8;
+          kd = 0.3;
         VisionReady = false; // vision is not ready
       }
 
@@ -68,7 +68,7 @@ int turretStable() {
         speed = 0;
       if ((speed < 0 && turretEncoderAngle > 85))
         speed = 0;
-      turret.spin(fwd, speed*1.2 , volt);
+      turret.spin(fwd, speed , pct);
 
       prevError = error;
       sum += error;
