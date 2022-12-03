@@ -34,6 +34,7 @@
 #include "stdio.h"
 #include "vex.h"
 #include <math.h>
+#include <iostream>
 //including files
 
 using namespace vex;
@@ -80,32 +81,20 @@ void pistonToggleReady();
 CONTROLLER PRINTING
 
 */
+extern float FSPEED;
 int ControllerPrint() {
 
   Brain.Timer.reset();
-  
+ 
   while (1) {
+   
+   
     Controller2.Screen.setCursor(1, 1);
-    double speed = F1.velocity(pct);
-    Controller2.Screen.print("Spd=%.2f tSpd=%.2f   ", speed, TargetSpeed);
+    Controller2.Screen.print("Spd=%.2f tSpd=%.2f   ", FSPEED, TargetSpeed);
     Controller2.Screen.setCursor(2, 1);
     Controller2.Screen.print("pos= (%.1f,%.1f)", X, Y);
     Controller2.Screen.setCursor(3, 1);
     Controller2.Screen.print("distance=%.2f ",sqrt( (115-X)*(115-X)+(115-Y)*(115-Y)));
-    
-    if (Brain.timer(sec) == 15) {
-      Controller1.rumble(".");
-    } // 2 minute mark
-    if (Brain.timer(sec) == 45) {
-      Controller1.rumble("..");
-    } // 1:30 mark
-    if (Brain.timer(sec) == 75)
-      Controller1.rumble("...");
-    // 1 minute mark
-    if (Brain.timer(sec) == 105) {
-      Controller1.rumble("....");
-    } // 30 second mark
-
     this_thread::sleep_for(50);
   }
 }
@@ -185,10 +174,10 @@ void autonomous(void) {
   loading = false;
   spinFlywheel(100);
   loading = false;
-  waitUntil(F1.velocity(pct) > 99&&F1.velocity(pct)<101);
+  waitUntil(FSPEED> 99&&FSPEED<101);
   pistonToggle();
   loading = false;
-  waitUntil(F1.velocity(pct) > 99&&F1.velocity(pct)<101);
+  waitUntil(FSPEED > 99&&FSPEED<101);
   pistonToggle();
   loading = false;
 }
@@ -256,7 +245,7 @@ void usercontrol(void) {
 
     */
     if (intakeOn) {
-      Intake1.spin(forward, 150, rpm);
+      Intake1.spin(forward, 85, pct);
     } else {
 
       if (Color.color() == red  && Color.isNearObject())

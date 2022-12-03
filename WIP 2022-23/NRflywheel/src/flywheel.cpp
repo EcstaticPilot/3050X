@@ -15,35 +15,28 @@ double FWDrive=0;
 double OldError=0;
 double TBHval = 0;
 double fwDrive;
+float FSPEED;
 int controlFlywheelSpeed() {
+   float s0,s1,s2,s3,s4,s5;
+  s0=0;
+  s1=0;
+  s2=0;
+  s3=0;
+  s4=0;
+  s5=0;
   while (true) {
-    double kP=0.25;
-    double kI = .025;
-
-  double speed = F1.velocity(pct);
-  double error = TargetSpeed - speed;
-      double fwDrive = FWDrive + kI * error;
-  std::cout<<error<<std::endl;
-  
- // Brain.Screen.printAt(1, 40, " speed = %.2f ", speed);
-  // Keep drive between 0 to 100%
-  if (fwDrive > 100)
-    fwDrive = 100;
-  if (fwDrive < 0)
-    fwDrive = 0;
-  // Check for zero crossing
-  if (error * OldError < 0) {
-    fwDrive = 0.5 * (fwDrive + TBHval);
-    TBHval = fwDrive;
-  }
-
-//  Brain.Screen.printAt(180, 40, "fwdrive %.1f  ", fwDrive);
-  if(error>10){speed=100;
-  }else {
-  speed=TargetSpeed;
-  }
-  spinFlywheel(TargetSpeed);
-  wait(10, msec);
+     s5=s4;
+    s4=s3;
+    s3=s2;
+    s2=s1;
+    s1=s0;
+    s0=F1.velocity(pct);
+    FSPEED=(s0+s1+s2+s3+s4+s5)/6;
+    double kP=2;
+double error = TargetSpeed - FSPEED;
+     std::cout<<F1.velocity(pct) << ","<< FSPEED<<","<<TargetSpeed<<","<<TargetSpeed+kP*error<<std::endl;
+  spinFlywheel(TargetSpeed+kP*error);
+  wait(12, msec);
   FWDrive = fwDrive;
   OldError = error;
 

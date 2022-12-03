@@ -13,7 +13,7 @@ int turretStable() {
   // safe working valuse double kp = 1; double ki = 0;double kd = 0.3;
   double kp = 1;
   double ki = 0;
-  double kd = 0.025;
+  double kd = 0.3;
   double sum = 0;
   double prevError = 0;
 
