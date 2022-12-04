@@ -199,7 +199,9 @@ void driveSwitch() { driveDir = !driveDir; }
 void usercontrol(void) {
   X = 75;
   Y = 0;
-  thread flywheelgo = thread(controlFlywheelSpeed);
+    //thread turretStablization = thread(turretStable);
+
+ // thread flywheelgo = thread(controlFlywheelSpeed);
   thread ControllerPrinting = thread(ControllerPrint);
   while (true) {
 
