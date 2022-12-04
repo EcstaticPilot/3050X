@@ -2,6 +2,8 @@
 extern bool loading;
 extern double TargetSpeed;
 extern double GoalAngle;
+extern bool VisionReady;
+extern float FSPEED;
 void pistonToggle() {
   if (turretOptical.isNearObject()) {
     Injector.set(true);
@@ -12,9 +14,9 @@ void pistonToggle() {
 
 void fireDisc() {
   loading = false;
-  TargetSpeed = 0; // need to create formula
-  waitUntil((fabs(GoalAngle - turretG.orientation(yaw, degrees)) < 2) &&
-            (fabs(F1.velocity(pct) - TargetSpeed) < .25));
+  TargetSpeed = 75; // need to create formula
+  waitUntil(VisionReady &&
+            (FSPEED - TargetSpeed) < 3);
   pistonToggle();
   if (turretOptical.isNearObject())
     fireDisc();

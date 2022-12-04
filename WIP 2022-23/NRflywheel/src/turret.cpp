@@ -6,6 +6,7 @@ double GoalAngle;
 extern double X,Y;
 float offset=0;
 bool VisionReady;
+extern bool isRed;
 int turretStable() {
   Controller1.rumble("..");
   loading = true;
@@ -28,8 +29,12 @@ int turretStable() {
     if (!loading) {
 
       if (fabs(GoalAngle + offset - turretG.orientation(yaw, degrees)) <
-          20) {                        // if goal is within limits
-        Vision16.takeSnapshot(RGOAL); // use vision sensor
+          20) {
+            if(isRed){ Vision16.takeSnapshot(RGOAL);
+            }else {
+            Vision16.takeSnapshot(BGOAL);
+            }                        // if goal is within limits
+        // use vision sensor
         if (Vision16.largestObject.exists) {
 
           error = Vision16.largestObject.centerX - 158;
@@ -39,7 +44,7 @@ int turretStable() {
                                Vision16.largestObject.centerX);
           kp = 0.2;
           kd = 0;
-          if(fabs(error)<10)VisionReady=true;
+          if(fabs(error)<20)VisionReady=true;
           else VisionReady=false;
         } else {
           VisionReady=false;

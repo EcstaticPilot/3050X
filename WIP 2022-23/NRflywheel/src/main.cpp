@@ -45,6 +45,7 @@ using namespace vex;
 competition Competition;
 
 //declaring external variables
+bool isRed=false;
 extern double GoalAngle;
 extern float offset;
 extern bool loading;
@@ -89,12 +90,12 @@ int ControllerPrint() {
   while (1) {
    
    
-    Controller2.Screen.setCursor(1, 1);
-    Controller2.Screen.print("Spd=%.2f tSpd=%.2f   ", FSPEED, TargetSpeed);
-    Controller2.Screen.setCursor(2, 1);
-    Controller2.Screen.print("pos= (%.1f,%.1f)", X, Y);
-    Controller2.Screen.setCursor(3, 1);
-    Controller2.Screen.print("distance=%.2f ",sqrt( (115-X)*(115-X)+(115-Y)*(115-Y)));
+    Controller1.Screen.setCursor(1, 1);
+    Controller1.Screen.print("Spd=%.2f tSpd=%.2f   ", FSPEED, TargetSpeed);
+    Controller1.Screen.setCursor(2, 1);
+    Controller1.Screen.print("pos= (%.1f,%.1f)", X, Y);
+    Controller1.Screen.setCursor(3, 1);
+    Controller1.Screen.print("distance=%.2f ",sqrt( (115-X)*(115-X)+(115-Y)*(115-Y)));
     this_thread::sleep_for(50);
   }
 }
@@ -129,7 +130,7 @@ void pre_auton(void) {
   
   gyro1.calibrate();
   turretG.calibrate();
-  waitUntil(!gyro1.isCalibrating() && !turretG.isCalibrating());
+  waitUntil(!(gyro1.isCalibrating() && turretG.isCalibrating()));
   //launch threads
   thread flywheelgo = thread(controlFlywheelSpeed);
   thread odometeryTracking = thread(odometery);
@@ -158,7 +159,7 @@ void autonomous(void) {
   Intake1.spin(forward, 100, pct);
   waitUntil(Color.color() == blue);
   Intake1.stop();&*/
-  
+  /*
    inchDrive(0.3);
    rotate(-90);
    inchDrive(24);
@@ -168,18 +169,14 @@ void autonomous(void) {
    waitUntil(Color.color() == red);
    Intake1.stop();
    
-
-  turretSpinTo(atan2(X - 110, 110 - Y) * (180 / M_PI), true);
-  GoalAngle = atan2(X - 115, 115 - Y) * (180 / M_PI);
-  loading = false;
-  spinFlywheel(100);
-  loading = false;
+*/
+loading = false;
+  TargetSpeed=100;
   waitUntil(FSPEED> 99&&FSPEED<101);
   pistonToggle();
-  loading = false;
   waitUntil(FSPEED > 99&&FSPEED<101);
   pistonToggle();
-  loading = false;
+  loading = true;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -202,6 +199,7 @@ void driveSwitch() { driveDir = !driveDir; }
 void usercontrol(void) {
   X = 75;
   Y = 0;
+  thread flywheelgo = thread(controlFlywheelSpeed);
   thread ControllerPrinting = thread(ControllerPrint);
   while (true) {
 
@@ -210,11 +208,11 @@ void usercontrol(void) {
     CONTROLLER 2 SPEED CONTROL
 
     */
-    if (Controller2.ButtonL1.pressing()) {
+    if (Controller1.ButtonL1.pressing()) {
       TargetSpeed -= 0.5;
       wait(10, msec);
     }
-    if (Controller2.ButtonR1.pressing()) {
+    if (Controller1.ButtonR1.pressing()) {
       TargetSpeed += 0.5;
       wait(10, msec);
     }
@@ -239,16 +237,20 @@ void usercontrol(void) {
     if (Controller2.ButtonY.pressing()) {
       TargetSpeed = 100;
     }
+    if(Controller1.ButtonY.pressing()){
+      TargetSpeed=75;
+    }
+  if(Controller1.ButtonDown.pressing())TargetSpeed=0;
     /*
 
     INTAKE
 
     */
     if (intakeOn) {
-      Intake1.spin(forward, 85, pct);
+      Intake1.spin(forward, 80, pct);
     } else {
 
-      if (Color.color() == red  && Color.isNearObject())
+      if ((isRed?Color.color() == red:Color.color()==blue)  && Color.isNearObject())
         Intake1.spin(forward, 200, rpm);
       else
         Intake1.stop();
@@ -297,9 +299,10 @@ int main() {
   Competition.drivercontrol(usercontrol);
 
   Controller1.ButtonB.pressed(toggleIntake);
-  Controller1.ButtonLeft.pressed(pistonToggleReady);
+  Controller1.ButtonLeft.pressed(pistonToggle);
   Controller1.ButtonRight.pressed(driveSwitch);
   Controller1.ButtonX.pressed(toggleTurret);
+  Controller1.ButtonA.pressed(fireDisc);
   Controller2.ButtonUp.pressed(pistonToggleReady);
   Controller2.ButtonLeft.pressed(pistonToggle);
   // Run the pre-autonomous function.
