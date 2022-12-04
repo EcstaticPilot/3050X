@@ -15,8 +15,8 @@ void pistonToggle() {
 void fireDisc() {
   loading = false;
   TargetSpeed = 75; // need to create formula
-  waitUntil(VisionReady &&
-            (FSPEED - TargetSpeed) < 3);
+  waitUntil(Controller1.ButtonLeft.pressing() &&
+            fabs((FSPEED - TargetSpeed)) < 3);
   pistonToggle();
   if (turretOptical.isNearObject())
     fireDisc();

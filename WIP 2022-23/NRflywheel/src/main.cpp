@@ -45,7 +45,7 @@ using namespace vex;
 competition Competition;
 
 //declaring external variables
-bool isRed=false;
+bool isRed=true;
 extern double GoalAngle;
 extern float offset;
 extern bool loading;
@@ -239,9 +239,10 @@ void usercontrol(void) {
     if (Controller2.ButtonY.pressing()) {
       TargetSpeed = 100;
     }
-    if(Controller1.ButtonY.pressing()){
+    if(Controller1.ButtonUp.pressing()){
       TargetSpeed=75;
     }
+
   if(Controller1.ButtonDown.pressing())TargetSpeed=0;
     /*
 
