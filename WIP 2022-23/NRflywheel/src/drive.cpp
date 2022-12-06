@@ -30,10 +30,10 @@ void drive_brake() {
 void rotate(double dir, double accuracy = 1) {
   // double currDir = gyro1.rotation(degrees);
   double speed = 100;
-  double error = dir;
+  double error = dir - gyro1.rotation(degrees);
   double prevError = dir;
   double Kd = 1;
-  double Ki = 0.2;
+  double Ki = 0.6;
   double sum = 0;
   double Kp = .8;
 
@@ -43,7 +43,6 @@ void rotate(double dir, double accuracy = 1) {
   // continues rotating until its within accuracy degrees from the target and
   // the speed of the motors isn't too fast
   while (fabs(error) > accuracy) {
-    error = dir - gyro1.rotation(degrees);
     speed = (Kp * error) + (Ki * sum) + (Kd * (error - prevError));
     LB.spin(fwd, speed / 3, percent);
     RB.spin(reverse, speed / 3, percent);
@@ -54,11 +53,8 @@ void rotate(double dir, double accuracy = 1) {
     prevError = error;
     sum = sum * 0.5 + error;
   }
-
-  LF.stop(brake);
-  RF.stop(brake);
-  RB.stop(brake);
-  LB.stop(brake);
+  Brain.Screen.printAt(1,20, "Finished!");
+  drive_brake();
 }
 
 void inchDrive(float dist, float accuracy = 1) {
@@ -85,7 +81,7 @@ void inchDrive(float dist, float accuracy = 1) {
 
     sum = sum * 0.7 + error; // <--
     speed = (error * kp) /*-*/ +
-            (ki * sum) /*speeds u u if ur taking a long time*/ +
+            (ki * sum) /*speeds u up if ur taking a long time*/ +
             (kd * (error - old_error)); /*slows u down
 if you're going too fast
 */
