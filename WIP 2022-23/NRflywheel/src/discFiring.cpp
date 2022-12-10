@@ -15,13 +15,12 @@ void pistonToggle() {
 void fireDisc() {
   loading = false;
   TargetSpeed = 75; // need to create formula
-  waitUntil(Controller1.ButtonLeft.pressing() &&
-            fabs((FSPEED - TargetSpeed)) < 3);
+  waitUntil(fabs(TurretE.velocity(rpm)) < 2 &&
+            fabs((FSPEED - TargetSpeed)) < 1);
   pistonToggle();
   if (turretOptical.isNearObject())
     fireDisc();
   else {
-
     loading = true;
     TargetSpeed = 0;
   }

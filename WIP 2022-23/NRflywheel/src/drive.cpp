@@ -4,7 +4,6 @@
 
 #include <math.h>
 
-
 float C = M_PI * 3.25;
 
 void drive(int lSpeed, int rSpeed, double wt) {
@@ -36,7 +35,7 @@ void rotate(double dir, double accuracy = 1) {
   double Ki = 0.6;
   double sum = 0;
   double Kp = .8;
-    Brain.Screen.clearScreen();
+  Brain.Screen.clearScreen();
   // change facing
   // dir = currDir - gyro1.rotation(degrees); // rotation offset
 
@@ -85,6 +84,41 @@ void inchDrive(float dist, float accuracy = 1) {
             (kd * (error - old_error)); /*slows u down
 if you're going too fast
 */
+  }
+  drive_brake();
+}
+extern double X, Y;
+void DriveToPoint(double targetX, double targetY, float speedMult = 1) {
+  // T=turn
+  // D=distance
+  float tError = atan2(X - targetX, targetY - Y);
+  float Tkp = .4, Tki = .2, Tkd = .33;
+  float tErrorOld=tError;
+  float tSum=0;
+
+  float dError =
+      sqrt((targetX - X) * (targetX - X) + (targetY - Y) * (targetY - Y));
+  float Dkp = 10, Dki = 2, Dkd = 5;
+  float dErrorOld=dError;
+  float dSum=0;
+
+  float accuracy = 3;
+
+  while (!((fabs(targetX - X) < accuracy) && (fabs(targetY - Y) < accuracy))) {
+    tError = atan2(X - targetX, targetY - Y);
+    dError =
+        sqrt((targetX - X) * (targetX - X) + (targetY - Y) * (targetY - Y));
+    float lSpeed = (Dkp * dError) + (Dki * dSum) + (Dkd * (dError - tErrorOld)) + 
+    (Tkp * tError) + (Tki * tSum) + (Tkd * (tError - tErrorOld));
+
+    float rSpeed=(Dkp * dError) + (Dki * dSum) + (Dkd * (dError - dErrorOld)) -( 
+    (Tkp * tError) + (Tki * tSum) + (Tkd * (tError - tErrorOld)));
+    drive((lSpeed) * speedMult, (rSpeed) * speedMult, 10);
+    dErrorOld=dError;
+    dSum+=dError;
+
+    tErrorOld=tError;
+    tSum+=tError;
   }
   drive_brake();
 }
