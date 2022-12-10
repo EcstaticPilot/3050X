@@ -45,7 +45,7 @@ using namespace vex;
 competition Competition;
 
 //declaring external variables
-bool isRed=true;
+bool isRed=false;
 extern double GoalAngle;
 extern float offset;
 extern bool loading;
@@ -154,9 +154,11 @@ void autonomous(void) {
   rotate(-90);
   inchDrive(12);
   rotate(0);
-  inchDrive(0.1);
+  inchDrive(4.0);
   Intake1.spin(forward, 100, pct);
+  Color.setLightPower(50);
   waitUntil(Color.color() == blue);
+  wait(30, msec);
   Intake1.stop();
 
   /*

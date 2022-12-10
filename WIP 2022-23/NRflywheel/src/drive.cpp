@@ -36,7 +36,7 @@ void rotate(double dir, double accuracy = 1) {
   double Ki = 0.6;
   double sum = 0;
   double Kp = .8;
-
+    Brain.Screen.clearScreen();
   // change facing
   // dir = currDir - gyro1.rotation(degrees); // rotation offset
 
@@ -52,8 +52,8 @@ void rotate(double dir, double accuracy = 1) {
     wait(10, msec);
     prevError = error;
     sum = sum * 0.5 + error;
+    error = dir - gyro1.rotation(degrees);
   }
-  Brain.Screen.printAt(1,20, "Finished!");
   drive_brake();
 }
 
