@@ -63,6 +63,7 @@ void drive(int lSpeed, int rSpeed, double wt);
 void drive_brake();
 void rotate(double dir, double accuracy = 1);
 void inchDrive(float dist, float accuracy = 1);
+void DriveToPoint(double targetX, double targetY, float speedMult = 1);
 //flywheel.cpp
 void spinFlywheel(double speed);
 int controlFlywheelSpeed();
@@ -148,6 +149,8 @@ void pre_auton(void) {
 /*---------------------------------------------------------------------------*/
 
 void autonomous(void) {
+
+  /*
   // thread turretStablization = thread(turretStable);
 
   inchDrive(0.3);
@@ -172,13 +175,16 @@ void autonomous(void) {
    Intake1.stop();
    
 */
+
+/*
 loading = false;
   TargetSpeed=100;
   waitUntil(FSPEED> 99&&FSPEED<101);
   pistonToggle();
   waitUntil(FSPEED > 99&&FSPEED<101);
   pistonToggle();
-  loading = true;
+  loading = true;*/
+  DriveToPoint(50, -25,1);
 }
 
 /*---------------------------------------------------------------------------*/

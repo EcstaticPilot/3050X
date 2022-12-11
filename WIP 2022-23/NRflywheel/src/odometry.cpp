@@ -4,7 +4,7 @@
 
 #include <math.h>
 
-double X,Y;
+double X=75,Y=0;
 int odometery() {
 double prevHeading = gyro1.heading();
 double deltaHeading = 0; // change in heading

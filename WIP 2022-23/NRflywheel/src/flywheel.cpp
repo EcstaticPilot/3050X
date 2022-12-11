@@ -46,7 +46,7 @@ int controlFlywheelSpeed() {
     FSPEED=(s0+s1+s2+s3+s4+s5+s6+s7+s8+s9+s10+s11)/12;
     double kP=2.5;
 double error = TargetSpeed - FSPEED;
-     std::cout<<F1.velocity(pct) << ","<< FSPEED<<","<<TargetSpeed<<","<<TargetSpeed+kP*error<<std::endl;
+     //std::cout<<F1.velocity(pct) << ","<< FSPEED<<","<<TargetSpeed<<","<<TargetSpeed+kP*error<<std::endl;
   spinFlywheel(TargetSpeed+kP*error);
   this_thread::sleep_for(15);
   FWDrive = fwDrive;

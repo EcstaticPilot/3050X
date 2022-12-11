@@ -1,6 +1,7 @@
 
-#include "stdio.h"
+#include <stdio.h>
 #include "vex.h"
+#include <iostream>
 
 #include <math.h>
 
@@ -12,10 +13,6 @@ void drive(int lSpeed, int rSpeed, double wt) {
   LB.spin(forward, lSpeed, pct);
   RB.spin(forward, rSpeed, pct);
   wait(wt, msec);
-  LF.stop();
-  RF.stop();
-  LB.stop();
-  RB.stop();
 }
 
 void drive_brake() {
@@ -91,21 +88,23 @@ extern double X, Y;
 void DriveToPoint(double targetX, double targetY, float speedMult = 1) {
   // T=turn
   // D=distance
-  float tError = atan2(X - targetX, targetY - Y);
-  float Tkp = .4, Tki = .2, Tkd = .33;
+  float tError = gyro1.rotation(degrees) - atan2(targetY-Y,X - targetX);
+  float Tkp = 2.5, Tki = 0, Tkd = 0;
   float tErrorOld=tError;
   float tSum=0;
 
   float dError =
       sqrt((targetX - X) * (targetX - X) + (targetY - Y) * (targetY - Y));
-  float Dkp = 10, Dki = 2, Dkd = 5;
+  float Dkp = 3, Dki = 0, Dkd = 0;
   float dErrorOld=dError;
   float dSum=0;
 
-  float accuracy = 3;
+  float accuracy = 1;
 
-  while (!((fabs(targetX - X) < accuracy) && (fabs(targetY - Y) < accuracy))) {
-    tError = atan2(X - targetX, targetY - Y);
+  while ((fabs(targetX - X) > accuracy) || (fabs(targetY - Y) > accuracy)) 
+  {
+    
+    tError = -gyro1.orientation(yaw, degrees)-(atan2(targetY-Y, X-targetX)*180/M_PI);
     dError =
         sqrt((targetX - X) * (targetX - X) + (targetY - Y) * (targetY - Y));
     float lSpeed = (Dkp * dError) + (Dki * dSum) + (Dkd * (dError - tErrorOld)) + 
@@ -113,7 +112,14 @@ void DriveToPoint(double targetX, double targetY, float speedMult = 1) {
 
     float rSpeed=(Dkp * dError) + (Dki * dSum) + (Dkd * (dError - dErrorOld)) -( 
     (Tkp * tError) + (Tki * tSum) + (Tkd * (tError - tErrorOld)));
-    drive((lSpeed) * speedMult, (rSpeed) * speedMult, 10);
+    if(speedMult<0){
+      double idk;
+      idk=rSpeed;
+      rSpeed=lSpeed;
+      lSpeed=idk;
+    }
+  std::cout<<tError<< ","<< dError<<","<<X<<","<<Y<<std::endl;
+    drive((lSpeed) * speedMult, (rSpeed) * speedMult, 12);
     dErrorOld=dError;
     dSum+=dError;
 
