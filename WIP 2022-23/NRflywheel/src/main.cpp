@@ -64,6 +64,7 @@ void drive_brake();
 void rotate(double dir, double accuracy = 1);
 void inchDrive(float dist, float accuracy = 1);
 void DriveToPoint(double targetX, double targetY, float speedMult = 1);
+void RAMSETE(float targetX, float targetY, float targetAngle,float accuracy=1);
 //flywheel.cpp
 void spinFlywheel(double speed);
 int controlFlywheelSpeed();

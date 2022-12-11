@@ -1,7 +1,7 @@
 
-#include <stdio.h>
 #include "vex.h"
 #include <iostream>
+#include <stdio.h>
 
 #include <math.h>
 
@@ -88,43 +88,74 @@ extern double X, Y;
 void DriveToPoint(double targetX, double targetY, float speedMult = 1) {
   // T=turn
   // D=distance
-  float tError = gyro1.rotation(degrees) - atan2(targetY-Y,X - targetX);
+  float tError = gyro1.rotation(degrees) - atan2(targetY - Y, X - targetX);
   float Tkp = 2.5, Tki = 0, Tkd = 0;
-  float tErrorOld=tError;
-  float tSum=0;
+  float tErrorOld = tError;
+  float tSum = 0;
 
   float dError =
       sqrt((targetX - X) * (targetX - X) + (targetY - Y) * (targetY - Y));
   float Dkp = 3, Dki = 0, Dkd = 0;
-  float dErrorOld=dError;
-  float dSum=0;
+  float dErrorOld = dError;
+  float dSum = 0;
 
   float accuracy = 1;
 
-  while ((fabs(targetX - X) > accuracy) || (fabs(targetY - Y) > accuracy)) 
-  {
-    
-    tError = -gyro1.orientation(yaw, degrees)-(atan2(targetY-Y, X-targetX)*180/M_PI);
+  while ((fabs(targetX - X) > accuracy) || (fabs(targetY - Y) > accuracy)) {
+
+    tError = -gyro1.orientation(yaw, degrees) -
+             (atan2(targetY - Y, X - targetX) * 180 / M_PI);
     dError =
         sqrt((targetX - X) * (targetX - X) + (targetY - Y) * (targetY - Y));
-    float lSpeed = (Dkp * dError) + (Dki * dSum) + (Dkd * (dError - tErrorOld)) + 
-    (Tkp * tError) + (Tki * tSum) + (Tkd * (tError - tErrorOld));
+    float lSpeed = (Dkp * dError) + (Dki * dSum) +
+                   (Dkd * (dError - tErrorOld)) + (Tkp * tError) +
+                   (Tki * tSum) + (Tkd * (tError - tErrorOld));
 
-    float rSpeed=(Dkp * dError) + (Dki * dSum) + (Dkd * (dError - dErrorOld)) -( 
-    (Tkp * tError) + (Tki * tSum) + (Tkd * (tError - tErrorOld)));
-    if(speedMult<0){
+    float rSpeed =
+        (Dkp * dError) + (Dki * dSum) + (Dkd * (dError - dErrorOld)) -
+        ((Tkp * tError) + (Tki * tSum) + (Tkd * (tError - tErrorOld)));
+    if (speedMult < 0) {
       double idk;
-      idk=rSpeed;
-      rSpeed=lSpeed;
-      lSpeed=idk;
+      idk = rSpeed;
+      rSpeed = lSpeed;
+      lSpeed = idk;
     }
-  std::cout<<tError<< ","<< dError<<","<<X<<","<<Y<<std::endl;
-    drive((lSpeed) * speedMult, (rSpeed) * speedMult, 12);
-    dErrorOld=dError;
-    dSum+=dError;
+    std::cout << tError << "," << dError << "," << X << "," << Y << std::endl;
+    drive((lSpeed)*speedMult, (rSpeed)*speedMult, 12);
+    dErrorOld = dError;
+    dSum += dError;
 
-    tErrorOld=tError;
-    tSum+=tError;
+    tErrorOld = tError;
+    tSum += tError;
   }
   drive_brake();
+}
+
+void RAMSETE(float targetX, float targetY, float targetAngle,
+             float accuracy = 1) {
+  // https://wiki.purduesigbots.com/software/control-algorithms/ramsete
+  //θ - copy and paste theta
+  float errorX = targetX - X;
+  float errorY = targetY - Y;
+  float smallScalar = 0.01;
+  float beta = 0.7;
+  float zeta = 2.0;
+  while (!((fabs(errorX) > accuracy) && (fabs(errorY)) > accuracy)) {
+    errorX = targetX - X;
+    errorY = targetY - Y;
+    float errorθ = targetAngle - gyro1.rotation();
+    float ey = cos(gyro1.rotation()) * errorX + sin(gyro1.rotation()) * errorY;
+    float ex = -sin(gyro1.rotation()) * errorX + cos(gyro1.rotation()) * errorY;
+    float eθ = errorθ;
+
+    float vd = smallScalar * ey;
+    float wd = smallScalar * eθ;
+    float k = 2 * zeta * sqrt(pow(wd, 2) + beta * pow(vd, 2));
+    float v = vd * cos(eθ) + k * ex;
+    float w = wd + k * eθ + (beta * vd * sin(eθ) * ey) / eθ;
+    float linearMotorVelocity = v / (M_PI * 3.25);
+    float left = linearMotorVelocity + w;
+    float right = linearMotorVelocity - w;
+    drive(left, right, 10);
+  }
 }
