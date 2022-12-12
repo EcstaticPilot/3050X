@@ -65,6 +65,7 @@ void rotate(double dir, double accuracy = 1);
 void inchDrive(float dist, float accuracy = 1);
 void DriveToPoint(double targetX, double targetY, float speedMult = 1);
 void RAMSETE(float targetX, float targetY, float targetAngle,float accuracy=1);
+void DriveToPoint2(float targetX,float targetY);
 //flywheel.cpp
 void spinFlywheel(double speed);
 int controlFlywheelSpeed();
@@ -185,7 +186,7 @@ loading = false;
   waitUntil(FSPEED > 99&&FSPEED<101);
   pistonToggle();
   loading = true;*/
-  DriveToPoint(50, -25,1);
+ DriveToPoint2(20, 0);
 }
 
 /*---------------------------------------------------------------------------*/
