@@ -144,22 +144,22 @@ void RAMSETE(float targetX, float targetY, float targetAngle,
   //θ - copy and paste theta
   float errorX = targetX - X;
   float errorY = targetY - Y;
-  float smallScalar = 0.005;
+  float smallScalar = 0.01;
   float beta = 0.3;
   float zeta = .2;
   while (!((fabs(errorX) < accuracy) && (fabs(errorY)) < accuracy)) {
     errorX = targetX - X;
     errorY = targetY - Y;
     float errorθ = - gyro1.rotation()-(atan2(targetY - Y, X - targetX) * 180 / M_PI);
-    float ex = cos(gyro1.rotation()) * errorX + sin(gyro1.rotation()) * errorY;
-    float ey = -sin(gyro1.rotation()) * errorX + cos(gyro1.rotation()) * errorY;
+    float ey = cos(gyro1.rotation()) * errorY + sin(gyro1.rotation()) * errorX;
+    float ex = -sin(gyro1.rotation()) * errorY + cos(gyro1.rotation()) * errorX;
     float eθ = errorθ;
 
-    float vd = errorX*2;
-    float wd = 0.0000000000000000001;
+    float vd = errorY*smallScalar;
+    float wd = eθ*smallScalar;
     float k = 2 * zeta * sqrt(pow(wd, 2) + beta * pow(vd, 2));
-    float v = (vd * cos(eθ)) + (k * ex);
-    float w = wd + k * eθ + (beta * vd * sin(eθ) * ey) / eθ;
+    float v = (vd * cos(eθ)) + (k * ey);
+    float w = wd + k * eθ + (beta * vd * sin(eθ) * ex) / eθ;
     
     float linearMotorVelocity = v / (M_PI * 3.25);
     float left = linearMotorVelocity;//+ w;
