@@ -12,7 +12,6 @@
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
 // Controller1          controller                    
-// F1                   motor         2               
 // F2                   motor         15              
 // Injector             digital_out   A               
 // LF                   motor         18              
@@ -28,7 +27,7 @@
 // Color                optical       7               
 // TurretE              rotation      17              
 // turretOptical        optical       9               
-// Controller2          controller                    
+// roller               motor         19              
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "stdio.h"
@@ -77,7 +76,7 @@ int turretStable();
 void turretSpinTo(double targetAngle, bool global);
 //discFiring.cpp
 void pistonToggle();
-void fireDisc();
+void fireDiscs();
 void pistonToggleReady();
 
 /*
@@ -118,7 +117,7 @@ void pre_auton(void) {
   vexcodeInit();
   if (!(RB.installed() && LB.installed() && RF.installed() &&
         LF.installed() &&                            // drive motors
-        F1.installed() && F2.installed()             // flywheel
+        F2.installed()             // flywheel
         && Intake1.installed() && turret.installed() // turret and intake
         && gyro1.installed() && RotationL.installed() &&
         RotationB.installed() // odom stuff
@@ -186,7 +185,33 @@ loading = false;
   waitUntil(FSPEED > 99&&FSPEED<101);
   pistonToggle();
   loading = true;*/
- DriveToPoint2(20, 0);
+ 
+//FAR SIDE
+inchDrive(10);
+loading=false;
+fireDiscs();
+loading=true;
+Intake1.spin(forward, 75, pct);
+DriveToPoint(58.42, 34.86);
+DriveToPoint(81.99, 58.42);
+rotate(90);
+loading=false;
+fireDiscs();
+
+//NEAR SIDE
+drive(-25, -25, 0);
+roller.spin(forward, 100, pct);
+waitUntil(Color.color()==red);
+roller.stop();
+drive_brake();
+loading=false;
+fireDiscs();
+loading=true;
+inchDrive(5);
+Intake1.spin(forward, 75, pct);
+DriveToPoint(92, 70);
+loading=false;
+fireDiscs();
 }
 
 /*---------------------------------------------------------------------------*/
@@ -228,27 +253,7 @@ void usercontrol(void) {
       TargetSpeed += 0.5;
       wait(10, msec);
     }
-    if (Controller2.ButtonL2.pressing()) {
-      offset += 0.5;
-      wait(10, msec);
-    }
-    if (Controller2.ButtonR2.pressing()) {
-      offset -= 0.5;
-      wait(10, msec);
-    }
-
-    if (Controller2.ButtonX.pressing()) {
-      TargetSpeed = 0;
-    }
-    if (Controller2.ButtonA.pressing()) {
-      TargetSpeed = 75;
-    }
-    if (Controller2.ButtonB.pressing()) {
-      TargetSpeed = 85;
-    }
-    if (Controller2.ButtonY.pressing()) {
-      TargetSpeed = 100;
-    }
+ 
     if(Controller1.ButtonUp.pressing()){
       TargetSpeed=75;
     }
@@ -315,9 +320,8 @@ int main() {
   Controller1.ButtonLeft.pressed(pistonToggle);
   Controller1.ButtonRight.pressed(driveSwitch);
   Controller1.ButtonX.pressed(toggleTurret);
-  Controller1.ButtonA.pressed(fireDisc);
-  Controller2.ButtonUp.pressed(pistonToggleReady);
-  Controller2.ButtonLeft.pressed(pistonToggle);
+  Controller1.ButtonA.pressed(fireDiscs);
+
   // Run the pre-autonomous function.
   pre_auton();
 

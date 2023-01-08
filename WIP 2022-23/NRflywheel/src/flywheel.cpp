@@ -9,7 +9,7 @@ double TargetSpeed = 0;
 void spinFlywheel(double speed) {
   speed = speed * 120; // speed is in pctage so convert to mV 100% = 12000
                        // mV
-  F1.spin(forward, speed, voltageUnits::mV);
+ 
   F2.spin(forward, speed, voltageUnits::mV);
 }
 double FWDrive = 0;
@@ -43,14 +43,14 @@ int controlFlywheelSpeed() {
     s3 = s2;
     s2 = s1;
     s1 = s0;
-    s0 = F1.velocity(pct);
+    s0 = F2.velocity(pct);
     FSPEED = (s0 + s1 + s2 + s3 + s4 + s5 + s6 + s7 + s8 + s9 + s10 + s11) / 12;
     double kP = 2.5;
     double error = TargetSpeed - FSPEED;
     // std::cout<<F1.velocity(pct) << ","<<
     // FSPEED<<","<<TargetSpeed<<","<<TargetSpeed+kP*error<<std::endl;
     if (TargetSpeed <= 0) {
-      F1.stop(coast);
+   
       F2.stop(coast);
     }
     spinFlywheel(TargetSpeed + kP * error);

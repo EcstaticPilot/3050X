@@ -12,14 +12,14 @@ void pistonToggle() {
   }
 }
 
-void fireDisc() {
+void fireDiscs() {
   loading = false;
   TargetSpeed = 75; // need to create formula
   waitUntil(fabs(TurretE.velocity(rpm)) < 1 &&
             fabs((FSPEED - TargetSpeed)) < 1);
   pistonToggle();
   if (turretOptical.isNearObject())
-    fireDisc();
+    fireDiscs();
   else {
     loading = true;
     TargetSpeed = 0;
@@ -28,11 +28,11 @@ void fireDisc() {
 
 void pistonToggleReady() {
   Brain.Screen.drawRectangle(120, 190, 60, 60, orange);
-  waitUntil(F1.velocity(pct) < TargetSpeed + .25 &&
-            F1.velocity(pct) > TargetSpeed - .25);
+  waitUntil(FSPEED < TargetSpeed + .25 &&
+            FSPEED > TargetSpeed - .25);
   wait(10, msec);
-  waitUntil(F1.velocity(pct) < TargetSpeed + .25 &&
-            F1.velocity(pct) > TargetSpeed - .25);
+  waitUntil(FSPEED < TargetSpeed + .25 &&
+            FSPEED > TargetSpeed - .25);
   Brain.Screen.drawRectangle(120, 190, 60, 60, black);
   if (turretOptical.isNearObject()) {
     Injector.set(true);

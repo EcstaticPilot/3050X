@@ -9,7 +9,6 @@ brain  Brain;
 
 // VEXcode device constructors
 controller Controller1 = controller(primary);
-motor F1 = motor(PORT2, ratio6_1, true);
 motor F2 = motor(PORT15, ratio6_1, false);
 digital_out Injector = digital_out(Brain.ThreeWirePort.A);
 motor LF = motor(PORT18, ratio18_1, false);
@@ -25,7 +24,7 @@ inertial turretG = inertial(PORT14);
 optical Color = optical(PORT7);
 rotation TurretE = rotation(PORT17, false);
 optical turretOptical = optical(PORT9);
-controller Controller2 = controller(partner);
+motor roller = motor(PORT19, ratio36_1, false);
 
 // VEXcode generated functions
 // define variable for remote controller enable/disable
