@@ -80,6 +80,10 @@ Discarded input sections
                 0x0000000000000000      0x3b0 build/src/drive.o
  .ARM.exidx.text._Z7RAMSETEffff
                 0x0000000000000000        0x8 build/src/drive.o
+ .text._Z13DriveToPoint3ffff
+                0x0000000000000000      0x1d4 build/src/drive.o
+ .ARM.exidx.text._Z13DriveToPoint3ffff
+                0x0000000000000000        0x8 build/src/drive.o
  .llvm_addrsig  0x0000000000000000        0xb build/src/drive.o
  .text          0x0000000000000000        0x0 build/src/flywheel.o
  .text._Z12spinFlywheeld

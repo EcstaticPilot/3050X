@@ -170,3 +170,41 @@ void RAMSETE(float targetX, float targetY, float targetAngle,
   drive_brake();
   Controller1.rumble(".");
 }
+void DriveToPoint3(float targetX, float targetY, float targetAngle,
+             float accuracy = 1) {
+  //θ - copy and paste theta
+  float errorX = targetX - X;
+  float errorY = targetY - Y;
+  float 
+  vp=15,
+  vi=1,
+  vd=3;
+  float 
+  wp=5,
+  wi=0.5,
+  wd=1;
+  float ySum=0;
+  float xSum=0;
+
+  while (!((fabs(errorX) < accuracy) && (fabs(errorY)) < accuracy)) {
+    errorX = targetX - X;
+    errorY = targetY - Y;
+
+    float ey = cos(gyro1.rotation()) * errorY + sin(gyro1.rotation()) * errorX;
+    float ex = -sin(gyro1.rotation()) * errorY + cos(gyro1.rotation()) * errorX;
+
+    float prevX =ex;
+    float prevY =ey;
+
+    float v = vp*ey+vi*ySum+vd*(prevY-ey);
+    float w = wp*ex+wi*xSum+wd*(prevX-ex);
+    
+    float left = v+ w;
+    float right = v- w;
+
+    ySum += ey;
+    xSum += ex;
+    drive(left, right, 10);
+  }
+  drive_brake();
+             }
