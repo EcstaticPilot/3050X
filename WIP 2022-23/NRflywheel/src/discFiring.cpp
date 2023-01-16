@@ -14,7 +14,7 @@ void pistonToggle() {
 
 void fireDiscs() {
   loading = false;
-  TargetSpeed = 75; // need to create formula
+// need to create formula
   waitUntil(fabs(TurretE.velocity(rpm)) < 1 &&
             fabs((FSPEED - TargetSpeed)) < 1);
   pistonToggle();

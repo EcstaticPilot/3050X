@@ -19,15 +19,16 @@
 // RF                   motor         20              
 // RB                   motor         4               
 // Intake1              motor         1               
-// turret               motor         21              
+// turret               motor         9               
 // gyro1                inertial      11              
 // RotationL            rotation      5               
 // RotationB            rotation      3               
 // turretG              inertial      14              
 // Color                optical       7               
 // TurretE              rotation      17              
-// turretOptical        optical       9               
-// roller               motor         19              
+// turretOptical        optical       2               
+// roller               motor         6               
+// expansion            digital_out   B               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "stdio.h"
@@ -266,13 +267,13 @@ void usercontrol(void) {
     */
     if (intakeOn) {
       Intake1.spin(forward, 80, pct);
-    } else {
+    } 
 
       if ((isRed?Color.color() == red:Color.color()==blue)  && Color.isNearObject())
-        Intake1.spin(forward, 200, rpm);
+        roller.spin(forward, 200, rpm);
       else
-        Intake1.stop();
-    }
+        roller.stop();
+    
     Color.setLightPower(100);
     if (Color.isNearObject())
       Color.setLight(ledState::on);
