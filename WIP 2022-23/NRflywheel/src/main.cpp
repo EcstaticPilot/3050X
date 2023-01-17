@@ -233,8 +233,6 @@ bool driveDir = 0;
 void driveSwitch() { driveDir = !driveDir; }
 
 void usercontrol(void) {
-  X = 75;
-  Y = 0;
     //thread turretStablization = thread(turretStable);
 
  // thread flywheelgo = thread(controlFlywheelSpeed);

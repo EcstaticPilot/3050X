@@ -24,8 +24,7 @@ int turretStable() {
   double speed;
   while (true) {
     GoalAngle = atan2(X - 115, 115 - Y) * (180 / M_PI);
-    double turretEncoderAngle =
-        (TurretE.angle() > 180 ? TurretE.angle() - 360 : TurretE.angle());
+    
     if (!loading) {
 
       if (fabs(GoalAngle + offset - turretG.orientation(yaw, degrees)) <
@@ -62,16 +61,16 @@ int turretStable() {
           }
       else { // if not loading go to zero
 
-        error = turretEncoderAngle;
+        error = TurretE.position(degrees);
         kp = 0.8;
           kd = 0.3;
         VisionReady = false; // vision is not ready
       }
 
       speed = (error * kp) + (ki * sum) + (kd * (error - prevError));
-      if ((speed > 0 && turretEncoderAngle < -150))
+      if ((speed > 0 && TurretE.position(degrees) < -120))
         speed = 0;
-      if ((speed < 0 && turretEncoderAngle > 85))
+      if ((speed < 0 && TurretE.position(degrees) > 180))
         speed = 0;
       turret.spin(fwd, speed , pct);
 
