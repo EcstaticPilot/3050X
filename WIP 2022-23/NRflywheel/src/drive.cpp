@@ -185,22 +185,24 @@ void DriveToPoint3(float targetX, float targetY, float targetAngle,
   wd=1;
   float ySum=0;
   float xSum=0;
-
+  float ey = cos(gyro1.rotation()) * errorY + sin(gyro1.rotation()) * errorX;
+  float ex = -sin(gyro1.rotation()) * errorY + cos(gyro1.rotation()) * errorX;
   while (!((fabs(errorX) < accuracy) && (fabs(errorY)) < accuracy)) {
     errorX = targetX - X;
     errorY = targetY - Y;
 
-    float ey = cos(gyro1.rotation()) * errorY + sin(gyro1.rotation()) * errorX;
-    float ex = -sin(gyro1.rotation()) * errorY + cos(gyro1.rotation()) * errorX;
 
     float prevX =ex;
     float prevY =ey;
 
-    float v = vp*ey+vi*ySum+vd*(prevY-ey);
-    float w = wp*ex+wi*xSum+wd*(prevX-ex);
+    ey =  cos(gyro1.rotation()) * errorY + sin(gyro1.rotation()) * errorX;
+    ex = -sin(gyro1.rotation()) * errorY + cos(gyro1.rotation()) * errorX;
+
+    float v = vp*ey + vi*ySum + vd*(prevY-ey);
+    float w = wp*ex + wi*xSum + wd*(prevX-ex);
     
-    float left = v+ w;
-    float right = v- w;
+    float left = v + w;
+    float right = v - w;
 
     ySum += ey;
     xSum += ex;

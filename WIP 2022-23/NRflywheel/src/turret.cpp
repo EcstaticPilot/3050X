@@ -12,9 +12,9 @@ int turretStable() {
   loading = true;
   // while (true) {
   // safe working valuse double kp = 1; double ki = 0;double kd = 0.3;
-  double kp = 1;
+  double kp = 3;
   double ki = 0;
-  double kd = 0.3;
+  double kd = 0.9;
   double sum = 0;
   double prevError = 0;
 
@@ -41,29 +41,29 @@ int turretStable() {
           Brain.Screen.printAt(1, 100, "error  = %.1f      ", error);
           Brain.Screen.printAt(1, 160, "vision  = %.1f      ",
                                Vision16.largestObject.centerX);
-          kp = 0.2;
-          kd = 0;
+          kp = 1;
+          kd = .2;
           if(fabs(error)<20)VisionReady=true;
           else VisionReady=false;
         } else {
           VisionReady=false;
           error = -(GoalAngle + offset) - turretG.orientation(yaw, degrees);
-          kp = 0.8;
-          kd = 0.3;
+          kp = 3;
+          kd = 0.9;
         }
       } else {
         VisionReady=false;
         error = -(GoalAngle + offset) - turretG.orientation(yaw, degrees);
-        kp = 0.8;
-          kd = 0.3;
+        kp = 3;
+          kd = 0.9;
       }
       //    VisionReady=false;//vision is not ready
           }
       else { // if not loading go to zero
 
         error = TurretE.position(degrees);
-        kp = 0.8;
-          kd = 0.3;
+        kp = 3;
+          kd = 0.9;
         VisionReady = false; // vision is not ready
       }
 
