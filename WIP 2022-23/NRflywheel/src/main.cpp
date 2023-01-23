@@ -187,6 +187,9 @@ loading = false;
   pistonToggle();
   loading = true;*/
  
+expansion.set(true);
+// do the pistons default to false? if so, that would set off the expansion early
+
 //FAR SIDE
 inchDrive(10);
 loading=false;
@@ -244,6 +247,7 @@ void usercontrol(void) {
     CONTROLLER 2 SPEED CONTROL
 
     */
+    expansion.set(true);
     if (Controller1.ButtonL1.pressing()) {
       TargetSpeed -= 0.5;
       wait(10, msec);
@@ -306,6 +310,9 @@ void usercontrol(void) {
   }
 }
 
+void expansion_fire() {
+  expansion.set(false);
+}
 
 // Main will set up the competition functions and callbacks.
 //
@@ -320,6 +327,7 @@ int main() {
   Controller1.ButtonRight.pressed(driveSwitch);
   Controller1.ButtonX.pressed(toggleTurret);
   Controller1.ButtonA.pressed(fireDiscs);
+  Controller1.ButtonY.pressed(expansion_fire); 
 
   // Run the pre-autonomous function.
   pre_auton();
