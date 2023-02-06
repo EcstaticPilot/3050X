@@ -25,7 +25,7 @@ optical Color = optical(PORT7);
 rotation TurretE = rotation(PORT17, false);
 optical turretOptical = optical(PORT2);
 motor roller = motor(PORT6, ratio36_1, false);
-digital_out expansion = digital_out(Brain.ThreeWirePort.B);
+digital_out expansion = digital_out(Brain.ThreeWirePort.D);
 
 // VEXcode generated functions
 // define variable for remote controller enable/disable

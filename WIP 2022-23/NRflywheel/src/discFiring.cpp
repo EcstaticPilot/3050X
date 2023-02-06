@@ -7,7 +7,7 @@ extern float FSPEED;
 void pistonToggle() {
   if (turretOptical.isNearObject()) {
     Injector.set(true);
-    wait(100, msec);
+    wait(120, msec);
     Injector.set(false);
   }
 }
@@ -16,13 +16,12 @@ void fireDiscs() {
   loading = false;
 // need to create formula
   waitUntil(fabs(TurretE.velocity(rpm)) < 1 &&
-            fabs((FSPEED - TargetSpeed)) < 1);
-  pistonToggle();
+            fabs((FSPEED - TargetSpeed)) < 2);
+  pistonToggle(); 
   if (turretOptical.isNearObject())
     fireDiscs();
   else {
     loading = true;
-    TargetSpeed = 0;
   }
 }
 

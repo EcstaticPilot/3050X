@@ -1,6 +1,7 @@
 #include "vex.h"
 #include <math.h>
 #include "vision.h"
+#include <iostream>
 bool loading=false;
 double GoalAngle;
 extern double X,Y;
@@ -10,6 +11,7 @@ extern bool isRed;
 int turretStable() {
   Controller1.rumble("..");
   loading = true;
+  TurretE.setPosition(0, turns);
   // while (true) {
   // safe working valuse double kp = 1; double ki = 0;double kd = 0.3;
   double kp = 3;
@@ -41,29 +43,30 @@ int turretStable() {
           Brain.Screen.printAt(1, 100, "error  = %.1f      ", error);
           Brain.Screen.printAt(1, 160, "vision  = %.1f      ",
                                Vision16.largestObject.centerX);
-          kp = 1;
+          kp = 0.5;
           kd = .2;
           if(fabs(error)<20)VisionReady=true;
           else VisionReady=false;
         } else {
           VisionReady=false;
           error = -(GoalAngle + offset) - turretG.orientation(yaw, degrees);
-          kp = 3;
-          kd = 0.9;
+          kp = 1;
+          kd = 0.3;
         }
       } else {
         VisionReady=false;
         error = -(GoalAngle + offset) - turretG.orientation(yaw, degrees);
-        kp = 3;
-          kd = 0.9;
+       kp = 1;
+          kd = 0.3;
       }
       //    VisionReady=false;//vision is not ready
           }
       else { // if not loading go to zero
 
-        error = TurretE.position(degrees);
-        kp = 3;
-          kd = 0.9;
+        error=  TurretE.position(turns)*360;
+        std::cout<<error<<std::endl;
+       kp = 0.5;
+          kd = 0.3;
         VisionReady = false; // vision is not ready
       }
 

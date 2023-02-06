@@ -1,3 +1,47 @@
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// Controller1          controller                    
+// F2                   motor         15              
+// Injector             digital_out   A               
+// LF                   motor         18              
+// LB                   motor         12              
+// RF                   motor         20              
+// RB                   motor         4               
+// Intake1              motor         1               
+// turret               motor         9               
+// gyro1                inertial      11              
+// RotationL            rotation      5               
+// RotationB            rotation      3               
+// turretG              inertial      14              
+// Color                optical       7               
+// TurretE              rotation      17              
+// turretOptical        optical       2               
+// roller               motor         6               
+// expansion            digital_out   D               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// Controller1          controller                    
+// F2                   motor         15              
+// Injector             digital_out   A               
+// LF                   motor         18              
+// LB                   motor         12              
+// RF                   motor         20              
+// RB                   motor         4               
+// Intake1              motor         1               
+// turret               motor         9               
+// gyro1                inertial      11              
+// RotationL            rotation      5               
+// RotationB            rotation      3               
+// turretG              inertial      14              
+// Color                optical       7               
+// TurretE              rotation      17              
+// turretOptical        optical       2               
+// roller               motor         6               
+// expansion            digital_out   B               
+// ---- END VEXCODE CONFIGURED DEVICES ----
 
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
@@ -45,7 +89,7 @@ using namespace vex;
 competition Competition;
 
 //declaring external variables
-bool isRed=false;
+bool isRed=true;
 extern double GoalAngle;
 extern float offset;
 extern bool loading;
@@ -178,20 +222,20 @@ void autonomous(void) {
    
 */
 
-/*
+
 loading = false;
-  TargetSpeed=100;
-  waitUntil(FSPEED> 99&&FSPEED<101);
+  TargetSpeed=70;
+  waitUntil(FSPEED> 68&&FSPEED<72);
   pistonToggle();
-  waitUntil(FSPEED > 99&&FSPEED<101);
+  waitUntil(FSPEED > 68&&FSPEED<72);
   pistonToggle();
-  loading = true;*/
+  loading = true;
  
-expansion.set(true);
+//expansion.set(true);
 // do the pistons default to false? if so, that would set off the expansion early
 
 //FAR SIDE
-inchDrive(10);
+/*inchDrive(10);
 loading=false;
 fireDiscs();
 loading=true;
@@ -201,21 +245,22 @@ DriveToPoint(81.99, 58.42);
 rotate(90);
 loading=false;
 fireDiscs();
+*/
 
 //NEAR SIDE
+/*
 drive(-25, -25, 0);
+TargetSpeed=75;
 roller.spin(forward, 100, pct);
-waitUntil(Color.color()==red);
+waitUntil(isRed?Color.color()==blue:Color.color()==red);
 roller.stop();
 drive_brake();
 loading=false;
-fireDiscs();
-loading=true;
-inchDrive(5);
-Intake1.spin(forward, 75, pct);
-DriveToPoint(92, 70);
-loading=false;
-fireDiscs();
+waitUntil(fabs(TurretE.velocity(rpm))<5);
+pistonToggle();
+wait(500, msec);
+pistonToggle();
+loading=true;*/
 }
 
 /*---------------------------------------------------------------------------*/
@@ -247,7 +292,9 @@ void usercontrol(void) {
     CONTROLLER 2 SPEED CONTROL
 
     */
-    expansion.set(true);
+    if (Controller1.ButtonY.pressing()) {
+      expansion.set(true);
+    }
     if (Controller1.ButtonL1.pressing()) {
       TargetSpeed -= 0.5;
       wait(10, msec);
@@ -262,20 +309,26 @@ void usercontrol(void) {
     }
 
   if(Controller1.ButtonDown.pressing())TargetSpeed=0;
+
     /*
 
     INTAKE
 
     */
     if (intakeOn) {
-      Intake1.spin(forward, 80, pct);
+      Intake1.spin(forward, 140, rpm);
     } 
+    if (!intakeOn) {
+      Intake1.stop();
+    }
 
       if ((isRed?Color.color() == red:Color.color()==blue)  && Color.isNearObject())
         roller.spin(forward, 200, rpm);
-      else
-        roller.stop();
-    
+      else{
+          if(Controller1.ButtonL2.pressing())roller.spin(forward, 100, pct);
+  else if(Controller1.ButtonR2.pressing())roller.spin(reverse, 100, pct);
+  else roller.stop();
+      }
     Color.setLightPower(100);
     if (Color.isNearObject())
       Color.setLight(ledState::on);
@@ -310,10 +363,6 @@ void usercontrol(void) {
   }
 }
 
-void expansion_fire() {
-  expansion.set(false);
-}
-
 // Main will set up the competition functions and callbacks.
 //
 int main() {
@@ -327,7 +376,6 @@ int main() {
   Controller1.ButtonRight.pressed(driveSwitch);
   Controller1.ButtonX.pressed(toggleTurret);
   Controller1.ButtonA.pressed(fireDiscs);
-  Controller1.ButtonY.pressed(expansion_fire); 
 
   // Run the pre-autonomous function.
   pre_auton();

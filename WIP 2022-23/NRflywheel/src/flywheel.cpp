@@ -45,7 +45,7 @@ int controlFlywheelSpeed() {
     s1 = s0;
     s0 = F2.velocity(pct);
     FSPEED = (s0 + s1 + s2 + s3 + s4 + s5 + s6 + s7 + s8 + s9 + s10 + s11) / 12;
-    double kP = 2.5;
+    double kP = 5;
     double error = TargetSpeed - FSPEED;
     // std::cout<<F1.velocity(pct) << ","<<
     // FSPEED<<","<<TargetSpeed<<","<<TargetSpeed+kP*error<<std::endl;

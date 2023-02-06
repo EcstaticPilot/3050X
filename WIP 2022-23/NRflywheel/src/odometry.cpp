@@ -4,9 +4,10 @@
 
 #include <math.h>
 
-double X=0,Y=0;
+double X=100,Y=10;
 int odometery() {
 double prevHeading = gyro1.heading();
+
 double deltaHeading = 0; // change in heading
 double absoluteOrientation = M_PI;
 double lRad = 1.375;      // radius of tracking wheel
