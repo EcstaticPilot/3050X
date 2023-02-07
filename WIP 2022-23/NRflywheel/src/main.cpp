@@ -92,11 +92,13 @@ competition Competition;
 bool isRed=true;
 extern double GoalAngle;
 extern float offset;
+extern int mode;
 extern bool loading;
 extern double TargetSpeed;
 extern double X,Y;
 extern bool VisionReady;
 extern bool TurretToggle;
+extern double GoalAngle;
 /*
 
 FUNCTIONS
@@ -142,7 +144,13 @@ int ControllerPrint() {
     Controller1.Screen.setCursor(2, 1);
     Controller1.Screen.print("pos= (%.1f,%.1f)", X, Y);
     Controller1.Screen.setCursor(3, 1);
-    Controller1.Screen.print("distance=%.2f ",sqrt( (115-X)*(115-X)+(115-Y)*(115-Y)));
+    switch(mode){
+      case 1:Controller1.Screen.print("usingCamera",GoalAngle);
+      case 2:Controller1.Screen.print("no goal",GoalAngle);
+      case 3:Controller1.Screen.print("going to goal",GoalAngle);
+      case 4:Controller1.Screen.print("loading",GoalAngle);
+    }
+    
     this_thread::sleep_for(50);
   }
 }
@@ -156,6 +164,7 @@ int ControllerPrint() {
 /*  function is only called once after the V5 has been powered on and        */
 /*  not every time that the robot is disabled.                               */
 /*---------------------------------------------------------------------------*/
+
 
 void pre_auton(void) {
 

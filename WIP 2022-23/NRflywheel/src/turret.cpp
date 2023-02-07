@@ -7,6 +7,7 @@ double GoalAngle;
 extern double X,Y;
 float offset=0;
 bool VisionReady;
+int mode=0;
 extern bool isRed;
 int turretStable() {
   Controller1.rumble("..");
@@ -43,8 +44,9 @@ int turretStable() {
           Brain.Screen.printAt(1, 100, "error  = %.1f      ", error);
           Brain.Screen.printAt(1, 160, "vision  = %.1f      ",
                                Vision16.largestObject.centerX);
-          kp = 0.5;
-          kd = .2;
+          mode=1;
+          kp = 0.3;
+          kd = .02;
           if(fabs(error)<20)VisionReady=true;
           else VisionReady=false;
         } else {
@@ -52,12 +54,14 @@ int turretStable() {
           error = -(GoalAngle + offset) - turretG.orientation(yaw, degrees);
           kp = 1;
           kd = 0.3;
+          mode=2;
         }
       } else {
         VisionReady=false;
         error = -(GoalAngle + offset) - turretG.orientation(yaw, degrees);
        kp = 1;
           kd = 0.3;
+          mode=3;
       }
       //    VisionReady=false;//vision is not ready
           }
@@ -67,6 +71,7 @@ int turretStable() {
         std::cout<<error<<std::endl;
        kp = 0.5;
           kd = 0.3;
+          mode=4;
         VisionReady = false; // vision is not ready
       }
 
