@@ -145,10 +145,14 @@ int ControllerPrint() {
     Controller1.Screen.print("pos= (%.1f,%.1f)", X, Y);
     Controller1.Screen.setCursor(3, 1);
     switch(mode){
-      case 1:Controller1.Screen.print("usingCamera",GoalAngle);
-      case 2:Controller1.Screen.print("no goal",GoalAngle);
-      case 3:Controller1.Screen.print("going to goal",GoalAngle);
-      case 4:Controller1.Screen.print("loading",GoalAngle);
+      case 1:Controller1.Screen.print("usingCamera");
+      break;
+      case 2:Controller1.Screen.print("no goal");
+      break;
+      case 3:Controller1.Screen.print("going to goal");
+      break;
+      case 4:Controller1.Screen.print("loading");
+      break;
     }
     
     this_thread::sleep_for(50);
