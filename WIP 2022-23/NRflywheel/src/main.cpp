@@ -321,6 +321,10 @@ void usercontrol(void) {
       TargetSpeed=75;
     }
 
+// there's gotta be a better way to write this
+// also speed is untested as of Feb 8th
+// and yes, this will activate the roller at the same time but im guessing we can live 
+// with that?
   if(Controller1.ButtonDown.pressing())TargetSpeed=0;
   if (driveDir == false) {
     if (Controller1.ButtonL2.pressing()) {
@@ -328,6 +332,14 @@ void usercontrol(void) {
     }
     if (Controller1.ButtonR2.pressing()) {
       turret.spin(forward, 30, pct);
+    }
+  }
+  if (driveDir == true) {
+    if (Controller1.ButtonL2.pressing()) {
+      turret.spin(forward, 30, pct);
+    }
+    if (Controller1.ButtonR2.pressing()) {
+      turret.spin(forward, -30, pct);
     }
   }
   
