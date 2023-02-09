@@ -322,7 +322,15 @@ void usercontrol(void) {
     }
 
   if(Controller1.ButtonDown.pressing())TargetSpeed=0;
-
+  if (driveDir == false) {
+    if (Controller1.ButtonL2.pressing()) {
+      turret.spin(forward, -30, pct);
+    }
+    if (Controller1.ButtonR2.pressing()) {
+      turret.spin(forward, 30, pct);
+    }
+  }
+  
     /*
 
     INTAKE
