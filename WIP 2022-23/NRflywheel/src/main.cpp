@@ -337,9 +337,13 @@ void usercontrol(void) {
   if (driveDir == true) {
     if (Controller1.ButtonL2.pressing()) {
       turret.spin(forward, 30, pct);
+      wait(500, msec);
+      turret.stop(brake);
     }
     if (Controller1.ButtonR2.pressing()) {
       turret.spin(forward, -30, pct);
+      wait(500, msec);
+      turret.stop(brake);
     }
   }
   
