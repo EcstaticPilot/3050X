@@ -19,6 +19,7 @@
 // turretOptical        optical       2               
 // roller               motor         6               
 // expansion            digital_out   D               
+// Controller2          controller                    
 // ---- END VEXCODE CONFIGURED DEVICES ----
 // ---- START VEXCODE CONFIGURED DEVICES ----
 // Robot Configuration:
@@ -41,15 +42,6 @@
 // turretOptical        optical       2               
 // roller               motor         6               
 // expansion            digital_out   B               
-// ---- END VEXCODE CONFIGURED DEVICES ----
-
-/*----------------------------------------------------------------------------*/
-/*                                                                            */
-/*    Module:       main.cpp                                                  */
-/*    Author:       NR 7700P                                                  */
-/*    Created:      May 13, 2022                                              */
-/*    Description:  code of Nikhil Ramanuja 7700P turret bot vex spin up      */
-/*----------------------------------------------------------------------------*/
 // vex::vision::signature BGOAL = vex::vision::signature (1, -1855, 2553, 349,
 // 2243, 10039, 6141, 1, 0);
 // ---- START VEXCODE CONFIGURED DEVICES ----
@@ -89,7 +81,7 @@ using namespace vex;
 competition Competition;
 
 //declaring external variables
-bool isRed=true;
+bool isRed=false;
 extern double GoalAngle;
 extern float offset;
 extern int mode;
@@ -145,13 +137,13 @@ int ControllerPrint() {
     Controller1.Screen.print("pos= (%.1f,%.1f)", X, Y);
     Controller1.Screen.setCursor(3, 1);
     switch(mode){
-      case 1:Controller1.Screen.print("usingCamera");
+      case 1:Controller1.Screen.print("usingCamera.    ");
       break;
-      case 2:Controller1.Screen.print("no goal");
+      case 2:Controller1.Screen.print("no goal.        ");
       break;
-      case 3:Controller1.Screen.print("going to goal");
+      case 3:Controller1.Screen.print("going to goal   ");
       break;
-      case 4:Controller1.Screen.print("loading");
+      case 4:Controller1.Screen.print("loading.        ");
       break;
     }
     
@@ -353,7 +345,7 @@ void usercontrol(void) {
 
     */
     if (intakeOn) {
-      Intake1.spin(forward, 140, rpm);
+      Intake1.spin(forward, 160, rpm);
     } 
     if (!intakeOn) {
       Intake1.stop();

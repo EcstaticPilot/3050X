@@ -26,12 +26,13 @@ int turretStable() {
   // while(true){
   double speed;
   while (true) {
-    GoalAngle = atan2(X - 115, 115 - Y) * (180 / M_PI);
+    GoalAngle = atan2(X - 100, 120 - Y) * (180 / M_PI);
+ //   GoalAngle=atan2(Controller2.Axis2.value(),Controller2.Axis1.value())*180/M_PI; if(Controller2.Axis2.position()<5&&Controller2.Axis1.position()<5)loading=true;else loading=false;
     
     if (!loading) {
-
-      if (fabs(GoalAngle + offset - turretG.orientation(yaw, degrees)) <
-          20) {
+          std::cout<<GoalAngle- turretG.orientation(yaw, degrees)<<std::endl;
+      if (fabs(GoalAngle- turretG.orientation(yaw, degrees)) <
+          50) {
             if(isRed){ Vision16.takeSnapshot(RGOAL);
             }else {
             Vision16.takeSnapshot(BGOAL);
@@ -39,14 +40,14 @@ int turretStable() {
         // use vision sensor
         if (Vision16.largestObject.exists) {
 
-          error = Vision16.largestObject.centerX - 158;
+          error = Vision16.largestObject.centerX - 140;
 
           Brain.Screen.printAt(1, 100, "error  = %.1f      ", error);
           Brain.Screen.printAt(1, 160, "vision  = %.1f      ",
                                Vision16.largestObject.centerX);
           mode=1;
-          kp = 0.3;
-          kd = .02;
+          kp = 0.2;
+          //kd = .09;
           if(fabs(error)<20)VisionReady=true;
           else VisionReady=false;
         } else {
@@ -68,7 +69,7 @@ int turretStable() {
       else { // if not loading go to zero
 
         error=  TurretE.position(turns)*360;
-        std::cout<<error<<std::endl;
+      
        kp = 0.5;
           kd = 0.3;
           mode=4;
@@ -76,9 +77,9 @@ int turretStable() {
       }
 
       speed = (error * kp) + (ki * sum) + (kd * (error - prevError));
-      if ((speed > 0 && TurretE.position(degrees) < -120))
+      if ((speed > 0 && TurretE.position(turns)*360 < -120))
         speed = 0;
-      if ((speed < 0 && TurretE.position(degrees) > 180))
+      if ((speed < 0 && TurretE.position(turns)*360 > 270))
         speed = 0;
       turret.spin(fwd, speed , pct);
 
