@@ -6,6 +6,7 @@
 #include <math.h>
 
 float C = M_PI * 3.25;
+extern double X,Y;
 
 void drive(int lSpeed, int rSpeed, double wt) {
   LF.spin(forward, lSpeed, pct);
@@ -16,11 +17,21 @@ void drive(int lSpeed, int rSpeed, double wt) {
 }
 
 void drive_brake() {
-
   LF.stop(brake);
   RF.stop(brake);
   LB.stop(brake);
   RB.stop(brake);
+}
+
+void forward_dist(float dist) {
+  // 
+  float t_to_run = dist/C;
+  LF.spin(forward, 60, rpm);
+  RF.spin(forward, 60, rpm);
+  LB.spin(forward, 60, rpm);
+  RB.spin(forward, 60, rpm);
+  wait(t_to_run, sec);
+  drive_brake();
 }
 
 void rotate(double dir, double accuracy = 1) {
@@ -53,35 +64,23 @@ void rotate(double dir, double accuracy = 1) {
   drive_brake();
 }
 
-void inchDrive(float dist, float accuracy = 1) {
+void forward_drive(float dist) {
 
-  float start_position = LF.position(rev);
-  float curr_position = 0.0;
-  float error = dist - curr_position;
-  float old_error = error;
-  float kp =
-      10.0; // <-- how many - before the target you want to start slow down
-  float ki = 2.0; // <-- why do i need this??
-  float kd = 5.0;
-  float speed = 100;
-  float sum = 0.0;
+  float start_position;
+  float curr_position;
+  float error;
+  float old_error;
+  float sum;
 
-  while (fabs(error) > accuracy) {
+  wait(100, msec);
 
-    drive(speed, speed, 10); // move at 100% for 10 millisecs
-    curr_position = (LF.position(rev) - start_position) *
-                    C; // total inches traveled since start position
+  Brain.Screen.printAt(100, 150, "hello world");
+  Brain.Screen.printAt(10, 110, "first: %f,%f ", X, Y);
+  forward_dist(1);
+  wait(100, msec);
+  Brain.Screen.printAt(10, 120, "second: %f,%f ", X, Y);
 
-    old_error = error;            // save error
-    error = dist - curr_position; // get current error
-
-    sum = sum * 0.7 + error; // <--
-    speed = (error * kp) /*-*/ +
-            (ki * sum) /*speeds u up if ur taking a long time*/ +
-            (kd * (error - old_error)); /*slows u down
-if you're going too fast
-*/
-  }
+  
   drive_brake();
 }
 extern double X, Y;
@@ -135,7 +134,7 @@ void DriveToPoint2(float targetX,float targetY){
   rotate((atan2(targetY - Y, X - targetX) * 180 / M_PI));
   std::cout << gyro1.rotation()<< std::endl;
   wait(1, sec);
-  inchDrive(-(sqrt((targetX - X) * (targetX -  X) + (targetY - Y) * (targetY - Y))));
+  //inchDrive(-(sqrt((targetX - X) * (targetX -  X) + (targetY - Y) * (targetY - Y))));
   std::cout << X << "," << Y << std::endl;
 }
 void RAMSETE(float targetX, float targetY, float targetAngle,

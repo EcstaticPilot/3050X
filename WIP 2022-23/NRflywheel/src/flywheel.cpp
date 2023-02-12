@@ -1,15 +1,14 @@
-
-
 #include "stdio.h"
 #include "vex.h"
 #include <iostream>
 #include <math.h>
+#include <vector>
+#include <numeric>
 
 double TargetSpeed = 0;
 void spinFlywheel(double speed) {
   speed = speed * 120; // speed is in pctage so convert to mV 100% = 12000
                        // mV
- 
   F2.spin(forward, speed, voltageUnits::mV);
 }
 double FWDrive = 0;
@@ -18,45 +17,30 @@ double TBHval = 0;
 double fwDrive;
 float FSPEED;
 int controlFlywheelSpeed() {
-  float s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11;
-  s0 = 0;
-  s1 = 0;
-  s2 = 0;
-  s3 = 0;
-  s4 = 0;
-  s5 = 0;
-  s6 = 0;
-  s7 = 0;
-  s8 = 0;
-  s9 = 0;
-  s10 = 0;
-  s11 = 0;
+  std::vector<float> moving_avg;
+  int init_count = 0;
+  double error;
   while (true) {
-    s11 = s10;
-    s10 = s9;
-    s9 = s8;
-    s8 = s7;
-    s7 = s6;
-    s6 = s5;
-    s5 = s4;
-    s4 = s3;
-    s3 = s2;
-    s2 = s1;
-    s1 = s0;
-    s0 = F2.velocity(pct);
-    FSPEED = (s0 + s1 + s2 + s3 + s4 + s5 + s6 + s7 + s8 + s9 + s10 + s11) / 12;
-    double kP = 5;
-    double error = TargetSpeed - FSPEED;
+    if (init_count > 9) {
+      FSPEED = std::accumulate(moving_avg.begin(), moving_avg.end(), 0.0) / 10.0;
+      moving_avg.erase(moving_avg.begin());
+      error = TargetSpeed - FSPEED;
+
+      if (TargetSpeed <= 0) {
+        F2.stop(coast);
+      }
+
+      spinFlywheel(TargetSpeed);
+      this_thread::sleep_for(50);
+      FWDrive = fwDrive;
+      OldError = error;
+    } else {
+      init_count++;
+    }
+    moving_avg.push_back(F2.velocity(pct));
     // std::cout<<F1.velocity(pct) << ","<<
     // FSPEED<<","<<TargetSpeed<<","<<TargetSpeed+kP*error<<std::endl;
-    if (TargetSpeed <= 0) {
-   
-      F2.stop(coast);
-    }
-    spinFlywheel(TargetSpeed + kP * error);
-    this_thread::sleep_for(15);
-    FWDrive = fwDrive;
-    OldError = error;
+    
   }
 
   return 1;

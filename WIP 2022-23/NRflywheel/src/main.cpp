@@ -101,6 +101,7 @@ void drive(int lSpeed, int rSpeed, double wt);
 void drive_brake();
 void rotate(double dir, double accuracy = 1);
 void inchDrive(float dist, float accuracy = 1);
+void forward_drive(float dist);
 void DriveToPoint(double targetX, double targetY, float speedMult = 1);
 void RAMSETE(float targetX, float targetY, float targetAngle,float accuracy=1);
 void DriveToPoint2(float targetX,float targetY);
@@ -180,13 +181,13 @@ void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
 
   
-  gyro1.calibrate();
-  turretG.calibrate();
-  waitUntil(!(gyro1.isCalibrating() && turretG.isCalibrating()));
+  //gyro1.calibrate();
+ // turretG.calibrate();
+ // waitUntil(!(gyro1.isCalibrating() && turretG.isCalibrating()));
   //launch threads
-  thread flywheelgo = thread(controlFlywheelSpeed);
+  //thread flywheelgo = thread(controlFlywheelSpeed);
   thread odometeryTracking = thread(odometery);
-  thread turretStablization = thread(turretStable);
+  //thread turretStablization = thread(turretStable);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -199,22 +200,25 @@ void pre_auton(void) {
 /*  You must modify the code to add your own robot specific commands here .  */
 /*---------------------------------------------------------------------------*/
 
+void my_print() {
+ Brain.Screen.printAt(20, 100, "auton running");
+}
+
 void autonomous(void) {
 
-  /*
+  
   // thread turretStablization = thread(turretStable);
-
-  inchDrive(0.3);
+  thread printing = thread(my_print);
+  forward_drive(1);
   rotate(-90);
-  inchDrive(12);
-  rotate(0);
-  inchDrive(4.0);
-  Intake1.spin(forward, 100, pct);
-  Color.setLightPower(50);
-  waitUntil(Color.color() == blue);
-  wait(30, msec);
-  Intake1.stop();
-
+  // inchDrive(12);
+  // rotate(0);
+  // inchDrive(4.0);
+  // Intake1.spin(forward, 100, pct);
+  // Color.setLightPower(50);
+  // waitUntil(Color.color() == blue);
+   wait(5000, msec);
+  // Intake1.stop();
   /*
    inchDrive(0.3);
    rotate(-90);
@@ -228,13 +232,13 @@ void autonomous(void) {
 */
 
 
-loading = false;
-  TargetSpeed=70;
-  waitUntil(FSPEED> 68&&FSPEED<72);
-  pistonToggle();
-  waitUntil(FSPEED > 68&&FSPEED<72);
-  pistonToggle();
-  loading = true;
+  // loading = false;
+  // TargetSpeed=70;
+  // waitUntil(FSPEED> 68&&FSPEED<72);
+  // pistonToggle();
+  // waitUntil(FSPEED > 68&&FSPEED<72);
+  // pistonToggle();
+  // loading = true;
  
 //expansion.set(true);
 // do the pistons default to false? if so, that would set off the expansion early
@@ -253,32 +257,19 @@ fireDiscs();
 */
 
 //NEAR SIDE
-/*
-drive(-25, -25, 0);
-TargetSpeed=75;
-roller.spin(forward, 100, pct);
-waitUntil(isRed?Color.color()==blue:Color.color()==red);
-roller.stop();
-drive_brake();
-loading=false;
-waitUntil(fabs(TurretE.velocity(rpm))<5);
-pistonToggle();
-wait(500, msec);
-pistonToggle();
-loading=true;*/
+// drive(-25, -25, 0);
+// TargetSpeed=75;
+// roller.spin(forward, 100, pct);
+// waitUntil(isRed?Color.color()==blue:Color.color()==red);
+// roller.stop();
+// drive_brake();
+// loading=false;
+// waitUntil(fabs(TurretE.velocity(rpm))<5);
+// pistonToggle();
+// wait(500, msec);
+// pistonToggle();
+// loading=true;
 }
-
-/*---------------------------------------------------------------------------*/
-/*                                                                           */
-/*                              User Control Task */
-/*                                                                           */
-/*  This task is used to control your robot during the user control phase of
- */
-/*  a VEX Competition.                            */
-/*                                                                           */
-/*  You must modify the code to add your own robot specific commands here. */
-/*---------------------------------------------------------------------------*/
-
 
 bool intakeOn = false;
 void toggleIntake() { intakeOn = !intakeOn; }
@@ -313,10 +304,6 @@ void usercontrol(void) {
       TargetSpeed=75;
     }
 
-// there's gotta be a better way to write this
-// also speed is untested as of Feb 8th
-// and yes, this will activate the roller at the same time but im guessing we can live 
-// with that?
   if(Controller1.ButtonDown.pressing())TargetSpeed=0;
   if (driveDir == false) {
     if (Controller1.ButtonL2.pressing()) {
@@ -396,6 +383,8 @@ void usercontrol(void) {
 //
 int main() {
 
+  
+
   // Set up callbacks for autonomous and driver control periods.
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
@@ -409,8 +398,8 @@ int main() {
   // Run the pre-autonomous function.
   pre_auton();
 
-  // Prevent main from exiting with an infinite loop.
-  while (true) {
-    wait(100, msec);
-  }
+  // // Prevent main from exiting with an infinite loop.
+  // while (true) {
+  //   wait(100, msec);
+  // }
 }
