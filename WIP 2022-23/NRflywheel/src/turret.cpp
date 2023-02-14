@@ -2,6 +2,8 @@
 #include <math.h>
 #include "vision.h"
 #include <iostream>
+#include <algorithm>
+#include <vector>
 bool loading=false;
 double GoalAngle;
 extern double X,Y;
@@ -31,22 +33,37 @@ int turretStable() {
     if (!loading) {
 
       if (fabs(GoalAngle + offset - turretG.orientation(yaw, degrees)) <
-          20) {
+          300) {
             if(isRed){ Vision16.takeSnapshot(RGOAL);
             }else {
             Vision16.takeSnapshot(BGOAL);
             }                        // if goal is within limits
         // use vision sensor
-        if (Vision16.largestObject.exists) {
-
-          error = Vision16.largestObject.centerX - 158;
+        //find closest
+       int object0= abs(140-Vision16.objects[0].centerX);
+       int object1= abs(140-Vision16.objects[1].centerX);
+       int object2= abs(140-Vision16.objects[2].centerX);
+       int object3= abs(140-Vision16.objects[3].centerX);
+       int object4= abs(140-Vision16.objects[4].centerX);
+       int object5= abs(140-Vision16.objects[5].centerX);
+       int object6= abs(140-Vision16.objects[6].centerX);
+       int object7= abs(140-Vision16.objects[7].centerX);
+       int visionObjects[8]={object0,object1,object2,object3,object4,object5,object6,object7};
+       std::min_element(visionObjects[0],visionObjects[7]);
+       int result = std::min_element(visionObjects[0], visionObjects[7]);
+       int i=0;
+        while (!(visionObjects[i]==result))
+        {
+        i++;
+        }
+          error = Vision16.objects[i].centerX -140;
 
           Brain.Screen.printAt(1, 100, "error  = %.1f      ", error);
           Brain.Screen.printAt(1, 160, "vision  = %.1f      ",
                                Vision16.largestObject.centerX);
           mode=1;
-          kp = 0.3;
-          kd = .02;
+          kp = 0.5;
+          kd = .3;
           if(fabs(error)<20)VisionReady=true;
           else VisionReady=false;
         } else {
@@ -76,9 +93,9 @@ int turretStable() {
       }
 
       speed = (error * kp) + (ki * sum) + (kd * (error - prevError));
-      if ((speed > 0 && TurretE.position(degrees) < -120))
+      if ((speed > 0 && TurretE.position(turns)*360 < -120))
         speed = 0;
-      if ((speed < 0 && TurretE.position(degrees) > 180))
+      if ((speed < 0 && TurretE.position(turns)*360 > 180))
         speed = 0;
       turret.spin(fwd, speed , pct);
 

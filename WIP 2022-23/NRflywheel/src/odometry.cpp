@@ -21,12 +21,13 @@ double prevBE = bEncoder; // create previous encoder value back
 double averageHeading;    //
 double deltaX;
 double deltaY;
+
   Controller1.rumble(".");
   RotationL.resetPosition();
   RotationB.resetPosition();
   while (1) {
-    lEncoder = RotationL.position(degrees);
-    bEncoder = RotationB.position(degrees);
+    lEncoder = RotationL.position(turns)*360;
+    bEncoder = RotationB.position(turns)*360;
 
     distL = ((lEncoder - prevLE) * M_PI / 180) * lRad;
     // convert encoder distance into distance traveled
@@ -41,7 +42,14 @@ double deltaY;
         absoluteOrientation - prevHeading; // calculate change in heading
     averageHeading = prevHeading + (deltaHeading) / 2;
     prevHeading = absoluteOrientation;
-
+    // ax+by
+    // cx +dy
+  /*  double a =cos(averageHeading);
+    double b =-sin(averageHeading);
+    double c =sin(averageHeading);
+    double d = cos(averageHeading);
+    double xVector= -B*deltaHeading-distB;
+    double yVector= L*deltaHeading-distL;*/
     deltaX = (distL * sin(averageHeading)) + (distB * cos(averageHeading));
     deltaY = (distL * cos(averageHeading)) - (distB * sin(averageHeading));
     while (absoluteOrientation >= 2 * M_PI) {
