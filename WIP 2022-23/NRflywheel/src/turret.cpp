@@ -50,6 +50,7 @@ int turretStable() {
         int object7 = abs(140 - Vision16.objects[7].centerX);
         int visionObjects[8] = {object0, object1, object2, object3,
                                 object4, object5, object6, object7};
+        //try this? https://www.sanfoundry.com/cpp-program-minimum-element-array-using-linear-search-2/
         std::min_element(visionObjects[0], visionObjects[7]);
         int result = std::min_element(visionObjects[0], visionObjects[7]);
         int i = 0;
