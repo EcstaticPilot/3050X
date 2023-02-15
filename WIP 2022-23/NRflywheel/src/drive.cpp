@@ -24,12 +24,13 @@ void drive_brake() {
 }
 
 void forward_dist(float dist) {
-  // 
+  // dist is in inches
+  // 36.15 for 1 wheel rotation a second for a gear ratio of 3/5
   float t_to_run = dist/C;
-  LF.spin(forward, 60, rpm);
-  RF.spin(forward, 60, rpm);
-  LB.spin(forward, 60, rpm);
-  RB.spin(forward, 60, rpm);
+  LF.spin(forward, 36.15, rpm);
+  RF.spin(forward, 36.15, rpm);
+  LB.spin(forward, 36.15, rpm);
+  RB.spin(forward, 36.15, rpm);
   wait(t_to_run, sec);
   drive_brake();
 }
@@ -64,7 +65,7 @@ void rotate(double dir, double accuracy = 1) {
   drive_brake();
 }
 
-void forward_drive(float dist) {
+/* void forward_drive(float dist) {
 
   float start_position;
   float curr_position;
@@ -82,7 +83,7 @@ void forward_drive(float dist) {
 
   
   drive_brake();
-}
+} */
 extern double X, Y;
 void DriveToPoint(double targetX, double targetY, float speedMult = 1) {
   // T=turn
