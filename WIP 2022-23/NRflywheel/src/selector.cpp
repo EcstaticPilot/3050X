@@ -13,7 +13,6 @@ void draw_GUI() {
   Brain.Screen.setFillColor(green);
   Brain.Screen.drawRectangle(170, 50, 100, 100);
   Brain.Screen.printAt(175, 75, "Near");
-  //Brain.Screen.setFillColor(black);
 }
 
 void fetch_touch() {
@@ -22,10 +21,12 @@ void fetch_touch() {
 
   if (x_touch >= 20 && x_touch <= 120 && y_touch >= 50 && y_touch <= 150) {
     Far_Side = true;
+    Near_Side = false;
     Brain.Screen.printAt(20, 200, "Far Side Selected");
   }
   if (x_touch >= 170 && x_touch <= 270 && y_touch >= 50 && y_touch <= 150) {
     Near_Side = true;
+    Far_Side = false;
     Brain.Screen.printAt(20, 200, "Near Side Selected");
   }
 }

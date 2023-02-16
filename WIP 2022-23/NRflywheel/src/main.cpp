@@ -120,24 +120,28 @@ void pre_auton(void) {
     Controller1.rumble("-------------------------------------------------------"
                        "-------------------------------");
   
-  //gyro1.calibrate();
- // turretG.calibrate();
- // waitUntil(!(gyro1.isCalibrating() && turretG.isCalibrating()));
+  gyro1.calibrate();
+  turretG.calibrate();
+  waitUntil(!(gyro1.isCalibrating() && turretG.isCalibrating()));
   //launch threads
-  //thread flywheelgo = thread(controlFlywheelSpeed);
+  thread flywheelgo = thread(controlFlywheelSpeed);
   thread odometeryTracking = thread(odometery);
-  //thread turretStablization = thread(turretStable);
+  thread turretStablization = thread(turretStable);
 }
 
 void autonomous(void) {
 
-// far (untested)
+// HEY!! the rotate function has an unknown issue and the starting value
+// the gyro senses is 90 degrees, so the values below seem inaccurate
+// but i promise they're not.
 if (Far_Side) {
+Brain.Screen.clearScreen();
+Brain.Screen.printAt(20, 20, "Far Side Auton Running");
 forward_dist(1);
 rotate(90);
-forward_dist(24);
+forward_dist(27);
 rotate(180);
-forward_dist(2);
+forward_dist(7);
 roller.spin(forward, 100, pct);
 if (isRed == true) {
   waitUntil(Color.color() == blue);
@@ -148,8 +152,10 @@ else {
 roller.stop();
 }
 
-// near
 if (Near_Side) {
+Brain.Screen.clearScreen();
+Brain.Screen.printAt(20, 20, "Near Side Auton Running");
+roller.spin(forward, 100, pct);
 if (isRed == true) {
   waitUntil(Color.color() == blue);
 }
@@ -159,40 +165,13 @@ else {
 roller.stop();
 }
 
-loading = false;
-TargetSpeed=70;
-waitUntil(FSPEED> 68&&FSPEED<72);
-pistonToggle();
-waitUntil(FSPEED > 68&&FSPEED<72);
-pistonToggle();
-loading = true;
- 
-//FAR SIDE
-/*inchDrive(10);
-loading=false;
-fireDiscs();
-loading=true;
-Intake1.spin(forward, 75, pct);
-DriveToPoint(58.42, 34.86);
-DriveToPoint(81.99, 58.42);
-rotate(90);
-loading=false;
-fireDiscs();
-*/
-
-//NEAR SIDE
-// drive(-25, -25, 0);
-// TargetSpeed=75;
-// roller.spin(forward, 100, pct);
-// waitUntil(isRed?Color.color()==blue:Color.color()==red);
-// roller.stop();
-// drive_brake();
-// loading=false;
-// waitUntil(fabs(TurretE.velocity(rpm))<5);
+// loading = false;
+// TargetSpeed=70;
+// waitUntil(FSPEED> 68&&FSPEED<72);
 // pistonToggle();
-// wait(500, msec);
+// waitUntil(FSPEED > 68&&FSPEED<72);
 // pistonToggle();
-// loading=true;
+// loading = true;
 }
 
 bool intakeOn = false;
@@ -231,25 +210,12 @@ void usercontrol(void) {
   if(Controller1.ButtonDown.pressing())TargetSpeed=0;
   if (driveDir == false) {
     if (Controller1.ButtonL2.pressing()) {
-      turret.spin(forward, -30, pct);
+      roller.spin(forward, 100, pct);
     }
     if (Controller1.ButtonR2.pressing()) {
-      turret.spin(forward, 30, pct);
+      roller.spin(forward, -100, pct);
     }
   }
-  if (driveDir == true) {
-    if (Controller1.ButtonL2.pressing()) {
-      turret.spin(forward, 30, pct);
-      wait(500, msec);
-      turret.stop(brake);
-    }
-    if (Controller1.ButtonR2.pressing()) {
-      turret.spin(forward, -30, pct);
-      wait(500, msec);
-      turret.stop(brake);
-    }
-  }
-  
     /*
 
     INTAKE
@@ -310,7 +276,6 @@ int main() {
   // Set up callbacks for autonomous and driver control periods.
   draw_GUI();
   Brain.Screen.pressed(fetch_touch);
-  wait(5000, msec);
 
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
@@ -325,7 +290,7 @@ int main() {
   pre_auton();
 
   // // Prevent main from exiting with an infinite loop.
-  // while (true) {
-  //   wait(100, msec);
-  // }
+   while (true) {
+     wait(100, msec);
+   }
 }

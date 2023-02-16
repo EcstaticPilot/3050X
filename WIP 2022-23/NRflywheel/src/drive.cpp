@@ -52,15 +52,17 @@ void rotate(double dir, double accuracy = 1) {
   // the speed of the motors isn't too fast
   while (fabs(error) > accuracy) {
     speed = (Kp * error) + (Ki * sum) + (Kd * (error - prevError));
-    LB.spin(fwd, speed / 3, percent);
-    RB.spin(reverse, speed / 3, percent);
-    RF.spin(reverse, speed / 3, percent);
-    LF.spin(fwd, speed / 3, percent);
+    drive(speed/3, -speed/3, 10);
+    // LB.spin(fwd, speed / 3, percent);
+    // RB.spin(fwd, -speed / 3, percent);
+    // RF.spin(fwd, -speed / 3, percent);
+    // LF.spin(fwd, speed / 3, percent);
 
-    wait(10, msec);
+    // wait(10, msec);
     prevError = error;
     sum = sum * 0.5 + error;
     error = dir - gyro1.rotation(degrees);
+    std::cout<<error<<std::endl;
   }
   drive_brake();
 }
