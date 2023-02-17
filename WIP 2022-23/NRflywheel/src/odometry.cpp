@@ -1,7 +1,5 @@
-
 #include "stdio.h"
 #include "vex.h"
-
 #include <math.h>
 
 double X=100,Y=10;
@@ -21,6 +19,7 @@ double prevBE = bEncoder; // create previous encoder value back
 double averageHeading;    //
 double deltaX;
 double deltaY;
+
   Controller1.rumble(".");
   RotationL.resetPosition();
   RotationB.resetPosition();
@@ -44,13 +43,14 @@ double deltaY;
 
     deltaX = (distL * sin(averageHeading)) + (distB * cos(averageHeading));
     deltaY = (distL * cos(averageHeading)) - (distB * sin(averageHeading));
+
     while (absoluteOrientation >= 2 * M_PI) {
       absoluteOrientation -= 2 * M_PI;
     }
-
     while (absoluteOrientation < 0) {
       absoluteOrientation += 2 * M_PI;
     }
+    
     X += deltaX;
     Y += deltaY;
 

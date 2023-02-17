@@ -1,4 +1,3 @@
-
 #include "vex.h"
 #include <iostream>
 #include <stdio.h>
@@ -36,7 +35,6 @@ void forward_dist(float dist) {
 }
 
 void rotate(double dir, double accuracy = 1) {
-  // double currDir = gyro1.rotation(degrees);
   double speed = 100;
   double error = dir - gyro1.rotation(degrees);
   double prevError = dir;
@@ -53,12 +51,8 @@ void rotate(double dir, double accuracy = 1) {
   while (fabs(error) > accuracy) {
     speed = (Kp * error) + (Ki * sum) + (Kd * (error - prevError));
     drive(speed/3, -speed/3, 10);
-    // LB.spin(fwd, speed / 3, percent);
-    // RB.spin(fwd, -speed / 3, percent);
-    // RF.spin(fwd, -speed / 3, percent);
-    // LF.spin(fwd, speed / 3, percent);
 
-    // wait(10, msec);
+    wait(10, msec);
     prevError = error;
     sum = sum * 0.5 + error;
     error = dir - gyro1.rotation(degrees);
@@ -85,6 +79,7 @@ void rotate(double dir, double accuracy = 1) {
   
   drive_brake();
 } */
+
 extern double X, Y;
 void DriveToPoint(double targetX, double targetY, float speedMult = 1) {
   // T=turn
@@ -131,6 +126,7 @@ void DriveToPoint(double targetX, double targetY, float speedMult = 1) {
   }
   drive_brake();
 }
+
 void DriveToPoint2(float targetX,float targetY){
 
   rotate((atan2(targetY - Y, X - targetX) * 180 / M_PI));
@@ -139,6 +135,7 @@ void DriveToPoint2(float targetX,float targetY){
   //inchDrive(-(sqrt((targetX - X) * (targetX -  X) + (targetY - Y) * (targetY - Y))));
   std::cout << X << "," << Y << std::endl;
 }
+
 void RAMSETE(float targetX, float targetY, float targetAngle,
              float accuracy = 1) {
   // https://wiki.purduesigbots.com/software/control-algorithms/ramsete
@@ -171,6 +168,7 @@ void RAMSETE(float targetX, float targetY, float targetAngle,
   drive_brake();
   Controller1.rumble(".");
 }
+
 void DriveToPoint3(float targetX, float targetY, float targetAngle,
              float accuracy = 1) {
   //θ - copy and paste theta

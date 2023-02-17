@@ -181,7 +181,6 @@ bool driveDir = 0;
 void driveSwitch() { driveDir = !driveDir; }
 
 void usercontrol(void) {
-  Brain.Screen.clearScreen();
   thread ControllerPrinting = thread(ControllerPrint);
 
   while (true) {

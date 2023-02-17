@@ -15,21 +15,20 @@ int turretStable() {
   Controller1.rumble("..");
   loading = true;
   TurretE.setPosition(0, turns);
-  // while (true) {
+
   // safe working values double kp = 1; double ki = 0;double kd = 0.3;
   double kp = 3;
   double ki = 0;
   double kd = 0.9;
   double sum = 0;
   double prevError = 0;
-
   double error = -(GoalAngle + offset) - turretG.orientation(yaw, degrees);
   // double accuracy = 1;
-  // while(true){
   double speed;
+
   while (true) {
     GoalAngle = atan2(X - 100, 120 - Y) * (180 / M_PI);
- //   GoalAngle=atan2(Controller2.Axis2.value(),Controller2.Axis1.value())*180/M_PI; if(Controller2.Axis2.position()<5&&Controller2.Axis1.position()<5)loading=true;else loading=false;
+    //GoalAngle=atan2(Controller2.Axis2.value(),Controller2.Axis1.value())*180/M_PI; if(Controller2.Axis2.position()<5&&Controller2.Axis1.position()<5)loading=true;else loading=false;
     
     if (!loading) {
           std::cout<<GoalAngle- turretG.orientation(yaw, degrees)<<std::endl;
@@ -70,9 +69,9 @@ int turretStable() {
           }
       else { // if not loading go to zero
 
-        error=  TurretE.position(turns)*360;
+        error = TurretE.position(turns)*360;
       
-       kp = 0.5;
+          kp = 0.5;
           kd = 0.3;
           mode=4;
         VisionReady = false; // vision is not ready
@@ -95,35 +94,33 @@ int turretStable() {
 void turretSpinTo(double targetAngle, bool global) {
   double kp = 1;
   double ki = 0;
-
   double kd = .5;
   double sum = 0;
   double prevError = 0;
   double error = targetAngle - turretG.orientation(yaw, degrees);
   double accuracy = 1;
-  // while(true){
   double speed;
+
   while (fabs(error) > accuracy) {
-    double turretEncoderAngle =
-        (TurretE.angle() > 180 ? TurretE.angle() - 360 : TurretE.angle());
+    double turretEncoderAngle = 
+    (TurretE.angle() > 180 ? TurretE.angle() - 360 : TurretE.angle());
     if (global) {
       error = -targetAngle - turretG.orientation(yaw, degrees);
-    } else {
+    } 
+    else {
       error = targetAngle - turretEncoderAngle;
     }
-
     speed = (error * kp) + (ki * sum) + (kd * (error - prevError));
 
     turret.spin(fwd, speed, pct);
-
     wait(10, msec);
     prevError = error;
     sum += error;
   }
+
   if (fabs(error) < accuracy) {
     turret.stop();
   }
-
 }
 
 void toggleTurret() {

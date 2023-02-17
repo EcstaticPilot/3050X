@@ -11,6 +11,7 @@ void spinFlywheel(double speed) {
                        // mV
   F2.spin(forward, speed, voltageUnits::mV);
 }
+
 double FWDrive = 0;
 double OldError = 0;
 double TBHval = 0;
@@ -34,14 +35,13 @@ int controlFlywheelSpeed() {
       this_thread::sleep_for(50);
       FWDrive = fwDrive;
       OldError = error;
-    } else {
+    } 
+    else {
       init_count++;
     }
     moving_avg.push_back(F2.velocity(pct));
     // std::cout<<F1.velocity(pct) << ","<<
     // FSPEED<<","<<TargetSpeed<<","<<TargetSpeed+kP*error<<std::endl;
-    
   }
-
   return 1;
 }

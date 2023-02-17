@@ -1,9 +1,11 @@
 #include <vex.h>
+
 extern bool loading;
 extern double TargetSpeed;
 extern double GoalAngle;
 extern bool VisionReady;
 extern float FSPEED;
+
 void pistonToggle() {
   if (turretOptical.isNearObject()) {
     Injector.set(true);
