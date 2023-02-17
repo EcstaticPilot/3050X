@@ -11,6 +11,16 @@ float offset = 0;
 bool VisionReady;
 int mode = 0;
 extern bool isRed;
+int findClosetObject(int a, int b){
+  if(abs(140-Vision16.objects[a].centerX)
+  <abs(140-Vision16.objects[b].centerX))
+  {
+    return a;
+  }
+  else {
+  return b;
+  }
+}
 int turretStable() {
   Controller1.rumble("..");
   loading = true;
@@ -40,24 +50,17 @@ int turretStable() {
         // if goal is within limits
         // use vision sensor
         // find closest
-        int object0 = abs(140 - Vision16.objects[0].centerX);
-        int object1 = abs(140 - Vision16.objects[1].centerX);
-        int object2 = abs(140 - Vision16.objects[2].centerX);
-        int object3 = abs(140 - Vision16.objects[3].centerX);
-        int object4 = abs(140 - Vision16.objects[4].centerX);
-        int object5 = abs(140 - Vision16.objects[5].centerX);
-        int object6 = abs(140 - Vision16.objects[6].centerX);
-        int object7 = abs(140 - Vision16.objects[7].centerX);
-        int visionObjects[8] = {object0, object1, object2, object3,
-                                object4, object5, object6, object7};
-        //try this? https://www.sanfoundry.com/cpp-program-minimum-element-array-using-linear-search-2/
-        std::min_element(visionObjects[0], visionObjects[7]);
-        int result = std::min_element(visionObjects[0], visionObjects[7]);
-        int i = 0;
-        while (!(visionObjects[i] == result)) {
-          i++;
+        int closestObject=0;
+        //int i=0;
+        for(int i=0; i<7; ++i){
+        //while(i<7){
+          closestObject=findClosetObject(closestObject, i);
+         // i++;
         }
-        error = Vision16.objects[i].centerX - 140;
+        //try this? https://www.sanfoundry.com/cpp-program-minimum-element-array-using-linear-search-2/
+
+     
+        error = Vision16.objects[closestObject].centerX - 140;
 
         Brain.Screen.printAt(1, 100, "error  = %.1f      ", error);
         Brain.Screen.printAt(1, 160, "vision  = %.1f      ",
