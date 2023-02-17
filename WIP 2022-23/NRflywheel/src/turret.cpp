@@ -2,6 +2,7 @@
 #include <math.h>
 #include "vision.h"
 #include <iostream>
+
 bool loading=false;
 double GoalAngle;
 extern double X,Y;
@@ -9,12 +10,13 @@ float offset=0;
 bool VisionReady;
 int mode=0;
 extern bool isRed;
+
 int turretStable() {
   Controller1.rumble("..");
   loading = true;
   TurretE.setPosition(0, turns);
   // while (true) {
-  // safe working valuse double kp = 1; double ki = 0;double kd = 0.3;
+  // safe working values double kp = 1; double ki = 0;double kd = 0.3;
   double kp = 3;
   double ki = 0;
   double kd = 0.9;
@@ -79,9 +81,9 @@ int turretStable() {
       speed = (error * kp) + (ki * sum) + (kd * (error - prevError));
       if ((speed > 0 && TurretE.position(turns)*360 < -120))
         speed = 0;
-      if ((speed < 0 && TurretE.position(turns)*360 > 270))
+      if ((speed < 0 && TurretE.position(turns)*360 > 180))
         speed = 0;
-      turret.spin(fwd, speed , pct);
+      turret.spin(fwd, speed, pct);
 
       prevError = error;
       sum += error;

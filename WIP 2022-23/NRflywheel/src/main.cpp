@@ -151,6 +151,10 @@ drive_brake();
 if (Near_Side) {
 Brain.Screen.clearScreen();
 Brain.Screen.printAt(20, 20, "Near Side Auton Running");
+LF.spin(forward, 50, pct);
+RF.spin(forward, 50, pct);
+LB.spin(forward, 50, pct);
+RB.spin(forward, 50, pct);
 roller.spin(forward, 100, pct);
 if (isRed == true) {
   waitUntil(Color.color() == blue);
