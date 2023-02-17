@@ -25,15 +25,14 @@
 #include "vex.h"
 #include <math.h>
 #include <iostream>
-//including files
 
 using namespace vex;
 
-// A global instance of competition
 competition Competition;
 
-//declaring external variables
+// declaring external variables
 bool isRed=false;
+
 extern double GoalAngle;
 extern float offset;
 extern int mode;
@@ -45,11 +44,9 @@ extern bool TurretToggle;
 extern double GoalAngle;
 extern bool Far_Side;
 extern bool Near_Side;
-/*
+extern float FSPEED;
 
-FUNCTIONS
-
-*/
+// declaring external functions
 // drive.cpp
 void drive(int lSpeed, int rSpeed, double wt);
 void drive_brake();
@@ -74,18 +71,14 @@ void fireDiscs();
 void pistonToggleReady();
 void draw_GUI();
 void fetch_touch();
-/*
 
-CONTROLLER PRINTING
+//////////////////////////////////////////////////////////////////////////////////
 
-*/
-extern float FSPEED;
 int ControllerPrint() {
 
   Brain.Timer.reset();
  
   while (1) {
-   
     Controller1.Screen.setCursor(1, 1);
     Controller1.Screen.print("Spd=%.2f tSpd=%.2f   ", FSPEED, TargetSpeed);
     Controller1.Screen.setCursor(2, 1);
@@ -109,21 +102,21 @@ void pre_auton(void) {
 
   vexcodeInit();
   if (!(RB.installed() && LB.installed() && RF.installed() &&
-        LF.installed() &&                            // drive motors
-        F2.installed()             // flywheel
-        && Intake1.installed() && turret.installed() // turret and intake
+        LF.installed() &&                            
+        F2.installed()            
+        && Intake1.installed() && turret.installed() 
         && gyro1.installed() && RotationL.installed() &&
-        RotationB.installed() // odom stuff
+        RotationB.installed() 
         && turretG.installed() && TurretE.installed() &&
-        turretOptical.installed() && // turret sensors
-        Color.installed()))          // roler sensor
+        turretOptical.installed() && 
+        Color.installed()))          
     Controller1.rumble("-------------------------------------------------------"
                        "-------------------------------");
   
   gyro1.calibrate();
   turretG.calibrate();
   waitUntil(!(gyro1.isCalibrating() && turretG.isCalibrating()));
-  //launch threads
+
   thread flywheelgo = thread(controlFlywheelSpeed);
   thread odometeryTracking = thread(odometery);
   thread turretStablization = thread(turretStable);
@@ -131,9 +124,6 @@ void pre_auton(void) {
 
 void autonomous(void) {
 
-// HEY!! the rotate function has an unknown issue and the starting value
-// the gyro senses is 90 degrees, so the values below seem inaccurate
-// but i promise they're not.
 if (Far_Side) {
 Brain.Screen.clearScreen();
 Brain.Screen.printAt(20, 20, "Far Side Auton Running");
@@ -143,6 +133,11 @@ forward_dist(27);
 rotate(180);
 forward_dist(7);
 roller.spin(forward, 100, pct);
+// to ensure contact w/ roller
+LF.spin(forward, 50, pct);
+RF.spin(forward, 50, pct);
+LB.spin(forward, 50, pct);
+RB.spin(forward, 50, pct);
 if (isRed == true) {
   waitUntil(Color.color() == blue);
 }
@@ -150,6 +145,7 @@ else {
   waitUntil(Color.color() == red);
 }
 roller.stop();
+drive_brake();
 }
 
 if (Near_Side) {
@@ -163,6 +159,7 @@ else {
   waitUntil(Color.color() == red);
 }
 roller.stop();
+drive_brake();
 }
 
 // loading = false;
@@ -180,17 +177,10 @@ bool driveDir = 0;
 void driveSwitch() { driveDir = !driveDir; }
 
 void usercontrol(void) {
-    //thread turretStablization = thread(turretStable);
-
- // thread flywheelgo = thread(controlFlywheelSpeed);
+  Brain.Screen.clearScreen();
   thread ControllerPrinting = thread(ControllerPrint);
+
   while (true) {
-
-    /*
-
-    CONTROLLER 2 SPEED CONTROL
-
-    */
     if (Controller1.ButtonY.pressing()) {
       expansion.set(true);
     }
@@ -202,12 +192,12 @@ void usercontrol(void) {
       TargetSpeed += 0.5;
       wait(10, msec);
     }
- 
     if(Controller1.ButtonUp.pressing()){
       TargetSpeed=75;
     }
 
   if(Controller1.ButtonDown.pressing())TargetSpeed=0;
+
   if (driveDir == false) {
     if (Controller1.ButtonL2.pressing()) {
       roller.spin(forward, 100, pct);
@@ -216,11 +206,7 @@ void usercontrol(void) {
       roller.spin(forward, -100, pct);
     }
   }
-    /*
 
-    INTAKE
-
-    */
     if (intakeOn) {
       Intake1.spin(forward, 160, rpm);
     } 
@@ -228,26 +214,23 @@ void usercontrol(void) {
       Intake1.stop();
     }
 
-      if ((isRed?Color.color() == red:Color.color()==blue)  && Color.isNearObject())
-        roller.spin(forward, 200, rpm);
-      else{
-          if(Controller1.ButtonL2.pressing())roller.spin(forward, 100, pct);
-  else if(Controller1.ButtonR2.pressing())roller.spin(reverse, 100, pct);
-  else roller.stop();
-      }
+    if ((isRed?Color.color() == red:Color.color()==blue)  && Color.isNearObject()) {
+      roller.spin(forward, 200, rpm);
+    }
+    else {
+      if(Controller1.ButtonL2.pressing())roller.spin(forward, 100, pct);
+      else if(Controller1.ButtonR2.pressing())roller.spin(reverse, 100, pct);
+      else roller.stop();
+    }
+
     Color.setLightPower(100);
+
     if (Color.isNearObject())
       Color.setLight(ledState::on);
     else
       Color.setLight(ledState::off);
-    /*
-
-    TANK DRIVE CODE
-
-    */
  
     if (driveDir) {
-
       LF.spin(forward, Controller1.Axis3.position() * 120, voltageUnits::mV);
       RF.spin(forward, Controller1.Axis2.position() * 120, voltageUnits::mV);
       LB.spin(forward, Controller1.Axis3.position() * 120, voltageUnits::mV);
@@ -269,11 +252,8 @@ void usercontrol(void) {
   }
 }
 
-// Main will set up the competition functions and callbacks.
-//
 int main() {
 
-  // Set up callbacks for autonomous and driver control periods.
   draw_GUI();
   Brain.Screen.pressed(fetch_touch);
 
@@ -286,10 +266,8 @@ int main() {
   Controller1.ButtonX.pressed(toggleTurret);
   Controller1.ButtonA.pressed(fireDiscs);
 
-  // Run the pre-autonomous function.
   pre_auton();
 
-  // // Prevent main from exiting with an infinite loop.
    while (true) {
      wait(100, msec);
    }

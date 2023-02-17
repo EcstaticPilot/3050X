@@ -62,7 +62,6 @@ void rotate(double dir, double accuracy = 1) {
     prevError = error;
     sum = sum * 0.5 + error;
     error = dir - gyro1.rotation(degrees);
-    std::cout<<error<<std::endl;
   }
   drive_brake();
 }
