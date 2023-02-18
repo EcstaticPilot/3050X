@@ -285,7 +285,7 @@ void usercontrol(void) {
 
     */
     if (intakeOn) {
-      Intake1.spin(forward, 140, rpm);
+      Intake1.spin(forward, 12, volt);
     } 
     if (!intakeOn) {
       Intake1.stop();
