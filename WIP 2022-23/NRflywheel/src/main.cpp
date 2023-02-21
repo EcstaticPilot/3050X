@@ -45,6 +45,7 @@ extern double GoalAngle;
 extern bool Far_Side;
 extern bool Near_Side;
 extern float FSPEED;
+extern bool skills;
 
 // declaring external functions
 // drive.cpp
@@ -124,7 +125,7 @@ void pre_auton(void) {
 
 void autonomous(void) {
 
-if (Far_Side) {
+if (Far_Side == true) {
 Brain.Screen.clearScreen();
 Brain.Screen.printAt(20, 20, "Far Side Auton Running");
 forward_dist(1);
@@ -132,47 +133,69 @@ rotate(90);
 forward_dist(27);
 rotate(180);
 forward_dist(7);
-roller.spin(forward, 100, pct);
+
 // to ensure contact w/ roller
 LF.spin(forward, 50, pct);
 RF.spin(forward, 50, pct);
 LB.spin(forward, 50, pct);
 RB.spin(forward, 50, pct);
-if (isRed == true) {
-  waitUntil(Color.color() == blue);
-}
-else {
-  waitUntil(Color.color() == red);
-}
+roller.spinFor(forward, -0.5, rev);
 roller.stop();
 drive_brake();
 }
 
-if (Near_Side) {
+if (Near_Side == true) {
 Brain.Screen.clearScreen();
 Brain.Screen.printAt(20, 20, "Near Side Auton Running");
 LF.spin(forward, 50, pct);
 RF.spin(forward, 50, pct);
 LB.spin(forward, 50, pct);
 RB.spin(forward, 50, pct);
-roller.spin(forward, 100, pct);
-if (isRed == true) {
-  waitUntil(Color.color() == blue);
-}
-else {
-  waitUntil(Color.color() == red);
-}
-roller.stop();
+// roller.spin(forward, 100, pct);
+// if (isRed == true) {
+//   waitUntil(Color.color() == blue);
+// }
+// else {
+//   waitUntil(Color.color() == red);
+// }
+roller.spinFor(forward, -0.25, rev);
+roller.stop(brake);
 drive_brake();
 }
 
-// loading = false;
-// TargetSpeed=70;
-// waitUntil(FSPEED> 68&&FSPEED<72);
-// pistonToggle();
-// waitUntil(FSPEED > 68&&FSPEED<72);
-// pistonToggle();
-// loading = true;
+if (!skills) {
+loading = false;
+TargetSpeed=70;
+waitUntil(FSPEED> 68&&FSPEED<72);
+pistonToggle();
+waitUntil(FSPEED > 68&&FSPEED<72);
+pistonToggle();
+loading = true;
+}
+
+if (skills) {
+LF.spin(forward, 50, pct);
+RF.spin(forward, 50, pct);
+LB.spin(forward, 50, pct);
+RB.spin(forward, 50, pct);
+// roller.spin(forward, 100, pct);
+// if (isRed == true) {
+//   waitUntil(Color.color() == blue);
+// }
+// else {
+//   waitUntil(Color.color() == red);
+// }
+roller.spinFor(forward, -0.25, rev);
+roller.stop();
+drive_brake();
+forward_dist(-5);
+rotate(45);
+  Controller1.rumble(".....");
+  wait(4, sec);
+expansion.set(false);
+wait(5,sec);
+expansion.set(true);
+}
 }
 
 bool intakeOn = false;

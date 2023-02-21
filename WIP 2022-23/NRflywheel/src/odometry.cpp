@@ -3,6 +3,9 @@
 #include <math.h>
 
 double X=100,Y=10;
+extern bool Far_Side;
+extern bool Near_Side;
+
 int odometery() {
 double prevHeading = gyro1.heading();
 
@@ -24,9 +27,17 @@ double deltaY;
   RotationL.resetPosition();
   RotationB.resetPosition();
   while (1) {
+    if(Far_Side){
+    
+    lEncoder = RotationL.position(turns)*-360;
+    bEncoder = RotationB.position(turns)*-360;
+    }
+    else {
+    
+    
     lEncoder = RotationL.position(turns)*360;
     bEncoder = RotationB.position(turns)*360;
-
+    }
     distL = ((lEncoder - prevLE) * M_PI / 180) * lRad;
     // convert encoder distance into distance traveled
     distB = ((bEncoder - prevBE) * M_PI / 180) * bRad;

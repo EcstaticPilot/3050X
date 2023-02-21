@@ -23,6 +23,7 @@ int controlFlywheelSpeed() {
   double error;
   while (true) {
     if (init_count > 9) {
+      double kp=5;
       FSPEED = std::accumulate(moving_avg.begin(), moving_avg.end(), 0.0) / 10.0;
       moving_avg.erase(moving_avg.begin());
       error = TargetSpeed - FSPEED;
@@ -30,8 +31,9 @@ int controlFlywheelSpeed() {
       if (TargetSpeed <= 0) {
         F2.stop(coast);
       }
-
-      spinFlywheel(TargetSpeed);
+      else
+      
+      spinFlywheel(TargetSpeed+error*kp);
       this_thread::sleep_for(50);
       FWDrive = fwDrive;
       OldError = error;

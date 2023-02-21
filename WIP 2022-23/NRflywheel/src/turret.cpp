@@ -12,6 +12,7 @@ bool VisionReady;
 int mode = 0;
 extern bool isRed;
 int findClosetObject(int a, int b){
+  if(!Vision16.objects[b].exists){return a; }
   if(abs(140-Vision16.objects[a].centerX)
   <abs(140-Vision16.objects[b].centerX))
   {
@@ -50,9 +51,10 @@ int turretStable() {
         // if goal is within limits
         // use vision sensor
         // find closest
+      
         int closestObject=0;
         //int i=0;
-        for(int i=0; i<5; ++i){
+        for(int i=0; i<=Vision16.objectCount; ++i){
         //while(i<7){
           closestObject=findClosetObject(closestObject, i);
          // i++;
@@ -60,14 +62,14 @@ int turretStable() {
         //try this? https://www.sanfoundry.com/cpp-program-minimum-element-array-using-linear-search-2/
 
      
-        error = Vision16.objects[closestObject].centerX - 140;
+        error = Vision16.largestObject.centerX - 150;
 
         Brain.Screen.printAt(1, 100, "error  = %.1f      ", error);
         Brain.Screen.printAt(1, 160, "vision  = %.1f      ",
                              Vision16.largestObject.centerX);
         mode = 1;
-        kp = 0.5;
-        kd = .3;
+        kp = 0.2;
+        kd = .00;
         if (fabs(error) < 20)
           VisionReady = true;
         else
@@ -93,7 +95,7 @@ int turretStable() {
     speed = (error * kp) + (ki * sum) + (kd * (error - prevError));
     if ((speed > 0 && TurretE.position(turns) * 360 < -120))
       speed = 0;
-    if ((speed < 0 && TurretE.position(turns) * 360 > 180))
+    if ((speed < 0 && TurretE.position(turns) * 360 > 160))
       speed = 0;
     turret.spin(fwd, speed, pct);
 

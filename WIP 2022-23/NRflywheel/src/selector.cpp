@@ -2,6 +2,7 @@
 
 bool Far_Side = false;
 bool Near_Side = false;
+bool skills = false;
 
 extern bool isRed;
 
@@ -15,6 +16,9 @@ void draw_GUI() {
   Brain.Screen.setFillColor(purple);
   Brain.Screen.drawRectangle(100, 50, 50, 50);
   Brain.Screen.printAt(105, 80, "Near");
+  Brain.Screen.drawRectangle(180, 50, 60, 60, yellow);
+  Brain.Screen.setFillColor(yellow);
+  Brain.Screen.printAt(185, 80, "Skills");
   Brain.Screen.setFillColor(black);
   Brain.Screen.printAt(20, 120, "Select alliance color");
   Brain.Screen.setFillColor(blue);
@@ -23,7 +27,6 @@ void draw_GUI() {
   Brain.Screen.setFillColor(red);
   Brain.Screen.drawRectangle(100, 130, 50, 50);
   Brain.Screen.printAt(105, 160, "Red");
-
 }
 
 void fetch_touch() {
@@ -33,12 +36,14 @@ void fetch_touch() {
   if (x_touch >= 20 && x_touch <= 70 && y_touch >= 50 && y_touch <= 100) {
     Far_Side = true;
     Near_Side = false;
+    skills = false;
     Brain.Screen.printAt(20, 200, "                  ");
     Brain.Screen.printAt(20, 200, "Far Side Selected");
   }
   if (x_touch >= 100 && x_touch <= 150 && y_touch >= 50 && y_touch <= 100) {
     Near_Side = true;
     Far_Side = false;
+    skills = false;
     Brain.Screen.printAt(20, 200, "                  ");
     Brain.Screen.printAt(20, 200, "Near Side Selected");
   }
@@ -51,5 +56,12 @@ void fetch_touch() {
     isRed = true;
     Brain.Screen.printAt(20, 230, "                      ");
     Brain.Screen.printAt(20, 230, "Red Alliance Selected");
+  }
+   if (x_touch >= 180 && x_touch <= 240 && y_touch >= 50 && y_touch <= 110) {
+    skills = true;
+    Far_Side = false;
+    Near_Side = false;
+    Brain.Screen.printAt(20, 200, "                      ");
+    Brain.Screen.printAt(20, 200, "Skills Selected");
   }
 }

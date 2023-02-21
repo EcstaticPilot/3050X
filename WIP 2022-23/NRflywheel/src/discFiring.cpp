@@ -9,7 +9,7 @@ extern float FSPEED;
 void pistonToggle() {
   if (turretOptical.isNearObject()) {
     Injector.set(true);
-    wait(120, msec);
+    wait(150, msec);
     Injector.set(false);
   }
 }
