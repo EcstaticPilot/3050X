@@ -50,9 +50,9 @@ extern bool skills;
 // declaring external functions
 // drive.cpp
 void drive(int lSpeed, int rSpeed, double wt);
-void drive_brake();
+void drive_brake(vex::brakeType Brake=brake);
 void rotate(double dir, double accuracy = 1);
-void inchDrive(float dist, float accuracy = 1);
+void inchDrive(double target, double speedMod=1);
 void forward_dist(float dist);
 void DriveToPoint(double targetX, double targetY, float speedMult = 1);
 void RAMSETE(float targetX, float targetY, float targetAngle,float accuracy=1);
@@ -85,7 +85,9 @@ int ControllerPrint() {
     Controller1.Screen.setCursor(2, 1);
     Controller1.Screen.print("pos= (%.1f,%.1f)", X, Y);
     Controller1.Screen.setCursor(3, 1);
-    switch(mode){
+        Controller1.Screen.print("pos= %.1f", RotationB.position(turns)*360);
+
+    /*switch(mode){
       case 1:Controller1.Screen.print("usingCamera.    ");
       break;
       case 2:Controller1.Screen.print("no goal.        ");
@@ -94,7 +96,7 @@ int ControllerPrint() {
       break;
       case 4:Controller1.Screen.print("loading.        ");
       break;
-    }
+    }*/
     this_thread::sleep_for(50);
   }
 }

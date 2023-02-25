@@ -7,12 +7,12 @@ extern bool Far_Side;
 extern bool Near_Side;
 
 int odometery() {
-double prevHeading = gyro1.heading();
+double prevHeading = gyro1.rotation();
 
 double deltaHeading = 0; // change in heading
 double absoluteOrientation = M_PI;
-double lRad = 1.375;      // radius of tracking wheel
-double bRad = 1.375;      // radius of tracking wheel
+double lRad = 1.3926;      // radius of tracking wheel
+double bRad = 1.3926;      // radius of tracking wheel
 double lEncoder = 0;      // declaring encoder variable left
 double bEncoder = 0;      // declaring encoder variable back
 double distL = 0;         // distance left encoder has traveled
@@ -22,6 +22,7 @@ double prevBE = bEncoder; // create previous encoder value back
 double averageHeading;    //
 double deltaX;
 double deltaY;
+
 
   Controller1.rumble(".");
   RotationL.resetPosition();
@@ -46,7 +47,7 @@ double deltaY;
     prevLE = lEncoder; // create previous encoder value left
     prevBE = bEncoder; // create previous encoder value back
 
-    absoluteOrientation = gyro1.heading(degrees) * M_PI / 180.0;
+    absoluteOrientation = gyro1.rotation() * M_PI / 180.0;
     deltaHeading =
         absoluteOrientation - prevHeading; // calculate change in heading
     averageHeading = prevHeading + (deltaHeading) / 2;
