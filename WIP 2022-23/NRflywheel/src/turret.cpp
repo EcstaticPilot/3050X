@@ -62,7 +62,7 @@ int turretStable() {
         //try this? https://www.sanfoundry.com/cpp-program-minimum-element-array-using-linear-search-2/
 
      
-        error = Vision16.largestObject.centerX - 150;
+        error = Vision16.objects[closestObject].centerX - 150;
 
         Brain.Screen.printAt(1, 100, "error  = %.1f      ", error);
         Brain.Screen.printAt(1, 160, "vision  = %.1f      ",
@@ -97,7 +97,10 @@ int turretStable() {
       speed = 0;
     if ((speed < 0 && TurretE.position(turns) * 360 > 160))
       speed = 0;
-    turret.spin(fwd, speed, pct);
+    if(fabs(speed)<2)
+    turret.stop(hold);
+    else
+    turret.spin(fwd, speed + (speed-turret.velocity(pct)), pct);
 
     prevError = error;
     sum += error;
