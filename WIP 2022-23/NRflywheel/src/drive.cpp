@@ -45,13 +45,12 @@ void inchDrive(double target, double speedMod=1){
   double accuracy=1;
   while(fabs(errorL)>accuracy){
   errorL=(target+lStart)-  (RotationL.position(turns)*360/*get degrees*/)*(M_PI/180/*do radians*/)*1.3926/*multiply by radius*/;
-  errorB=0-bStart;
+  errorB=0-bStart; 
   double lSpeed=(kp*errorL)+(ki*sum)+(kd*(prevError-errorL))+0.2*errorB;
   double rSpeed=(kp*errorL)+(ki*sum)+(kd*(prevError-errorL))-0.2*errorB;;
   drive(lSpeed*speedMod, rSpeed*speedMod, 10);
   sum+=errorL;
   prevError=errorL;
-
   }
 }
 

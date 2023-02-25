@@ -10,6 +10,29 @@
 // RB                   motor         4               
 // Intake1              motor         1               
 // turret               motor         9               
+// gyro1                inertial      10              
+// RotationL            rotation      5               
+// RotationB            rotation      3               
+// turretG              inertial      14              
+// Color                optical       7               
+// TurretE              rotation      17              
+// turretOptical        optical       2               
+// roller               motor         6               
+// expansion            digital_out   D               
+// Controller2          controller                    
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// Controller1          controller                    
+// F2                   motor         15              
+// Injector             digital_out   A               
+// LF                   motor         18              
+// LB                   motor         12              
+// RF                   motor         20              
+// RB                   motor         4               
+// Intake1              motor         1               
+// turret               motor         9               
 // gyro1                inertial      11              
 // RotationL            rotation      5               
 // RotationB            rotation      3               
