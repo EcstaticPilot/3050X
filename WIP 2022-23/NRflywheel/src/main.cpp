@@ -126,7 +126,7 @@ void pre_auton(void) {
 }
 
 void autonomous(void) {
-
+/*
 if (Far_Side == true) {
 Brain.Screen.clearScreen();
 Brain.Screen.printAt(20, 20, "Far Side Auton Running");
@@ -198,6 +198,8 @@ expansion.set(false);
 wait(5,sec);
 expansion.set(true);
 }
+*/
+inchDrive(10);
 }
 
 bool intakeOn = false;

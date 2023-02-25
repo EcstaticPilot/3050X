@@ -35,7 +35,7 @@ void forward_dist(float dist) {
 }
 
 void inchDrive(double target, double speedMod=1){
-  double kp=10,ki=0,kd=0;
+  double kp=1,ki=0,kd=0;
   double bStart=RotationB.position(turns)*360;
   double lStart=(RotationL.position(turns)*360/*get degrees*/)*(M_PI/180/*do radians*/)*1.3926/*multiply by radius*/;
   double errorL=target-lStart;
@@ -43,7 +43,7 @@ void inchDrive(double target, double speedMod=1){
   double prevError=errorL;
   double sum=0;
   double accuracy=1;
-  while(fabs(errorL)<accuracy){
+  while(fabs(errorL)>accuracy){
   errorL=(target+lStart)-  (RotationL.position(turns)*360/*get degrees*/)*(M_PI/180/*do radians*/)*1.3926/*multiply by radius*/;
   errorB=0-bStart;
   double lSpeed=(kp*errorL)+(ki*sum)+(kd*(prevError-errorL))+0.2*errorB;
