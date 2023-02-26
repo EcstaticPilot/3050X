@@ -22,6 +22,7 @@ int findClosetObject(int a, int b){
   return b;
   }
 }
+double joyAngle;
 int turretStable() {
   Controller1.rumble("..");
   loading = true;
@@ -40,7 +41,8 @@ int turretStable() {
   double speed;
   while (true) {
     GoalAngle = atan2(X - 115, 115 - Y) * (180 / M_PI);
-
+     joyAngle = atan2(Controller2.Axis1.position(),Controller2.Axis2.position())*180/M_PI;
+    
     if (!loading) {
 
       if (fabs(GoalAngle + offset - turretG.orientation(yaw, degrees)) < 300) {

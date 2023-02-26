@@ -68,6 +68,7 @@ extern double GoalAngle;
 extern bool Far_Side;
 extern bool Near_Side;
 extern float FSPEED;
+extern double joyAngle;
 extern bool skills;
 
 // declaring external functions
@@ -103,12 +104,12 @@ int ControllerPrint() {
   Brain.Timer.reset();
  
   while (1) {
-    Controller1.Screen.setCursor(1, 1);
-    Controller1.Screen.print("Spd=%.2f tSpd=%.2f   ", FSPEED, TargetSpeed);
-    Controller1.Screen.setCursor(2, 1);
-    Controller1.Screen.print("pos= (%.1f,%.1f)", X, Y);
-    Controller1.Screen.setCursor(3, 1);
-        Controller1.Screen.print("pos= %.1f", RotationB.position(turns)*360);
+    Controller2.Screen.setCursor(1, 1);
+    Controller2.Screen.print("Spd=%.2f tSpd=%.2f   ", FSPEED, TargetSpeed);
+    Controller2.Screen.setCursor(2, 1);
+    Controller2.Screen.print("pos= (%.1f,%.1f)", X, Y);
+    Controller2.Screen.setCursor(3, 1);
+        Controller2.Screen.print("pos= %.1f", joyAngle);
 
     /*switch(mode){
       case 1:Controller1.Screen.print("usingCamera.    ");
