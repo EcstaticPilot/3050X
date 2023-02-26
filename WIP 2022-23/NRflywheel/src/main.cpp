@@ -238,19 +238,19 @@ void usercontrol(void) {
     if (Controller1.ButtonY.pressing()) {
       expansion.set(true);
     }
-    if (Controller1.ButtonL1.pressing()) {
+    if (Controller2.ButtonL1.pressing()) {
       TargetSpeed -= 0.5;
       wait(10, msec);
     }
-    if (Controller1.ButtonR1.pressing()) {
+    if (Controller2.ButtonR1.pressing()) {
       TargetSpeed += 0.5;
       wait(10, msec);
     }
-    if(Controller1.ButtonUp.pressing()){
+    if(Controller2.ButtonUp.pressing()){
       TargetSpeed=75;
     }
 
-  if(Controller1.ButtonDown.pressing())TargetSpeed=0;
+  if(Controller2.ButtonDown.pressing())TargetSpeed=0;
 
   if (driveDir == false) {
     if (Controller1.ButtonL2.pressing()) {
@@ -315,10 +315,10 @@ int main() {
   Competition.drivercontrol(usercontrol);
 
   Controller1.ButtonB.pressed(toggleIntake);
-  Controller1.ButtonLeft.pressed(pistonToggle);
+  Controller2.ButtonLeft.pressed(pistonToggle);
   Controller1.ButtonRight.pressed(driveSwitch);
-  Controller1.ButtonX.pressed(toggleTurret);
-  Controller1.ButtonA.pressed(fireDiscs);
+  Controller2.ButtonX.pressed(toggleTurret);
+  Controller2.ButtonA.pressed(fireDiscs);
 
   pre_auton();
 

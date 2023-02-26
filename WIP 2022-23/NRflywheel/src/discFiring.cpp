@@ -17,7 +17,7 @@ void pistonToggle() {
 void fireDiscs() {
   loading = false;
 // need to create formula
-  waitUntil(fabs(TurretE.velocity(rpm)) < 1 &&
+  waitUntil(//fabs(TurretE.velocity(rpm)) < 1 &&
             fabs((FSPEED - TargetSpeed)) < 2);
   pistonToggle(); 
   if (turretOptical.isNearObject())

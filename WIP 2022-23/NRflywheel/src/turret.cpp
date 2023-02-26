@@ -40,11 +40,16 @@ int turretStable() {
   // while(true){
   double speed;
   while (true) {
-    GoalAngle = atan2(X - 115, 115 - Y) * (180 / M_PI);
+    //GoalAngle = atan2(X - 115, 115 - Y) * (180 / M_PI);
      joyAngle = atan2(Controller2.Axis1.position(),Controller2.Axis2.position())*180/M_PI;
-    
+    if((Controller2.Axis1.position()<5)&&(Controller2.Axis2.position()<5))
+    loading=true;
+    else 
+    loading=false;
     if (!loading) {
+      
 
+    /*
       if (fabs(GoalAngle + offset - turretG.orientation(yaw, degrees)) < 300) {
         if (isRed)
           Vision16.takeSnapshot(RGOAL);
@@ -78,12 +83,19 @@ int turretStable() {
           VisionReady = false;
       } else {
         VisionReady = false;
-        error = -(GoalAngle + offset) - turretG.orientation(yaw, degrees);
+
+        */
+        error = joyAngle - turretG.orientation(yaw, degrees);
         kp = 1;
         kd = 0.3;
         mode = 2;
-      }
+      
       //    VisionReady=false;//vision is not ready
+
+
+      
+
+
     } else { // if not loading go to zero
 
       error = TurretE.position(turns) * 360;
