@@ -100,7 +100,7 @@ int turretStable() {
     if(fabs(speed)<2)
     turret.stop(hold);
     else
-    turret.spin(fwd, speed + (speed-turret.velocity(pct)), pct);
+    turret.spin(fwd, speed, pct);
 
     prevError = error;
     sum += error;

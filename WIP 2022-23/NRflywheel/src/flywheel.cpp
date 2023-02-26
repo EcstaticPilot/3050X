@@ -33,7 +33,7 @@ int controlFlywheelSpeed() {
       }
       else
       
-      spinFlywheel(TargetSpeed+error*kp);
+      spinFlywheel(TargetSpeed*1.2+error*kp);
       this_thread::sleep_for(50);
       FWDrive = fwDrive;
       OldError = error;
