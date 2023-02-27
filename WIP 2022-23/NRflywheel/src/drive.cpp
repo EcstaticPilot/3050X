@@ -48,7 +48,7 @@ void inchDrive(double target, double speedMod=1){
   errorB=0-bStart; 
   double lSpeed=(kp*errorL)+(ki*sum)+(kd*(prevError-errorL))+0.2*errorB;
   double rSpeed=(kp*errorL)+(ki*sum)+(kd*(prevError-errorL))-0.2*errorB;;
-  drive(lSpeed*speedMod, rSpeed*speedMod, 10);
+  drive(-lSpeed*speedMod, -rSpeed*speedMod, 10);
   sum+=errorL;
   prevError=errorL;
   }

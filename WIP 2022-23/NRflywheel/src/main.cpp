@@ -48,7 +48,6 @@
 #include "vex.h"
 #include <math.h>
 #include <iostream>
-
 using namespace vex;
 
 competition Competition;
@@ -109,7 +108,9 @@ int ControllerPrint() {
     Controller2.Screen.setCursor(2, 1);
     Controller2.Screen.print("pos= (%.1f,%.1f)", X, Y);
     Controller2.Screen.setCursor(3, 1);
-        Controller2.Screen.print("pos= %.1f", joyAngle);
+    // Vision16.takeSnapshot(isRed?RGOAL:BGOAL);
+    
+       // Controller2.Screen.print("pos= %.1f", Vision16.largestObject.centerX-150);
 
     /*switch(mode){
       case 1:Controller1.Screen.print("usingCamera.    ");
@@ -158,6 +159,7 @@ forward_dist(1);
 rotate(90);
 forward_dist(27);
 rotate(180);
+TargetSpeed=75;
 forward_dist(7);
 
 // to ensure contact w/ roller
@@ -168,6 +170,10 @@ RB.spin(forward, 50, pct);
 roller.spinFor(forward, -0.5, rev);
 roller.stop();
 drive_brake();
+loading=false;
+GoalAngle=10;
+wait(1, sec);
+fireDiscs();
 }
 
 if (Near_Side == true) {
@@ -223,7 +229,18 @@ wait(5,sec);
 expansion.set(true);
 }
 */
-inchDrive(10);
+RF.stop(hold);
+RB.stop(hold);
+LF.spin(fwd, 100, pct);
+LB.spin(fwd, 100, pct);
+waitUntil(gyro1.rotation()>145);
+drive_brake(hold);
+LF.spin(forward, 50, pct);
+RF.spin(forward, 50, pct);
+LB.spin(forward, 50, pct);
+RB.spin(forward, 50, pct);
+waitUntil(Color.isNearObject());
+roller.spinFor(-0.5,turns);
 }
 
 bool intakeOn = false;

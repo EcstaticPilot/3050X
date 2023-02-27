@@ -1,3 +1,4 @@
+
 #include "vex.h"
 #include "vision.h"
 #include <algorithm>
@@ -9,6 +10,8 @@ double GoalAngle;
 extern double X, Y;
 float offset = 0;
 bool VisionReady;
+extern bool Far_Side;
+extern competition Competition;
 int mode = 0;
 extern bool isRed;
 int findClosetObject(int a, int b){
@@ -42,7 +45,8 @@ int turretStable() {
   while (true) {
     //GoalAngle = atan2(X - 115, 115 - Y) * (180 / M_PI);
      joyAngle = atan2(Controller2.Axis1.position(),Controller2.Axis2.position())*180/M_PI;
-    if((Controller2.Axis1.position()<5)&&(Controller2.Axis2.position()<5))
+
+    if( ( abs(Controller2.Axis1.position()) < 5 )  &&  ( abs(Controller2.Axis2.position()) < 5 ) )
     loading=true;
     else 
     loading=false;
@@ -85,7 +89,12 @@ int turretStable() {
         VisionReady = false;
 
         */
-        error = joyAngle - turretG.orientation(yaw, degrees);
+       if(Competition.isAutonomous())
+        error=-GoalAngle-turretG.orientation(yaw,degrees);
+        else{
+       // if(competition.){statements
+       // }
+        error = joyAngle - (Far_Side?turretG.orientation(yaw, degrees)+90:turretG.orientation(yaw,degrees));}
         kp = 1;
         kd = 0.3;
         mode = 2;
@@ -107,14 +116,14 @@ int turretStable() {
     }
 
     speed = (error * kp) + (ki * sum) + (kd * (error - prevError));
-    if ((speed > 0 && TurretE.position(turns) * 360 < -120))
-      speed = 0;
+    if ((speed > 0 && TurretE.position(turns) * 360 < -240))
+     speed = 0;
     if ((speed < 0 && TurretE.position(turns) * 360 > 160))
-      speed = 0;
-    if(fabs(speed)<2)
-    turret.stop(hold);
-    else
-    turret.spin(fwd, speed, pct);
+     speed = 0;
+   // if(fabs(speed)<1)
+   // turret.stop(hold);
+  //  else
+    turret.spin(fwd, speed+0.5*(speed-turret.velocity(pct)), pct);
 
     prevError = error;
     sum += error;
