@@ -22,6 +22,7 @@ extern optical turretOptical;
 extern motor roller;
 extern digital_out expansion;
 extern controller Controller2;
+extern digital_out expansion_two;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.

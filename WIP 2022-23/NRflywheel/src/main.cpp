@@ -17,6 +17,30 @@
 // Color                optical       7               
 // TurretE              rotation      17              
 // turretOptical        optical       2               
+// roller               motor         19              
+// expansion            digital_out   D               
+// Controller2          controller                    
+// expansion_two        digital_out   B               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// Controller1          controller                    
+// F2                   motor         15              
+// Injector             digital_out   A               
+// LF                   motor         18              
+// LB                   motor         12              
+// RF                   motor         20              
+// RB                   motor         4               
+// Intake1              motor         1               
+// turret               motor         9               
+// gyro1                inertial      10              
+// RotationL            rotation      5               
+// RotationB            rotation      3               
+// turretG              inertial      14              
+// Color                optical       7               
+// TurretE              rotation      17              
+// turretOptical        optical       2               
 // roller               motor         6               
 // expansion            digital_out   D               
 // Controller2          controller                    
@@ -254,6 +278,9 @@ void usercontrol(void) {
   while (true) {
     if (Controller1.ButtonY.pressing()) {
       expansion.set(true);
+      expansion_two.set(true); // <-- the piston thats on the robot
+      // is a single acting piston; is it still a digital out
+      // and written this way or no? 
     }
     if (Controller2.ButtonL1.pressing()) {
       TargetSpeed -= 0.5;
