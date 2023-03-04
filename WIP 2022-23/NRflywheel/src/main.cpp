@@ -136,7 +136,7 @@ int ControllerPrint() {
     
        // Controller2.Screen.print("pos= %.1f", Vision16.largestObject.centerX-150);
 
-    /*switch(mode){
+    switch(mode){
       case 1:Controller1.Screen.print("usingCamera.    ");
       break;
       case 2:Controller1.Screen.print("no goal.        ");
@@ -145,7 +145,7 @@ int ControllerPrint() {
       break;
       case 4:Controller1.Screen.print("loading.        ");
       break;
-    }*/
+    }
     this_thread::sleep_for(50);
   }
 }
@@ -329,15 +329,15 @@ void usercontrol(void) {
       Color.setLight(ledState::off);
  
     if (driveDir) {
-      LF.spin(forward, Controller1.Axis3.position() * 120, voltageUnits::mV);
-      RF.spin(forward, Controller1.Axis2.position() * 120, voltageUnits::mV);
-      LB.spin(forward, Controller1.Axis3.position() * 120, voltageUnits::mV);
-      RB.spin(forward, Controller1.Axis2.position() * 120, voltageUnits::mV);
+      LF.spin(forward, Controller1.Axis3.position() * 127, voltageUnits::mV);
+      RF.spin(forward, Controller1.Axis2.position() * 127, voltageUnits::mV);
+      LB.spin(forward, Controller1.Axis3.position() * 127, voltageUnits::mV);
+      RB.spin(forward, Controller1.Axis2.position() * 127, voltageUnits::mV);
     } else if (!driveDir) {
-      LF.spin(reverse, Controller1.Axis2.position() * 120, voltageUnits::mV);
-      RF.spin(reverse, Controller1.Axis3.position() * 120, voltageUnits::mV);
-      LB.spin(reverse, Controller1.Axis2.position() * 120, voltageUnits::mV);
-      RB.spin(reverse, Controller1.Axis3.position() * 120, voltageUnits::mV);
+      LF.spin(reverse, Controller1.Axis2.position() * 127, voltageUnits::mV);
+      RF.spin(reverse, Controller1.Axis3.position() * 127, voltageUnits::mV);
+      LB.spin(reverse, Controller1.Axis2.position() * 127, voltageUnits::mV);
+      RB.spin(reverse, Controller1.Axis3.position() * 127, voltageUnits::mV);
     }
     if (Controller1.Axis2.position() == 0 &&
         Controller1.Axis3.position() == 0) {
@@ -362,7 +362,7 @@ int main() {
   Controller2.ButtonLeft.pressed(pistonToggle);
   Controller1.ButtonRight.pressed(driveSwitch);
   Controller2.ButtonX.pressed(toggleTurret);
-  Controller2.ButtonA.pressed(fireDiscs);
+  Controller2.ButtonR2.pressed(fireDiscs);
 
   pre_auton();
 
