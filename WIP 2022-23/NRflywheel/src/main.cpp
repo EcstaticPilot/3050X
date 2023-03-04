@@ -175,7 +175,7 @@ void pre_auton(void) {
 }
 
 void autonomous(void) {
-/*
+
 if (Far_Side == true) {
 Brain.Screen.clearScreen();
 Brain.Screen.printAt(20, 20, "Far Side Auton Running");
@@ -201,6 +201,7 @@ fireDiscs();
 }
 
 if (Near_Side == true) {
+  /*
 Brain.Screen.clearScreen();
 Brain.Screen.printAt(20, 20, "Near Side Auton Running");
 LF.spin(forward, 50, pct);
@@ -216,7 +217,21 @@ RB.spin(forward, 50, pct);
 // }
 roller.spinFor(forward, -0.25, rev);
 roller.stop(brake);
-drive_brake();
+drive_brake();*/
+
+
+RF.stop(hold);
+RB.stop(hold);
+LF.spin(fwd, 100, pct);
+LB.spin(fwd, 100, pct);
+waitUntil(gyro1.rotation()>145);
+drive_brake(hold);
+LF.spin(forward, 50, pct);
+RF.spin(forward, 50, pct);
+LB.spin(forward, 50, pct);
+RB.spin(forward, 50, pct);
+waitUntil(Color.isNearObject());
+roller.spinFor(-0.5,turns);
 }
 
 if (!skills) {
@@ -252,19 +267,8 @@ expansion.set(false);
 wait(5,sec);
 expansion.set(true);
 }
-*/
-RF.stop(hold);
-RB.stop(hold);
-LF.spin(fwd, 100, pct);
-LB.spin(fwd, 100, pct);
-waitUntil(gyro1.rotation()>145);
-drive_brake(hold);
-LF.spin(forward, 50, pct);
-RF.spin(forward, 50, pct);
-LB.spin(forward, 50, pct);
-RB.spin(forward, 50, pct);
-waitUntil(Color.isNearObject());
-roller.spinFor(-0.5,turns);
+
+
 }
 
 bool intakeOn = false;
@@ -323,11 +327,14 @@ void usercontrol(void) {
 
     Color.setLightPower(100);
 
+
     if (Color.isNearObject())
       Color.setLight(ledState::on);
     else
       Color.setLight(ledState::off);
- 
+      if(Controller1.ButtonX.pressing()&&!intakeOn){
+        Intake1.spin(fwd,-12,volt);
+      }
     if (driveDir) {
       LF.spin(forward, Controller1.Axis3.position() * 127, voltageUnits::mV);
       RF.spin(forward, Controller1.Axis2.position() * 127, voltageUnits::mV);

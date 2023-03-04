@@ -77,7 +77,7 @@ int turretStable() {
         // https://www.sanfoundry.com/cpp-program-minimum-element-array-using-linear-search-2/
 
         error = Vision16.objects[closestObject].centerX - 150;
-        if (error > 50) {
+        if (fabs(error) > 40) {
 
           error = joyAngle - (Far_Side ? turretG.orientation(yaw, degrees) + 90
                                        : turretG.orientation(yaw, degrees));
@@ -91,7 +91,7 @@ int turretStable() {
           Brain.Screen.printAt(1, 160, "vision  = %.1f      ",
                                Vision16.largestObject.centerX);
           mode = 1;
-          kp = 0.05;
+          kp = 0.1;
           kd = .00;
           if (fabs(error) < 10)
             Controller2.rumble(".");

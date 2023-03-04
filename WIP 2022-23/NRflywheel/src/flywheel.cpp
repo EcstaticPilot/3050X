@@ -7,7 +7,7 @@
 
 double TargetSpeed = 0;
 void spinFlywheel(double speed) {
-  speed = speed * 120; // speed is in pctage so convert to mV 100% = 12000
+  speed = speed * 127; // speed is in pctage so convert to mV 100% = 12000
                        // mV
   F2.spin(forward, speed, voltageUnits::mV);
 }
