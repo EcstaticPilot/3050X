@@ -38,7 +38,7 @@ int turretStable() {
   double sum = 0;
   double prevError = 0;
 
-  double error = -(GoalAngle + offset) - turretG.orientation(yaw, degrees);
+  double error = -(GoalAngle) - turretG.orientation(yaw, degrees);
   // double accuracy = 1;
   // while(true){
   double speed;
@@ -57,7 +57,7 @@ int turretStable() {
     if (!loading) {
 
       if (fabs((Far_Side ? joyAngle - 90 : joyAngle) -
-               turretG.orientation(yaw, degrees)) < 20) {
+               turretG.orientation(yaw, degrees)) < 40) {
         if (isRed)
           Vision16.takeSnapshot(RGOAL);
         else
@@ -76,7 +76,7 @@ int turretStable() {
         // try this?
         // https://www.sanfoundry.com/cpp-program-minimum-element-array-using-linear-search-2/
 
-        error = Vision16.objects[closestObject].centerX - 150;
+        error = Vision16.objects[closestObject].centerX - (155+offset);
         if (fabs(error) > 40) {
 
           error = joyAngle - (Far_Side ? turretG.orientation(yaw, degrees) + 90
@@ -91,9 +91,9 @@ int turretStable() {
           Brain.Screen.printAt(1, 160, "vision  = %.1f      ",
                                Vision16.largestObject.centerX);
           mode = 1;
-          kp = 0.1;
-          kd = .00;
-          if (fabs(error) < 10)
+          kp = 0.2;
+          kd = .025;
+          if (fabs(error) < 15)
             Controller2.rumble(".");
           else
             VisionReady = false;

@@ -17,6 +17,9 @@ double OldError = 0;
 double TBHval = 0;
 double fwDrive;
 float FSPEED;
+extern double X;
+extern double Y;
+double speedOffset=0;
 int controlFlywheelSpeed() {
   std::vector<float> moving_avg;
   int init_count = 0;
@@ -27,13 +30,13 @@ int controlFlywheelSpeed() {
       FSPEED = std::accumulate(moving_avg.begin(), moving_avg.end(), 0.0) / 10.0;
       moving_avg.erase(moving_avg.begin());
       error = TargetSpeed - FSPEED;
-
+      TargetSpeed=0.263*sqrt( ( (125-X)*(125-X) ) + ( (125-Y)*(125-Y) ) )+38.6+speedOffset;
       if (TargetSpeed <= 0) {
         F2.stop(coast);
       }
       else
       
-      spinFlywheel(TargetSpeed*1.3+error*kp);
+      spinFlywheel(TargetSpeed*1.1+error*kp);
       this_thread::sleep_for(50);
       FWDrive = fwDrive;
       OldError = error;

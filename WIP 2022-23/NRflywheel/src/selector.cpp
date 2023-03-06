@@ -16,7 +16,7 @@ void draw_GUI() {
   Brain.Screen.setFillColor(purple);
   Brain.Screen.drawRectangle(100, 50, 50, 50);
   Brain.Screen.printAt(105, 80, "Near");
-  Brain.Screen.drawRectangle(180, 50, 60, 60, yellow);
+  Brain.Screen.drawRectangle(180, 50, 60, 80, yellow);
   Brain.Screen.setFillColor(yellow);
   Brain.Screen.printAt(185, 80, "Skills");
   Brain.Screen.setFillColor(black);
@@ -57,7 +57,7 @@ void fetch_touch() {
     Brain.Screen.printAt(20, 230, "                      ");
     Brain.Screen.printAt(20, 230, "Red Alliance Selected");
   }
-   if (x_touch >= 180 && x_touch <= 240 && y_touch >= 50 && y_touch <= 110) {
+   if (x_touch >= 180 && x_touch <= 240 && y_touch >= 50 && y_touch <= 130) {
     skills = true;
     Far_Side = false;
     Near_Side = false;

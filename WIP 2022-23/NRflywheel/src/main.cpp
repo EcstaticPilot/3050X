@@ -93,7 +93,8 @@ extern bool Near_Side;
 extern float FSPEED;
 extern double joyAngle;
 extern bool skills;
-
+extern float offset;
+extern double speedOffset;
 // declaring external functions
 // drive.cpp
 void drive(int lSpeed, int rSpeed, double wt);
@@ -134,8 +135,8 @@ int ControllerPrint() {
     Controller2.Screen.setCursor(3, 1);
     // Vision16.takeSnapshot(isRed?RGOAL:BGOAL);
     
-       // Controller2.Screen.print("pos= %.1f", Vision16.largestObject.centerX-150);
-
+        Controller2.Screen.print("dist= %.1f", sqrt( ( (125-X)*(125-X) ) + ( (125-Y)*(125-Y) ) )  );
+/*
     switch(mode){
       case 1:Controller1.Screen.print("usingCamera.    ");
       break;
@@ -145,7 +146,7 @@ int ControllerPrint() {
       break;
       case 4:Controller1.Screen.print("loading.        ");
       break;
-    }
+    }*/
     this_thread::sleep_for(50);
   }
 }
@@ -220,28 +221,19 @@ roller.stop(brake);
 drive_brake();*/
 
 
-RF.stop(hold);
-RB.stop(hold);
-LF.spin(fwd, 100, pct);
-LB.spin(fwd, 100, pct);
-waitUntil(gyro1.rotation()>145);
-drive_brake(hold);
-LF.spin(forward, 50, pct);
-RF.spin(forward, 50, pct);
-LB.spin(forward, 50, pct);
-RB.spin(forward, 50, pct);
-waitUntil(Color.isNearObject());
-roller.spinFor(-0.5,turns);
-}
+// RF.stop(hold);
+// RB.stop(hold);
+// LF.spin(fwd, 100, pct);
+// LB.spin(fwd, 100, pct);
+// waitUntil(gyro1.rotation()>145);
+// drive_brake(hold);
+// LF.spin(forward, 50, pct);
+// RF.spin(forward, 50, pct);
+// LB.spin(forward, 50, pct);
+// RB.spin(forward, 50, pct);
+// waitUntil(Color.isNearObject());
+// roller.spinFor(-0.5,turns);
 
-if (!skills) {
-loading = false;
-TargetSpeed=70;
-waitUntil(FSPEED> 68&&FSPEED<72);
-pistonToggle();
-waitUntil(FSPEED > 68&&FSPEED<72);
-pistonToggle();
-loading = true;
 }
 
 if (skills) {
@@ -259,13 +251,19 @@ RB.spin(forward, 50, pct);
 roller.spinFor(forward, -0.25, rev);
 roller.stop();
 drive_brake();
-forward_dist(-5);
+forward_dist(-24);
+rotate(90);
+LF.spin(forward, 50, pct);
+RF.spin(forward, 50, pct);
+LB.spin(forward, 50, pct);
+RB.spin(forward, 50, pct);
+waitUntil(Color.isNearObject());
+roller.spinFor(fwd, -0.5, rev);
+forward_dist(12);
 rotate(45);
-  Controller1.rumble(".....");
-  wait(4, sec);
+wait(3, sec);
 expansion.set(false);
-wait(5,sec);
-expansion.set(true);
+expansion_two.set(false);
 }
 
 
@@ -287,27 +285,31 @@ void usercontrol(void) {
       // and written this way or no? 
     }
     if (Controller2.ButtonL1.pressing()) {
-      TargetSpeed -= 0.5;
+      speedOffset -= 0.5;
       wait(10, msec);
     }
     if (Controller2.ButtonR1.pressing()) {
-      TargetSpeed += 0.5;
+      speedOffset += 0.5;
       wait(10, msec);
     }
-    if(Controller2.ButtonUp.pressing()){
-      TargetSpeed=75;
-    }
+
 
   if(Controller2.ButtonDown.pressing())TargetSpeed=0;
 
-  if (driveDir == false) {
+  
     if (Controller1.ButtonL2.pressing()) {
       roller.spin(forward, 100, pct);
     }
     if (Controller1.ButtonR2.pressing()) {
       roller.spin(forward, -100, pct);
     }
-  }
+
+    if (Controller2.ButtonL2.pressing()) {
+      offset+=0.1;
+    }
+    if (Controller2.ButtonR2.pressing()) {
+      offset-=0.1;
+    }
 
     if (intakeOn) {
       Intake1.spin(forward, 12, volt);
@@ -369,7 +371,7 @@ int main() {
   Controller2.ButtonLeft.pressed(pistonToggle);
   Controller1.ButtonRight.pressed(driveSwitch);
   Controller2.ButtonX.pressed(toggleTurret);
-  Controller2.ButtonR2.pressed(fireDiscs);
+  Controller2.ButtonUp.pressed(fireDiscs);
 
   pre_auton();
 

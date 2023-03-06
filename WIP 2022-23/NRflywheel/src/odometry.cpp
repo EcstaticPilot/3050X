@@ -2,9 +2,10 @@
 #include "vex.h"
 #include <math.h>
 
-double X=100,Y=10;
+double X=0,Y=0;
 extern bool Far_Side;
 extern bool Near_Side;
+
 
 int odometery() {
 double prevHeading = gyro1.rotation();
@@ -22,11 +23,14 @@ double prevBE = bEncoder; // create previous encoder value back
 double averageHeading;    //
 double deltaX;
 double deltaY;
-
+Near_Side=true;
 
   Controller1.rumble(".");
   RotationL.resetPosition();
   RotationB.resetPosition();
+  if(Far_Side){X=72;
+  }
+  if(Near_Side) X=98;
   while (1) {
     if(Far_Side){
     
@@ -37,7 +41,7 @@ double deltaY;
     
     
     lEncoder = RotationL.position(turns)*360;
-    bEncoder = RotationB.position(turns)*360;
+    bEncoder = RotationB.position(turns)*-360;
     }
     distL = ((lEncoder - prevLE) * M_PI / 180) * lRad;
     // convert encoder distance into distance traveled
@@ -47,7 +51,7 @@ double deltaY;
     prevLE = lEncoder; // create previous encoder value left
     prevBE = bEncoder; // create previous encoder value back
 
-    absoluteOrientation = gyro1.rotation() * M_PI / 180.0;
+    absoluteOrientation = (Near_Side?-gyro1.rotation():gyro1.rotation()) * M_PI / 180.0;
     deltaHeading =
         absoluteOrientation - prevHeading; // calculate change in heading
     averageHeading = prevHeading + (deltaHeading) / 2;
