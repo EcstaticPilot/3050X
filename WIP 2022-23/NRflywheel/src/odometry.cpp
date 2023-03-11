@@ -23,7 +23,7 @@ double prevBE = bEncoder; // create previous encoder value back
 double averageHeading;    //
 double deltaX;
 double deltaY;
-Near_Side=true;
+
 
   Controller1.rumble(".");
   RotationL.resetPosition();

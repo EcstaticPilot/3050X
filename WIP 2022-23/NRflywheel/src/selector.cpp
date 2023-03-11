@@ -7,7 +7,7 @@ bool skills = false;
 extern bool isRed;
 
 void draw_GUI() {
-  // Draws 4 buttons to be used for selecting auto
+  // Draws 5 buttons to be used for selecting auto
   Brain.Screen.clearScreen();
   Brain.Screen.printAt(20, 40, "Select side");
   Brain.Screen.setFillColor(orange);

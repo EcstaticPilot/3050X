@@ -17,6 +17,7 @@ double OldError = 0;
 double TBHval = 0;
 double fwDrive;
 float FSPEED;
+extern bool Far_Side;
 extern double X;
 extern double Y;
 double speedOffset=0;
@@ -29,8 +30,9 @@ int controlFlywheelSpeed() {
       double kp=5;
       FSPEED = std::accumulate(moving_avg.begin(), moving_avg.end(), 0.0) / 10.0;
       moving_avg.erase(moving_avg.begin());
+      
+      TargetSpeed=0.263*sqrt( ( (125-X)*(125-X) ) + ( (125-Y)*(125-Y) ) )+38.6+speedOffset;
       error = TargetSpeed - FSPEED;
-      TargetSpeed=0.263*sqrt( ( (125-X)*(125-X) ) + ( (125-Y)*(125-Y) ) )+35+speedOffset;
       if (TargetSpeed <= 0) {
         F2.stop(coast);
       }

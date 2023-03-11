@@ -129,7 +129,7 @@ int ControllerPrint() {
  
   while (1) {
     Controller2.Screen.setCursor(1, 1);
-    Controller2.Screen.print("Spd=%.2f tSpd=%.2f   ", FSPEED, TargetSpeed);
+    Controller2.Screen.print("Spd=%.1f tSpd=%.1f   ", FSPEED, TargetSpeed);
     Controller2.Screen.setCursor(2, 1);
     Controller2.Screen.print("pos= (%.1f,%.1f)", X, Y);
     Controller2.Screen.setCursor(3, 1);
@@ -147,12 +147,13 @@ int ControllerPrint() {
       case 4:Controller1.Screen.print("loading.        ");
       break;
     }*/
-    this_thread::sleep_for(50);
+    this_thread::sleep_for(75);
   }
 }
 
 void pre_auton(void) {
-
+Far_Side=true;
+isRed=false;
   vexcodeInit();
   if (!(RB.installed() && LB.installed() && RF.installed() &&
         LF.installed() &&                            
@@ -171,10 +172,10 @@ void pre_auton(void) {
   waitUntil(!(gyro1.isCalibrating() && turretG.isCalibrating()));
 
 
-  waitUntil(Far_Side||Near_Side);
+  waitUntil(Far_Side || Near_Side);
   thread odometeryTracking = thread(odometery);
   thread flywheelgo = thread(controlFlywheelSpeed);
-    thread turretStablization = thread(turretStable);
+  thread turretStablization = thread(turretStable);
 }
 
 void autonomous(void) {
@@ -184,7 +185,7 @@ Brain.Screen.clearScreen();
 Brain.Screen.printAt(20, 20, "Far Side Auton Running");
 forward_dist(1);
 rotate(90);
-forward_dist(27);
+forward_dist(26);
 rotate(180);
 TargetSpeed=75;
 forward_dist(7);
@@ -195,7 +196,7 @@ RF.spin(forward, 50, pct);
 LB.spin(forward, 50, pct);
 RB.spin(forward, 50, pct);
 roller.spinFor(forward, -0.25, rev);
-roller.stop();
+roller.stop(brake);
 drive_brake();
 joyAngle=-90;
 waitUntil(TurretE.velocity(rpm)<10);
@@ -210,13 +211,6 @@ LF.spin(forward, 50, pct);
 RF.spin(forward, 50, pct);
 LB.spin(forward, 50, pct);
 RB.spin(forward, 50, pct);
-// roller.spin(forward, 100, pct);
-// if (isRed == true) {
-//   waitUntil(Color.color() == blue);
-// }
-// else {
-//   waitUntil(Color.color() == red);
-// }
 roller.spinFor(forward, -0.25, rev);
 roller.stop(brake);
 drive_brake();
@@ -242,13 +236,6 @@ LF.spin(forward, 50, pct);
 RF.spin(forward, 50, pct);
 LB.spin(forward, 50, pct);
 RB.spin(forward, 50, pct);
-// roller.spin(forward, 100, pct);
-// if (isRed == true) {
-//   waitUntil(Color.color() == blue);
-// }
-// else {
-//   waitUntil(Color.color() == red);
-// }
 roller.spinFor(forward, -0.25, rev);
 roller.stop();
 drive_brake();
@@ -319,13 +306,13 @@ void usercontrol(void) {
       Intake1.stop();
     }
 
-    if ((isRed?Color.color() == red:Color.color()==blue)  && Color.isNearObject()) {
+    if ((isRed?Color.color() == red:Color.color()==blue)) {
       roller.spin(forward, 200, rpm);
     }
     else {
       if(Controller1.ButtonL2.pressing())roller.spin(forward, 100, pct);
       else if(Controller1.ButtonR2.pressing())roller.spin(reverse, 100, pct);
-      else roller.stop();
+      else roller.stop(brake);
     }
 
     Color.setLightPower(100);

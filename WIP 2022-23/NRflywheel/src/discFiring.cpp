@@ -6,16 +6,18 @@ extern double GoalAngle;
 extern bool VisionReady;
 extern double speedOffset;
 extern float FSPEED;
-
+bool isIndex=false;
 void pistonToggle() {
+
   if (turretOptical.isNearObject()) {
-    
-    Injector.set(true);
+   // isIndex=true;
     speedOffset+=5;
-    wait(140, msec);
+    Injector.set(true);
+    wait(180, msec);
     Injector.set(false);
-    wait(30, msec);
+    wait(50, msec);
     speedOffset-=5;
+  //  isIndex=false;
   }
 }
 
@@ -27,7 +29,7 @@ void fireDiscs() {
   pistonToggle(); 
   if (turretOptical.isNearObject()){
     fireDiscs();
-    wait(100, msec);}
+    wait(300, msec);}
   else {
     loading = true;
   }
