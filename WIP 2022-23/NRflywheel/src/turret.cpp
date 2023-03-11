@@ -18,6 +18,9 @@ int findClosetObject(int a, int b) {
   if (!Vision16.objects[b].exists) {
     return a;
   }
+  if(Vision16.objects[b].centerY<50){
+    return a;
+  }
   if (abs(150 - Vision16.objects[a].centerX) <
       abs(150 - Vision16.objects[b].centerX)) {
     return a;
@@ -55,6 +58,7 @@ int turretStable() {
       else
         loading = false;
     }
+    
     if (!loading) {
 
       if (fabs(joyAngle - (Far_Side ? turretG.orientation(yaw, degrees) + 90
@@ -78,7 +82,7 @@ int turretStable() {
         // https://www.sanfoundry.com/cpp-program-minimum-element-array-using-linear-search-2/
 
         error = Vision16.objects[closestObject].centerX - (155 + offset);
-        if (fabs(error) > 40) {
+        if (fabs(error) > 30) {
 
           error = joyAngle - (Far_Side ? turretG.orientation(yaw, degrees) + 90
                                        : turretG.orientation(yaw, degrees));
@@ -92,8 +96,8 @@ int turretStable() {
           Brain.Screen.printAt(1, 160, "vision  = %.1f      ",
                                Vision16.largestObject.centerX);
           mode = 1;
-          kp = 0.2;
-          kd = .025;
+          kp = 0.175;
+          kd = .05;
           if (fabs(error) < 15)
             Controller2.rumble(".");
           else
@@ -127,8 +131,11 @@ int turretStable() {
     speed = (error * kp) + (ki * sum) + (kd * (error - prevError));
     if ((speed > 0 && TurretE.position(turns) * 360 < -240))
       speed = 0;
-    if ((speed < 0 && TurretE.position(turns) * 360 > 160))
+    if ((speed < 0 && TurretE.position(turns) * 360 > 140)){
       speed = 0;
+      turret.stop(brake);
+    }
+      
     // if(fabs(speed)<1)
     // turret.stop(hold);
     //  else

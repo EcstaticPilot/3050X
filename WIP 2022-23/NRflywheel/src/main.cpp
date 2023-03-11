@@ -194,16 +194,16 @@ LF.spin(forward, 50, pct);
 RF.spin(forward, 50, pct);
 LB.spin(forward, 50, pct);
 RB.spin(forward, 50, pct);
-roller.spinFor(forward, -0.5, rev);
+roller.spinFor(forward, -0.25, rev);
 roller.stop();
 drive_brake();
-loading=false;
-joyAngle=-89;
-
+joyAngle=-90;
+waitUntil(TurretE.velocity(rpm)<10);
+fireDiscs();
 }
 
 if (Near_Side == true) {
-  /*
+  
 Brain.Screen.clearScreen();
 Brain.Screen.printAt(20, 20, "Near Side Auton Running");
 LF.spin(forward, 50, pct);
@@ -219,7 +219,7 @@ RB.spin(forward, 50, pct);
 // }
 roller.spinFor(forward, -0.25, rev);
 roller.stop(brake);
-drive_brake();*/
+drive_brake();
 
 
 // RF.stop(hold);
