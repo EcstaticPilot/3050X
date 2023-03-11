@@ -196,9 +196,8 @@ roller.spinFor(forward, -0.5, rev);
 roller.stop();
 drive_brake();
 loading=false;
-GoalAngle=10;
-wait(1, sec);
-fireDiscs();
+joyAngle=-89;
+
 }
 
 if (Near_Side == true) {

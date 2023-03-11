@@ -38,22 +38,23 @@ int turretStable() {
   double sum = 0;
   double prevError = 0;
 
-  double error = -(GoalAngle) - turretG.orientation(yaw, degrees);
+  double error = -(GoalAngle)-turretG.orientation(yaw, degrees);
   // double accuracy = 1;
   // while(true){
   double speed;
   while (true) {
     // GoalAngle = atan2(X - 115, 115 - Y) * (180 / M_PI);
-    joyAngle =
-        atan2(Controller2.Axis1.position(), Controller2.Axis2.position()) *
-        180 / M_PI;
+    if (Competition.isDriverControl()) {
+      joyAngle =
+          atan2(Controller2.Axis1.position(), Controller2.Axis2.position()) *
+          180 / M_PI;
 
-    if ((abs(Controller2.Axis1.position()) < 5) &&
-        (abs(Controller2.Axis2.position()) < 5))
-      loading = true;
-    else
-      loading = false;
-
+      if ((abs(Controller2.Axis1.position()) < 5) &&
+          (abs(Controller2.Axis2.position()) < 5))
+        loading = true;
+      else
+        loading = false;
+    }
     if (!loading) {
 
       if (fabs((Far_Side ? joyAngle - 90 : joyAngle) -
@@ -76,7 +77,7 @@ int turretStable() {
         // try this?
         // https://www.sanfoundry.com/cpp-program-minimum-element-array-using-linear-search-2/
 
-        error = Vision16.objects[closestObject].centerX - (155+offset);
+        error = Vision16.objects[closestObject].centerX - (155 + offset);
         if (fabs(error) > 40) {
 
           error = joyAngle - (Far_Side ? turretG.orientation(yaw, degrees) + 90

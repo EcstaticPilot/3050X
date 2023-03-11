@@ -4,13 +4,18 @@ extern bool loading;
 extern double TargetSpeed;
 extern double GoalAngle;
 extern bool VisionReady;
+extern double speedOffset;
 extern float FSPEED;
 
 void pistonToggle() {
   if (turretOptical.isNearObject()) {
+    
     Injector.set(true);
+    speedOffset+=5;
     wait(140, msec);
     Injector.set(false);
+    wait(30, msec);
+    speedOffset-=5;
   }
 }
 
