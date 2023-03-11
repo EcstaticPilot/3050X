@@ -57,8 +57,8 @@ int turretStable() {
     }
     if (!loading) {
 
-      if (fabs((Far_Side ? joyAngle - 90 : joyAngle) -
-               turretG.orientation(yaw, degrees)) < 40) {
+      if (fabs(joyAngle - (Far_Side ? turretG.orientation(yaw, degrees) + 90
+                                     : turretG.orientation(yaw, degrees)))<20) {
         if (isRed)
           Vision16.takeSnapshot(RGOAL);
         else

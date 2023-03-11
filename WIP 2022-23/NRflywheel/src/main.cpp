@@ -170,9 +170,11 @@ void pre_auton(void) {
   turretG.calibrate();
   waitUntil(!(gyro1.isCalibrating() && turretG.isCalibrating()));
 
-  thread flywheelgo = thread(controlFlywheelSpeed);
+
+  waitUntil(Far_Side||Near_Side);
   thread odometeryTracking = thread(odometery);
-  thread turretStablization = thread(turretStable);
+  thread flywheelgo = thread(controlFlywheelSpeed);
+    thread turretStablization = thread(turretStable);
 }
 
 void autonomous(void) {

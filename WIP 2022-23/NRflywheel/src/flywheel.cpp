@@ -30,7 +30,7 @@ int controlFlywheelSpeed() {
       FSPEED = std::accumulate(moving_avg.begin(), moving_avg.end(), 0.0) / 10.0;
       moving_avg.erase(moving_avg.begin());
       error = TargetSpeed - FSPEED;
-      TargetSpeed=0.263*sqrt( ( (125-X)*(125-X) ) + ( (125-Y)*(125-Y) ) )+38.6+speedOffset;
+      TargetSpeed=0.263*sqrt( ( (125-X)*(125-X) ) + ( (125-Y)*(125-Y) ) )+40+speedOffset;
       if (TargetSpeed <= 0) {
         F2.stop(coast);
       }
