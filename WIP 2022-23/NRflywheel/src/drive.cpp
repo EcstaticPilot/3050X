@@ -25,11 +25,11 @@ void drive_brake(vex::brakeType Brake=brake) {
 void forward_dist(float dist) {
   // dist is in inches
   // 36.15 for 1 wheel rotation a second for a gear ratio of 3/5
-  float t_to_run = dist/C;
-  LF.spin(forward, 36.15, rpm);
-  RF.spin(forward, 36.15, rpm);
-  LB.spin(forward, 36.15, rpm);
-  RB.spin(forward, 36.15, rpm);
+  float t_to_run = fabs(dist)/C;
+  LF.spin(forward, (dist/fabs(dist))*36.15, rpm);
+  RF.spin(forward, (dist/fabs(dist))*36.15, rpm);
+  LB.spin(forward, (dist/fabs(dist))*36.15, rpm);
+  RB.spin(forward, (dist/fabs(dist))*36.15, rpm);
   wait(t_to_run, sec);
   drive_brake();
 }

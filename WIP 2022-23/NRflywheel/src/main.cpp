@@ -152,8 +152,8 @@ int ControllerPrint() {
 }
 
 void pre_auton(void) {
-Far_Side=true;
-isRed=false;
+//Far_Side=true;
+//isRed=false;
   vexcodeInit();
   if (!(RB.installed() && LB.installed() && RF.installed() &&
         LF.installed() &&                            
@@ -172,14 +172,15 @@ isRed=false;
   waitUntil(!(gyro1.isCalibrating() && turretG.isCalibrating()));
 
 
-  waitUntil(Far_Side || Near_Side);
+  waitUntil(Far_Side || Near_Side||skills);
   thread odometeryTracking = thread(odometery);
   thread flywheelgo = thread(controlFlywheelSpeed);
   thread turretStablization = thread(turretStable);
 }
 
 void autonomous(void) {
-
+skills=true;
+isRed=false;
 if (Far_Side == true) {
 Brain.Screen.clearScreen();
 Brain.Screen.printAt(20, 20, "Far Side Auton Running");
@@ -198,7 +199,7 @@ RB.spin(forward, 50, pct);
 roller.spinFor(forward, -0.25, rev);
 roller.stop(brake);
 drive_brake();
-joyAngle=-90;
+joyAngle=-85;
 waitUntil(TurretE.velocity(rpm)<10);
 fireDiscs();
 }
@@ -236,19 +237,35 @@ LF.spin(forward, 50, pct);
 RF.spin(forward, 50, pct);
 LB.spin(forward, 50, pct);
 RB.spin(forward, 50, pct);
-roller.spinFor(forward, -0.25, rev);
+roller.spin(fwd,12,volt);
+waitUntil(Color.color()==blue);
 roller.stop();
 drive_brake();
 forward_dist(-24);
+
 rotate(90);
+Intake1.spin(fwd,12, volt);
 LF.spin(forward, 50, pct);
 RF.spin(forward, 50, pct);
 LB.spin(forward, 50, pct);
 RB.spin(forward, 50, pct);
 waitUntil(Color.isNearObject());
-roller.spinFor(fwd, -0.5, rev);
-forward_dist(12);
-rotate(45);
+wait(750,msec);
+roller.spin(fwd,12,volt);
+waitUntil(Color.color()==blue);
+roller.stop();
+
+
+forward_dist(-17);
+joyAngle=90;
+loading=false;
+wait(3,sec);
+pistonToggle();
+wait(3, sec);
+pistonToggle();
+wait(3, sec);
+pistonToggle();
+rotate(-45);
 wait(3, sec);
 expansion.set(false);
 expansion_two.set(false);
@@ -293,10 +310,10 @@ void usercontrol(void) {
     }
 
     if (Controller2.ButtonL2.pressing()) {
-      offset+=0.1;
+      offset+=0.5;
     }
     if (Controller2.ButtonR2.pressing()) {
-      offset-=0.1;
+      offset-=0.5;
     }
 
     if (intakeOn) {

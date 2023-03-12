@@ -84,7 +84,7 @@ int turretStable() {
         // try this?
         // https://www.sanfoundry.com/cpp-program-minimum-element-array-using-linear-search-2/
 
-        error = Vision16.largestObject.centerX - (155 + offset);
+        error = Vision16.largestObject.centerX - (160 + offset);
         if (fabs(error) > 50) {
 
           error = joyAngle - (turretG.heading() > 180 ? turretG.heading() - 360 : turretG.heading());
