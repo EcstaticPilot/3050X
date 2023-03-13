@@ -17,6 +17,30 @@
 // Color                optical       7               
 // TurretE              rotation      17              
 // turretOptical        optical       2               
+// roller               motor         8               
+// expansion            digital_out   D               
+// Controller2          controller                    
+// expansion_two        digital_out   B               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// Controller1          controller                    
+// F2                   motor         15              
+// Injector             digital_out   A               
+// LF                   motor         18              
+// LB                   motor         12              
+// RF                   motor         20              
+// RB                   motor         4               
+// Intake1              motor         1               
+// turret               motor         9               
+// gyro1                inertial      10              
+// RotationL            rotation      5               
+// RotationB            rotation      3               
+// turretG              inertial      14              
+// Color                optical       7               
+// TurretE              rotation      17              
+// turretOptical        optical       2               
 // roller               motor         19              
 // expansion            digital_out   D               
 // Controller2          controller                    
@@ -106,6 +130,7 @@ void DriveToPoint(double targetX, double targetY, float speedMult = 1);
 void RAMSETE(float targetX, float targetY, float targetAngle,float accuracy=1);
 void DriveToPoint2(float targetX,float targetY);
 //flywheel.cpp
+void toggleSpeed();
 void spinFlywheel(double speed);
 int controlFlywheelSpeed();
 //odometry.cpp
@@ -122,6 +147,7 @@ void draw_GUI();
 void fetch_touch();
 
 //////////////////////////////////////////////////////////////////////////////////
+
 
 int ControllerPrint() {
 
@@ -150,10 +176,17 @@ int ControllerPrint() {
     this_thread::sleep_for(75);
   }
 }
-
+void launchThread(){
+    thread odometeryTracking = thread(odometery);
+  thread flywheelgo = thread(controlFlywheelSpeed);
+  thread turretStablization = thread(turretStable);
+   thread ControllerPrinting = thread(ControllerPrint);
+  
+}
 void pre_auton(void) {
-//Far_Side=true;
+//Near_Side=true;
 //isRed=false;
+skills=true;
   vexcodeInit();
   if (!(RB.installed() && LB.installed() && RF.installed() &&
         LF.installed() &&                            
@@ -170,17 +203,14 @@ void pre_auton(void) {
   gyro1.calibrate();
   turretG.calibrate();
   waitUntil(!(gyro1.isCalibrating() && turretG.isCalibrating()));
-
-
-  waitUntil(Far_Side || Near_Side||skills);
+    thread ControllerPrinting = thread(ControllerPrint);
   thread odometeryTracking = thread(odometery);
   thread flywheelgo = thread(controlFlywheelSpeed);
   thread turretStablization = thread(turretStable);
 }
 
 void autonomous(void) {
-skills=true;
-isRed=false;
+
 if (Far_Side == true) {
 Brain.Screen.clearScreen();
 Brain.Screen.printAt(20, 20, "Far Side Auton Running");
@@ -233,31 +263,33 @@ drive_brake();
 }
 
 if (skills) {
+   expansion.set(false);
+expansion_two.set(false);
+expansion.set(true);
+expansion_two.set(true);/*
 LF.spin(forward, 50, pct);
 RF.spin(forward, 50, pct);
 LB.spin(forward, 50, pct);
 RB.spin(forward, 50, pct);
-roller.spin(fwd,12,volt);
-waitUntil(Color.color()==blue);
-roller.stop();
+wait(100, msec);
+roller.spinFor(fwd,0.5, rev);
 drive_brake();
 forward_dist(-24);
 
-rotate(90);
+rotate(-45);
 Intake1.spin(fwd,12, volt);
 LF.spin(forward, 50, pct);
 RF.spin(forward, 50, pct);
 LB.spin(forward, 50, pct);
 RB.spin(forward, 50, pct);
-waitUntil(Color.isNearObject());
-wait(750,msec);
-roller.spin(fwd,12,volt);
-waitUntil(Color.color()==blue);
-roller.stop();
 
-
+wait(3,sec);
+roller.spinFor(fwd,0.5, rev);
+ expansion.set(false);
+expansion_two.set(false);
+/*
 forward_dist(-17);
-joyAngle=90;
+/*joyAngle=90;
 loading=false;
 wait(3,sec);
 pistonToggle();
@@ -269,6 +301,7 @@ rotate(-45);
 wait(3, sec);
 expansion.set(false);
 expansion_two.set(false);
+*/
 }
 
 
@@ -280,7 +313,6 @@ bool driveDir = 0;
 void driveSwitch() { driveDir = !driveDir; }
 
 void usercontrol(void) {
-  thread ControllerPrinting = thread(ControllerPrint);
 
   while (true) {
     if (Controller1.ButtonY.pressing()) {
@@ -365,7 +397,7 @@ void usercontrol(void) {
 }
 
 int main() {
-
+  Competition.bStopAllTasksBetweenModes=false;
   draw_GUI();
   Brain.Screen.pressed(fetch_touch);
 
@@ -376,7 +408,9 @@ int main() {
   Controller2.ButtonLeft.pressed(pistonToggle);
   Controller1.ButtonRight.pressed(driveSwitch);
   Controller2.ButtonX.pressed(toggleTurret);
-  Controller2.ButtonUp.pressed(fireDiscs);
+  Controller2.ButtonUp.pressed(toggleSpeed);
+  Controller2.ButtonB.pressed(launchThread);
+
 
   pre_auton();
 

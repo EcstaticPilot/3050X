@@ -7,6 +7,7 @@ extern bool VisionReady;
 extern double speedOffset;
 extern float FSPEED;
 bool isIndex=false;
+
 void pistonToggle() {
 
   if (turretOptical.isNearObject()) {
@@ -22,17 +23,20 @@ void pistonToggle() {
 }
 
 void fireDiscs() {
+ int i=0;
 //  loading = false;
 // need to create formula
   waitUntil(//fabs(TurretE.velocity(rpm)) < 1 &&
             fabs((FSPEED - TargetSpeed)) < 2);
   pistonToggle(); 
-  if (turretOptical.isNearObject()){
+  if (turretOptical.isNearObject()&&i<3){
     fireDiscs();
+    i++;
     wait(300, msec);}
   else {
     loading = true;
   }
+  i=0;
 }
 
 void pistonToggleReady() {

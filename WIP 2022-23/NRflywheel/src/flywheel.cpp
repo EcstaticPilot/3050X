@@ -6,6 +6,12 @@
 #include <numeric>
 
 double TargetSpeed = 0;
+
+bool isAuto=false;
+void toggleSpeed(){
+  isAuto=!isAuto;
+}
+
 void spinFlywheel(double speed) {
   speed = speed * 127; // speed is in pctage so convert to mV 100% = 12000
                        // mV
@@ -30,8 +36,12 @@ int controlFlywheelSpeed() {
       double kp=5;
       FSPEED = std::accumulate(moving_avg.begin(), moving_avg.end(), 0.0) / 10.0;
       moving_avg.erase(moving_avg.begin());
-      
+      if(isAuto){
       TargetSpeed=0.263*sqrt( ( (125-X)*(125-X) ) + ( (125-Y)*(125-Y) ) )+38.6+speedOffset;
+      }
+      else {
+      TargetSpeed=70+speedOffset;
+      }
       error = TargetSpeed - FSPEED;
       if (TargetSpeed <= 0) {
         F2.stop(coast);

@@ -11,6 +11,7 @@ extern double X, Y;
 float offset = 0;
 bool VisionReady;
 extern bool Far_Side;
+extern bool Near_Side;
 extern competition Competition;
 int mode = 0;
 extern bool isRed;
@@ -47,6 +48,9 @@ int turretStable() {
   double speed;
   if(Far_Side){
   turretG.setHeading(90, degrees);
+  }
+  if(Near_Side){
+  turretG.setHeading(0, degrees);
   }
   while (true) {
     // GoalAngle = atan2(X - 115, 115 - Y) * (180 / M_PI);

@@ -5,9 +5,10 @@
 double X=0,Y=0;
 extern bool Far_Side;
 extern bool Near_Side;
-
+bool first=true;
 
 int odometery() {
+ 
 double prevHeading = gyro1.rotation();
 
 double deltaHeading = 0; // change in heading
@@ -28,9 +29,12 @@ double deltaY;
   Controller1.rumble(".");
   RotationL.resetPosition();
   RotationB.resetPosition();
-  if(Far_Side){X=72;
+  if(Far_Side&&first){X=72;
   }
-  if(Near_Side) X=98;
+  if(Near_Side&&first)X=98;
+
+
+  first=false;
   while (1) {
     if(Far_Side){
     
