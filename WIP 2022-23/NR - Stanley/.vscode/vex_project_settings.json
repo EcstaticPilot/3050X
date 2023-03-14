@@ -1,0 +1,18 @@
+{
+	"project": {
+		"name": "StanleyNR",
+		"slot": 1,
+		"description": "testing of a stanley controller\n",
+		"platform": "V5",
+		"creationDate": "Tue, 14 Mar 2023 22:19:08 GMT",
+		"language": "cpp",
+		"sdkVersion": "V5_20220726_10_00_00",
+		"cpp": {
+			"includePath": []
+		}
+	},
+	"extension": {
+		"version": "0.4.1",
+		"json": 1
+	}
+}
