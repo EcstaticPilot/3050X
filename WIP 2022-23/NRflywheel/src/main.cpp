@@ -263,7 +263,10 @@ drive_brake();
 }
 
 if (skills) {
-
+   expansion.set(false);
+expansion_two.set(false);
+expansion.set(true);
+expansion_two.set(true);/*
 LF.spin(forward, 50, pct);
 RF.spin(forward, 50, pct);
 LB.spin(forward, 50, pct);
@@ -274,8 +277,6 @@ drive_brake();
 forward_dist(-24);
 
 rotate(-45);
-expansion.set(true);
-expansion_two.set(true);/*
 Intake1.spin(fwd,12, volt);
 LF.spin(forward, 50, pct);
 RF.spin(forward, 50, pct);
