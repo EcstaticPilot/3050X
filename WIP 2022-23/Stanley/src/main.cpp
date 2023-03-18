@@ -25,7 +25,7 @@ void forward_dist(float dist);
 void DriveToPoint(double targetX, double targetY, float speedMult = 1);
 void RAMSETE(float targetX, float targetY, float targetAngle,float accuracy=1);
 void DriveToPoint2(float targetX,float targetY);
-
+void stanley(double points[][2]);
 
 int ControllerPrint() {
 
@@ -65,6 +65,8 @@ void pre_auton(void) {
 /*---------------------------------------------------------------------------*/
 
 void autonomous(void) {
+  double points[2][2]={{9.8,9.8},{6.7,45}};
+  stanley(points);
   // ..........................................................................
   // Insert autonomous user code here.
   // ..........................................................................
