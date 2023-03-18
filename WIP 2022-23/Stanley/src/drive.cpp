@@ -223,7 +223,11 @@ void DriveToPoint3(float targetX, float targetY, float targetAngle,
   }
   drive_brake();
 }
-
+/**
+ * @brief drive with a curve
+ * @param targetVel target velocity for the robot to drive at
+ * @param curvature how mcuh the robot should curve
+ */
 void curveDrive(float targetVel, float curvature)
 {
   // calculate speeds
@@ -244,12 +248,18 @@ void curveDrive(float targetVel, float curvature)
   // drive
   drive(vL, vR, 10);
 }
-
+/**
+ * @brief convert radians to degrees
+ * @param rad radians(double)
+ */
 double RadToDeg(double rad)
 {
   return (rad * 180 / M_PI);
 }
-
+/**
+ * @brief convert degrees to radians
+ * @param deg degrees (double)
+ */
 double DegToRad(double deg)
 {
   return (deg * M_PI / 180);
@@ -261,6 +271,7 @@ double robotDistance(double x, double y)
   return ( sqrt(pow(X - x, 2) + pow(Y - y, 2)) );
 }
 //finds the point closest to a robot on an array
+
 int closestPoint(double points[][2])
 {
   int npoints = sizeof points / sizeof points[2];
@@ -274,7 +285,10 @@ int closestPoint(double points[][2])
   }
   return(closest);
 }
-//stanley controller for following a path of points
+/**
+ * @brief stanley controller for following a path of points
+ * @param points an array containing points to follow
+ */
 void stanley(double points[][2])
 {
 
@@ -287,6 +301,7 @@ void stanley(double points[][2])
   double pathError;
   while (1)
   {
+    closestPoint(points);
     ld = kv / v;
     ldAngle = RadToDeg(atan2(pathDistance, ld)) - gyro1.yaw();
     pathError = pathHeading - gyro1.yaw();
