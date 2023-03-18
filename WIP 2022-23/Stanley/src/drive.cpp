@@ -280,6 +280,17 @@ double DegToRad(double deg)
   return (deg * M_PI / 180);
 }
 /**
+ * @brief finds the slope between two points
+ * @param points an array containing the points
+ * @param point1 the first point
+ * @param point2 the second point
+*/
+float slope(double points[][2], int point1, int point2)
+{
+double slope= RadToDeg(atan2(points[point2][1]-points[point1][1],points[point2][0]-points[point1][0]));
+return slope;
+}
+/**
  * @brief finds the distance between the robot and a point
  * @param x x coordinate of the point
  * @param y y coordinate of the point
@@ -330,6 +341,7 @@ float perpendicularDist(double points[][2],int point1,int point2)
  */
 void stanley(double points[][2])
 {
+  
 
   double ld;
   double v = 50;
@@ -338,9 +350,15 @@ void stanley(double points[][2])
   double pathHeading;
   double ldAngle;
   double pathError;
-  while (1)
+  while (!(closestPoint(points) == sizeof points / sizeof points[2]))
   {
     closestPoint(points);
+    if(perpendicularDist(points,closestPoint(points),closestPoint(points)+1)<perpendicularDist(points,closestPoint(points),closestPoint(points)-1)){
+    pathDistance = perpendicularDist(points,closestPoint(points),closestPoint(points)+1);
+    }
+    else{
+      pathDistance = perpendicularDist(points,closestPoint(points),closestPoint(points)-1);
+    }
     ld = kv / v;
     ldAngle = RadToDeg(atan2(pathDistance, ld)) - gyro1.yaw();
     pathError = pathHeading - gyro1.yaw();
@@ -348,6 +366,10 @@ void stanley(double points[][2])
     v = LF.velocity(pct) + RF.velocity(pct) / 2;
   }
 }
+
+
+
+
 
 
 
