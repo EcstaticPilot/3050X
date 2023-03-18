@@ -16,6 +16,9 @@ void drive(int lSpeed, int rSpeed, double wt)
   wait(wt, msec);
 }
 
+/**
+ * @brief brakes the robot based on brake type
+*/
 void drive_brake(vex::brakeType Brake = brake)
 {
   LF.stop(Brake);
@@ -36,7 +39,12 @@ void forward_dist(float dist)
   wait(t_to_run, sec);
   drive_brake();
 }
-
+/**
+ * @brief drives the robot a certain distance
+ * @param dist distance in inches
+ * @param speedMod speed modifier
+ * @param accuracy accuracy in inches
+*/
 void inchDrive(double target, double speedMod = 1)
 {
   double kp = 1, ki = 0, kd = 0;
@@ -59,7 +67,9 @@ void inchDrive(double target, double speedMod = 1)
     prevError = errorL;
   }
 }
-
+/**
+ * @brief rotates the robot to a certain direction globally
+*/
 void rotate(double dir, double accuracy = 1)
 {
   double speed = 100;
@@ -146,7 +156,9 @@ void DriveToPoint2(float targetX, float targetY)
   // inchDrive(-(sqrt((targetX - X) * (targetX -  X) + (targetY - Y) * (targetY - Y))));
   std::cout << X << "," << Y << std::endl;
 }
-
+/**
+ * @brief Ramsete control algorithm
+*/
 void RAMSETE(float targetX, float targetY, float targetAngle,
              float accuracy = 1)
 {
@@ -182,6 +194,9 @@ void RAMSETE(float targetX, float targetY, float targetAngle,
   Controller1.rumble(".");
 }
 
+/**
+ * @brief Drives to a point using the gyro
+*/
 void DriveToPoint3(float targetX, float targetY, float targetAngle,
                    float accuracy = 1)
 {
@@ -264,14 +279,20 @@ double DegToRad(double deg)
 {
   return (deg * M_PI / 180);
 }
-//the distance of the robot from a point
+/**
+ * @brief finds the distance between the robot and a point
+ * @param x x coordinate of the point
+ * @param y y coordinate of the point
+ */
 double robotDistance(double x, double y)
 {
 
   return ( sqrt(pow(X - x, 2) + pow(Y - y, 2)) );
 }
-//finds the point closest to a robot on an array
-
+/**
+ * @brief finds the closest point to the robot
+ * @param points an array containing the points
+ */
 int closestPoint(double points[][2])
 {
   int npoints = sizeof points / sizeof points[2];
@@ -285,6 +306,24 @@ int closestPoint(double points[][2])
   }
   return(closest);
 }
+/**
+ * @brief finds the distance of a point from a line
+ * @param points an array containing the points of the line
+ * @param point1 the index first point of the line
+ * @param point2 the index second point of the line
+ */
+float perpendicularDist(double points[][2],int point1,int point2)
+{
+  double x1 = points[point1][0];
+  double y1 = points[point1][1];
+  double x2 = points[point2][0];
+  double y2 = points[point2][1];
+  double x3 = X;
+  double y3 = Y;
+  double d = fabs((y2 - y1) * x3 - (x2 - x1) * y3 + x2 * y1 - y2 * x1) / sqrt(pow(y2 - y1, 2) + pow(x2 - x1, 2));
+  return d;
+}
+
 /**
  * @brief stanley controller for following a path of points
  * @param points an array containing points to follow
@@ -309,3 +348,11 @@ void stanley(double points[][2])
     v = LF.velocity(pct) + RF.velocity(pct) / 2;
   }
 }
+
+
+
+
+
+
+
+
