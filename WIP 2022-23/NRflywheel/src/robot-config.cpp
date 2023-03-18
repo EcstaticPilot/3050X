@@ -1,5 +1,5 @@
 #include "vex.h"
-#include "sylib/sylib.h"
+
 using namespace vex;
 using signature = vision::signature;
 using code = vision::code;
@@ -8,27 +8,26 @@ using code = vision::code;
 brain  Brain;
 
 // VEXcode device constructors
-
 controller Controller1 = controller(primary);
-motor F1 = motor(PORT2, ratio6_1, true);
-//auto F1 = sylib::Motor(2,600, true); 
-motor F2 = motor(PORT15, ratio6_1, false);
-//auto F2 = sylib::Motor(15,600, true);
+motor F2 = motor(PORT15, ratio6_1, true);
 digital_out Injector = digital_out(Brain.ThreeWirePort.A);
 motor LF = motor(PORT18, ratio18_1, false);
 motor LB = motor(PORT12, ratio18_1, true);
 motor RF = motor(PORT20, ratio18_1, true);
 motor RB = motor(PORT4, ratio18_1, false);
 motor Intake1 = motor(PORT1, ratio18_1, true);
-motor turret = motor(PORT21, ratio18_1, false);
-inertial gyro1 = inertial(PORT11);
+motor turret = motor(PORT9, ratio18_1, false);
+inertial gyro1 = inertial(PORT10);
 rotation RotationL = rotation(PORT5, true);
 rotation RotationB = rotation(PORT3, true);
 inertial turretG = inertial(PORT14);
 optical Color = optical(PORT7);
 rotation TurretE = rotation(PORT17, false);
-optical turretOptical = optical(PORT9);
+optical turretOptical = optical(PORT2);
+motor roller = motor(PORT8, ratio36_1, false);
+digital_out expansion = digital_out(Brain.ThreeWirePort.D);
 controller Controller2 = controller(partner);
+digital_out expansion_two = digital_out(Brain.ThreeWirePort.B);
 
 // VEXcode generated functions
 // define variable for remote controller enable/disable

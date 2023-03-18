@@ -4,13 +4,10 @@ extern brain Brain;
 
 // VEXcode devices
 extern controller Controller1;
-
-
+extern motor F2;
 extern digital_out Injector;
 extern motor LF;
 extern motor LB;
-extern motor F1;
-extern motor F2;
 extern motor RF;
 extern motor RB;
 extern motor Intake1;
@@ -22,7 +19,10 @@ extern inertial turretG;
 extern optical Color;
 extern rotation TurretE;
 extern optical turretOptical;
+extern motor roller;
+extern digital_out expansion;
 extern controller Controller2;
+extern digital_out expansion_two;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.

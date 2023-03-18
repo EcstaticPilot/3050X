@@ -1,48 +1,64 @@
-
-#include "sylib/sylib.h"
 #include "stdio.h"
 #include "vex.h"
+#include <iostream>
 #include <math.h>
+#include <vector>
+#include <numeric>
 
-double TargetSpeed=0;
-void spinFlywheel(double speed) {
-  speed = speed * 120; // speed is in pctage so convert to mV 100% = 12000
-                       // mV
+double TargetSpeed = 0;
 
-  F1.spin(fwd, speed, vex::voltageUnits::mV);
-  F2.spin(fwd, speed, vex::voltageUnits::mV);
+bool isAuto=false;
+void toggleSpeed(){
+  isAuto=!isAuto;
 }
-double OldError = 0.0;
-double TBHval = 0.0;
-double FWDrive = 0.0;
-int controlFlywheelSpeed() {
-  double kI = .025;
-  while (true) {
-    
-        double speed = F1.velocity(pct);
-        double error = TargetSpeed - speed;
-       double fwDrive = FWDrive + kI * error;
-        // :D
-        // Brain.Screen.printAt(1, 40, " speed = %.2f ", speed);
-        // Keep drive between 0 to 100%
-    
-        if (error > 20) {
-          fwDrive = 100;
-        }
 
-        else {
-          if (fwDrive > 100)
-            fwDrive = 100;
-          if (fwDrive <= 0)
-            fwDrive = 0;
-          // Check for zero crossing
-          if (error * OldError < 0) {
-            fwDrive = 0.5 * (fwDrive + TBHval);
-            TBHval = fwDrive;
-          }
-        }
-     FWDrive = fwDrive;
-     OldError = error;
+void spinFlywheel(double speed) {
+  speed = speed * 127; // speed is in pctage so convert to mV 100% = 12000
+                       // mV
+  F2.spin(forward, speed, voltageUnits::mV);
+}
+
+double FWDrive = 0;
+double OldError = 0;
+double TBHval = 0;
+double fwDrive;
+float FSPEED;
+extern bool Far_Side;
+extern double X;
+extern double Y;
+double speedOffset=0;
+int controlFlywheelSpeed() {
+  std::vector<float> moving_avg;
+  int init_count = 0;
+  double error;
+  while (true) {
+    if (init_count > 9) {
+      double kp=5;
+      FSPEED = std::accumulate(moving_avg.begin(), moving_avg.end(), 0.0) / 10.0;
+      moving_avg.erase(moving_avg.begin());
+      if(isAuto){
+      TargetSpeed=0.263*sqrt( ( (125-X)*(125-X) ) + ( (125-Y)*(125-Y) ) )+38.6+speedOffset;
+      }
+      else {
+      TargetSpeed=70+speedOffset;
+      }
+      error = TargetSpeed - FSPEED;
+      if (TargetSpeed <= 0) {
+        F2.stop(coast);
+      }
+      else
+      
+      spinFlywheel(TargetSpeed*1.2+error*kp);
+      this_thread::sleep_for(50);
+      FWDrive = fwDrive;
+      OldError = error;
+    } 
+    else {
+      init_count++;
+    }
+    moving_avg.push_back(F2.velocity(pct));
+    // std::cout<<F1.velocity(pct) << ","<<
+    // FSPEED<<","<<TargetSpeed<<","<<TargetSpeed+kP*error<<std::endl;
   }
   return 1;
 }

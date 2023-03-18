@@ -1,214 +1,311 @@
-
-/*----------------------------------------------------------------------------*/
-/*                                                                            */
-/*    Module:       main.cpp                                                  */
-/*    Author:       NR 7700P                                                  */
-/*    Created:      May 13, 2022                                              */
-/*    Description:  code of Nikhil Ramanuja 7700P turret bot vex spin up      */
-/*----------------------------------------------------------------------------*/
-// vex::vision::signature BGOAL = vex::vision::signature (1, -1855, 2553, 349,
-// 2243, 10039, 6141, 1, 0);
 // ---- START VEXCODE CONFIGURED DEVICES ----
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
-// Controller1          controller
-// F1                   motor         2
-// F2                   motor         15
-// Injector             digital_out   A
-// LF                   motor         18
-// LB                   motor         12
-// RF                   motor         20
-// RB                   motor         4
-// Intake1              motor         1
-// turret               motor         21
-// gyro1                inertial      11
-// RotationL            rotation      5
-// RotationB            rotation      3
-// turretG              inertial      14
-// Color                optical       7
-// TurretE              rotation      17
-// turretOptical        optical       9
+// Controller1          controller                    
+// F2                   motor         15              
+// Injector             digital_out   A               
+// LF                   motor         18              
+// LB                   motor         12              
+// RF                   motor         20              
+// RB                   motor         4               
+// Intake1              motor         1               
+// turret               motor         9               
+// gyro1                inertial      10              
+// RotationL            rotation      5               
+// RotationB            rotation      3               
+// turretG              inertial      14              
+// Color                optical       7               
+// TurretE              rotation      17              
+// turretOptical        optical       2               
+// roller               motor         8               
+// expansion            digital_out   D               
+// Controller2          controller                    
+// expansion_two        digital_out   B               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// Controller1          controller                    
+// F2                   motor         15              
+// Injector             digital_out   A               
+// LF                   motor         18              
+// LB                   motor         12              
+// RF                   motor         20              
+// RB                   motor         4               
+// Intake1              motor         1               
+// turret               motor         9               
+// gyro1                inertial      10              
+// RotationL            rotation      5               
+// RotationB            rotation      3               
+// turretG              inertial      14              
+// Color                optical       7               
+// TurretE              rotation      17              
+// turretOptical        optical       2               
+// roller               motor         19              
+// expansion            digital_out   D               
+// Controller2          controller                    
+// expansion_two        digital_out   B               
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// Controller1          controller                    
+// F2                   motor         15              
+// Injector             digital_out   A               
+// LF                   motor         18              
+// LB                   motor         12              
+// RF                   motor         20              
+// RB                   motor         4               
+// Intake1              motor         1               
+// turret               motor         9               
+// gyro1                inertial      10              
+// RotationL            rotation      5               
+// RotationB            rotation      3               
+// turretG              inertial      14              
+// Color                optical       7               
+// TurretE              rotation      17              
+// turretOptical        optical       2               
+// roller               motor         6               
+// expansion            digital_out   D               
+// Controller2          controller                    
+// ---- END VEXCODE CONFIGURED DEVICES ----
+// ---- START VEXCODE CONFIGURED DEVICES ----
+// Robot Configuration:
+// [Name]               [Type]        [Port(s)]
+// Controller1          controller                    
+// F2                   motor         15              
+// Injector             digital_out   A               
+// LF                   motor         18              
+// LB                   motor         12              
+// RF                   motor         20              
+// RB                   motor         4               
+// Intake1              motor         1               
+// turret               motor         9               
+// gyro1                inertial      11              
+// RotationL            rotation      5               
+// RotationB            rotation      3               
+// turretG              inertial      14              
+// Color                optical       7               
+// TurretE              rotation      17              
+// turretOptical        optical       2               
+// roller               motor         6               
+// expansion            digital_out   B               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "stdio.h"
-//#include "sylib/sylib.h"
 #include "vex.h"
 #include <math.h>
-#include "robot-config.h"
-// including files
-
+#include <iostream>
 using namespace vex;
-
-// A global instance of competition
 
 competition Competition;
 
 // declaring external variables
+bool isRed=false;
+
 extern double GoalAngle;
 extern float offset;
+extern int mode;
 extern bool loading;
 extern double TargetSpeed;
-extern double X, Y;
+extern double X,Y;
 extern bool VisionReady;
 extern bool TurretToggle;
-// team switch
-bool IsRed = true;
-
-/*
-
-PROTOTYPES FOR FUNCTIONS
-
-*/
+extern double GoalAngle;
+extern bool Far_Side;
+extern bool Near_Side;
+extern float FSPEED;
+extern double joyAngle;
+extern bool skills;
+extern float offset;
+extern double speedOffset;
+// declaring external functions
 // drive.cpp
 void drive(int lSpeed, int rSpeed, double wt);
-void drive_brake();
+void drive_brake(vex::brakeType Brake=brake);
 void rotate(double dir, double accuracy = 1);
-void inchDrive(float dist, float accuracy = 1);
-void driveToPoint(float targetX,float targetY,float endOrientation = gyro1.rotation(degrees));
-// flywheel.cpp
+void inchDrive(double target, double speedMod=1);
+void forward_dist(float dist);
+void DriveToPoint(double targetX, double targetY, float speedMult = 1);
+void RAMSETE(float targetX, float targetY, float targetAngle,float accuracy=1);
+void DriveToPoint2(float targetX,float targetY);
+//flywheel.cpp
+void toggleSpeed();
 void spinFlywheel(double speed);
 int controlFlywheelSpeed();
-// odometry.cpp
+//odometry.cpp
 int odometery();
-// turret.cpp
+//turret.cpp
 void toggleTurret();
 int turretStable();
 void turretSpinTo(double targetAngle, bool global);
-// discFiring.cpp
+//discFiring.cpp
 void pistonToggle();
-void fireDisc();
+void fireDiscs();
 void pistonToggleReady();
+void draw_GUI();
+void fetch_touch();
 
-/*
+//////////////////////////////////////////////////////////////////////////////////
 
-CONTROLLER PRINTING
 
-*/
 int ControllerPrint() {
 
   Brain.Timer.reset();
-
+ 
   while (1) {
     Controller2.Screen.setCursor(1, 1);
-    
-    double speed = F1.velocity(pct);
-    Controller2.Screen.print("Spd=%.2f tSpd=%.2f   ", speed, TargetSpeed);
+    Controller2.Screen.print("Spd=%.1f tSpd=%.1f   ", FSPEED, TargetSpeed);
     Controller2.Screen.setCursor(2, 1);
     Controller2.Screen.print("pos= (%.1f,%.1f)", X, Y);
     Controller2.Screen.setCursor(3, 1);
-    Controller2.Screen.print("time=%.2f ", Brain.timer(sec));
-
-    if (Brain.timer(sec) == 15) {
-      Controller1.rumble(".");
-    } // 2 minute mark
-    if (Brain.timer(sec) == 45) {
-      Controller1.rumble("..");
-    } // 1:30 mark
-    if (Brain.timer(sec) == 75)
-      Controller1.rumble("...");
-    // 1 minute mark
-    if (Brain.timer(sec) == 105) {
-      Controller1.rumble("....");
-    } // 30 second mark
-
-    this_thread::sleep_for(50);
+    // Vision16.takeSnapshot(isRed?RGOAL:BGOAL);
+    
+        Controller2.Screen.print("dist= %.1f", sqrt( ( (125-X)*(125-X) ) + ( (125-Y)*(125-Y) ) )  );
+/*
+    switch(mode){
+      case 1:Controller1.Screen.print("usingCamera.    ");
+      break;
+      case 2:Controller1.Screen.print("no goal.        ");
+      break;
+      case 3:Controller1.Screen.print("going to goal   ");
+      break;
+      case 4:Controller1.Screen.print("loading.        ");
+      break;
+    }*/
+    this_thread::sleep_for(75);
   }
 }
-
-/*---------------------------------------------------------------------------*/
-/*                          Pre-autonomousomous Functions                    */
-/*                                                                           */
-/*  You may want to perform some actions before the competition starts.      */
-/*  Do them in the following function.  You must return from this function   */
-/*  or the autonomous and usercontrol tasks will not be started.  This       */
-/*  function is only called once after the V5 has been powered on and        */
-/*  not every time that the robot is disabled.                               */
-/*---------------------------------------------------------------------------*/
-
+void launchThread(){
+    thread odometeryTracking = thread(odometery);
+  thread flywheelgo = thread(controlFlywheelSpeed);
+  thread turretStablization = thread(turretStable);
+   thread ControllerPrinting = thread(ControllerPrint);
+  
+}
 void pre_auton(void) {
-  //sylib::initialize();
-
+//Near_Side=true;
+//isRed=false;
+skills=true;
   vexcodeInit();
-  Controller1.rumble(".");
   if (!(RB.installed() && LB.installed() && RF.installed() &&
-        LF.installed() // &&                            // drive motors
-        //  F1.installed() && F2.installed()             // flywheel
-        && Intake1.installed() && turret.installed() // turret and intake
+        LF.installed() &&                            
+        F2.installed()            
+        && Intake1.installed() && turret.installed() 
         && gyro1.installed() && RotationL.installed() &&
-        RotationB.installed() // odom stuff
+        RotationB.installed() 
         && turretG.installed() && TurretE.installed() &&
-        turretOptical.installed() && // turret sensors
-        Color.installed()))          // roler sensor
+        turretOptical.installed() && 
+        Color.installed()))          
     Controller1.rumble("-------------------------------------------------------"
                        "-------------------------------");
-
-  // Initializing Robot Configuration. DO NOT REMOVE!
-
+  
   gyro1.calibrate();
   turretG.calibrate();
-  waitUntil(!gyro1.isCalibrating() && !turretG.isCalibrating());
-  // launch threads
-  thread flywheelgo = thread(controlFlywheelSpeed);
+  waitUntil(!(gyro1.isCalibrating() && turretG.isCalibrating()));
+    thread ControllerPrinting = thread(ControllerPrint);
   thread odometeryTracking = thread(odometery);
+  thread flywheelgo = thread(controlFlywheelSpeed);
   thread turretStablization = thread(turretStable);
 }
 
-/*---------------------------------------------------------------------------*/
-/*                                                                           */
-/*                              Autonomous Task                              */
-/*                                                                           */
-/*  This task is used to control your robot during the autonomous phase of   */
-/*  a VEX Competition.                                                       */
-/*                                                                           */
-/*  You must modify the code to add your own robot specific commands here .  */
-/*---------------------------------------------------------------------------*/
-
 void autonomous(void) {
 
-  // thread turretStablization = thread(turretStable);
-  /*
+if (Far_Side == true) {
+Brain.Screen.clearScreen();
+Brain.Screen.printAt(20, 20, "Far Side Auton Running");
+forward_dist(1);
+rotate(90);
+forward_dist(26);
+rotate(180);
+TargetSpeed=75;
+forward_dist(7);
 
-    inchDrive(0.3);
-    rotate(90);
-    inchDrive(24);
-    rotate(180);
-    inchDrive(0.1);
-    Intake1.spin(forward, 100, pct);
-    waitUntil(Color.color() == blue);
-    Intake1.stop();&*/
-
-  inchDrive(0.3);
-  rotate(-90);
-  inchDrive(24);
-  rotate(-90);
-  inchDrive(0.1);
-  Intake1.spin(forward, 100, pct);
-  waitUntil(Color.color() == red);
-  Intake1.stop();
-  
-  turretSpinTo(atan2(X - 110, 110 - Y) * (180 / M_PI), true);
-  GoalAngle = atan2(X - 115, 115 - Y) * (180 / M_PI);
-  loading = false;
-  spinFlywheel(100);
-  loading = false;
-  waitUntil(F1.velocity(pct) > 99 && F1.velocity(pct)  < 101);
-  pistonToggle();
-  loading = false;
-  waitUntil(F1.velocity(pct)  > 99 && F1.velocity(pct)  < 101);
-  pistonToggle();
-  loading = false;
+// to ensure contact w/ roller
+LF.spin(forward, 50, pct);
+RF.spin(forward, 50, pct);
+LB.spin(forward, 50, pct);
+RB.spin(forward, 50, pct);
+roller.spinFor(forward, -0.25, rev);
+roller.stop(brake);
+drive_brake();
+joyAngle=-85;
+waitUntil(TurretE.velocity(rpm)<10);
+fireDiscs();
 }
 
-/*---------------------------------------------------------------------------*/
-/*                                                                           */
-/*                              User Control Task */
-/*                                                                           */
-/*  This task is used to control your robot during the user control phase of
- */
-/*  a VEX Competition.                            */
-/*                                                                           */
-/*  You must modify the code to add your own robot specific commands here. */
-/*---------------------------------------------------------------------------*/
+if (Near_Side == true) {
+  
+Brain.Screen.clearScreen();
+Brain.Screen.printAt(20, 20, "Near Side Auton Running");
+LF.spin(forward, 50, pct);
+RF.spin(forward, 50, pct);
+LB.spin(forward, 50, pct);
+RB.spin(forward, 50, pct);
+roller.spinFor(forward, -0.25, rev);
+roller.stop(brake);
+drive_brake();
+
+
+// RF.stop(hold);
+// RB.stop(hold);
+// LF.spin(fwd, 100, pct);
+// LB.spin(fwd, 100, pct);
+// waitUntil(gyro1.rotation()>145);
+// drive_brake(hold);
+// LF.spin(forward, 50, pct);
+// RF.spin(forward, 50, pct);
+// LB.spin(forward, 50, pct);
+// RB.spin(forward, 50, pct);
+// waitUntil(Color.isNearObject());
+// roller.spinFor(-0.5,turns);
+
+}
+
+if (skills) {
+   expansion.set(false);
+expansion_two.set(false);
+expansion.set(true);
+expansion_two.set(true);/*
+LF.spin(forward, 50, pct);
+RF.spin(forward, 50, pct);
+LB.spin(forward, 50, pct);
+RB.spin(forward, 50, pct);
+wait(100, msec);
+roller.spinFor(fwd,0.5, rev);
+drive_brake();
+forward_dist(-24);
+
+rotate(-45);
+Intake1.spin(fwd,12, volt);
+LF.spin(forward, 50, pct);
+RF.spin(forward, 50, pct);
+LB.spin(forward, 50, pct);
+RB.spin(forward, 50, pct);
+
+wait(3,sec);
+roller.spinFor(fwd,0.5, rev);
+ expansion.set(false);
+expansion_two.set(false);
+/*
+forward_dist(-17);
+/*joyAngle=90;
+loading=false;
+wait(3,sec);
+pistonToggle();
+wait(3, sec);
+pistonToggle();
+wait(3, sec);
+pistonToggle();
+rotate(-45);
+wait(3, sec);
+expansion.set(false);
+expansion_two.set(false);
+*/
+}
+
+
+}
 
 bool intakeOn = false;
 void toggleIntake() { intakeOn = !intakeOn; }
@@ -216,80 +313,77 @@ bool driveDir = 0;
 void driveSwitch() { driveDir = !driveDir; }
 
 void usercontrol(void) {
-  thread ControllerPrinting = thread(ControllerPrint);
+
   while (true) {
-
-    /*
-
-    CONTROLLER 2 SPEED CONTROL
-
-    */
+    if (Controller1.ButtonY.pressing()) {
+      expansion.set(true);
+      expansion_two.set(true); // <-- the piston thats on the robot
+      // is a single acting piston; is it still a digital out
+      // and written this way or no? 
+    }
     if (Controller2.ButtonL1.pressing()) {
-      TargetSpeed -= 0.5;
+      speedOffset -= 0.5;
       wait(10, msec);
     }
     if (Controller2.ButtonR1.pressing()) {
-      TargetSpeed += 0.5;
+      speedOffset += 0.5;
       wait(10, msec);
     }
+
+
+  if(Controller2.ButtonDown.pressing())TargetSpeed=0;
+
+  
+    if (Controller1.ButtonL2.pressing()) {
+      roller.spin(forward, 100, pct);
+    }
+    if (Controller1.ButtonR2.pressing()) {
+      roller.spin(forward, -100, pct);
+    }
+
     if (Controller2.ButtonL2.pressing()) {
-      offset += 0.5;
-      wait(10, msec);
+      offset+=0.5;
     }
     if (Controller2.ButtonR2.pressing()) {
-      offset -= 0.5;
-      wait(10, msec);
+      offset-=0.5;
     }
 
-    if (Controller2.ButtonX.pressing()) {
-      TargetSpeed = 0;
-    }
-    if (Controller2.ButtonA.pressing()) {
-      TargetSpeed = 75;
-    }
-    if (Controller2.ButtonB.pressing()) {
-      TargetSpeed = 85;
-    }
-    if (Controller2.ButtonY.pressing()) {
-      TargetSpeed = 100;
-    }
-    /*
-
-    INTAKE
-
-    */
     if (intakeOn) {
-      Intake1.spin(forward, 150, rpm);
-    } else {
-
-      if ((IsRed ? Color.color() == red : Color.color() == blue) &&
-          Color.isNearObject())
-        Intake1.spin(forward, 200, rpm);
-      else
-        Intake1.stop();
+      Intake1.spin(forward, 12, volt);
+    } 
+    if (!intakeOn) {
+      Intake1.stop();
     }
+
+    if ((isRed?Color.color() == red:Color.color()==blue)) {
+      roller.spin(forward, 200, rpm);
+    }
+    else {
+      if(Controller1.ButtonL2.pressing())roller.spin(forward, 100, pct);
+      else if(Controller1.ButtonR2.pressing())roller.spin(reverse, 100, pct);
+      else roller.stop(brake);
+    }
+
     Color.setLightPower(100);
+
+
     if (Color.isNearObject())
       Color.setLight(ledState::on);
     else
       Color.setLight(ledState::off);
-    /*
-
-    TANK DRIVE CODE
-
-    */
-
+      if(Controller1.ButtonX.pressing()&&!intakeOn){
+        Intake1.spin(fwd,-12,volt);
+      }
     if (driveDir) {
-
-      LF.spin(forward, Controller1.Axis3.position() * 120, voltageUnits::mV);
-      RF.spin(forward, Controller1.Axis2.position() * 120, voltageUnits::mV);
-      LB.spin(forward, Controller1.Axis3.position() * 120, voltageUnits::mV);
-      RB.spin(forward, Controller1.Axis2.position() * 120, voltageUnits::mV);
+      LF.spin(forward, Controller1.Axis3.position() * 127, voltageUnits::mV);
+      RF.spin(forward, Controller1.Axis2.position() * 127, voltageUnits::mV);
+      LB.spin(forward, Controller1.Axis3.position() * 127, voltageUnits::mV);
+      RB.spin(forward, Controller1.Axis2.position() * 127, voltageUnits::mV);
     } else if (!driveDir) {
-      LF.spin(reverse, Controller1.Axis2.position() * 120, voltageUnits::mV);
-      RF.spin(reverse, Controller1.Axis3.position() * 120, voltageUnits::mV);
-      LB.spin(reverse, Controller1.Axis2.position() * 120, voltageUnits::mV);
-      RB.spin(reverse, Controller1.Axis3.position() * 120, voltageUnits::mV);
+      LF.spin(reverse, Controller1.Axis2.position() * 127, voltageUnits::mV);
+      RF.spin(reverse, Controller1.Axis3.position() * 127, voltageUnits::mV);
+      LB.spin(reverse, Controller1.Axis2.position() * 127, voltageUnits::mV);
+      RB.spin(reverse, Controller1.Axis3.position() * 127, voltageUnits::mV);
     }
     if (Controller1.Axis2.position() == 0 &&
         Controller1.Axis3.position() == 0) {
@@ -302,25 +396,25 @@ void usercontrol(void) {
   }
 }
 
-// Main will set up the competition functions and callbacks.
-//
 int main() {
+  Competition.bStopAllTasksBetweenModes=false;
+  draw_GUI();
+  Brain.Screen.pressed(fetch_touch);
 
-  // Set up callbacks for autonomous and driver control periods.
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
 
   Controller1.ButtonB.pressed(toggleIntake);
-  Controller1.ButtonLeft.pressed(pistonToggleReady);
-  Controller1.ButtonRight.pressed(driveSwitch);
-  Controller1.ButtonX.pressed(toggleTurret);
-  Controller2.ButtonUp.pressed(pistonToggle);
   Controller2.ButtonLeft.pressed(pistonToggle);
-  // Run the pre-autonomous function.
+  Controller1.ButtonRight.pressed(driveSwitch);
+  Controller2.ButtonX.pressed(toggleTurret);
+  Controller2.ButtonUp.pressed(toggleSpeed);
+  Controller2.ButtonB.pressed(launchThread);
+
+
   pre_auton();
 
-  // Prevent main from exiting with an infinite loop.
-  while (true) {
-    wait(100, msec);
-  }
+   while (true) {
+     wait(100, msec);
+   }
 }
