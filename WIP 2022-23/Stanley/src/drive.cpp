@@ -263,6 +263,19 @@ void curveDrive(float targetVel, float curvature)
   // drive
   drive(vL, vR, 10);
 }
+
+/**
+ * @breif distance between two points
+ * @param x1 x coordinate of the first point
+ * @param y1 y coordinate of the first point
+ * @param x2 x coordinate of the second point
+ * @param y2 y coordinate of the second point
+*/
+double distance2points(double x1, double y1, double x2, double y2)
+{
+  return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
+}
+
 /**
  * @brief convert radians to degrees
  * @param rad radians(double)
@@ -271,6 +284,7 @@ double RadToDeg(double rad)
 {
   return (rad * 180 / M_PI);
 }
+
 /**
  * @brief convert degrees to radians
  * @param deg degrees (double)
@@ -279,6 +293,7 @@ double DegToRad(double deg)
 {
   return (deg * M_PI / 180);
 }
+
 /**
  * @brief finds the slope between two points
  * @param points an array containing the points
@@ -290,6 +305,7 @@ float slope(double points[][2], int point1, int point2)
 double slope= RadToDeg(atan2(points[point2][1]-points[point1][1],points[point2][0]-points[point1][0]));
 return slope;
 }
+
 /**
  * @brief finds the distance between the robot and a point
  * @param x x coordinate of the point
@@ -300,6 +316,7 @@ double robotDistance(double x, double y)
 
   return ( sqrt(pow(X - x, 2) + pow(Y - y, 2)) );
 }
+
 /**
  * @brief finds the closest point to the robot
  * @param points an array containing the points
@@ -317,6 +334,7 @@ int closestPoint(double points[][2])
   }
   return(closest);
 }
+
 /**
  * @brief finds the distance of a point from a line
  * @param points an array containing the points of the line
@@ -332,6 +350,15 @@ float perpendicularDist(double points[][2],int point1,int point2)
   double x3 = X;
   double y3 = Y;
   double d = fabs((y2 - y1) * x3 - (x2 - x1) * y3 + x2 * y1 - y2 * x1) / sqrt(pow(y2 - y1, 2) + pow(x2 - x1, 2));
+  //check for intersection
+  double a=robotDistance(x1,y1);
+  double b=distance2points(x1,y1,x2,y2);
+  double c=robotDistance(x2,y2);
+  double angle1=RadToDeg(acos((pow(a,2) + pow(b,2) - pow(c,2)) / (2 * a * b)));
+  double angle2=RadToDeg(acos((pow(c,2) + pow(b,2) - pow(a,2)) / (2 * c * b)));
+  if(angle1>90||angle2>90){
+    d+=10000000000;
+  }
   return d;
 }
 
@@ -341,8 +368,6 @@ float perpendicularDist(double points[][2],int point1,int point2)
  */
 void stanley(double points[][2])
 {
-  
-
   double ld;
   double v = 50;
   double kv = 0.25;
@@ -352,12 +377,14 @@ void stanley(double points[][2])
   double pathError;
   while (!(closestPoint(points) == sizeof points / sizeof points[2]))
   {
-    closestPoint(points);
-    if(perpendicularDist(points,closestPoint(points),closestPoint(points)+1)<perpendicularDist(points,closestPoint(points),closestPoint(points)-1)){
-    pathDistance = perpendicularDist(points,closestPoint(points),closestPoint(points)+1);
+    int pointClosest = closestPoint(points);
+    if(perpendicularDist(points,pointClosest,pointClosest+1)<perpendicularDist(points,pointClosest-1,pointClosest)){
+    pathDistance = perpendicularDist(points,pointClosest,pointClosest+1);
+    pathHeading=slope(points,pointClosest,pointClosest+1);
     }
     else{
-      pathDistance = perpendicularDist(points,closestPoint(points),closestPoint(points)-1);
+      pathDistance = perpendicularDist(points,pointClosest-1,pointClosest);
+      pathHeading=slope(points,pointClosest-1,pointClosest);
     }
     ld = kv / v;
     ldAngle = RadToDeg(atan2(pathDistance, ld)) - gyro1.yaw();
