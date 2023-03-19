@@ -42,8 +42,6 @@ double deltaY;
     bEncoder = RotationB.position(turns)*-360;
     }
     else {
-    
-    
     lEncoder = RotationL.position(turns)*360;
     bEncoder = RotationB.position(turns)*-360;
     }
@@ -81,7 +79,7 @@ double deltaY;
     X += deltaX;
     Y += deltaY;
 
-    this_thread::sleep_for(5);
+    this_thread::sleep_for(10);
   }
   return 1;
 }
