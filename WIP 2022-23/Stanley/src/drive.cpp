@@ -404,6 +404,7 @@ void stanley(double points[][2])
   double pathHeading;
   double ldAngle;
   double pathError;
+  int sign;
   while (true)
   {
     int pointClosest = closestPoint(points);
@@ -421,17 +422,19 @@ void stanley(double points[][2])
     {
       pathDistance = segment2dist;
       pathHeading = slope(points, pointClosest, pointClosest + 1);
+      sign = signOfDistance(points, pointClosest, pointClosest + 1);
     }
     else
     {
       pathDistance = segment1dist;
       pathHeading = slope(points, pointClosest - 1, pointClosest);
+      sign = signOfDistance(points, pointClosest - 1, pointClosest);
     }
     ld = v / kv;
     
     ldAngle = RadToDeg(atan2(pathDistance, ld)) - gyro1.yaw();
     pathError = pathHeading - gyro1.yaw();
-    curveDrive(50, ldAngle + pathError);
+    curveDrive(50, ldAngle*sign + pathError);
     v = LF.velocity(pct) + RF.velocity(pct) / 2;
   }
 }
