@@ -5,11 +5,11 @@
 	},
 	"project": {
 		"name": "Stanley",
-		"description": "NR attempt at a stanley controller",
-		"creationDate": "3/14/2023, 3:29:14 PM",
+		"description": "NR attempt at a stanley controller, how long can this be time to find out this is a really really funny thing Never gonna give you up Never gonna let you down Never gonna run around and desert you Never gonna make you cry Never gonna say goodbye Never gonna tell a lie and hurt you, never gonna let you down, never gonna run around and desert you",
+		"creationDate": "pi day 2023 lmao",
 		"platform": "V5",
 		"language": "cpp",
-		"slot": 1,
+		"slot": 3,
 		"sdkVersion": "V5_20220726_10_00_00",
 		"cpp": {
 			"includePath": []

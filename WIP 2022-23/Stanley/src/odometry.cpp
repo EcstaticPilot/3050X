@@ -29,12 +29,7 @@ double deltaY;
   Controller1.rumble(".");
   RotationL.resetPosition();
   RotationB.resetPosition();
-  if(Far_Side&&first){X=72;
-  }
-  if(Near_Side&&first)X=98;
 
-
-  first=false;
   while (1) {
     if(Far_Side){
     
