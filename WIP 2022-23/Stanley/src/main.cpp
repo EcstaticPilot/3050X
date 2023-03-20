@@ -8,7 +8,7 @@
 /*----------------------------------------------------------------------------*/
 
 #include "vex.h"
-
+#include <iostream>
 using namespace vex;
 
 // A global instance of competition
@@ -65,7 +65,9 @@ void pre_auton(void) {
 /*---------------------------------------------------------------------------*/
 
 void autonomous(void) {
-  double points[7][2]={(4,5),(10,20),(15,32),(20,40),(30,45),(40,47),(50,50)};
+  Controller1.rumble("....");
+  std::cout<<"Autonomous Started"<<std::endl;
+  double points[8][2]={(1,1),(4,5),(10,20),(15,32),(20,40),(30,45),(40,47),(50,50)};
   stanley(points);
   // ..........................................................................
   // Insert autonomous user code here.

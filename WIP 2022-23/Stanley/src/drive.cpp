@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <vector>
 #include <math.h>
-float TrackWidth = 15;
+float TrackWidth = 27/2;
 float C = M_PI * 3.25;
 extern double X, Y;
 
@@ -332,10 +332,10 @@ int signOfDistance(double points[][2], int point1, int point2){
   double y3 = Y;
   double d = (x2-x1)*(y1-y3) - (x1-x3)*(y2-y1);
   if (d > 0){
-    return 1;
+    return -1;
   }
   else if (d < 0){
-    return -1;
+    return 1;
   }
   else{
     return 0;
@@ -399,21 +399,27 @@ void stanley(double points[][2])
 {
   double ld;
   double v = 50;
-  double kv = 4;
+  double kv = 1;
   double pathDistance;
   double pathHeading;
   double ldAngle;
   double pathError;
   int sign;
+ Brain.Screen.print("stanley");
+  int i = 0;
   while (true)
   {
+    i++;
+    
+    Brain.Screen.print("%.1f", i);
     int pointClosest = closestPoint(points);
     if (pointClosest == sizeof points / sizeof points[2])
     {
-      break;
+  //    break;
     }
-    double segment1dist = (pointClosest == 0 ? perpendicularDist(points, pointClosest - 1, pointClosest) : __DBL_MAX__);
+    double segment1dist = (!pointClosest == 0 ? perpendicularDist(points, pointClosest - 1, pointClosest) : 900000000000);
     double segment2dist = perpendicularDist(points, pointClosest, pointClosest + 1);
+  
     if (segment1dist>300000 && segment2dist>300000 )
     {
       segment2dist-=300000;
@@ -430,12 +436,15 @@ void stanley(double points[][2])
       pathHeading = slope(points, pointClosest - 1, pointClosest);
       sign = signOfDistance(points, pointClosest - 1, pointClosest);
     }
-    ld = v / kv;
+    ld =50;// v / kv;
     
     ldAngle = RadToDeg(atan2(pathDistance, ld)) - gyro1.yaw();
     pathError = pathHeading - gyro1.yaw();
-    curveDrive(50, ldAngle*sign + pathError);
+    curveDrive(20, ldAngle*sign + pathError);
     v = LF.velocity(pct) + RF.velocity(pct) / 2;
+    std::cout<<ld<<","<< ldAngle*sign<<", "<<  pathError<<std::endl;
+
   }
+  Brain.Screen.drawLine(0, 0, 20, 20);
 }
 
