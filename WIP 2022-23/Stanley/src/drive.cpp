@@ -303,13 +303,12 @@ double DegToRad(double deg)
  */
 float slope(double points[][2], int point1, int point2)
 {
-  double slope = RadToDeg(atan2(points[point2][1] - points[point1][1], points[point2][0] - points[point1][0]));
+  double x1 = points[point1][0];
+  double y1 = points[point1][1];
+  double x2 = points[point2][0];
+  double y2 = points[point2][1];
+  double slope = RadToDeg(atan2(y2 - y1, x2 - x1));
   return slope;
-}
-
-double Yintercept(double points[][2], int point1, int point2)
-{
-  return points[point1][1] - (slope(points, point1, point2) * points[point1][0]);
 }
 
 /**
@@ -377,13 +376,16 @@ float perpendicularDist(double points[][2], int point1, int point2)
   double y2 = points[point2][1];
   double x3 = X;
   double y3 = Y;
+  // calculate distance
   double d = fabs((y2 - y1) * x3 - (x2 - x1) * y3 + x2 * y1 - y2 * x1) / sqrt(pow(y2 - y1, 2) + pow(x2 - x1, 2));
   // check for intersection
   double a = robotDistance(x1, y1);
   double b = distance2points(x1, y1, x2, y2);
   double c = robotDistance(x2, y2);
+  // check if the robot is within the line using law of cosines
   double angle1 = RadToDeg(acos((pow(a, 2) + pow(b, 2) - pow(c, 2)) / (2 * a * b)));
   double angle2 = RadToDeg(acos((pow(c, 2) + pow(b, 2) - pow(a, 2)) / (2 * c * b)));
+  // if the robot is not within the line, add a large number to the distance
   if (angle1 > 90 || angle2 > 90)
   {
     d += 300000;
@@ -412,18 +414,22 @@ void stanley(double points[][2])
     i++;
     
     Brain.Screen.print("%.1f", i);
+    // find the closest point
     int pointClosest = closestPoint(points);
+    // if the closest point is the last point, stop
     if (pointClosest == sizeof points / sizeof points[2])
     {
-  //    break;
+     break;
     }
+    // find the distance to the line segment before and after the closest point
     double segment1dist = (!pointClosest == 0 ? perpendicularDist(points, pointClosest - 1, pointClosest) : 900000000000);
     double segment2dist = perpendicularDist(points, pointClosest, pointClosest + 1);
-  
+    // if neither one has an intersection, find the distance to the line segment after the next point
     if (segment1dist>300000 && segment2dist>300000 )
     {
       segment2dist-=300000;
     }
+    // find the distance to the closest line segment and the heading of that line segment
     if (segment2dist < segment1dist)
     {
       pathDistance = segment2dist;
@@ -437,11 +443,14 @@ void stanley(double points[][2])
       sign = signOfDistance(points, pointClosest - 1, pointClosest);
     }
     ld =50;// v / kv;
-    
+    // calculate the angle to the line segment and the error in the heading
     ldAngle = RadToDeg(atan2(pathDistance, ld)) - gyro1.yaw();
     pathError = pathHeading - gyro1.yaw();
+    // drive the robot
     curveDrive(20, ldAngle*sign + pathError);
+    // update speed
     v = LF.velocity(pct) + RF.velocity(pct) / 2;
+    // print the values
     std::cout<<ld<<","<< ldAngle*sign<<", "<<  pathError<<std::endl;
 
   }
