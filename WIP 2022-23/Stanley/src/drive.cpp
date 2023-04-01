@@ -295,6 +295,62 @@ double DegToRad(double deg)
   return (deg * M_PI / 180);
 }
 
+//inject more evenly spaced points into the path with a spacing of 3 inches
+//copilot made this
+double injectPointsEvenly(double points[][2], double spacing){
+  double newPoints[100][2];
+  int newPointsIndex = 0;
+  int pointsIndex = 0;
+  double dist = 0;
+  double x1 = points[pointsIndex][0];
+  double y1 = points[pointsIndex][1];
+  double x2 = points[pointsIndex + 1][0];
+  double y2 = points[pointsIndex + 1][1];
+  double slope = RadToDeg(atan2(y2 - y1, x2 - x1));
+  double x = x1;
+  double y = y1;
+  newPoints[newPointsIndex][0] = x1;
+  newPoints[newPointsIndex][1] = y1;
+  newPointsIndex++;
+  while(pointsIndex < 10){
+    dist = distance2points(x1, y1, x2, y2);
+    if(dist > spacing){
+      x = x + spacing * cos(DegToRad(slope));
+      y = y + spacing * sin(DegToRad(slope));
+      newPoints[newPointsIndex][0] = x;
+      newPoints[newPointsIndex][1] = y;
+      newPointsIndex++;
+      x1 = x;
+      y1 = y;
+    }
+    else{
+      newPoints[newPointsIndex][0] = x2;
+      newPoints[newPointsIndex][1] = y2;
+      newPointsIndex++;
+      pointsIndex++;
+      x1 = points[pointsIndex][0];
+      y1 = points[pointsIndex][1];
+      x2 = points[pointsIndex + 1][0];
+      y2 = points[pointsIndex + 1][1];
+      slope = RadToDeg(atan2(y2 - y1, x2 - x1));
+      x = x1;
+      y = y1;
+    }
+  }
+  for(int i = 0; i < newPointsIndex; i++){
+    points[i][0] = newPoints[i][0];
+    points[i][1] = newPoints[i][1];
+  }
+  return newPointsIndex;
+
+
+}
+
+double smoothPath(double points[][2])
+{
+  
+
+}
 /**
  * @brief finds the slope between two points
  * @param points an array containing the points
@@ -307,7 +363,7 @@ float slope(double points[][2], int point1, int point2)
   double y1 = points[point1][1];
   double x2 = points[point2][0];
   double y2 = points[point2][1];
-  double slope = RadToDeg(atan2(y2 - y1, x2 - x1));
+  double slope = RadToDeg(atan2(x2-x1,y2-y1));
   return slope;
 }
 
