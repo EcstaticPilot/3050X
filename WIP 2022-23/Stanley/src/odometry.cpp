@@ -3,8 +3,7 @@
 #include <math.h>
 
 double X=0,Y=0;
-extern bool Far_Side;
-extern bool Near_Side;
+
 bool first=true;
 
 int odometery() {
@@ -31,15 +30,10 @@ double deltaY;
   RotationB.resetPosition();
 
   while (1) {
-    if(Far_Side){
-    
-    lEncoder = RotationL.position(turns)*-360;
-    bEncoder = RotationB.position(turns)*-360;
-    }
-    else {
+
     lEncoder = RotationL.position(turns)*360;
-    bEncoder = RotationB.position(turns)*-360;
-    }
+    bEncoder = RotationB.position(turns)*360;
+    
     distL = ((lEncoder - prevLE) * M_PI / 180) * lRad;
     // convert encoder distance into distance traveled
     distB = ((bEncoder - prevBE) * M_PI / 180) * bRad;
@@ -48,7 +42,7 @@ double deltaY;
     prevLE = lEncoder; // create previous encoder value left
     prevBE = bEncoder; // create previous encoder value back
 
-    absoluteOrientation = (Near_Side?-gyro1.rotation():gyro1.rotation()) * M_PI / 180.0;
+    absoluteOrientation = gyro1.rotation() * M_PI / 180.0;
     deltaHeading =
         absoluteOrientation - prevHeading; // calculate change in heading
     averageHeading = prevHeading + (deltaHeading) / 2;

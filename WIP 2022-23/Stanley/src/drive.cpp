@@ -345,12 +345,6 @@ double injectPointsEvenly(double points[][2], double spacing){
 
 
 }
-
-double smoothPath(double points[][2])
-{
-  
-
-}
 /**
  * @brief finds the slope between two points
  * @param points an array containing the points
@@ -478,7 +472,7 @@ void stanley(double points[][2])
      break;
     }
     // find the distance to the line segment before and after the closest point
-    double segment1dist = (!pointClosest == 0 ? perpendicularDist(points, pointClosest - 1, pointClosest) : 900000000000);
+    double segment1dist = (!pointClosest == 0 ? (perpendicularDist(points, pointClosest - 1, pointClosest) ): 900000000000);
     double segment2dist = perpendicularDist(points, pointClosest, pointClosest + 1);
     // if neither one has an intersection, find the distance to the line segment after the next point
     if (segment1dist>300000 && segment2dist>300000 )

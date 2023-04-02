@@ -26,7 +26,8 @@ void DriveToPoint(double targetX, double targetY, float speedMult = 1);
 void RAMSETE(float targetX, float targetY, float targetAngle,float accuracy=1);
 void DriveToPoint2(float targetX,float targetY);
 void stanley(double points[][2]);
-
+//odometry
+int odometery();
 int ControllerPrint() {
 
 
@@ -34,7 +35,8 @@ int ControllerPrint() {
   while (1) {
     Controller1.Screen.setCursor(1, 1);
     Controller1.Screen.print("pos= (%.1f,%.1f)", X, Y);
-
+     Controller1.Screen.setCursor(2, 1);
+     Controller1.Screen.print("%.1f",gyro1.rotation(rotationUnits::deg));
     this_thread::sleep_for(75);
   }
 }
@@ -49,7 +51,11 @@ int ControllerPrint() {
 /*---------------------------------------------------------------------------*/
 
 void pre_auton(void) {
+  gyro1.calibrate();
+  waitUntil(gyro1.isCalibrating()==false);
+  
   thread ControllerPrinting = thread(ControllerPrint);
+  thread posTrack = thread(odometery);
   // All activities that occur before the competition starts
   // Example: clearing encoders, setting servo positions, ...
 }
