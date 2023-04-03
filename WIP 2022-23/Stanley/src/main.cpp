@@ -53,7 +53,7 @@ int ControllerPrint() {
 void pre_auton(void) {
   gyro1.calibrate();
   waitUntil(gyro1.isCalibrating()==false);
-  
+
   thread ControllerPrinting = thread(ControllerPrint);
   thread posTrack = thread(odometery);
   // All activities that occur before the competition starts
@@ -73,7 +73,7 @@ void pre_auton(void) {
 void autonomous(void) {
   Controller1.rumble("....");
   std::cout<<"Autonomous Started"<<std::endl;
-  double points[8][2]={(1,1),(4,5),(10,20),(15,32),(20,40),(30,45),(40,47),(50,50)};
+  double points[4][2]={(0,0),(1,100),(4,120),(10,150)};
   stanley(points);
   // ..........................................................................
   // Insert autonomous user code here.

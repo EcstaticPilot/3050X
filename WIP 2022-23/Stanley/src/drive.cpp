@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <vector>
 #include <math.h>
-float TrackWidth = 27/2;
+float TrackWidth = 17/2;
 float C = M_PI * 3.25;
 extern double X, Y;
 
@@ -263,8 +263,6 @@ void curveDrive(float targetVel, float curvature)
   // drive
   drive(vL, vR, 10);
 }
-
-
 /**
  * @breif distance between two points
  * @param x1 x coordinate of the first point
@@ -357,7 +355,7 @@ float slope(double points[][2], int point1, int point2)
   double y1 = points[point1][1];
   double x2 = points[point2][0];
   double y2 = points[point2][1];
-  double slope = RadToDeg(atan2(x2-x1,y2-y1));
+  double slope = RadToDeg(atan2(y2-y1,x2-x1));
   return slope;
 }
 
@@ -466,20 +464,24 @@ void stanley(double points[][2])
     Brain.Screen.print("%.1f", i);
     // find the closest point
     int pointClosest = closestPoint(points);
+    Brain.Screen.print("0.5");
     // if the closest point is the last point, stop
     if (pointClosest == sizeof points / sizeof points[2])
     {
-     break;
+  //   break;
     }
+     Brain.Screen.print("1");
     // find the distance to the line segment before and after the closest point
     double segment1dist = (!pointClosest == 0 ? (perpendicularDist(points, pointClosest - 1, pointClosest) ): 900000000000);
     double segment2dist = perpendicularDist(points, pointClosest, pointClosest + 1);
     // if neither one has an intersection, find the distance to the line segment after the next point
+     Brain.Screen.print("2");
     if (segment1dist>300000 && segment2dist>300000 )
     {
       segment2dist-=300000;
     }
     // find the distance to the closest line segment and the heading of that line segment
+    Brain.Screen.print("3");
     if (segment2dist < segment1dist)
     {
       pathDistance = segment2dist;
@@ -492,16 +494,17 @@ void stanley(double points[][2])
       pathHeading = slope(points, pointClosest - 1, pointClosest);
       sign = signOfDistance(points, pointClosest - 1, pointClosest);
     }
+     Brain.Screen.print("4");
     ld =50;// v / kv;
     // calculate the angle to the line segment and the error in the heading
-    ldAngle = RadToDeg(atan2(pathDistance, ld)) - gyro1.yaw();
+    ldAngle = RadToDeg(atan2(pathDistance, ld));
     pathError = pathHeading - gyro1.yaw();
     // drive the robot
-    curveDrive(20, ldAngle*sign + pathError);
+    curveDrive(1, ldAngle*-sign + pathError);
     // update speed
     v = LF.velocity(pct) + RF.velocity(pct) / 2;
     // print the values
-    std::cout<<ld<<","<< ldAngle*sign<<", "<<  pathError<<std::endl;
+    std::cout<<pathHeading<<","<<ldAngle*-sign+ pathError<<","<<pathError<<","<<ldAngle*-sign<<std::endl;
 
   }
   Brain.Screen.drawLine(0, 0, 20, 20);
