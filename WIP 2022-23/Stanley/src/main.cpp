@@ -93,6 +93,7 @@ void autonomous(void) {
 void usercontrol(void) {
   // User control code here, inside the loop
   while (1) {
+    std::cout<<X<<","<<Y<<std::endl;
       LF.spin(forward, Controller1.Axis3.position() * 120, voltageUnits::mV);
       RF.spin(forward, Controller1.Axis2.position() * 120, voltageUnits::mV);
       LB.spin(forward, Controller1.Axis3.position() * 120, voltageUnits::mV);

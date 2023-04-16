@@ -345,20 +345,18 @@ int signOfDistance(double points[][2], int point1, int point2){
  */
 int closestPoint(double points[][2])
 {
-  int npoints =(.5*sizeof points) / sizeof(double);
-  int closest = 0;
-  double closestDist = robotDistance(points[0][0], points[0][1]);
-
-  for (int i = 0; i < npoints; i++)
+  double min = robotDistance(points[0][0], points[0][1]);
+  int index = 0;
+  for (int i =0; i < sizeof points; i++)
   {
     double dist = robotDistance(points[i][0], points[i][1]);
-    if (closestDist > dist)
+    if (dist < min)
     {
-      closest = i;
-      closestDist = dist;
+      min = dist;
+      index = i;
     }
   }
-  return (closest);
+  return index;
 }
 
 /**
@@ -407,7 +405,6 @@ void stanley(double points[][2])
   double pathDistance;
   double pathHeading;
   double ldAngle;
-  double pathError;
   int sign;
  Brain.Screen.print("stanley");
   int i = 0;
@@ -420,7 +417,7 @@ void stanley(double points[][2])
     int pointClosest = closestPoint(points);
     Brain.Screen.print("0.5");
     // if the closest point is the last point, stop
-    if (pointClosest == (.5*sizeof points) / sizeof(double))
+    if (pointClosest == sizeof points-1)
     {
      break;
     }
@@ -449,18 +446,20 @@ void stanley(double points[][2])
       sign = signOfDistance(points, pointClosest - 1, pointClosest);
     }
      Brain.Screen.print("4");
-    ld =50;// v / kv;
+    ld =20;// v / kv;
     // calculate the angle to the line segment and the error in the heading
-    ldAngle = RadToDeg(atan2(ld,pathDistance));
-    pathError = pathHeading;
+    ldAngle = RadToDeg(atan2(pathDistance, ld));
+   
     // drive the robot
-   // curveDrive(25,( ldAngle*-sign + pathError-gyro1.rotation(deg)/5));
+    double delta = 0.5*( ldAngle*-sign + pathHeading-gyro1.yaw(deg));
+  //  drive(25+delta,25-delta,10);
+    //curveDrive(25,( ldAngle*-sign + pathError-gyro1.yaw(deg)/5));
     // update speed
     v = LF.velocity(pct) + RF.velocity(pct) / 2;
     // print the values
     //pathDistance<<","<<ldAngle*-sign<<","<<perpendicularDist(points,0,1)<<","
-    std::cout<<segment1dist<<","<<segment2dist<<std::endl;
-    wait(10, msec);
+    std::cout<<robotDistance(0,0)<<","<<robotDistance(0,120)<<","<<pointClosest<<std::endl;
+  //  wait(10, msec);
   }
   Brain.Screen.drawLine(0, 0, 20, 20);
 }
