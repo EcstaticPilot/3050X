@@ -497,14 +497,14 @@ void stanley(double points[][2])
      Brain.Screen.print("4");
     ld =50;// v / kv;
     // calculate the angle to the line segment and the error in the heading
-    ldAngle = RadToDeg(atan2(pathDistance, ld));
-    pathError = pathHeading - gyro1.yaw();
+    ldAngle = RadToDeg(atan2(ld,pathDistance));
+    pathError = pathHeading;
     // drive the robot
-    curveDrive(1, ldAngle*-sign + pathError);
+    curveDrive(25, ldAngle*-sign + pathError-gyro1.rotation(deg));
     // update speed
     v = LF.velocity(pct) + RF.velocity(pct) / 2;
     // print the values
-    std::cout<<pathHeading<<","<<ldAngle*-sign+ pathError<<","<<pathError<<","<<ldAngle*-sign<<std::endl;
+    std::cout<<ldAngle*-sign + pathError-gyro1.rotation(deg)<<std::endl;
 
   }
   Brain.Screen.drawLine(0, 0, 20, 20);
