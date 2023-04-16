@@ -73,7 +73,7 @@ void pre_auton(void) {
 void autonomous(void) {
   Controller1.rumble("....");
   std::cout<<"Autonomous Started"<<std::endl;
-  double points[4][2]={(0,0),(1,100),(4,120),(10,150)};
+  double points[4][2]={(0,0),(2,100),(0,120),(0,150)};
   stanley(points);
   // ..........................................................................
   // Insert autonomous user code here.
