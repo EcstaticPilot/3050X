@@ -425,7 +425,10 @@ float perpendicularDist(double points[][2], int point1, int point2)
   double x3 = X;
   double y3 = Y;
   // calculate distance
-  double d = fabs((y2 - y1) * x3 - (x2 - x1) * y3 + x2 * y1 - y2 * x1) / sqrt(pow(y2 - y1, 2) + pow(x2 - x1, 2));
+  double A=y2-y1;
+  double B=x1-x2;
+  double C=(x2*y1)-(x1*y2);
+  double d = fabs((A*x3+B*y3+C)/sqrt(A*A+B*B));
   // check for intersection
   double a = robotDistance(x1, y1);
   double b = distance2points(x1, y1, x2, y2);
@@ -500,12 +503,12 @@ void stanley(double points[][2])
     ldAngle = RadToDeg(atan2(ld,pathDistance));
     pathError = pathHeading;
     // drive the robot
-    curveDrive(25, ldAngle*-sign + pathError-gyro1.rotation(deg));
+   // curveDrive(25,( ldAngle*-sign + pathError-gyro1.rotation(deg)/5));
     // update speed
     v = LF.velocity(pct) + RF.velocity(pct) / 2;
     // print the values
-    std::cout<<ldAngle*-sign + pathError-gyro1.rotation(deg)<<std::endl;
-
+    std::cout<<pathDistance<<","<<ldAngle*-sign<<","<<perpendicularDist(points,0,1)<<","<<segment1dist<<","<<segment2dist<<std::endl;
+    wait(10, msec);
   }
   Brain.Screen.drawLine(0, 0, 20, 20);
 }
