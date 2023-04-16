@@ -293,56 +293,7 @@ double DegToRad(double deg)
   return (deg * M_PI / 180);
 }
 
-//inject more evenly spaced points into the path with a spacing of 3 inches
-//copilot made this
-double injectPointsEvenly(double points[][2], double spacing){
-  double newPoints[100][2];
-  int newPointsIndex = 0;
-  int pointsIndex = 0;
-  double dist = 0;
-  double x1 = points[pointsIndex][0];
-  double y1 = points[pointsIndex][1];
-  double x2 = points[pointsIndex + 1][0];
-  double y2 = points[pointsIndex + 1][1];
-  double slope = RadToDeg(atan2(y2 - y1, x2 - x1));
-  double x = x1;
-  double y = y1;
-  newPoints[newPointsIndex][0] = x1;
-  newPoints[newPointsIndex][1] = y1;
-  newPointsIndex++;
-  while(pointsIndex < 10){
-    dist = distance2points(x1, y1, x2, y2);
-    if(dist > spacing){
-      x = x + spacing * cos(DegToRad(slope));
-      y = y + spacing * sin(DegToRad(slope));
-      newPoints[newPointsIndex][0] = x;
-      newPoints[newPointsIndex][1] = y;
-      newPointsIndex++;
-      x1 = x;
-      y1 = y;
-    }
-    else{
-      newPoints[newPointsIndex][0] = x2;
-      newPoints[newPointsIndex][1] = y2;
-      newPointsIndex++;
-      pointsIndex++;
-      x1 = points[pointsIndex][0];
-      y1 = points[pointsIndex][1];
-      x2 = points[pointsIndex + 1][0];
-      y2 = points[pointsIndex + 1][1];
-      slope = RadToDeg(atan2(y2 - y1, x2 - x1));
-      x = x1;
-      y = y1;
-    }
-  }
-  for(int i = 0; i < newPointsIndex; i++){
-    points[i][0] = newPoints[i][0];
-    points[i][1] = newPoints[i][1];
-  }
-  return newPointsIndex;
 
-
-}
 /**
  * @brief finds the slope between two points
  * @param points an array containing the points
@@ -394,13 +345,13 @@ int signOfDistance(double points[][2], int point1, int point2){
  */
 int closestPoint(double points[][2])
 {
-  int npoints = sizeof points / sizeof points[2];
+  int npoints =(.5*sizeof points) / sizeof(double);
   int closest = 0;
-  double closestDist = robotDistance(points[0][1], points[0][2]);
+  double closestDist = robotDistance(points[0][0], points[0][1]);
 
   for (int i = 0; i < npoints; i++)
   {
-    double dist = robotDistance(points[i][1], points[i][2]);
+    double dist = robotDistance(points[i][0], points[i][1]);
     if (closestDist > dist)
     {
       closest = i;
@@ -469,13 +420,13 @@ void stanley(double points[][2])
     int pointClosest = closestPoint(points);
     Brain.Screen.print("0.5");
     // if the closest point is the last point, stop
-    if (pointClosest == sizeof points / sizeof points[2])
+    if (pointClosest == (.5*sizeof points) / sizeof(double))
     {
-  //   break;
+     break;
     }
      Brain.Screen.print("1");
     // find the distance to the line segment before and after the closest point
-    double segment1dist = (!pointClosest == 0 ? (perpendicularDist(points, pointClosest - 1, pointClosest) ): 900000000000);
+    double segment1dist = (!(pointClosest == 0) ? (perpendicularDist(points, (pointClosest - 1), pointClosest) ):( 900000000000));
     double segment2dist = perpendicularDist(points, pointClosest, pointClosest + 1);
     // if neither one has an intersection, find the distance to the line segment after the next point
      Brain.Screen.print("2");
@@ -507,7 +458,8 @@ void stanley(double points[][2])
     // update speed
     v = LF.velocity(pct) + RF.velocity(pct) / 2;
     // print the values
-    std::cout<<pathDistance<<","<<ldAngle*-sign<<","<<perpendicularDist(points,0,1)<<","<<segment1dist<<","<<segment2dist<<std::endl;
+    //pathDistance<<","<<ldAngle*-sign<<","<<perpendicularDist(points,0,1)<<","
+    std::cout<<segment1dist<<","<<segment2dist<<std::endl;
     wait(10, msec);
   }
   Brain.Screen.drawLine(0, 0, 20, 20);
