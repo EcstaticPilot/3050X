@@ -416,7 +416,7 @@ void stanley(double points[][2])
     int pointClosest = closestPoint(points);
     Brain.Screen.print("0.5");
     // if the closest point is the last point, stop
-    if (pointClosest == sizeof points-1)
+    if (pointClosest == sizeof points)
     {
      break;
     }
@@ -445,21 +445,23 @@ void stanley(double points[][2])
       sign = signOfDistance(points, pointClosest - 1, pointClosest);
     }
      Brain.Screen.print("4");
-    ld =1;// v / kv;
+    ld =10;// v / kv;
     // calculate the angle to the line segment and the error in the heading
     ldAngle = RadToDeg(atan2(pathDistance, ld));
    
     // drive the robot
-    double delta = ( ldAngle*-sign + pathHeading-gyro1.yaw(deg));
+    double delta = ( ldAngle*sign + pathHeading-gyro1.yaw(deg));
     drive(25+delta,25-delta,10);
     //curveDrive(25,( ldAngle*-sign + pathError-gyro1.yaw(deg)/5));
     // update speed
     v = LF.velocity(pct) + RF.velocity(pct) / 2;
     // print the values
     //pathDistance<<","<<ldAngle*-sign<<","<<perpendicularDist(points,0,1)<<","
-    std::cout<<pathDistance<<","<<pathHeading<<","<<ldAngle*sign+pathHeading<<","<<delta<<std::endl;
+    std::cout<<X<<","<<Y<<std::endl;
     wait(10, msec);
-  }                                                                                                                                                               
+  } 
+  drive(0,0,100);
+  drive_brake;                                                                                                                                                              
   Brain.Screen.drawLine(0, 0,144, 144);
 }
 
