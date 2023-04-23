@@ -318,7 +318,7 @@ float slope(double points[][2], int point1, int point2)
 double robotDistance(double x, double y)
 {
 
-  return (sqrt(pow(X - x, 2) + pow(Y - y, 2)));
+  return (sqrt((X-x)*(X-x) + (Y-y)*(Y-y)));
 }
 
 int signOfDistance(double points[][2], int point1, int point2){
@@ -347,14 +347,14 @@ int closestPoint(double points[][2])
 {
   double min = robotDistance(points[0][0], points[0][1]);
   int index = 0;
+  
+  
+ 
   for (int i =0; i < sizeof points; i++)
   {
     double dist = robotDistance(points[i][0], points[i][1]);
-    if (dist < min)
-    {
-      min = dist;
-      index = i;
-    }
+    if (dist < min) {min = dist; index = i;}
+    
   }
   return index;
 }
@@ -376,7 +376,7 @@ float perpendicularDist(double points[][2], int point1, int point2)
   // calculate distance
   double A=y2-y1;
   double B=x1-x2;
-  double C=(x2*y1)-(x1*y2);
+  double C=x2*y1-x1*y2;
   double d = fabs((A*x3+B*y3+C)/sqrt(A*A+B*B));
   // check for intersection
   double a = robotDistance(x1, y1);
@@ -451,16 +451,16 @@ void stanley(double points[][2])
     ldAngle = RadToDeg(atan2(pathDistance, ld));
    
     // drive the robot
-    double delta = 0.5*( ldAngle*-sign + pathHeading-gyro1.yaw(deg));
-  //  drive(25+delta,25-delta,10);
+    double delta = ( ldAngle*-sign + pathHeading-gyro1.yaw(deg));
+ //   drive(25+delta,25,10);
     //curveDrive(25,( ldAngle*-sign + pathError-gyro1.yaw(deg)/5));
     // update speed
     v = LF.velocity(pct) + RF.velocity(pct) / 2;
     // print the values
     //pathDistance<<","<<ldAngle*-sign<<","<<perpendicularDist(points,0,1)<<","
-    std::cout<<robotDistance(0,0)<<","<<robotDistance(0,120)<<","<<pointClosest<<std::endl;
-  //  wait(10, msec);
-  }
-  Brain.Screen.drawLine(0, 0, 20, 20);
+    std::cout<<segment1dist<<","<<segment2dist <<","<<perpendicularDist(points,0,1)<<std::endl;
+    wait(10, msec);
+  }                                                                                                                                                               
+  Brain.Screen.drawLine(0, 0,144, 144);
 }
 

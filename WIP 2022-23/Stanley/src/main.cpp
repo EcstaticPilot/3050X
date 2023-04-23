@@ -73,7 +73,7 @@ void pre_auton(void) {
 void autonomous(void) {
   Controller1.rumble("....");
   std::cout<<"Autonomous Started"<<std::endl;
-  double points[4][2]={(0,0),(2,100),(0,120),(0,150)};
+  double points[4][2]={{(1000,10000)},{(50000,30000)},{(90000,70000)},{(12000000,120000000)}};
   stanley(points);
   // ..........................................................................
   // Insert autonomous user code here.
@@ -108,6 +108,7 @@ void usercontrol(void) {
 //
 int main() {
   // Set up callbacks for autonomous and driver control periods.
+
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
 
