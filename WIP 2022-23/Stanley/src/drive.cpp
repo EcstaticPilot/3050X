@@ -6,7 +6,6 @@
 float TrackWidth = 17/2;
 float C = M_PI * 3.25;
 extern double X, Y;
-
 void drive(int lSpeed, int rSpeed, double wt)
 {
   LF.spin(forward, lSpeed, pct);
@@ -377,7 +376,7 @@ float perpendicularDist(double points[][2], int point1, int point2)
   double A=y2-y1;
   double B=x1-x2;
   double C=x2*y1-x1*y2;
-  double d = fabs((A*x3+B*y3+C)/sqrt(A*A+B*B));
+  double d = fabs((A*x3+B*y3+C))/sqrt(A*A+B*B);
   // check for intersection
   double a = robotDistance(x1, y1);
   double b = distance2points(x1, y1, x2, y2);
@@ -446,19 +445,19 @@ void stanley(double points[][2])
       sign = signOfDistance(points, pointClosest - 1, pointClosest);
     }
      Brain.Screen.print("4");
-    ld =20;// v / kv;
+    ld =1;// v / kv;
     // calculate the angle to the line segment and the error in the heading
     ldAngle = RadToDeg(atan2(pathDistance, ld));
    
     // drive the robot
     double delta = ( ldAngle*-sign + pathHeading-gyro1.yaw(deg));
- //   drive(25+delta,25,10);
+    drive(25+delta,25-delta,10);
     //curveDrive(25,( ldAngle*-sign + pathError-gyro1.yaw(deg)/5));
     // update speed
     v = LF.velocity(pct) + RF.velocity(pct) / 2;
     // print the values
     //pathDistance<<","<<ldAngle*-sign<<","<<perpendicularDist(points,0,1)<<","
-    std::cout<<segment1dist<<","<<segment2dist <<","<<perpendicularDist(points,0,1)<<std::endl;
+    std::cout<<pathDistance<<","<<pathHeading<<","<<ldAngle*sign+pathHeading<<","<<delta<<std::endl;
     wait(10, msec);
   }                                                                                                                                                               
   Brain.Screen.drawLine(0, 0,144, 144);

@@ -2,7 +2,7 @@
 #include "vex.h"
 #include <math.h>
 
-double X=-699999999,Y=3;
+double X=0,Y=0;
 
 bool first=true;
 
