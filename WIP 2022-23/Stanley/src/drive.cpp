@@ -305,7 +305,7 @@ float slope(double points[][2], int point1, int point2)
   double y1 = points[point1][1];
   double x2 = points[point2][0];
   double y2 = points[point2][1];
-  double slope = RadToDeg(atan2(y2-y1,x2-x1));
+  double slope = RadToDeg(atan2(x2-x1,y2-y1));
   return slope;
 }
 
@@ -457,7 +457,7 @@ void stanley(double points[][2])
     v = LF.velocity(pct) + RF.velocity(pct) / 2;
     // print the values
     //pathDistance<<","<<ldAngle*-sign<<","<<perpendicularDist(points,0,1)<<","
-    std::cout<<X<<","<<Y<<std::endl;
+    std::cout<<X<<","<<Y<<","<<delta<<std::endl;
     wait(10, msec);
   } 
   drive(0,0,100);
