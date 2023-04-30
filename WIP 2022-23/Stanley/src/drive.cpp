@@ -292,6 +292,19 @@ double DegToRad(double deg)
   return (deg * M_PI / 180);
 }
 
+bool zeroCrossing(double a, double b)
+{
+  int A=fabs(a)/a;
+  int B=fabs(b)/b;
+  if(A!=B)
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+}
 
 /**
  * @brief finds the slope between two points
@@ -398,12 +411,17 @@ float perpendicularDist(double points[][2], int point1, int point2)
  */
 void stanley(double points[][2])
 {
+  double kp=0.5;
+  double ki=0;
+  double kd=0;
   double ld;
   double v = 50;
   double kv = 1;
   double pathDistance;
   double pathHeading;
   double ldAngle;
+  double prevError=0; 
+  double totalError=0;
   int sign;
  Brain.Screen.print("stanley");
   int i = 0;
@@ -450,14 +468,25 @@ void stanley(double points[][2])
     ldAngle = RadToDeg(atan2(pathDistance, ld));
    
     // drive the robot
-    double delta = ( ldAngle*sign + pathHeading-gyro1.yaw(deg));
-    drive(25+delta,25-delta,10);
+    double error = ( ldAngle*sign + pathHeading-gyro1.yaw(deg));
+    //start pid
+    double output=(error*kp)+(totalError)*ki+(prevError-error)*kd;
+
+    prevError=error;
+    drive(25+output,25-output,10);
+
+    if(zeroCrossing(error,prevError)){
+      totalError=0;
+    }
+    else{
+      totalError+=error;
+    }
     //curveDrive(25,( ldAngle*-sign + pathError-gyro1.yaw(deg)/5));
     // update speed
     v = LF.velocity(pct) + RF.velocity(pct) / 2;
     // print the values
     //pathDistance<<","<<ldAngle*-sign<<","<<perpendicularDist(points,0,1)<<","
-    std::cout<<X<<","<<Y<<","<<delta<<std::endl;
+    std::cout<<X<<","<<Y<<","<<error<<std::endl;
     wait(10, msec);
   } 
   drive(0,0,100);
