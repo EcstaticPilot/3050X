@@ -474,7 +474,7 @@ void stanley(double points[][2])
 
     prevError=error;
     drive(25+output,25-output,10);
-
+    //reset integral if error crosses zero
     if(zeroCrossing(error,prevError)){
       totalError=0;
     }
