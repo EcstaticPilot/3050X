@@ -2,38 +2,54 @@
 #include "vex.h"
 #include <math.h>
 
-double X=0,Y=0;
+double X = 0, Y = 0;
 
-bool first=true;
+bool trackingwheels = true;
 
-int odometery() {
- 
-double prevHeading = gyro1.rotation();
+int odometery()
+{
 
-double deltaHeading = 0; // change in heading
-double absoluteOrientation = M_PI;
-double lRad = 1.3926;      // radius of tracking wheel
-double bRad = 1.3926;      // radius of tracking wheel
-double lEncoder = 0;      // declaring encoder variable left
-double bEncoder = 0;      // declaring encoder variable back
-double distL = 0;         // distance left encoder has traveled
-double distB = 0;         // distance back encoder has traveled
-double prevLE = lEncoder; // create previous encoder value left
-double prevBE = bEncoder; // create previous encoder value back
-double averageHeading;    //
-double deltaX;
-double deltaY;
+  double prevHeading = gyro1.rotation();
 
+  double deltaHeading = 0; // change in heading
+  double absoluteOrientation = M_PI;
+  double lRad;
+  double bRad;
+  if(trackingwheels){
+  lRad = 1.3926;     // radius of tracking wheel
+  bRad = 1.3926;
+  }
+  else{
+  lRad = 2;
+  bRad = 0;
+  }     // radius of tracking wheel
+  double lEncoder = 0;      // declaring encoder variable left
+  double bEncoder = 0;      // declaring encoder variable back
+  double distL = 0;         // distance left encoder has traveled
+  double distB = 0;         // distance back encoder has traveled
+  double prevLE = lEncoder; // create previous encoder value left
+  double prevBE = bEncoder; // create previous encoder value back
+  double averageHeading;    //
+  double deltaX;
+  double deltaY;
 
   Controller1.rumble(".");
   RotationL.resetPosition();
   RotationB.resetPosition();
 
-  while (1) {
+  while (1)
+  {
+    if (trackingwheels)
+    {
+      lEncoder = RotationL.position(turns) * 360;
+      bEncoder = RotationB.position(turns) * 360;
+    }
+    else
+    {
+      lEncoder = (RB.position(turns) * 360 + LB.position(turns) * 360) / 2;
+      bEncoder=0;
+    }
 
-    lEncoder = RotationL.position(turns)*360;
-    bEncoder = RotationB.position(turns)*360;
-    
     distL = ((lEncoder - prevLE) * M_PI / 180) * lRad;
     // convert encoder distance into distance traveled
     distB = ((bEncoder - prevBE) * M_PI / 180) * bRad;
@@ -49,22 +65,24 @@ double deltaY;
     prevHeading = absoluteOrientation;
     // ax+by
     // cx +dy
-  /*  double a =cos(averageHeading);
-    double b =-sin(averageHeading);
-    double c =sin(averageHeading);
-    double d = cos(averageHeading);
-    double xVector= -B*deltaHeading-distB;
-    double yVector= L*deltaHeading-distL;*/
+    /*  double a =cos(averageHeading);
+      double b =-sin(averageHeading);
+      double c =sin(averageHeading);
+      double d = cos(averageHeading);
+      double xVector= -B*deltaHeading-distB;
+      double yVector= L*deltaHeading-distL;*/
     deltaX = (distL * sin(averageHeading)) + (distB * cos(averageHeading));
     deltaY = (distL * cos(averageHeading)) - (distB * sin(averageHeading));
 
-    while (absoluteOrientation >= 2 * M_PI) {
+    while (absoluteOrientation >= 2 * M_PI)
+    {
       absoluteOrientation -= 2 * M_PI;
     }
-    while (absoluteOrientation < 0) {
+    while (absoluteOrientation < 0)
+    {
       absoluteOrientation += 2 * M_PI;
     }
-    
+
     X += deltaX;
     Y += deltaY;
 
