@@ -28,6 +28,11 @@ void DriveToPoint2(float targetX,float targetY);
 void stanley(double points[][2]);
 //odometry
 int odometery();
+
+
+void toggleclaw(){
+  claw.set(!claw.value());
+}
 int ControllerPrint() {
 
 
@@ -54,7 +59,7 @@ void pre_auton(void) {
   gyro1.calibrate();
   waitUntil(gyro1.isCalibrating()==false);
 
- // thread ControllerPrinting = thread(ControllerPrint);
+  thread ControllerPrinting = thread(ControllerPrint);
   thread posTrack = thread(odometery);
   // All activities that occur before the competition starts
   // Example: clearing encoders, setting servo positions, ...
@@ -75,16 +80,14 @@ void autonomous(void) {
   std::cout<<"Autonomous Started"<<std::endl;
   gyro1.calibrate();
   waitUntil(gyro1.isCalibrating()==false);
-  double points[22][2]={{0,0},
- { 0	,	10},{0,50},{10,50},{30,50}
-  
+  double points[5][2]={
+{0,0},{30,30},{30,50},{10,80},{0,50}
   };
   stanley(points);
   // ..........................................................................
   // Insert autonomous user code here.
   // ..........................................................................
 }
-
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
 /*                              User Control Task                            */
@@ -97,12 +100,14 @@ void autonomous(void) {
 
 void usercontrol(void) {
   // User control code here, inside the loop
+  
   while (1) {
     std::cout<<X<<","<<Y<<std::endl;
       LF.spin(forward, Controller1.Axis3.position() * 120, voltageUnits::mV);
       RF.spin(forward, Controller1.Axis2.position() * 120, voltageUnits::mV);
       LB.spin(forward, Controller1.Axis3.position() * 120, voltageUnits::mV);
       RB.spin(forward, Controller1.Axis2.position() * 120, voltageUnits::mV);
+   
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
   }
@@ -113,10 +118,10 @@ void usercontrol(void) {
 //
 int main() {
   // Set up callbacks for autonomous and driver control periods.
-
+  
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
-
+    Controller1.ButtonA.pressed(toggleclaw);
   // Run the pre-autonomous function.
   pre_auton();
 

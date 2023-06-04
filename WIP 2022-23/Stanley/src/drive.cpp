@@ -262,6 +262,7 @@ void curveDrive(float targetVel, float curvature)
   // drive
   drive(vL, vR, 10);
 }
+
 /**
  * @breif distance between two points
  * @param x1 x coordinate of the first point
@@ -352,6 +353,21 @@ int signOfDistance(double points[][2], int point1, int point2){
   }
 }
 /**
+ * @brief drive to a point with a curve
+ * @param x x coordinate of the point
+ * @param y y coordinate of the point
+ * @param speed speed to drive at
+ */
+void curveDrive2(double x, double y, double speed){
+  double L = robotDistance(x,y);
+  double errorX= x-X;
+  double errorY= y-Y;
+  double localX = errorX*cos(gyro1.rotation()) - errorY*sin(gyro1.rotation());
+  double curvature = 2*localX/(L*L);
+
+
+}
+/**
  * @brief finds the closest point to the robot
  * @param points an array containing the points
  */
@@ -371,6 +387,17 @@ int closestPoint(double points[][2])
   return index;
 }
 
+int nextPoint(int initial, double points[][2])
+{
+  if (robotDistance(points[initial][0], points[initial][1]) < robotDistance(points[initial+1][0], points[initial+1][1]))
+  {
+    return initial;
+  }
+  else
+  {
+    return initial+1;
+  }
+}
 /**
  * @brief finds the distance of a point from a line
  * @param points an array containing the points of the line
@@ -411,7 +438,7 @@ float perpendicularDist(double points[][2], int point1, int point2)
  */
 void stanley(double points[][2])
 {
-  double kp=0.5;
+  double kp=0.75;
   double ki=0;
   double kd=0;
   double ld;
@@ -425,13 +452,15 @@ void stanley(double points[][2])
   int sign;
  Brain.Screen.print("stanley");
   int i = 0;
+  int pointClosest=0;
   while (true)
   {
     i++;
     
     Brain.Screen.print("%.1f", i);
     // find the closest point
-    int pointClosest = closestPoint(points);
+    //pointClosest =closestPoint(points);
+    pointClosest = nextPoint(pointClosest, points);
     Brain.Screen.print("0.5");
     // if the closest point is the last point, stop
     if (pointClosest == sizeof points)
@@ -440,7 +469,9 @@ void stanley(double points[][2])
     }
      Brain.Screen.print("1");
     // find the distance to the line segment before and after the closest point
+    //distance of the path segment before the closest point
     double segment1dist = (!(pointClosest == 0) ? (perpendicularDist(points, (pointClosest - 1), pointClosest) ):( 900000000000));
+    //distance of the path segment after the closest point
     double segment2dist = perpendicularDist(points, pointClosest, pointClosest + 1);
     // if neither one has an intersection, find the distance to the line segment after the next point
      Brain.Screen.print("2");
@@ -486,7 +517,9 @@ void stanley(double points[][2])
     v = LF.velocity(pct) + RF.velocity(pct) / 2;
     // print the values
     //pathDistance<<","<<ldAngle*-sign<<","<<perpendicularDist(points,0,1)<<","
-    std::cout<<X<<","<<Y<<","<<error<<std::endl;
+  //  std::cout<<"x="<<X<<", y= "<<Y<<", pointclosest= "<<pointClosest<<" error= "<<error<<std::endl
+  //  <<"seg1dist= "<<segment1dist<<", seg2dist= "<<segment2dist<<", pathdist= "<<pathDistance<<std::endl<<std::endl;
+  std::cout<<X<<","<<Y<<std::endl;
     wait(10, msec);
   } 
   drive(0,0,100);

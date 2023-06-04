@@ -1,10 +1,10 @@
 #include "stdio.h"
 #include "vex.h"
 #include <math.h>
-
+#include <iostream>
 double X = 0, Y = 0;
 
-bool trackingwheels = true;
+bool trackingwheels = false;
 
 int odometery()
 {
@@ -32,11 +32,14 @@ int odometery()
   double averageHeading;    //
   double deltaX;
   double deltaY;
-
+  double speed;
+  double prevTime=0;
+  double time=0;
   Controller1.rumble(".");
   RotationL.resetPosition();
   RotationB.resetPosition();
-
+  RB.resetPosition();
+  LB.resetPosition();
   while (1)
   {
     if (trackingwheels)
@@ -46,10 +49,12 @@ int odometery()
     }
     else
     {
+      time=Brain.timer(timeUnits::msec);
+      speed+=gyro1.acceleration(yaxis)*386088582.67717*(time-prevTime); //converts acceleration to velocity in inches per millisecond
       lEncoder = (RB.position(turns) * 360 + LB.position(turns) * 360) / 2;
-      bEncoder=0;
+      bEncoder=0;//speed*(time-prevTime);
     }
-
+    prevTime=time;
     distL = ((lEncoder - prevLE) * M_PI / 180) * lRad;
     // convert encoder distance into distance traveled
     distB = ((bEncoder - prevBE) * M_PI / 180) * bRad;
@@ -85,7 +90,7 @@ int odometery()
 
     X += deltaX;
     Y += deltaY;
-
+  //  std::cout<<speed<<std::endl;
     this_thread::sleep_for(10);
   }
   return 1;

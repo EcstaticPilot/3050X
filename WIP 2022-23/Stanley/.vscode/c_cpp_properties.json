@@ -36,7 +36,7 @@
 			"cStandard": "gnu99",
 			"cppStandard": "gnu++11",
 			"intelliSenseMode": "macos-clang-x86"
-		},
+		},//secert name thing - NIKIHL RAMANUJA
 		{
 			"name": "Linux",
 			"includePath": [
