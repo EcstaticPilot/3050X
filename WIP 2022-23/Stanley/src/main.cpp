@@ -9,6 +9,7 @@
 
 #include "vex.h"
 #include <iostream>
+
 using namespace vex;
 
 // A global instance of competition
@@ -25,7 +26,7 @@ void forward_dist(float dist);
 void DriveToPoint(double targetX, double targetY, float speedMult = 1);
 void RAMSETE(float targetX, float targetY, float targetAngle,float accuracy=1);
 void DriveToPoint2(float targetX,float targetY);
-void stanley(double points[][2]);
+void stanley(double points[][2],int length);
 //odometry
 int odometery();
 
@@ -79,11 +80,26 @@ void autonomous(void) {
   Controller1.rumble("....");
   std::cout<<"Autonomous Started"<<std::endl;
   gyro1.calibrate();
+  
   waitUntil(gyro1.isCalibrating()==false);
-  double points[5][2]={
-{0,0},{30,30},{30,50},{10,80},{0,50}
+  //allocate memory space using malloc
+  
+ const int numpts =11; 
+  //assign x and y values for the points
+  double points[numpts][2]={
+{	0.00	,	0	},
+{	0.84	,	2.51	},
+{	3.12	,	4.27	},
+{	6.48	,	5.60	},
+{	10.56	,	6.82	},
+{	15.00	,	8.25	},
+{	19.44	,	10.22	},
+{	23.52	,	13.06	},
+{	26.88	,	17.09	},
+{	29.16	,	22.63	},
+{	30.00	,	30.00	},
   };
-  stanley(points);
+  stanley(points,numpts);
   // ..........................................................................
   // Insert autonomous user code here.
   // ..........................................................................

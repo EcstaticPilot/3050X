@@ -50,7 +50,7 @@ int odometery()
     else
     {
       time=Brain.timer(timeUnits::msec);
-      speed+=gyro1.acceleration(yaxis)*386088582.67717*(time-prevTime); //converts acceleration to velocity in inches per millisecond
+     // speed+=gyro1.acceleration(xaxis)*386088582.67717*(time-prevTime); //converts acceleration to velocity in inches per millisecond
       lEncoder = (RB.position(turns) * 360 + LB.position(turns) * 360) / 2;
       bEncoder=0;//speed*(time-prevTime);
     }
@@ -90,7 +90,7 @@ int odometery()
 
     X += deltaX;
     Y += deltaY;
-  //  std::cout<<speed<<std::endl;
+  //  std::cout<<speed<<", "<<X<<","<<Y<<std::endl;
     this_thread::sleep_for(10);
   }
   return 1;

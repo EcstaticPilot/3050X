@@ -306,6 +306,10 @@ bool zeroCrossing(double a, double b)
     return false;
   }
 }
+// a class containing the x and y coordinates of a point
+
+
+
 
 /**
  * @brief finds the slope between two points
@@ -367,6 +371,7 @@ void curveDrive2(double x, double y, double speed){
 
 
 }
+
 /**
  * @brief finds the closest point to the robot
  * @param points an array containing the points
@@ -436,7 +441,7 @@ float perpendicularDist(double points[][2], int point1, int point2)
  * @brief stanley controller for following a path of points
  * @param points an array containing points to follow
  */
-void stanley(double points[][2])
+void stanley(double points[][2],int length)
 {
   double kp=0.75;
   double ki=0;
@@ -463,7 +468,7 @@ void stanley(double points[][2])
     pointClosest = nextPoint(pointClosest, points);
     Brain.Screen.print("0.5");
     // if the closest point is the last point, stop
-    if (pointClosest == sizeof points)
+    if (pointClosest== length-1)
     {
      break;
     }
@@ -494,7 +499,7 @@ void stanley(double points[][2])
       sign = signOfDistance(points, pointClosest - 1, pointClosest);
     }
      Brain.Screen.print("4");
-    ld =10;// v / kv;
+    ld =7.5;// v / kv;
     // calculate the angle to the line segment and the error in the heading
     ldAngle = RadToDeg(atan2(pathDistance, ld));
    
@@ -519,11 +524,11 @@ void stanley(double points[][2])
     //pathDistance<<","<<ldAngle*-sign<<","<<perpendicularDist(points,0,1)<<","
   //  std::cout<<"x="<<X<<", y= "<<Y<<", pointclosest= "<<pointClosest<<" error= "<<error<<std::endl
   //  <<"seg1dist= "<<segment1dist<<", seg2dist= "<<segment2dist<<", pathdist= "<<pathDistance<<std::endl<<std::endl;
-  std::cout<<X<<","<<Y<<std::endl;
+  std::cout<<X<<","<<Y<<","<<pointClosest<<std::endl;
     wait(10, msec);
   } 
   drive(0,0,100);
   drive_brake;                                                                                                                                                              
-  Brain.Screen.drawLine(0, 0,144, 144);
+  std::cout<<"done"<<std::endl;
 }
 
