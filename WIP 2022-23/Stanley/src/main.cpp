@@ -26,7 +26,7 @@ void forward_dist(float dist);
 void DriveToPoint(double targetX, double targetY, float speedMult = 1);
 void RAMSETE(float targetX, float targetY, float targetAngle,float accuracy=1);
 void DriveToPoint2(float targetX,float targetY);
-void stanley(double points[][2],int length);
+void stanley(float points[][2],int length);
 //odometry
 int odometery();
 
@@ -57,6 +57,7 @@ int ControllerPrint() {
 /*---------------------------------------------------------------------------*/
 
 void pre_auton(void) {
+  Brain.Screen.drawRectangle(0, 0, 480, 240, red);
   gyro1.calibrate();
   waitUntil(gyro1.isCalibrating()==false);
 
@@ -81,25 +82,55 @@ void autonomous(void) {
   std::cout<<"Autonomous Started"<<std::endl;
   gyro1.calibrate();
   
-  waitUntil(gyro1.isCalibrating()==false);
+  waitUntil(!gyro1.isCalibrating());
   //allocate memory space using malloc
   
- const int numpts =11; 
+
   //assign x and y values for the points
-  double points[numpts][2]={
-{	0.00	,	0	},
-{	0.86	,	2.54	},
-{	3.24	,	4.51	},
-{	6.89	,	6.41	},
-{	11.52	,	8.74	},
-{	16.88	,	12.00	},
-{	22.68	,	16.70	},
-{	28.67	,	23.35	},
-{	34.56	,	32.45	},
-{	40.10	,	44.50	},
-{	45.00	,	60.00	}
+  float points[41][2]={
+{	0	,	0	},
+{	0.08	,	7.16	},
+{	0.33	,	13.66	},
+{	0.72	,	19.54	},
+{	1.26	,	24.83	},
+{	1.93	,	29.56	},
+{	2.73	,	33.78	},
+{	3.65	,	37.51	},
+{	4.68	,	40.80	},
+{	5.81	,	43.67	},
+{	7.03	,	46.17	},
+{	8.34	,	48.33	},
+{	9.72	,	50.18	},
+{	11.17	,	51.75	},
+{	12.68	,	53.09	},
+{	14.24	,	54.23	},
+{	15.84	,	55.20	},
+{	17.48	,	56.04	},
+{	19.14	,	56.78	},
+{	20.81	,	57.47	},
+{	22.50	,	58.13	},
+{	24.19	,	58.79	},
+{	25.86	,	59.50	},
+{	27.52	,	60.29	},
+{	29.16	,	61.20	},
+{	30.76	,	62.26	},
+{	32.32	,	63.50	},
+{	33.83	,	64.96	},
+{	35.28	,	66.68	},
+{	36.66	,	68.68	},
+{	37.97	,	71.02	},
+{	39.19	,	73.71	},
+{	40.32	,	76.80	},
+{	41.35	,	80.32	},
+{	42.27	,	84.31	},
+{	43.07	,	88.80	},
+{	43.74	,	93.83	},
+{	44.28	,	99.42	},
+{	44.67	,	105.63	},
+{	44.92	,	112.48	},
+{	45.00	,	120.00	}
   };
-  stanley(points,numpts);
+  stanley(points,sizeof(points)/8);
   // ..........................................................................
   // Insert autonomous user code here.
   // ..........................................................................

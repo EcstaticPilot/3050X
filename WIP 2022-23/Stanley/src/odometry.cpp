@@ -4,7 +4,7 @@
 #include <iostream>
 double X = 0, Y = 0;
 
-bool trackingwheels = false;
+const bool trackingwheels = false;
 
 int odometery()
 {
@@ -15,14 +15,16 @@ int odometery()
   double absoluteOrientation = M_PI;
   double lRad;
   double bRad;
-  if(trackingwheels){
-  lRad = 1.3926;     // radius of tracking wheel
-  bRad = 1.3926;
+  if (trackingwheels)
+  {
+    lRad = 1.3926; // radius of tracking wheel
+    bRad = 1.3926;
   }
-  else{
-  lRad = 2;
-  bRad = 0;
-  }     // radius of tracking wheel
+  else
+  {
+    lRad = 2;
+    bRad = 0;
+  }                         // radius of tracking wheel
   double lEncoder = 0;      // declaring encoder variable left
   double bEncoder = 0;      // declaring encoder variable back
   double distL = 0;         // distance left encoder has traveled
@@ -32,14 +34,16 @@ int odometery()
   double averageHeading;    //
   double deltaX;
   double deltaY;
-  double speed;
-  double prevTime=0;
-  double time=0;
+  double speed = 0;
+  double prevTime = 0;
+  double time = 0;
+  double acceleration = 0;
   Controller1.rumble(".");
   RotationL.resetPosition();
   RotationB.resetPosition();
   RB.resetPosition();
   LB.resetPosition();
+  Brain.Screen.drawRectangle(0, 0, 480, 240, orange);
   while (1)
   {
     if (trackingwheels)
@@ -49,15 +53,26 @@ int odometery()
     }
     else
     {
-      time=Brain.timer(timeUnits::msec);
-     // speed+=gyro1.acceleration(xaxis)*386088582.67717*(time-prevTime); //converts acceleration to velocity in inches per millisecond
+      if(abs(gyro1.acceleration(yaxis)>0.01))
+      acceleration = gyro1.acceleration(yaxis);
+      else
+      acceleration = 0;
+      time = Brain.timer(msec);
+      speed += acceleration * 386088582.67717 * (time - prevTime); // converts acceleration to velocity in inches per millisecond
       lEncoder = (RB.position(turns) * 360 + LB.position(turns) * 360) / 2;
-      bEncoder=0;//speed*(time-prevTime);
     }
-    prevTime=time;
+
     distL = ((lEncoder - prevLE) * M_PI / 180) * lRad;
     // convert encoder distance into distance traveled
-    distB = ((bEncoder - prevBE) * M_PI / 180) * bRad;
+    if (trackingwheels)
+      distB = ((bEncoder - prevBE) * M_PI / 180) * bRad;
+    else
+    {
+      distB = 0;//speed * (time - prevTime);//+.5*gyro1.acceleration(yaxis) * 386088582.67717 * pow((time - prevTime),2);
+      prevTime = time;
+    }
+
+    
     // convert encoder distance into disntance traveled
 
     prevLE = lEncoder; // create previous encoder value left
@@ -90,7 +105,7 @@ int odometery()
 
     X += deltaX;
     Y += deltaY;
-  //  std::cout<<speed<<", "<<X<<","<<Y<<std::endl;
+    //  std::cout<<speed<<", "<<X<<","<<Y<<","<<gyro1.acceleration(yaxis)<<std::endl;
     this_thread::sleep_for(10);
   }
   return 1;

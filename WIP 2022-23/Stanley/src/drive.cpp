@@ -270,30 +270,30 @@ void curveDrive(float targetVel, float curvature)
  * @param x2 x coordinate of the second point
  * @param y2 y coordinate of the second point
  */
-double distance2points(double x1, double y1, double x2, double y2)
+float distance2points(float x1, float y1, float x2, float y2)
 {
   return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
 }
 
 /**
  * @brief convert radians to degrees
- * @param rad radians(double)
+ * @param rad radians(float)
  */
-double RadToDeg(double rad)
+float RadToDeg(float rad)
 {
   return (rad * 180 / M_PI);
 }
 
 /**
  * @brief convert degrees to radians
- * @param deg degrees (double)
+ * @param deg degrees (float)
  */
-double DegToRad(double deg)
+float DegToRad(float deg)
 {
   return (deg * M_PI / 180);
 }
 
-bool zeroCrossing(double a, double b)
+bool zeroCrossing(float a, float b)
 {
   int A = fabs(a) / a;
   int B = fabs(b) / b;
@@ -314,13 +314,13 @@ bool zeroCrossing(double a, double b)
  * @param point1 the first point
  * @param point2 the second point
  */
-float slope(double points[][2], int point1, int point2)
+float slope(float points[][2], int point1, int point2)
 {
-  double x1 = points[point1][0];
-  double y1 = points[point1][1];
-  double x2 = points[point2][0];
-  double y2 = points[point2][1];
-  double slope = RadToDeg(atan2(x2 - x1, y2 - y1));
+  float x1 = points[point1][0];
+  float y1 = points[point1][1];
+  float x2 = points[point2][0];
+  float y2 = points[point2][1];
+  float slope = RadToDeg(atan2(x2 - x1, y2 - y1));
   return slope;
 }
 
@@ -329,21 +329,21 @@ float slope(double points[][2], int point1, int point2)
  * @param x x coordinate of the point
  * @param y y coordinate of the point
  */
-double robotDistance(double x, double y)
+float robotDistance(float x, float y)
 {
-
+  
   return (sqrt((X - x) * (X - x) + (Y - y) * (Y - y)));
 }
 
-int signOfDistance(double points[][2], int point1, int point2)
+int signOfDistance(float points[][2], int point1, int point2)
 {
-  double x1 = points[point1][0];
-  double y1 = points[point1][1];
-  double x2 = points[point2][0];
-  double y2 = points[point2][1];
-  double x3 = X;
-  double y3 = Y;
-  double d = (x2 - x1) * (y1 - y3) - (x1 - x3) * (y2 - y1);
+  float x1 = points[point1][0];
+  float y1 = points[point1][1];
+  float x2 = points[point2][0];
+  float y2 = points[point2][1];
+  float x3 = X;
+  float y3 = Y;
+  float d = (x2 - x1) * (y1 - y3) - (x1 - x3) * (y2 - y1);
   if (d > 0)
   {
     return -1;
@@ -370,20 +370,44 @@ void curveDrive2(double x, double y, double speed)
   double errorY = y - Y;
   double localX = errorX * cos(gyro1.rotation()) - errorY * sin(gyro1.rotation());
   double curvature = 2 * localX / (L * L);
+  float L = speed*(2+(curvature*TrackWidth))/2;
+  float R = speed*(2-(curvature*TrackWidth))/2;
+  drive(L, R, 10);
 }
+void lineCircleIntersection(float points[][2],int lineSegment, float ld){
+//convert the x and y coordinates of the line segment into the form y=mx+b
+float x1=points[lineSegment][0];
+float y1=points[lineSegment][1];
+float x2=points[lineSegment+1][0];
+float y2=points[lineSegment+1][1];
+float m=(y2-y1)/(x2-x1);
+float b=y1-m*x1;
+//find the equation of the circle in form (x-h)^2+(y-k)^2=r^2
+float h=X;
+float k=Y;
+float r=ld;
+//find the discriminant
+float discriminant=pow((2 * m * b - 2 * h),2) - 4 * ( (m*m) + 1) * ((b*b) - (r*r) + (h*h) - 2 * k * b + (k*k));
+ 
 
+
+
+
+
+
+}
 /**
  * @brief finds the closest point to the robot
  * @param points an array containing the points
  */
-int closestPoint(double points[][2])
+int closestPoint(float points[][2])
 {
   double min = robotDistance(points[0][0], points[0][1]);
   int index = 0;
 
   for (int i = 0; i < sizeof points; i++)
   {
-    double dist = robotDistance(points[i][0], points[i][1]);
+    float dist = robotDistance(points[i][0], points[i][1]);
     if (dist < min)
     {
       min = dist;
@@ -393,7 +417,7 @@ int closestPoint(double points[][2])
   return index;
 }
 
-int nextPoint(int initial, double points[][2])
+int nextPoint(int initial, float points[][2])
 {
   if (robotDistance(points[initial][0], points[initial][1]) < robotDistance(points[initial + 1][0], points[initial + 1][1]))
   {
@@ -410,26 +434,26 @@ int nextPoint(int initial, double points[][2])
  * @param point1 the index first point of the line
  * @param point2 the index second point of the line
  */
-float perpendicularDist(double points[][2], int point1, int point2)
+float perpendicularDist(float points[][2], int point1, int point2)
 {
-  double x1 = points[point1][0];
-  double y1 = points[point1][1];
-  double x2 = points[point2][0];
-  double y2 = points[point2][1];
-  double x3 = X;
-  double y3 = Y;
+  float x1 = points[point1][0];
+  float y1 = points[point1][1];
+  float x2 = points[point2][0];
+  float y2 = points[point2][1];
+  float x3 = X;
+  float y3 = Y;
   // calculate distance
-  double A = y2 - y1;
-  double B = x1 - x2;
-  double C = x2 * y1 - x1 * y2;
-  double d = fabs((A * x3 + B * y3 + C)) / sqrt(A * A + B * B);
+  float A = y2 - y1;
+  float B = x1 - x2;
+  float C = x2 * y1 - x1 * y2;
+  float d = fabs((A * x3 + B * y3 + C)) / sqrt(A * A + B * B);
   // check for intersection
-  double a = robotDistance(x1, y1);
-  double b = distance2points(x1, y1, x2, y2);
-  double c = robotDistance(x2, y2);
+  float a = robotDistance(x1, y1);
+  float b = distance2points(x1, y1, x2, y2);
+  float c = robotDistance(x2, y2);
   // check if the robot is within the line using law of cosines
-  double angle1 = RadToDeg(acos((pow(a, 2) + pow(b, 2) - pow(c, 2)) / (2 * a * b)));
-  double angle2 = RadToDeg(acos((pow(c, 2) + pow(b, 2) - pow(a, 2)) / (2 * c * b)));
+  float angle1 = RadToDeg(acos((pow(a, 2) + pow(b, 2) - pow(c, 2)) / (2 * a * b)));
+  float angle2 = RadToDeg(acos((pow(c, 2) + pow(b, 2) - pow(a, 2)) / (2 * c * b)));
   // if the robot is not within the line, add a large number to the distance
   if (angle1 > 90 || angle2 > 90)
   {
@@ -442,23 +466,24 @@ float perpendicularDist(double points[][2], int point1, int point2)
  * @brief stanley controller for following a path of points
  * @param points an array containing points to follow
  */
-void stanley(double points[][2], int length)
+void stanley(float points[][2],int length)
 {
-  double kp = 0.75;
-  double ki = 0;
-  double kd = 0;
-  double ld;
-  double v;
-  double kv = 1;
-  double pathDistance;
-  double pathHeading;
-  double ldAngle;
-  double prevError = 0;
-  double totalError = 0;
+  float kp = 0.5;
+  float ki = 0.005;
+  float kd = 0.00;
+  float ld;
+  float v;
+  float kv = 1;
+  float pathDistance;
+  float pathHeading;
+  float ldAngle;
+  float prevError = 0;
+  float totalError = 0;
   int sign;
   Brain.Screen.print("stanley");
   int i = 0;
   int pointClosest = 0;
+  Brain.Screen.drawRectangle(0, 0, 480, 240, yellow);
   while (true)
   {
     i++;
@@ -468,7 +493,7 @@ void stanley(double points[][2], int length)
     // pointClosest =closestPoint(points); //alternate way to find closest point
     pointClosest = nextPoint(pointClosest, points);
     Brain.Screen.print("0.5");
-    // if the closest point is the last point, stop
+    // if the closest point is the last point, break from the while loop using the sizeof function
     if (pointClosest == length - 1)
     {
       break;
@@ -476,9 +501,9 @@ void stanley(double points[][2], int length)
 
     // find the distance to the line segment before and after the closest point
 
-    double segment1dist = (!(pointClosest == 0) ? (perpendicularDist(points, (pointClosest - 1), pointClosest)) : (900000000000)); // distance of the path segment before the closest point
+    float segment1dist = (!(pointClosest == 0) ? (perpendicularDist(points, (pointClosest - 1), pointClosest)) : (900000000000)); // distance of the path segment before the closest point
 
-    double segment2dist = perpendicularDist(points, pointClosest, pointClosest + 1); // distance of the path segment after the closest point
+    float segment2dist = perpendicularDist(points, pointClosest, pointClosest + 1); // distance of the path segment after the closest point
     // if neither one has an intersection, find the distance to the line segment after the next point
 
     if (segment1dist > 300000 && segment2dist > 300000)
@@ -501,19 +526,18 @@ void stanley(double points[][2], int length)
     }
     // calculate lookahead distance
     v = LF.velocity(pct) + RF.velocity(pct) / 2;
-    ld = 7.5; // v / kv;
+    ld = 5; // v / kv;
 
     // calculate the angle to the global angle to the lookahead point
     ldAngle = RadToDeg(atan2(pathDistance, ld));
 
     // calculate the error
-    double error = (ldAngle * sign + pathHeading - gyro1.yaw(deg));
+    float error = (ldAngle * sign + pathHeading - gyro1.yaw(deg));
 
     // calculate the PID output
-    double output = (error * kp) + (totalError)*ki + (prevError - error) * kd;
+    float output = (error * kp) + (totalError)*ki + (prevError - error) * kd;
 
-    // prevoius error
-    prevError = error;
+    
 
     // drive
     drive(25 + output, 25 - output, 10);
@@ -527,17 +551,44 @@ void stanley(double points[][2], int length)
     {
       totalError += error;
     }
-    // curveDrive(25,( ldAngle*-sign + pathError-gyro1.yaw(deg)/5));
+    // prevoius error
+    prevError = error;
     //  update speed
 
     // print the values
     // pathDistance<<","<<ldAngle*-sign<<","<<perpendicularDist(points,0,1)<<","
     //  std::cout<<"x="<<X<<", y= "<<Y<<", pointclosest= "<<pointClosest<<" error= "<<error<<std::endl
     //  <<"seg1dist= "<<segment1dist<<", seg2dist= "<<segment2dist<<", pathdist= "<<pathDistance<<std::endl<<std::endl;
-    std::cout << X << "," << Y << "," << pointClosest << std::endl;
+    std::cout << X << ",,," << Y<< std::endl;
     wait(10, msec);
   }
-  drive(0, 0, 100);
+  drive(0, 0, 10);
+  Brain.Screen.drawRectangle(0, 0, 480, 240, green);
   drive_brake;
   std::cout << "done" << std::endl;
+  Brain.Screen.drawRectangle(0, 0, 480, 240, green);
 }
+
+void purePursuit(float points[][2],int length){
+  float ld=12;
+  int pointClosest=0;
+  while(true){
+    if(length==pointClosest-1){
+      break;
+    }
+    //find the lookahead point
+
+
+
+
+
+
+  }
+
+
+
+}
+
+
+
+
