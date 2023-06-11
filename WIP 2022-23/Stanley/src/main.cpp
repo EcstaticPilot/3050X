@@ -133,7 +133,7 @@ void autonomous(void) {
 {45.01,140.00}
   
   };
-  stanley(points,sizeof(points)/8);
+  purePursuit(points,sizeof(points)/8);
   // ..........................................................................
   // Insert autonomous user code here.
   // ..........................................................................

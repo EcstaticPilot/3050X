@@ -34,7 +34,7 @@ int odometery()
   else
   {
     lRad = 2;
-    bRad = 0;
+    bRad = 1.3926;
   }                         // radius of tracking wheel
   double lEncoder = 0;      // declaring encoder variable left
   double bEncoder = 0;      // declaring encoder variable back
@@ -71,7 +71,7 @@ int odometery()
       time = Brain.timer(msec);
       speed += acceleration * 386088582.67717 * (time - prevTime); // converts acceleration to velocity in inches per millisecond
       lEncoder = (RB.position(turns) * 360 + LB.position(turns) * 360) / 2;
-      bEncoder = 0;
+      bEncoder = RotationB.position(turns) * 360;
     }
     // convert encoder distance into distance traveled
     distL = ((lEncoder - prevLE) * M_PI / 180) * lRad;

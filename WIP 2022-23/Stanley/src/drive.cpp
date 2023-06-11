@@ -1,10 +1,10 @@
 #include "vex.h"
 #include <iostream>
 #include <stdio.h>
-#include<vector>
+#include <vector>
 #include <math.h>
 #include <string.h>
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace vex;
 
 float TrackWidth = 17 / 2;
@@ -293,7 +293,7 @@ bool zeroCrossing(float a, float b)
  * @param point1 the first point
  * @param point2 the second point
  */
-float slope(std::vector < std::vector<float> > points, int point1, int point2)
+float slope(std::vector<std::vector<float>> points, int point1, int point2)
 {
   float x1 = points[point1][0];
   float y1 = points[point1][1];
@@ -340,7 +340,7 @@ int closestPoint(float points[][2])
  * @param initial the index of the current point
  * @param points an array containing the points
  */
-int nextPoint(int initial, std::vector < std::vector<float> > points)
+int nextPoint(int initial, std::vector<std::vector<float>> points)
 {
   if (robotDistance(points[initial][0], points[initial][1]) < robotDistance(points[initial + 1][0], points[initial + 1][1]))
   {
@@ -375,14 +375,14 @@ int nextPoint(int initial, float points[][2])
 
 float lerp(float a, float b, float t)
 {
-  return ((1-t)*a + t*b);
+  return ((1 - t) * a + t * b);
 }
 /**
  * @brief finds the point on a bezier curve
  * @param bezier an array containing the controll points
  * @param t the t value
  * @param XorY whether to return the x or y value. use lowercase x or y
-*/
+ */
 float bezier(float bezier[][2], float t, std::string XorY)
 {
   int n;
@@ -403,7 +403,7 @@ float bezier(float bezier[][2], float t, std::string XorY)
   float b3 = lerp(a3, a4, t);
   float c1 = lerp(b1, b2, t);
   float c2 = lerp(b2, b3, t);
-  float d  = lerp(c1, c2, t);
+  float d = lerp(c1, c2, t);
   return (d);
 }
 
@@ -413,7 +413,7 @@ float bezier(float bezier[][2], float t, std::string XorY)
  * @param point1 the index first point of the line
  * @param point2 the index second point of the line
  */
-float perpendicularDist(std::vector < std::vector<float> > points, int point1, int point2)
+float perpendicularDist(std::vector<std::vector<float>> points, int point1, int point2)
 {
   float x1 = points[point1][0];
   float y1 = points[point1][1];
@@ -447,7 +447,7 @@ float perpendicularDist(std::vector < std::vector<float> > points, int point1, i
  * @param point1 the first point
  * @param point2 the second point
  */
-int signOfDistance(std::vector < std::vector<float> > points, int point1, int point2)
+int signOfDistance(std::vector<std::vector<float>> points, int point1, int point2)
 {
   float x1 = points[point1][0];
   float y1 = points[point1][1];
@@ -492,21 +492,21 @@ void stanley(float points[][2], int length)
 
   int num_col = 2;
 
-	// Number of rows
-	int num_row = 10;
- // int i = 0;
-	// Initializing the 2-D vector
-	std::vector<std::vector<float>> Bpoints(num_row, std::vector<float>(num_col, 0.0));
-  int tval=0;
+  // Number of rows
+  int num_row = 10;
+  // int i = 0;
+  // Initializing the 2-D vector
+  std::vector<std::vector<float>> Bpoints(num_row, std::vector<float>(num_col, 0.0));
+  int tval = 0;
   // fil the 2d vector with the points
-  for(int i=0; i < 20; i++ )
+  for (int i = 0; i < 20; i++)
   {
 
     Bpoints[i][0] = bezier(points, tval, "x");
     Bpoints[i][1] = bezier(points, tval, "y");
-    tval+=0.005;
+    tval += 0.005;
   }
-  //print out the array to the terminal
+  // print out the array to the terminal
   for (int i = 0; i < Bpoints.size(); i++)
   {
     for (int j = 0; j < Bpoints[i].size(); j++)
@@ -515,11 +515,9 @@ void stanley(float points[][2], int length)
     }
     std::cout << std::endl;
   }
-  
-  
 
   Brain.Screen.print("stanley");
-  
+
   int pointClosest = 0;
   Brain.Screen.drawRectangle(0, 0, 480, 240, yellow);
   while (true)
@@ -528,12 +526,9 @@ void stanley(float points[][2], int length)
     // pointClosest =closestPoint(points); //alternate way to find closest point
     pointClosest = nextPoint(pointClosest, Bpoints);
     Brain.Screen.print("0.5");
-    if(!pointClosest == 0)
-    { 
-      
-       
+    if (!pointClosest == 0)
+    {
     }
-
 
     // find the distance to the line segment before and after the closest point
 
@@ -644,8 +639,7 @@ float lineCircleIntersection(float points[][2], int lineSegment, float ld)
   float y1 = points[lineSegment][1];
   float x2 = points[lineSegment + 1][0];
   float y2 = points[lineSegment + 1][1];
-  float m = (y2 - y1) / (x2 - x1);
-  float b = y1 - m * x1;
+
   float h = X;
   float k = Y;
   float r = ld;
@@ -655,11 +649,9 @@ float lineCircleIntersection(float points[][2], int lineSegment, float ld)
   double x2p = x2 - h;
   double y2p = y2 - k;
 
-
   // Calculate the slope and y-intercept of the translated line segment
   double m = (y2p - y1p) / (x2p - x1p);
   double b = y1p - m * x1p;
-
 
   // Calculate the discriminant
   double discriminant = pow((2 * m * b), 2) - 4 * ((pow(m, 2) + 1) * (pow(b, 2) - pow(r, 2)));
@@ -676,7 +668,6 @@ float lineCircleIntersection(float points[][2], int lineSegment, float ld)
     float tval2 = (x_2 - x1) / (x2 - x1) + lineSegment;
     float tval3 = fmax(tval1, tval2);
 
-    return tval3;
     // make sure to check if both intersection points are on the line segment
     if (tval3 > 0 && tval3 < 1)
     {
@@ -723,11 +714,11 @@ void purePursuit(float points[][2], int length)
   int pointClosest = 0;
   float tval;
   float tvali;
-  float tval2;
   float prevTval = -1;
+  float x1, y1;
   while (true)
   {
-    pointClosest = nextPoint(pointClosest, points);
+    pointClosest = closestPoint(points);
     if (length == pointClosest - 1)
     {
       break;
@@ -736,17 +727,25 @@ void purePursuit(float points[][2], int length)
     for (int i = 0; i < length; i++)
     {
       tvali = lineCircleIntersection(points, i, ld);
-      if (tvali > prevTval)
+      if (tvali > tval)
       {
         pointLookahead = i;
         tval = tvali;
       }
-      prevTval = tvali;
     }
-
-    tval2 = tval2 - pointLookahead;
-    float x1 = points[pointLookahead][0] + tval2 * (points[pointLookahead + 1][0] - points[pointLookahead][0]);
-    float y1 = points[pointLookahead][1] + tval2 * (points[pointLookahead + 1][1] - points[pointLookahead][1]);
+    // std::cout<<tval<<","<<pointLookahead<<std::endl;
+    tval = tval - pointLookahead;
+    if (tval < 0)
+    {
+      x1 = points[pointClosest][0];
+      y1 = points[pointClosest][1];
+    }
+    else
+    {
+      x1 = points[pointLookahead][0] + tval * (points[pointLookahead + 1][0] - points[pointLookahead][0]);
+      y1 = points[pointLookahead][1] + tval * (points[pointLookahead + 1][1] - points[pointLookahead][1]);
+    }
+    std::cout << x1 << "," << y1 << std::endl;
     curveDrive(x1, y1, 25);
   }
 }
