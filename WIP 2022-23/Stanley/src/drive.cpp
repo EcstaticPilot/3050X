@@ -547,11 +547,11 @@ void stanley(float points[][2], int length)
  */
 void curveDrive(double x, double y, double speed)
 {
-  double L = robotDistance(x, y);
+  double dist = robotDistance(x, y);
   double errorX = x - X;
   double errorY = y - Y;
   double localX = errorX * cos(gyro1.rotation()) - errorY * sin(gyro1.rotation());
-  double curvature = 2 * localX / (L * L);
+  double curvature = 2 * localX / (dist * dist);
   float L = speed * (2 + (curvature * TrackWidth)) / 2;
   float R = speed * (2 - (curvature * TrackWidth)) / 2;
   drive(L, R, 10);
@@ -572,8 +572,6 @@ float lineCircleIntersection(float points[][2], int lineSegment, float ld)
   float y1 = points[lineSegment][1];
   float x2 = points[lineSegment + 1][0];
   float y2 = points[lineSegment + 1][1];
-  float m = (y2 - y1) / (x2 - x1);
-  float b = y1 - m * x1;
   float h = X;
   float k = Y;
   float r = ld;
