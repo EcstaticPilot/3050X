@@ -620,11 +620,11 @@ void stanley(float points[][2], int length)
  */
 void curveDrive(double x, double y, double speed)
 {
-  double L = robotDistance(x, y);
+  double dist = robotDistance(x, y);
   double errorX = x - X;
   double errorY = y - Y;
   double localX = errorX * cos(gyro1.rotation()) - errorY * sin(gyro1.rotation());
-  double curvature = 2 * localX / (L * L);
+  double curvature = 2 * localX / (dist * dist);
   float L = speed * (2 + (curvature * TrackWidth)) / 2;
   float R = speed * (2 - (curvature * TrackWidth)) / 2;
   drive(L, R, 10);
@@ -656,8 +656,7 @@ float lineCircleIntersection(float points[][2], int lineSegment, float ld)
   double y2p = y2 - k;
 
   // Calculate the slope and y-intercept of the translated line segment
-  double m = (y2p - y1p) / (x2p - x1p);
-  double b = y1p - m * x1p;
+
 
   // Calculate the discriminant
   double discriminant = pow((2 * m * b), 2) - 4 * ((pow(m, 2) + 1) * (pow(b, 2) - pow(r, 2)));
