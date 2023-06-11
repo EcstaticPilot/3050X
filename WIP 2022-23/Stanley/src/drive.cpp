@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <vector>
 #include <math.h>
+#include <string.h>
 float TrackWidth = 17 / 2;
 float C = M_PI * 3.25;
 extern double X, Y;
@@ -331,7 +332,7 @@ float slope(float points[][2], int point1, int point2)
  */
 float robotDistance(float x, float y)
 {
-  
+
   return (sqrt((X - x) * (X - x) + (Y - y) * (Y - y)));
 }
 
@@ -370,32 +371,71 @@ void curveDrive2(double x, double y, double speed)
   double errorY = y - Y;
   double localX = errorX * cos(gyro1.rotation()) - errorY * sin(gyro1.rotation());
   double curvature = 2 * localX / (L * L);
-  float L = speed*(2+(curvature*TrackWidth))/2;
-  float R = speed*(2-(curvature*TrackWidth))/2;
+  float L = speed * (2 + (curvature * TrackWidth)) / 2;
+  float R = speed * (2 - (curvature * TrackWidth)) / 2;
   drive(L, R, 10);
 }
-void lineCircleIntersection(float points[][2],int lineSegment, float ld){
-//convert the x and y coordinates of the line segment into the form y=mx+b
-float x1=points[lineSegment][0];
-float y1=points[lineSegment][1];
-float x2=points[lineSegment+1][0];
-float y2=points[lineSegment+1][1];
-float m=(y2-y1)/(x2-x1);
-float b=y1-m*x1;
-//find the equation of the circle in form (x-h)^2+(y-k)^2=r^2
-float h=X;
-float k=Y;
-float r=ld;
-//find the discriminant
-float discriminant=pow((2 * m * b - 2 * h),2) - 4 * ( (m*m) + 1) * ((b*b) - (r*r) + (h*h) - 2 * k * b + (k*k));
- 
+struct point
+{
+  float x;
+  float y;
+  float x2;
+  float y2;
+};
 
 
 
+/**
+ * @brief fidn the intersectionof a line and a circle
+ * @param points an array containing the points
+ * @param lineSegment the index of the start of the line segment
+ * @param ld the distance from the robot to the point
+ * @param xOrY whether to return the x or y coordinate of the intersection
+*/
+float lineCircleIntersection(float points[][2], int lineSegment, float ld)
+{
+  // convert the x and y coordinates of the line segment into the form y=mx+b
+  
+  float x1 = points[lineSegment][0];
+  float y1 = points[lineSegment][1];
+  float x2 = points[lineSegment + 1][0];
+  float y2 = points[lineSegment + 1][1];
+  float m = (y2 - y1) / (x2 - x1);
+  float b = y1 - m * x1;
+  // find the equation of the circle in form (x-h)^2+(y-k)^2=r^2
+  float h = X;
+  float k = Y;
+  float r = ld;
+  float discriminant = pow((2 * m * b - 2 * h), 2) - 4 * ((m * m) + 1) * ((b * b) - (r * r) + (h * h) - 2 * k * b + (k * k));
 
+  if (discriminant < 0){
+    float tval1 = 100000000000;
+    return tval1;
+  }
+  if (discriminant == 0)
+  {
+    float x_1 = (-2 * m * b + 2 * h) / (2 * (pow(m, 2) + 1));
+    float y_1 = m * x_1 + b;
+    float intersectPoints[1][2] = {{x_1, y_1}};
+    float tval1 = (x_1 - x1) / (x2 - x1)+lineSegment;
+    return tval1;
+  }
 
+  // calculate the intersections
+  if (discriminant > 0)
+  {
+    float x_1 = (-2 * m * b + 2 * h + sqrt(discriminant)) / (2 * (pow(m, 2) + 1));
+    float y_1 = m * x_1 + b;
+    float x_2 = (-2 * m * b + 2 * h - sqrt(discriminant)) / (2 * (pow(m, 2) + 1));
+    float y_2 = m * x_2 + b;
+    float tval1 = (x_1 - x1) / (x2 - x1)+lineSegment;
+    float tval2 = (x_2 - x1) / (x2 - x1)+lineSegment;
+    float tval3 = fmax(tval1, tval2);
+    return tval3;
+  }
 
 }
+
 /**
  * @brief finds the closest point to the robot
  * @param points an array containing the points
@@ -466,7 +506,7 @@ float perpendicularDist(float points[][2], int point1, int point2)
  * @brief stanley controller for following a path of points
  * @param points an array containing points to follow
  */
-void stanley(float points[][2],int length)
+void stanley(float points[][2], int length)
 {
   float kp = 0.5;
   float ki = 0.005;
@@ -537,8 +577,6 @@ void stanley(float points[][2],int length)
     // calculate the PID output
     float output = (error * kp) + (totalError)*ki + (prevError - error) * kd;
 
-    
-
     // drive
     drive(25 + output, 25 - output, 10);
 
@@ -559,8 +597,8 @@ void stanley(float points[][2],int length)
     // pathDistance<<","<<ldAngle*-sign<<","<<perpendicularDist(points,0,1)<<","
     //  std::cout<<"x="<<X<<", y= "<<Y<<", pointclosest= "<<pointClosest<<" error= "<<error<<std::endl
     //  <<"seg1dist= "<<segment1dist<<", seg2dist= "<<segment2dist<<", pathdist= "<<pathDistance<<std::endl<<std::endl;
-    std::cout << X << ",,," << Y<< std::endl;
-    wait(10, msec);
+    std::cout << X << ",,," << Y << std::endl;
+    vex::wait(10, msec);
   }
   drive(0, 0, 10);
   Brain.Screen.drawRectangle(0, 0, 480, 240, green);
@@ -569,26 +607,33 @@ void stanley(float points[][2],int length)
   Brain.Screen.drawRectangle(0, 0, 480, 240, green);
 }
 
-void purePursuit(float points[][2],int length){
-  float ld=12;
-  int pointClosest=0;
-  while(true){
-    if(length==pointClosest-1){
+void purePursuit(float points[][2], int length)
+{
+  int pointLookahead = 0;
+  float ld = 12;
+  int pointClosest = 0;
+  float tval;
+  float tval2;
+  while (true)
+  {
+    pointClosest = nextPoint(pointClosest, points);
+    if (length == pointClosest - 1)
+    {
       break;
     }
-    //find the lookahead point
-
-
-
-
-
-
+    // find the lookahead point
+    for(int i = 0; i < length; i++)
+    {
+      if(lineCircleIntersection(points,i,ld)>lineCircleIntersection(points,i-1,ld))
+      {
+        pointLookahead = i;
+      }
+    }
+   tval= lineCircleIntersection(points,pointLookahead,ld);
+   tval2=tval2-pointLookahead;
+   float x1=points[pointLookahead][0]+tval2*(points[pointLookahead+1][0]-points[pointLookahead][0]);
+   float y1=points[pointLookahead][1]+tval2*(points[pointLookahead+1][1]-points[pointLookahead][1]);
+   curveDrive2(x1,y1,25);
   }
 
-
-
 }
-
-
-
-
