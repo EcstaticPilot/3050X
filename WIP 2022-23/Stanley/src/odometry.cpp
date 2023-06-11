@@ -2,10 +2,21 @@
 #include "vex.h"
 #include <math.h>
 #include <iostream>
+/*
+ ██████╗  ██████╗   ██████╗  ███╗   ███╗ ███████╗ ████████╗ ███████╗ ██████╗  ██╗   ██╗
+██╔═══██╗ ██╔══██╗ ██╔═══██╗ ████╗ ████║ ██╔════╝ ╚══██╔══╝ ██╔════╝ ██╔══██╗ ╚██╗ ██╔╝
+██║   ██║ ██║  ██║ ██║   ██║ ██╔████╔██║ █████╗      ██║    █████╗   ██████╔╝  ╚████╔╝ 
+██║   ██║ ██║  ██║ ██║   ██║ ██║╚██╔╝██║ ██╔══╝      ██║    ██╔══╝   ██╔══██╗   ╚██╔╝  
+╚██████╔╝ ██████╔╝ ╚██████╔╝ ██║ ╚═╝ ██║ ███████╗    ██║    ███████╗ ██║  ██║    ██║   
+ ╚═════╝  ╚═════╝   ╚═════╝  ╚═╝     ╚═╝ ╚══════╝    ╚═╝    ╚══════╝ ╚═╝  ╚═╝    ╚═╝   
+                                                                               
+*/
+
 double X = 0, Y = 0;
-
 const bool trackingwheels = false;
-
+/**
+ * @brief odometry
+*/
 int odometery()
 {
 
@@ -44,7 +55,7 @@ int odometery()
   RB.resetPosition();
   LB.resetPosition();
   Brain.Screen.drawRectangle(0, 0, 480, 240, orange);
-  while (1)
+  while (true)
   {
     if (trackingwheels)
     {
@@ -60,17 +71,12 @@ int odometery()
       time = Brain.timer(msec);
       speed += acceleration * 386088582.67717 * (time - prevTime); // converts acceleration to velocity in inches per millisecond
       lEncoder = (RB.position(turns) * 360 + LB.position(turns) * 360) / 2;
+      bEncoder = 0;
     }
-
-    distL = ((lEncoder - prevLE) * M_PI / 180) * lRad;
     // convert encoder distance into distance traveled
-    if (trackingwheels)
-      distB = ((bEncoder - prevBE) * M_PI / 180) * bRad;
-    else
-    {
-      distB = 0;//speed * (time - prevTime);//+.5*gyro1.acceleration(yaxis) * 386088582.67717 * pow((time - prevTime),2);
-      prevTime = time;
-    }
+    distL = ((lEncoder - prevLE) * M_PI / 180) * lRad;
+    
+    distB = ((bEncoder - prevBE) * M_PI / 180) * bRad;
 
     
     // convert encoder distance into disntance traveled
