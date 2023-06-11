@@ -238,31 +238,6 @@ void DriveToPoint3(float targetX, float targetY, float targetAngle,
   }
   drive_brake();
 }
-/**
- * @brief drive with a curve
- * @param targetVel target velocity for the robot to drive at
- * @param curvature how mcuh the robot should curve
- */
-void curveDrive(float targetVel, float curvature)
-{
-  // calculate speeds
-  float turnSpeed = 0.5 * targetVel * curvature * TrackWidth;
-  float vL = targetVel + turnSpeed;
-  float vR = targetVel - turnSpeed;
-
-  // normalize
-  float normFactor = 100 / fmax(fabs(vL), fabs(vR));
-
-  // clip speed if necessary
-  if (normFactor < 1)
-  {
-    vL *= normFactor;
-    vR *= normFactor;
-  }
-
-  // drive
-  drive(vL, vR, 10);
-}
 
 /**
  * @breif distance between two points
@@ -336,105 +311,7 @@ float robotDistance(float x, float y)
   return (sqrt((X - x) * (X - x) + (Y - y) * (Y - y)));
 }
 
-int signOfDistance(float points[][2], int point1, int point2)
-{
-  float x1 = points[point1][0];
-  float y1 = points[point1][1];
-  float x2 = points[point2][0];
-  float y2 = points[point2][1];
-  float x3 = X;
-  float y3 = Y;
-  float d = (x2 - x1) * (y1 - y3) - (x1 - x3) * (y2 - y1);
-  if (d > 0)
-  {
-    return -1;
-  }
-  else if (d < 0)
-  {
-    return 1;
-  }
-  else
-  {
-    return 0;
-  }
-}
-/**
- * @brief drive to a point with a curve
- * @param x x coordinate of the point
- * @param y y coordinate of the point
- * @param speed speed to drive at
- */
-void curveDrive2(double x, double y, double speed)
-{
-  double L = robotDistance(x, y);
-  double errorX = x - X;
-  double errorY = y - Y;
-  double localX = errorX * cos(gyro1.rotation()) - errorY * sin(gyro1.rotation());
-  double curvature = 2 * localX / (L * L);
-  float L = speed * (2 + (curvature * TrackWidth)) / 2;
-  float R = speed * (2 - (curvature * TrackWidth)) / 2;
-  drive(L, R, 10);
-}
-struct point
-{
-  float x;
-  float y;
-  float x2;
-  float y2;
-};
 
-
-
-/**
- * @brief fidn the intersectionof a line and a circle
- * @param points an array containing the points
- * @param lineSegment the index of the start of the line segment
- * @param ld the distance from the robot to the point
- * @param xOrY whether to return the x or y coordinate of the intersection
-*/
-float lineCircleIntersection(float points[][2], int lineSegment, float ld)
-{
-  // convert the x and y coordinates of the line segment into the form y=mx+b
-  
-  float x1 = points[lineSegment][0];
-  float y1 = points[lineSegment][1];
-  float x2 = points[lineSegment + 1][0];
-  float y2 = points[lineSegment + 1][1];
-  float m = (y2 - y1) / (x2 - x1);
-  float b = y1 - m * x1;
-  // find the equation of the circle in form (x-h)^2+(y-k)^2=r^2
-  float h = X;
-  float k = Y;
-  float r = ld;
-  float discriminant = pow((2 * m * b - 2 * h), 2) - 4 * ((m * m) + 1) * ((b * b) - (r * r) + (h * h) - 2 * k * b + (k * k));
-
-  if (discriminant < 0){
-    float tval1 = 100000000000;
-    return tval1;
-  }
-  if (discriminant == 0)
-  {
-    float x_1 = (-2 * m * b + 2 * h) / (2 * (pow(m, 2) + 1));
-    float y_1 = m * x_1 + b;
-    float intersectPoints[1][2] = {{x_1, y_1}};
-    float tval1 = (x_1 - x1) / (x2 - x1)+lineSegment;
-    return tval1;
-  }
-
-  // calculate the intersections
-  if (discriminant > 0)
-  {
-    float x_1 = (-2 * m * b + 2 * h + sqrt(discriminant)) / (2 * (pow(m, 2) + 1));
-    float y_1 = m * x_1 + b;
-    float x_2 = (-2 * m * b + 2 * h - sqrt(discriminant)) / (2 * (pow(m, 2) + 1));
-    float y_2 = m * x_2 + b;
-    float tval1 = (x_1 - x1) / (x2 - x1)+lineSegment;
-    float tval2 = (x_2 - x1) / (x2 - x1)+lineSegment;
-    float tval3 = fmax(tval1, tval2);
-    return tval3;
-  }
-
-}
 
 /**
  * @brief finds the closest point to the robot
@@ -457,6 +334,11 @@ int closestPoint(float points[][2])
   return index;
 }
 
+/**
+ * @brief if the next point is closer
+ * @param initial the index of the current point
+ * @param points an array containing the points
+*/
 int nextPoint(int initial, float points[][2])
 {
   if (robotDistance(points[initial][0], points[initial][1]) < robotDistance(points[initial + 1][0], points[initial + 1][1]))
@@ -468,6 +350,17 @@ int nextPoint(int initial, float points[][2])
     return initial + 1;
   }
 }
+
+
+/*
+███████╗ ████████╗  █████╗  ███╗   ██╗ ██╗      ███████╗ ██╗   ██╗
+██╔════╝ ╚══██╔══╝ ██╔══██╗ ████╗  ██║ ██║      ██╔════╝ ╚██╗ ██╔╝
+███████╗    ██║    ███████║ ██╔██╗ ██║ ██║      █████╗    ╚████╔╝ 
+╚════██║    ██║    ██╔══██║ ██║╚██╗██║ ██║      ██╔══╝     ╚██╔╝  
+███████║    ██║    ██║  ██║ ██║ ╚████║ ███████╗ ███████╗    ██║   
+╚══════╝    ╚═╝    ╚═╝  ╚═╝ ╚═╝  ╚═══╝ ╚══════╝ ╚══════╝    ╚═╝                                                     
+*/
+
 /**
  * @brief finds the distance of a point from a line
  * @param points an array containing the points of the line
@@ -503,8 +396,38 @@ float perpendicularDist(float points[][2], int point1, int point2)
 }
 
 /**
+ * @brief finds the sign of the distance bettwen two points
+ * @param points an array containing the points
+ * @param point1 the first point
+ * @param point2 the second point
+*/
+int signOfDistance(float points[][2], int point1, int point2)
+{
+  float x1 = points[point1][0];
+  float y1 = points[point1][1];
+  float x2 = points[point2][0];
+  float y2 = points[point2][1];
+  float x3 = X;
+  float y3 = Y;
+  float d = (x2 - x1) * (y1 - y3) - (x1 - x3) * (y2 - y1);
+  if (d > 0)
+  {
+    return -1;
+  }
+  else if (d < 0)
+  {
+    return 1;
+  }
+  else
+  {
+    return 0;
+  }
+}
+
+/**
  * @brief stanley controller for following a path of points
  * @param points an array containing points to follow
+ * @param length the length of the array
  */
 void stanley(float points[][2], int length)
 {
@@ -607,13 +530,98 @@ void stanley(float points[][2], int length)
   Brain.Screen.drawRectangle(0, 0, 480, 240, green);
 }
 
+/*
+██████╗  ██╗   ██╗ ██████╗  ███████╗     ██████╗  ██╗   ██╗ ██████╗  ███████╗ ██╗   ██╗ ██╗ ████████╗
+██╔══██╗ ██║   ██║ ██╔══██╗ ██╔════╝     ██╔══██╗ ██║   ██║ ██╔══██╗ ██╔════╝ ██║   ██║ ██║ ╚══██╔══╝
+██████╔╝ ██║   ██║ ██████╔╝ █████╗       ██████╔╝ ██║   ██║ ██████╔╝ ███████╗ ██║   ██║ ██║    ██║   
+██╔═══╝  ██║   ██║ ██╔══██╗ ██╔══╝       ██╔═══╝  ██║   ██║ ██╔══██╗ ╚════██║ ██║   ██║ ██║    ██║   
+██║      ╚██████╔╝ ██║  ██║ ███████╗     ██║      ╚██████╔╝ ██║  ██║ ███████║ ╚██████╔╝ ██║    ██║   
+╚═╝       ╚═════╝  ╚═╝  ╚═╝ ╚══════╝     ╚═╝       ╚═════╝  ╚═╝  ╚═╝ ╚══════╝  ╚═════╝  ╚═╝    ╚═╝   
+*/
+
+/**
+ * @brief drive to a point with a curve
+ * @param x x coordinate of the point
+ * @param y y coordinate of the point
+ * @param speed speed to drive at
+ */
+void curveDrive(double x, double y, double speed)
+{
+  double L = robotDistance(x, y);
+  double errorX = x - X;
+  double errorY = y - Y;
+  double localX = errorX * cos(gyro1.rotation()) - errorY * sin(gyro1.rotation());
+  double curvature = 2 * localX / (L * L);
+  float L = speed * (2 + (curvature * TrackWidth)) / 2;
+  float R = speed * (2 - (curvature * TrackWidth)) / 2;
+  drive(L, R, 10);
+}
+/**
+ * @brief fidn the intersectionof a line and a circle
+ * @param points an array containing the points
+ * @param lineSegment the index of the start of the line segment
+ * @param ld the distance from the robot to the point
+ * @param xOrY whether to return the x or y coordinate of the intersection
+ */
+float lineCircleIntersection(float points[][2], int lineSegment, float ld)
+{
+  // convert the x and y coordinates of the line segment into the form y=mx+b
+
+  float x1 = points[lineSegment][0];
+  float y1 = points[lineSegment][1];
+  float x2 = points[lineSegment + 1][0];
+  float y2 = points[lineSegment + 1][1];
+  float m = (y2 - y1) / (x2 - x1);
+  float b = y1 - m * x1;
+  // find the equation of the circle in form (x-h)^2+(y-k)^2=r^2
+  float h = X;
+  float k = Y;
+  float r = ld;
+  float discriminant = pow((2 * m * b - 2 * h), 2) - 4 * ((m * m) + 1) * ((b * b) - (r * r) + (h * h) - 2 * k * b + (k * k));
+
+  if (discriminant < 0)
+  {
+    float tval1 = -1;
+    return tval1;
+  } 
+  
+  if (discriminant == 0)
+  {
+    float x_1 = (-2 * m * b + 2 * h) / (2 * (pow(m, 2) + 1));
+    float y_1 = m * x_1 + b;
+    float intersectPoints[1][2] = {{x_1, y_1}};
+    float tval1 = (x_1 - x1) / (x2 - x1) + lineSegment;
+    return tval1;
+  }
+
+  // calculate the intersections
+  if (discriminant > 0)
+  {
+    float x_1 = (-2 * m * b + 2 * h + sqrt(discriminant)) / (2 * (pow(m, 2) + 1));
+    float y_1 = m * x_1 + b;
+    float x_2 = (-2 * m * b + 2 * h - sqrt(discriminant)) / (2 * (pow(m, 2) + 1));
+    float y_2 = m * x_2 + b;
+    float tval1 = (x_1 - x1) / (x2 - x1) + lineSegment;
+    float tval2 = (x_2 - x1) / (x2 - x1) + lineSegment;
+    float tval3 = fmax(tval1, tval2);
+    return tval3;
+  }
+}
+
+/**
+ * @brief pure pursuit algorithm
+ * @param points an array containing the points
+ * @param length the length of the array
+*/
 void purePursuit(float points[][2], int length)
 {
   int pointLookahead = 0;
   float ld = 12;
   int pointClosest = 0;
   float tval;
+  float tvali;
   float tval2;
+  float prevTval=-1;
   while (true)
   {
     pointClosest = nextPoint(pointClosest, points);
@@ -622,18 +630,20 @@ void purePursuit(float points[][2], int length)
       break;
     }
     // find the lookahead point
-    for(int i = 0; i < length; i++)
+    for (int i = 0; i < length; i++)
     {
-      if(lineCircleIntersection(points,i,ld)>lineCircleIntersection(points,i-1,ld))
+      tvali = lineCircleIntersection(points, i, ld);
+      if (tvali > prevTval)
       {
         pointLookahead = i;
+        tval = tvali;
       }
+      prevTval=tvali;
     }
-   tval= lineCircleIntersection(points,pointLookahead,ld);
-   tval2=tval2-pointLookahead;
-   float x1=points[pointLookahead][0]+tval2*(points[pointLookahead+1][0]-points[pointLookahead][0]);
-   float y1=points[pointLookahead][1]+tval2*(points[pointLookahead+1][1]-points[pointLookahead][1]);
-   curveDrive2(x1,y1,25);
+   
+    tval2 = tval2 - pointLookahead;
+    float x1 = points[pointLookahead][0] + tval2 * (points[pointLookahead + 1][0] - points[pointLookahead][0]);
+    float y1 = points[pointLookahead][1] + tval2 * (points[pointLookahead + 1][1] - points[pointLookahead][1]);
+    curveDrive(x1, y1, 25);
   }
-
 }
