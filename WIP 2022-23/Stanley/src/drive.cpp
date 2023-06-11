@@ -655,7 +655,10 @@ float lineCircleIntersection(float points[][2], int lineSegment, float ld)
   double x2p = x2 - h;
   double y2p = y2 - k;
 
+
   // Calculate the slope and y-intercept of the translated line segment
+  double m = (y2p - y1p) / (x2p - x1p);
+  double b = y1p - m * x1p;
 
 
   // Calculate the discriminant
