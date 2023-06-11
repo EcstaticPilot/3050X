@@ -567,46 +567,65 @@ float lineCircleIntersection(float points[][2], int lineSegment, float ld)
 {
   // convert the x and y coordinates of the line segment into the form y=mx+b
 
+
   float x1 = points[lineSegment][0];
   float y1 = points[lineSegment][1];
   float x2 = points[lineSegment + 1][0];
   float y2 = points[lineSegment + 1][1];
   float m = (y2 - y1) / (x2 - x1);
   float b = y1 - m * x1;
-  // find the equation of the circle in form (x-h)^2+(y-k)^2=r^2
   float h = X;
   float k = Y;
   float r = ld;
-  float discriminant = pow((2 * m * b - 2 * h), 2) - 4 * ((m * m) + 1) * ((b * b) - (r * r) + (h * h) - 2 * k * b + (k * k));
+  // Translate the line segment and circle so that the circle is centered at the origin
+  double x1p = x1 - h;
+  double y1p = y1 - k;
+  double x2p = x2 - h;
+  double y2p = y2 - k;
 
-  if (discriminant < 0)
-  {
-    float tval1 = -1;
-    return tval1;
-  } 
-  
-  if (discriminant == 0)
-  {
-    float x_1 = (-2 * m * b + 2 * h) / (2 * (pow(m, 2) + 1));
-    float y_1 = m * x_1 + b;
-    float intersectPoints[1][2] = {{x_1, y_1}};
-    float tval1 = (x_1 - x1) / (x2 - x1) + lineSegment;
-    return tval1;
-  }
 
-  // calculate the intersections
+  // Calculate the slope and y-intercept of the translated line segment
+  double m = (y2p - y1p) / (x2p - x1p);
+  double b = y1p - m * x1p;
+
+
+  // Calculate the discriminant
+  double discriminant = pow((2 * m * b), 2) - 4 * ((pow(m, 2) + 1) * (pow(b, 2) - pow(r, 2)));
+
+
   if (discriminant > 0)
   {
-    float x_1 = (-2 * m * b + 2 * h + sqrt(discriminant)) / (2 * (pow(m, 2) + 1));
-    float y_1 = m * x_1 + b;
-    float x_2 = (-2 * m * b + 2 * h - sqrt(discriminant)) / (2 * (pow(m, 2) + 1));
-    float y_2 = m * x_2 + b;
+    // Two distinct intersection points
+    double x_1 = (-2 * m * b + sqrt(discriminant)) / (2 * (pow(m, 2) + 1));
+    double y_1 = m * x_1 + b;
     float tval1 = (x_1 - x1) / (x2 - x1) + lineSegment;
+
+    double x_2 = (-2 * m * b - sqrt(discriminant)) / (2 * (pow(m, 2) + 1));
+    double y_2 = m * x_2 + b;
     float tval2 = (x_2 - x1) / (x2 - x1) + lineSegment;
     float tval3 = fmax(tval1, tval2);
+
     return tval3;
   }
+  else if (discriminant == 0)
+  {
+    // Tangent intersection point
+    double x_1 = -2 * m * b / (2 * (pow(m, 2) + 1));
+    double y_1 = m * x_1 + b;
+    float tval1 = (x_1 - x1) / (x2 - x1) + lineSegment;
+
+    return tval1;
+  }
+  else
+  {
+    // No intersection
+    return -1;
+  }
 }
+
+
+
+
 
 /**
  * @brief pure pursuit algorithm

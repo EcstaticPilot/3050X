@@ -27,6 +27,7 @@ void DriveToPoint(double targetX, double targetY, float speedMult = 1);
 void RAMSETE(float targetX, float targetY, float targetAngle,float accuracy=1);
 void DriveToPoint2(float targetX,float targetY);
 void stanley(float points[][2],int length);
+void purePursuit(float points[][2], int length);
 //odometry
 int odometery();
 
