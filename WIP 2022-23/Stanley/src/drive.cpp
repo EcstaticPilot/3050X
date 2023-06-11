@@ -311,8 +311,6 @@ float robotDistance(float x, float y)
   return (sqrt((X - x) * (X - x) + (Y - y) * (Y - y)));
 }
 
-
-
 /**
  * @brief finds the closest point to the robot
  * @param points an array containing the points
@@ -338,7 +336,7 @@ int closestPoint(float points[][2])
  * @brief if the next point is closer
  * @param initial the index of the current point
  * @param points an array containing the points
-*/
+ */
 int nextPoint(int initial, float points[][2])
 {
   if (robotDistance(points[initial][0], points[initial][1]) < robotDistance(points[initial + 1][0], points[initial + 1][1]))
@@ -351,15 +349,43 @@ int nextPoint(int initial, float points[][2])
   }
 }
 
-
 /*
 ███████╗ ████████╗  █████╗  ███╗   ██╗ ██╗      ███████╗ ██╗   ██╗
 ██╔════╝ ╚══██╔══╝ ██╔══██╗ ████╗  ██║ ██║      ██╔════╝ ╚██╗ ██╔╝
-███████╗    ██║    ███████║ ██╔██╗ ██║ ██║      █████╗    ╚████╔╝ 
-╚════██║    ██║    ██╔══██║ ██║╚██╗██║ ██║      ██╔══╝     ╚██╔╝  
-███████║    ██║    ██║  ██║ ██║ ╚████║ ███████╗ ███████╗    ██║   
-╚══════╝    ╚═╝    ╚═╝  ╚═╝ ╚═╝  ╚═══╝ ╚══════╝ ╚══════╝    ╚═╝                                                     
+███████╗    ██║    ███████║ ██╔██╗ ██║ ██║      █████╗    ╚████╔╝
+╚════██║    ██║    ██╔══██║ ██║╚██╗██║ ██║      ██╔══╝     ╚██╔╝
+███████║    ██║    ██║  ██║ ██║ ╚████║ ███████╗ ███████╗    ██║
+╚══════╝    ╚═╝    ╚═╝  ╚═╝ ╚═╝  ╚═══╝ ╚══════╝ ╚══════╝    ╚═╝
 */
+
+float lerp(float a, float b, float t)
+{
+  return ((1-t)*a + t*b);
+}
+
+float bezier(float bezier[][2], float t, std::string XorY)
+{
+  int n;
+  if (XorY == "x")
+  {
+    n = 0;
+  }
+  else if (XorY == "y")
+  {
+    n = 1;
+  }
+  float a1 = bezier[0][n];
+  float a2 = bezier[1][n];
+  float a3 = bezier[2][n];
+  float a4 = bezier[3][n];
+  float b1 = lerp(a1, a2, t);
+  float b2 = lerp(a2, a3, t);
+  float b3 = lerp(a3, a4, t);
+  float c1 = lerp(b1, b2, t);
+  float c2 = lerp(b2, b3, t);
+  float d = lerp(c1, c2, t);
+  return (d);
+}
 
 /**
  * @brief finds the distance of a point from a line
@@ -400,7 +426,7 @@ float perpendicularDist(float points[][2], int point1, int point2)
  * @param points an array containing the points
  * @param point1 the first point
  * @param point2 the second point
-*/
+ */
 int signOfDistance(float points[][2], int point1, int point2)
 {
   float x1 = points[point1][0];
@@ -533,10 +559,10 @@ void stanley(float points[][2], int length)
 /*
 ██████╗  ██╗   ██╗ ██████╗  ███████╗     ██████╗  ██╗   ██╗ ██████╗  ███████╗ ██╗   ██╗ ██╗ ████████╗
 ██╔══██╗ ██║   ██║ ██╔══██╗ ██╔════╝     ██╔══██╗ ██║   ██║ ██╔══██╗ ██╔════╝ ██║   ██║ ██║ ╚══██╔══╝
-██████╔╝ ██║   ██║ ██████╔╝ █████╗       ██████╔╝ ██║   ██║ ██████╔╝ ███████╗ ██║   ██║ ██║    ██║   
-██╔═══╝  ██║   ██║ ██╔══██╗ ██╔══╝       ██╔═══╝  ██║   ██║ ██╔══██╗ ╚════██║ ██║   ██║ ██║    ██║   
-██║      ╚██████╔╝ ██║  ██║ ███████╗     ██║      ╚██████╔╝ ██║  ██║ ███████║ ╚██████╔╝ ██║    ██║   
-╚═╝       ╚═════╝  ╚═╝  ╚═╝ ╚══════╝     ╚═╝       ╚═════╝  ╚═╝  ╚═╝ ╚══════╝  ╚═════╝  ╚═╝    ╚═╝   
+██████╔╝ ██║   ██║ ██████╔╝ █████╗       ██████╔╝ ██║   ██║ ██████╔╝ ███████╗ ██║   ██║ ██║    ██║
+██╔═══╝  ██║   ██║ ██╔══██╗ ██╔══╝       ██╔═══╝  ██║   ██║ ██╔══██╗ ╚════██║ ██║   ██║ ██║    ██║
+██║      ╚██████╔╝ ██║  ██║ ███████╗     ██║      ╚██████╔╝ ██║  ██║ ███████║ ╚██████╔╝ ██║    ██║
+╚═╝       ╚═════╝  ╚═╝  ╚═╝ ╚══════╝     ╚═╝       ╚═════╝  ╚═╝  ╚═╝ ╚══════╝  ╚═════╝  ╚═╝    ╚═╝
 */
 
 /**
@@ -567,7 +593,6 @@ float lineCircleIntersection(float points[][2], int lineSegment, float ld)
 {
   // convert the x and y coordinates of the line segment into the form y=mx+b
 
-
   float x1 = points[lineSegment][0];
   float y1 = points[lineSegment][1];
   float x2 = points[lineSegment + 1][0];
@@ -583,15 +608,12 @@ float lineCircleIntersection(float points[][2], int lineSegment, float ld)
   double x2p = x2 - h;
   double y2p = y2 - k;
 
-
   // Calculate the slope and y-intercept of the translated line segment
   double m = (y2p - y1p) / (x2p - x1p);
   double b = y1p - m * x1p;
 
-
   // Calculate the discriminant
   double discriminant = pow((2 * m * b), 2) - 4 * ((pow(m, 2) + 1) * (pow(b, 2) - pow(r, 2)));
-
 
   if (discriminant > 0)
   {
@@ -606,15 +628,32 @@ float lineCircleIntersection(float points[][2], int lineSegment, float ld)
     float tval3 = fmax(tval1, tval2);
 
     return tval3;
+    // make sure to check if both intersection points are on the line segment
+    if (tval3 > 0 && tval3 < 1)
+    {
+      return tval3 + lineSegment;
+    }
+    else
+    {
+      return -1;
+    }
   }
   else if (discriminant == 0)
   {
     // Tangent intersection point
     double x_1 = -2 * m * b / (2 * (pow(m, 2) + 1));
     double y_1 = m * x_1 + b;
-    float tval1 = (x_1 - x1) / (x2 - x1) + lineSegment;
 
-    return tval1;
+    float tval1 = (x_1 - x1) / (x2 - x1);
+    // check if the intersection is on the line segment
+    if (tval1 > 0 && tval1 < 1)
+    {
+      return tval1 + lineSegment;
+    }
+    else
+    {
+      return -1;
+    }
   }
   else
   {
@@ -623,15 +662,11 @@ float lineCircleIntersection(float points[][2], int lineSegment, float ld)
   }
 }
 
-
-
-
-
 /**
  * @brief pure pursuit algorithm
  * @param points an array containing the points
  * @param length the length of the array
-*/
+ */
 void purePursuit(float points[][2], int length)
 {
   int pointLookahead = 0;
@@ -640,7 +675,7 @@ void purePursuit(float points[][2], int length)
   float tval;
   float tvali;
   float tval2;
-  float prevTval=-1;
+  float prevTval = -1;
   while (true)
   {
     pointClosest = nextPoint(pointClosest, points);
@@ -657,9 +692,9 @@ void purePursuit(float points[][2], int length)
         pointLookahead = i;
         tval = tvali;
       }
-      prevTval=tvali;
+      prevTval = tvali;
     }
-   
+
     tval2 = tval2 - pointLookahead;
     float x1 = points[pointLookahead][0] + tval2 * (points[pointLookahead + 1][0] - points[pointLookahead][0]);
     float y1 = points[pointLookahead][1] + tval2 * (points[pointLookahead + 1][1] - points[pointLookahead][1]);
