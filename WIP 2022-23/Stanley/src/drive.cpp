@@ -311,8 +311,6 @@ float robotDistance(float x, float y)
   return (sqrt((X - x) * (X - x) + (Y - y) * (Y - y)));
 }
 
-
-
 /**
  * @brief finds the closest point to the robot
  * @param points an array containing the points
@@ -338,7 +336,7 @@ int closestPoint(float points[][2])
  * @brief if the next point is closer
  * @param initial the index of the current point
  * @param points an array containing the points
-*/
+ */
 int nextPoint(int initial, float points[][2])
 {
   if (robotDistance(points[initial][0], points[initial][1]) < robotDistance(points[initial + 1][0], points[initial + 1][1]))
@@ -351,14 +349,13 @@ int nextPoint(int initial, float points[][2])
   }
 }
 
-
 /*
 ███████╗ ████████╗  █████╗  ███╗   ██╗ ██╗      ███████╗ ██╗   ██╗
 ██╔════╝ ╚══██╔══╝ ██╔══██╗ ████╗  ██║ ██║      ██╔════╝ ╚██╗ ██╔╝
-███████╗    ██║    ███████║ ██╔██╗ ██║ ██║      █████╗    ╚████╔╝ 
-╚════██║    ██║    ██╔══██║ ██║╚██╗██║ ██║      ██╔══╝     ╚██╔╝  
-███████║    ██║    ██║  ██║ ██║ ╚████║ ███████╗ ███████╗    ██║   
-╚══════╝    ╚═╝    ╚═╝  ╚═╝ ╚═╝  ╚═══╝ ╚══════╝ ╚══════╝    ╚═╝                                                     
+███████╗    ██║    ███████║ ██╔██╗ ██║ ██║      █████╗    ╚████╔╝
+╚════██║    ██║    ██╔══██║ ██║╚██╗██║ ██║      ██╔══╝     ╚██╔╝
+███████║    ██║    ██║  ██║ ██║ ╚████║ ███████╗ ███████╗    ██║
+╚══════╝    ╚═╝    ╚═╝  ╚═╝ ╚═╝  ╚═══╝ ╚══════╝ ╚══════╝    ╚═╝
 */
 
 /**
@@ -400,7 +397,7 @@ float perpendicularDist(float points[][2], int point1, int point2)
  * @param points an array containing the points
  * @param point1 the first point
  * @param point2 the second point
-*/
+ */
 int signOfDistance(float points[][2], int point1, int point2)
 {
   float x1 = points[point1][0];
@@ -431,8 +428,8 @@ int signOfDistance(float points[][2], int point1, int point2)
  */
 void stanley(float points[][2], int length)
 {
-  float kp = 0.5;
-  float ki = 0.005;
+  float kp = 1;
+  float ki = 0.0;
   float kd = 0.00;
   float ld;
   float v;
@@ -443,6 +440,7 @@ void stanley(float points[][2], int length)
   float prevError = 0;
   float totalError = 0;
   int sign;
+  float targetVel = 50;
   Brain.Screen.print("stanley");
   int i = 0;
   int pointClosest = 0;
@@ -489,7 +487,7 @@ void stanley(float points[][2], int length)
     }
     // calculate lookahead distance
     v = LF.velocity(pct) + RF.velocity(pct) / 2;
-    ld = 5; // v / kv;
+    ld = 10; // v / kv;
 
     // calculate the angle to the global angle to the lookahead point
     ldAngle = RadToDeg(atan2(pathDistance, ld));
@@ -501,7 +499,11 @@ void stanley(float points[][2], int length)
     float output = (error * kp) + (totalError)*ki + (prevError - error) * kd;
 
     // drive
-    drive(25 + output, 25 - output, 10);
+    float vL = targetVel + output;
+    float vR = targetVel - output;
+
+    // drive
+    drive(vL, vR, 10);
 
     // reset integral if error crosses zero
     if (zeroCrossing(error, prevError))
@@ -520,8 +522,8 @@ void stanley(float points[][2], int length)
     // pathDistance<<","<<ldAngle*-sign<<","<<perpendicularDist(points,0,1)<<","
     //  std::cout<<"x="<<X<<", y= "<<Y<<", pointclosest= "<<pointClosest<<" error= "<<error<<std::endl
     //  <<"seg1dist= "<<segment1dist<<", seg2dist= "<<segment2dist<<", pathdist= "<<pathDistance<<std::endl<<std::endl;
-    std::cout << X << ",,," << Y << std::endl;
-    vex::wait(10, msec);
+   // std::cout << X << ",,," << Y << std::endl;
+   // wait(15, msec);
   }
   drive(0, 0, 10);
   Brain.Screen.drawRectangle(0, 0, 480, 240, green);
@@ -533,10 +535,10 @@ void stanley(float points[][2], int length)
 /*
 ██████╗  ██╗   ██╗ ██████╗  ███████╗     ██████╗  ██╗   ██╗ ██████╗  ███████╗ ██╗   ██╗ ██╗ ████████╗
 ██╔══██╗ ██║   ██║ ██╔══██╗ ██╔════╝     ██╔══██╗ ██║   ██║ ██╔══██╗ ██╔════╝ ██║   ██║ ██║ ╚══██╔══╝
-██████╔╝ ██║   ██║ ██████╔╝ █████╗       ██████╔╝ ██║   ██║ ██████╔╝ ███████╗ ██║   ██║ ██║    ██║   
-██╔═══╝  ██║   ██║ ██╔══██╗ ██╔══╝       ██╔═══╝  ██║   ██║ ██╔══██╗ ╚════██║ ██║   ██║ ██║    ██║   
-██║      ╚██████╔╝ ██║  ██║ ███████╗     ██║      ╚██████╔╝ ██║  ██║ ███████║ ╚██████╔╝ ██║    ██║   
-╚═╝       ╚═════╝  ╚═╝  ╚═╝ ╚══════╝     ╚═╝       ╚═════╝  ╚═╝  ╚═╝ ╚══════╝  ╚═════╝  ╚═╝    ╚═╝   
+██████╔╝ ██║   ██║ ██████╔╝ █████╗       ██████╔╝ ██║   ██║ ██████╔╝ ███████╗ ██║   ██║ ██║    ██║
+██╔═══╝  ██║   ██║ ██╔══██╗ ██╔══╝       ██╔═══╝  ██║   ██║ ██╔══██╗ ╚════██║ ██║   ██║ ██║    ██║
+██║      ╚██████╔╝ ██║  ██║ ███████╗     ██║      ╚██████╔╝ ██║  ██║ ███████║ ╚██████╔╝ ██║    ██║
+╚═╝       ╚═════╝  ╚═╝  ╚═╝ ╚══════╝     ╚═╝       ╚═════╝  ╚═╝  ╚═╝ ╚══════╝  ╚═════╝  ╚═╝    ╚═╝
 */
 
 /**
@@ -567,7 +569,6 @@ float lineCircleIntersection(float points[][2], int lineSegment, float ld)
 {
   // convert the x and y coordinates of the line segment into the form y=mx+b
 
-
   float x1 = points[lineSegment][0];
   float y1 = points[lineSegment][1];
   float x2 = points[lineSegment + 1][0];
@@ -581,15 +582,12 @@ float lineCircleIntersection(float points[][2], int lineSegment, float ld)
   double x2p = x2 - h;
   double y2p = y2 - k;
 
-
   // Calculate the slope and y-intercept of the translated line segment
   double m = (y2p - y1p) / (x2p - x1p);
   double b = y1p - m * x1p;
 
-
   // Calculate the discriminant
   double discriminant = pow((2 * m * b), 2) - 4 * ((pow(m, 2) + 1) * (pow(b, 2) - pow(r, 2)));
-
 
   if (discriminant > 0)
   {
@@ -621,15 +619,11 @@ float lineCircleIntersection(float points[][2], int lineSegment, float ld)
   }
 }
 
-
-
-
-
 /**
  * @brief pure pursuit algorithm
  * @param points an array containing the points
  * @param length the length of the array
-*/
+ */
 void purePursuit(float points[][2], int length)
 {
   int pointLookahead = 0;
@@ -638,7 +632,7 @@ void purePursuit(float points[][2], int length)
   float tval;
   float tvali;
   float tval2;
-  float prevTval=-1;
+  float prevTval = -1;
   while (true)
   {
     pointClosest = nextPoint(pointClosest, points);
@@ -655,9 +649,9 @@ void purePursuit(float points[][2], int length)
         pointLookahead = i;
         tval = tvali;
       }
-      prevTval=tvali;
+      prevTval = tvali;
     }
-   
+
     tval2 = tval2 - pointLookahead;
     float x1 = points[pointLookahead][0] + tval2 * (points[pointLookahead + 1][0] - points[pointLookahead][0]);
     float y1 = points[pointLookahead][1] + tval2 * (points[pointLookahead + 1][1] - points[pointLookahead][1]);
