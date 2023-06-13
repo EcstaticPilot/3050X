@@ -242,6 +242,13 @@ void DriveToPoint3(float targetX, float targetY, float targetAngle,
   drive_brake();
 }
 
+struct point
+{
+  float x;
+  float y;
+  point(float x, float y) : x(x), y(y) {}
+};
+
 /**
  * @breif distance between two points
  * @param x1 x coordinate of the first point
@@ -249,9 +256,9 @@ void DriveToPoint3(float targetX, float targetY, float targetAngle,
  * @param x2 x coordinate of the second point
  * @param y2 y coordinate of the second point
  */
-float distance2points(float x1, float y1, float x2, float y2)
+float distance2points(point p1, point p2)
 {
-  return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
+  return sqrt(pow(p2.x - p1.x, 2) + pow(p2.y - p1.y, 2));
 }
 
 /**
@@ -293,12 +300,12 @@ bool zeroCrossing(float a, float b)
  * @param point1 the first point
  * @param point2 the second point
  */
-float slope(std::vector<std::vector<float>> points, int point1, int point2)
+float slope(std::vector<point> points, int point1, int point2)
 {
-  float x1 = points[point1][0];
-  float y1 = points[point1][1];
-  float x2 = points[point2][0];
-  float y2 = points[point2][1];
+  float x1 = points[point1].x;
+  float y1 = points[point1].y;
+  float x2 = points[point2].x;
+  float y2 = points[point2].y;
   float slope = RadToDeg(atan2(x2 - x1, y2 - y1));
   return slope;
 }
@@ -312,6 +319,15 @@ float robotDistance(float x, float y)
 {
 
   return (sqrt((X - x) * (X - x) + (Y - y) * (Y - y)));
+}
+/**
+ * @brief finds the distance between the robot and a point
+ * @param p1 struct of point containing the point
+ */
+float robotDistance(point p1)
+{
+
+  return (sqrt((X - p1.x) * (X - p1.x) + (Y - p1.y) * (Y - p1.y)));
 }
 
 /**
@@ -340,9 +356,9 @@ int closestPoint(float points[][2])
  * @param initial the index of the current point
  * @param points an array containing the points
  */
-int nextPoint(int initial, std::vector<std::vector<float>> points)
+int nextPoint(int initial, std::vector<point> points)
 {
-  if (robotDistance(points[initial][0], points[initial][1]) < robotDistance(points[initial + 1][0], points[initial + 1][1]))
+  if (robotDistance(points[initial].x, points[initial].y) < robotDistance(points[initial + 1].x, points[initial + 1].y))
   {
     return initial;
   }
@@ -373,6 +389,9 @@ int nextPoint(int initial, float points[][2])
 ╚══════╝    ╚═╝    ╚═╝  ╚═╝ ╚═╝  ╚═══╝ ╚══════╝ ╚══════╝    ╚═╝
 */
 
+
+
+
 float lerp(float a, float b, float t)
 {
   return ((1 - t) * a + t * b);
@@ -398,13 +417,16 @@ float bezier(float bezier[][2], float t, std::string XorY)
   float a2 = bezier[1][n];
   float a3 = bezier[2][n];
   float a4 = bezier[3][n];
-  float b1 = lerp(a1, a2, t);
-  float b2 = lerp(a2, a3, t);
-  float b3 = lerp(a3, a4, t);
-  float c1 = lerp(b1, b2, t);
-  float c2 = lerp(b2, b3, t);
-  float d = lerp(c1, c2, t);
-  return (d);
+  //bernestein polynomials
+  return (a1*(pow(-t,3)+3*pow(t,2)-3*t+1)+a2*(3*pow(t,3)-6*pow(t,2)+3*t)+a3*(-3*pow(t,3)+3*pow(t,2))+a4*pow(t,3));
+  //nested lerps
+  float lerp1 = lerp(a1, a2, t);
+  float lerp2 = lerp(a2, a3, t);
+  float lerp3 = lerp(a3, a4, t);
+  float lerp4 = lerp(lerp1, lerp2, t);
+  float lerp5 = lerp(lerp2, lerp3, t);
+  float lerp6 = lerp(lerp4, lerp5, t);
+  return lerp6;
 }
 
 /**
@@ -413,23 +435,20 @@ float bezier(float bezier[][2], float t, std::string XorY)
  * @param point1 the index first point of the line
  * @param point2 the index second point of the line
  */
-float perpendicularDist(std::vector<std::vector<float>> points, int point1, int point2)
+float perpendicularDist(std::vector<point> points, int point1, int point2)
 {
-  float x1 = points[point1][0];
-  float y1 = points[point1][1];
-  float x2 = points[point2][0];
-  float y2 = points[point2][1];
-  float x3 = X;
-  float y3 = Y;
+  point p1 = points[point1];
+  point p2 = points[point2];
+  point robot = point(X, Y);
   // calculate distance
-  float A = y2 - y1;
-  float B = x1 - x2;
-  float C = x2 * y1 - x1 * y2;
-  float d = fabs((A * x3 + B * y3 + C)) / sqrt(A * A + B * B);
+  float A = p2.y - p1.y;
+  float B = p1.x - p2.x;
+  float C = p2.x * p1.y - p1.x * p2.y;
+  float d = fabs((A * robot.x + B * robot.y + C)) / sqrt(A * A + B * B);
   // check for intersection
-  float a = robotDistance(x1, y1);
-  float b = distance2points(x1, y1, x2, y2);
-  float c = robotDistance(x2, y2);
+  float a = robotDistance(p1);
+  float b = distance2points(p1,p2);
+  float c = robotDistance(p2);
   // check if the robot is within the line using law of cosines
   float angle1 = RadToDeg(acos((pow(a, 2) + pow(b, 2) - pow(c, 2)) / (2 * a * b)));
   float angle2 = RadToDeg(acos((pow(c, 2) + pow(b, 2) - pow(a, 2)) / (2 * c * b)));
@@ -447,12 +466,12 @@ float perpendicularDist(std::vector<std::vector<float>> points, int point1, int 
  * @param point1 the first point
  * @param point2 the second point
  */
-int signOfDistance(std::vector<std::vector<float>> points, int point1, int point2)
+int signOfDistance(std::vector<point> points, int p1, int p2)
 {
-  float x1 = points[point1][0];
-  float y1 = points[point1][1];
-  float x2 = points[point2][0];
-  float y2 = points[point2][1];
+  float x1 = points[p1].x;
+  float y1 = points[p1].y;
+  float x2 = points[p2].x;
+  float y2 = points[p2].y;
   float x3 = X;
   float y3 = Y;
   float d = (x2 - x1) * (y1 - y3) - (x1 - x3) * (y2 - y1);
@@ -496,25 +515,17 @@ void stanley(float points[][2], int length)
   int num_row = 10;
   // int i = 0;
   // Initializing the 2-D vector
-  std::vector<std::vector<float>> Bpoints(num_row, std::vector<float>(num_col, 0.0));
+  std::vector<point> Bpoints(num_row, point(0, 0));
   int tval = 0;
   // fil the 2d vector with the points
   for (int i = 0; i < 20; i++)
   {
 
-    Bpoints[i][0] = bezier(points, tval, "x");
-    Bpoints[i][1] = bezier(points, tval, "y");
+    Bpoints[i].x= bezier(points, tval, "x");
+    Bpoints[i].y= bezier(points, tval, "y");
     tval += 0.005;
   }
   // print out the array to the terminal
-  for (int i = 0; i < Bpoints.size(); i++)
-  {
-    for (int j = 0; j < Bpoints[i].size(); j++)
-    {
-      std::cout << Bpoints[i][j] << " ";
-    }
-    std::cout << std::endl;
-  }
 
   Brain.Screen.print("stanley");
 
@@ -526,8 +537,16 @@ void stanley(float points[][2], int length)
     // pointClosest =closestPoint(points); //alternate way to find closest point
     pointClosest = nextPoint(pointClosest, Bpoints);
     Brain.Screen.print("0.5");
-    if (!pointClosest == 0)
+    if (!(pointClosest == 1))
     {
+      //if the closest point is not the second point, erase all prevoius values until it is
+      Bpoints.erase(Bpoints.begin(), Bpoints.begin() + pointClosest - 1);
+      //fill the vecotr until the length is 20
+      while (Bpoints.size() < 20)
+      {
+        Bpoints.push_back(point(bezier(points, tval, "x"), bezier(points, tval, "y")));
+        tval += 0.005;
+      }
     }
 
     // find the distance to the line segment before and after the closest point
@@ -589,7 +608,7 @@ void stanley(float points[][2], int length)
     //  std::cout<<"x="<<X<<", y= "<<Y<<", pointclosest= "<<pointClosest<<" error= "<<error<<std::endl
     //  <<"seg1dist= "<<segment1dist<<", seg2dist= "<<segment2dist<<", pathdist= "<<pathDistance<<std::endl<<std::endl;
     std::cout << X << ",,," << Y << std::endl;
-    vex::wait(10, msec);
+    vex::wait(20, msec);
   }
   drive(0, 0, 10);
   Brain.Screen.drawRectangle(0, 0, 480, 240, green);
