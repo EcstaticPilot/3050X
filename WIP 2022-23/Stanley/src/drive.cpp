@@ -350,6 +350,26 @@ int closestPoint(float points[][2])
   }
   return index;
 }
+/**
+ * @brief finds the closest point to the robot
+ * @param points an array containing the points as a struct
+ */
+int closestPoint(std::vector<point> points)
+{
+  double min = robotDistance(points[0].x, points[0].y);
+  int index = 0;
+
+  for (int i = 0; i < sizeof points; i++)
+  {
+    float dist = robotDistance(points[i].x, points[i].y);
+    if (dist < min)
+    {
+      min = dist;
+      index = i;
+    }
+  }
+  return index;
+}
 
 /**
  * @brief if the next point is closer
@@ -389,9 +409,6 @@ int nextPoint(int initial, float points[][2])
 ╚══════╝    ╚═╝    ╚═╝  ╚═╝ ╚═╝  ╚═══╝ ╚══════╝ ╚══════╝    ╚═╝
 */
 
-
-
-
 float lerp(float a, float b, float t)
 {
   return ((1 - t) * a + t * b);
@@ -417,9 +434,9 @@ float bezier(float bezier[][2], float t, std::string XorY)
   float a2 = bezier[1][n];
   float a3 = bezier[2][n];
   float a4 = bezier[3][n];
-  //bernestein polynomials
-  return (a1*(pow(-t,3)+3*pow(t,2)-3*t+1)+a2*(3*pow(t,3)-6*pow(t,2)+3*t)+a3*(-3*pow(t,3)+3*pow(t,2))+a4*pow(t,3));
-  //nested lerps
+  // bernestein polynomials
+  return (a1 * (pow(-t, 3) + 3 * pow(t, 2) - 3 * t + 1) + a2 * (3 * pow(t, 3) - 6 * pow(t, 2) + 3 * t) + a3 * (-3 * pow(t, 3) + 3 * pow(t, 2)) + a4 * pow(t, 3));
+  // nested lerps
   float lerp1 = lerp(a1, a2, t);
   float lerp2 = lerp(a2, a3, t);
   float lerp3 = lerp(a3, a4, t);
@@ -427,6 +444,28 @@ float bezier(float bezier[][2], float t, std::string XorY)
   float lerp5 = lerp(lerp2, lerp3, t);
   float lerp6 = lerp(lerp4, lerp5, t);
   return lerp6;
+}
+/**
+ * @brief finds the point on a bezier curve and reutrns a point struct
+ * @param bezier an array containing the control points
+ * @param t the t value
+*/
+point bezier(float bezierPoints[][2], float t)
+{
+  float x1 = bezierPoints[0][0];
+  float x2 = bezierPoints[1][0];
+  float x3 = bezierPoints[2][0];
+  float x4 = bezierPoints[3][0];
+
+  float y1 = bezierPoints[0][1];
+  float y2 = bezierPoints[1][1];
+  float y3 = bezierPoints[2][1];
+  float y4 = bezierPoints[3][1];
+  // bernestein polynomials
+  point bezierPoint(
+  /*x points*/(x1 * (pow(-t, 3) + 3 * pow(t, 2) - 3 * t + 1) + x2 * (3 * pow(t, 3) - 6 * pow(t, 2) + 3 * t) + x3 * (-3 * pow(t, 3) + 3 * pow(t, 2)) + x4 * pow(t, 3)),
+  /*y points*/(y1 * (pow(-t, 3) + 3 * pow(t, 2) - 3 * t + 1) + y2 * (3 * pow(t, 3) - 6 * pow(t, 2) + 3 * t) + y3 * (-3 * pow(t, 3) + 3 * pow(t, 2)) + y4 * pow(t, 3)));
+  return (bezierPoint);
 }
 
 /**
@@ -447,7 +486,7 @@ float perpendicularDist(std::vector<point> points, int point1, int point2)
   float d = fabs((A * robot.x + B * robot.y + C)) / sqrt(A * A + B * B);
   // check for intersection
   float a = robotDistance(p1);
-  float b = distance2points(p1,p2);
+  float b = distance2points(p1, p2);
   float c = robotDistance(p2);
   // check if the robot is within the line using law of cosines
   float angle1 = RadToDeg(acos((pow(a, 2) + pow(b, 2) - pow(c, 2)) / (2 * a * b)));
@@ -520,9 +559,7 @@ void stanley(float points[][2], int length)
   // fil the 2d vector with the points
   for (int i = 0; i < 20; i++)
   {
-
-    Bpoints[i].x= bezier(points, tval, "x");
-    Bpoints[i].y= bezier(points, tval, "y");
+    Bpoints[i] = bezier(points, tval);
     tval += 0.005;
   }
   // print out the array to the terminal
@@ -539,12 +576,12 @@ void stanley(float points[][2], int length)
     Brain.Screen.print("0.5");
     if (!(pointClosest == 1))
     {
-      //if the closest point is not the second point, erase all prevoius values until it is
+      // if the closest point is not the second point, erase all prevoius values until it is
       Bpoints.erase(Bpoints.begin(), Bpoints.begin() + pointClosest - 1);
-      //fill the vecotr until the length is 20
+      // fill the vecotr until the length is 20
       while (Bpoints.size() < 20)
       {
-        Bpoints.push_back(point(bezier(points, tval, "x"), bezier(points, tval, "y")));
+        Bpoints.push_back( bezier(points, tval) );
         tval += 0.005;
       }
     }
