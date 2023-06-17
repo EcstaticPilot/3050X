@@ -43,8 +43,8 @@ int ControllerPrint()
     Controller1.Screen.setCursor(1, 1);
     Controller1.Screen.print("pos= (%.1f,%.1f)", X, Y);
     Controller1.Screen.setCursor(2, 1);
-    Controller1.Screen.print("%.1f", gyro1.rotation(rotationUnits::deg));
-    this_thread::sleep_for(75);
+    Controller1.Screen.print("%.1f", gyro1.yaw(deg));
+    this_thread::sleep_for(100);
   }
 }
 /*---------------------------------------------------------------------------*/
@@ -81,19 +81,16 @@ void pre_auton(void)
 
 void autonomous(void)
 {
-  Controller1.rumble("....");
+  Controller1.rumble("--");
   std::cout << "Autonomous Started" << std::endl;
-  gyro1.calibrate();
-
-  waitUntil(!gyro1.isCalibrating());
   // allocate memory space using malloc
 
   // assign x and y values for the points
   float points[4][2] = {
       {0, 0},
-      {0.0, 125},
-      {-100, 125},
-      {-100, 0}};
+      {0, 40},
+      {20, 10},
+      {20, 50}};
   stanley(points, sizeof(points) / 8);
   // ..........................................................................
   // Insert autonomous user code here.

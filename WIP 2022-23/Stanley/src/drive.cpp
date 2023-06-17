@@ -31,7 +31,6 @@ void drive_brake(vex::brakeType Brake = brake)
   RB.stop(Brake);
 }
 
-
 void forward_dist(float dist)
 {
   // dist is in inches
@@ -423,23 +422,45 @@ float lerp(float a, float b, float t)
  */
 point bezier(float bezierPoints[][2], float t)
 {
-  //determines whcih bezier curve to find when working with splines
+  // determines whcih bezier curve to find when working with splines
   int n = floor(t);
-  float x1 = bezierPoints[0+4*n][0];
-  float x2 = bezierPoints[1+4*n][0];
-  float x3 = bezierPoints[2+4*n][0];
-  float x4 = bezierPoints[3+4*n][0];
+  float x1 = bezierPoints[0 + 4 * n][0];
+  float x2 = bezierPoints[1 + 4 * n][0];
+  float x3 = bezierPoints[2 + 4 * n][0];
+  float x4 = bezierPoints[3 + 4 * n][0];
 
-  float y1 = bezierPoints[0+4*n][1];
-  float y2 = bezierPoints[1+4*n][1];
-  float y3 = bezierPoints[2+4*n][1];
-  float y4 = bezierPoints[3+4*n][1];
+  float y1 = bezierPoints[0 + 4 * n][1];
+  float y2 = bezierPoints[1 + 4 * n][1];
+  float y3 = bezierPoints[2 + 4 * n][1];
+  float y4 = bezierPoints[3 + 4 * n][1];
   // bernestein polynomials
-  //subtracts the n value from t to get the t value for the bezier curve
-  t-=n;
+  // subtracts the n value from t to get the t value for the bezier curve
+  t -= n;
   point bezierPoint(
       /*x points*/ (x1 * (pow(-t, 3) + 3 * pow(t, 2) - 3 * t + 1) + x2 * (3 * pow(t, 3) - 6 * pow(t, 2) + 3 * t) + x3 * (-3 * pow(t, 3) + 3 * pow(t, 2)) + x4 * pow(t, 3)),
       /*y points*/ (y1 * (pow(-t, 3) + 3 * pow(t, 2) - 3 * t + 1) + y2 * (3 * pow(t, 3) - 6 * pow(t, 2) + 3 * t) + y3 * (-3 * pow(t, 3) + 3 * pow(t, 2)) + y4 * pow(t, 3)));
+  return (bezierPoint);
+}
+
+point DerivativeBezier(float bezierPoints[][2], float t){
+    int n = floor(t);
+  float x1 = bezierPoints[0 + 4 * n][0];
+  float x2 = bezierPoints[1 + 4 * n][0];
+  float x3 = bezierPoints[2 + 4 * n][0];
+  float x4 = bezierPoints[3 + 4 * n][0];
+
+  float y1 = bezierPoints[0 + 4 * n][1];
+  float y2 = bezierPoints[1 + 4 * n][1];
+  float y3 = bezierPoints[2 + 4 * n][1];
+  float y4 = bezierPoints[3 + 4 * n][1];
+  // bernestein polynomials
+  // subtracts the n value from t to get the t value for the bezier curve
+  t -= n;
+  float p1K=-3*t*t+6*t-3;
+  float p2k=9*t*t-12*t+3;
+  float p3k=-9*t*t+6*t;
+  float p4k=3*t*t;
+  point bezierPoint(x1*p1K+x2*p2k+x3*p3k+x4*p4k,y1*p1K+y2*p2k+y3*p3k+y4*p4k);
   return (bezierPoint);
 }
 
@@ -498,20 +519,22 @@ int signOfDistance(std::vector<point> points, int p1, int p2)
  */
 void stanley(float points[][2], int length)
 {
-  float kp = 0.5;
-  float ki = 0.00;
+  float kp = .8;
+  float ki = 0.000;
   float kd = 0.00;
   float ld;
   float v;
   float segmentDist;
   float pathHeading;
+  point dBezier(0,0);
+  float tSpeed;
   float ldAngle;
   float prevError = 0;
   float totalError = 0;
   int sign;
   int pointClosest = 0;
   float tval = 0;
-  
+
   // Initializing the 1-D vector of struct "point"
   std::vector<point> Bpoints(10, point(0, 0));
   // Filling the vector with points
@@ -528,30 +551,33 @@ void stanley(float points[][2], int length)
     // pointClosest =closestPoint(points); //alternate way to find closest point
     pointClosest = closestPoint(Bpoints);
     // if the closest point is the last point of the points array
-    if (Bpoints[pointClosest].x == points[length-1][0] && Bpoints[pointClosest].y == points[length-1][1])
+    if (tval > length / 4)
     {
       break;
     }
-    
-    if (!(pointClosest == 0))
+
+    if (!(pointClosest == 1))
     {
+      std::cout<<"point closest: "<<pointClosest<<std::endl;
       // if the closest point is not the first point, erase all prevoius values until it is
-      Bpoints.erase(Bpoints.begin(), Bpoints.begin() + pointClosest);
+      Bpoints.erase(Bpoints.begin(), Bpoints.begin() + pointClosest - 1);
       // fill the vecotr until the length is 20
       while (Bpoints.size() < 10)
       {
         Bpoints.push_back(bezier(points, tval));
         tval += 0.005;
       }
-      pointClosest = 0;
+      pointClosest = 1;
     }
 
     // find the distance to the line segment after the closest point
     segmentDist = perpendicularDist(Bpoints, pointClosest, pointClosest + 1); // distance of the path segment after the closest point
 
-    // find the distance to the line segment
-    pathHeading = slope(Bpoints, pointClosest, pointClosest + 1); 
-
+    // slope of the path at the closest point
+    pathHeading = slope(Bpoints, pointClosest, pointClosest + 1);
+    //obtaining speed
+    dBezier = DerivativeBezier(points, tval);
+    tSpeed = 100-(fabs(dBezier.y)*0.3);
     // get the sign of the distance
     sign = signOfDistance(Bpoints, pointClosest, pointClosest + 1);
 
@@ -581,15 +607,15 @@ void stanley(float points[][2], int length)
     float output = (error * kp) + (totalError)*ki + (prevError - error) * kd;
 
     prevError = error;
-    
+
     // drive
-    drive(25 + output, 25 - output, 10);
+    drive(tSpeed + output, tSpeed - output, 10);
 
     // print the values
     // pathDistance<<","<<ldAngle*-sign<<","<<perpendicularDist(points,0,1)<<","
     //  std::cout<<"x="<<X<<", y= "<<Y<<", pointclosest= "<<pointClosest<<" error= "<<error<<std::endl
     //  <<"seg1dist= "<<segment1dist<<", seg2dist= "<<segment2dist<<", pathdist= "<<pathDistance<<std::endl<<std::endl;
-    std::cout << X << ",,," << Y << std::endl;
+    //std::cout << X << ",,," << Y << "," << tval << std::endl;
     wait(5, msec);
   }
   drive_brake();

@@ -12,6 +12,7 @@ extern motor RB;
 extern inertial gyro1;
 extern rotation RotationL;
 extern rotation RotationB;
+extern rotation RotationR;
 extern pneumatics claw;
 
 
