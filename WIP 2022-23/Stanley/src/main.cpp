@@ -87,7 +87,7 @@ void autonomous(void)
   // allocate memory space using malloc
   // assign x and y values for the points
   float points[4][2] = {
-      {0.001, 0},
+      {0, 0},
       {0, 50},
       {24, 24},
       {24, 70}};

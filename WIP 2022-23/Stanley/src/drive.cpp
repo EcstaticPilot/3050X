@@ -264,7 +264,7 @@ struct point
  */
 float distance2points(point p1, point p2)
 {
-  return sqrt(pow(p2.x - p1.x, 2) + pow(p2.y - p1.y, 2));
+  return hypot(p1.x - p2.x, p1.y - p2.y);
 }
 
 /**
@@ -324,7 +324,7 @@ float slope(std::vector<point> points, int point1, int point2)
 float robotDistance(float x, float y)
 {
 
-  return (sqrt((X - x) * (X - x) + (Y - y) * (Y - y)));
+  return (hypot(X - x, Y - y));
 }
 /**
  * @brief finds the distance between the robot and a point
@@ -333,7 +333,7 @@ float robotDistance(float x, float y)
 float robotDistance(point p1)
 {
 
-  return (sqrt((X - p1.x) * (X - p1.x) + (Y - p1.y) * (Y - p1.y)));
+  return (hypot(X - p1.x, Y - p1.y));
 }
 
 /**
@@ -489,7 +489,7 @@ float perpendicularDist(std::vector<point> points, int point1, int point2)
   float A = p2.y - p1.y;
   float B = p1.x - p2.x;
   float C = p2.x * p1.y - p1.x * p2.y;
-  float d = fabs((A * robot.x + B * robot.y + C)) / sqrt((A * A) + (B * B));
+  float d = fabs((A * robot.x + B * robot.y + C)) / hypot(A, B);
   return d;
 }
 
@@ -533,7 +533,7 @@ void stanley(float points[][2], int length)
   float ki = 0.000;
   float kd = 0.00;
   float ld;
-  float minSpeed=25;
+  float minSpeed=15;
   float maxSpeed=90;
   float v;
   float kv=5;
@@ -563,7 +563,7 @@ void stanley(float points[][2], int length)
     // pointClosest =closestPoint(points,8); //alternate way to find closest point
     pointClosest = closestPoint(Bpoints,8);
     // if the closest point is the last point of the points array
-    if (tval > length / 4)
+    if ((tval - 0.1) > length / 4)
     {
       break;
     }
@@ -589,10 +589,6 @@ void stanley(float points[][2], int length)
     // slope of the path at the closest point
     pathHeading = slope(Bpoints, pointClosest, pointClosest + 1);
     //obtaining speed
-    tSpeed=100-curvature(points,tval)*2500;
-    //limit the value of tSpeed
-    tSpeed=std::max(tSpeed,minSpeed);
-    tSpeed=std::min(tSpeed,maxSpeed);
     // get the sign of the distance
     sign = signOfDistance(Bpoints, pointClosest, pointClosest + 1);
   //  std::cout<<"3"<<std::endl;
@@ -623,7 +619,11 @@ void stanley(float points[][2], int length)
     float output = (error * kp) + (totalError)*ki + (prevError - error) * kd;
   //  std::cout<<"5"<<std::endl;
     prevError = error;
-
+    // calculate the speed of the motors
+    tSpeed=90-fabs((2*error));
+    //limit the value of tSpeed
+    tSpeed=std::max(tSpeed,minSpeed);
+    tSpeed=std::min(tSpeed,maxSpeed);
     // drive
     drive(tSpeed + output, tSpeed - output, 10);
     
@@ -631,8 +631,8 @@ void stanley(float points[][2], int length)
     // pathDistance<<","<<ldAngle*-sign<<","<<perpendicularDist(points,0,1)<<","
     //  std::cout<<"x="<<X<<", y= "<<Y<<", pointclosest= "<<pointClosest<<" error= "<<error<<std::endl
     //  <<"seg1dist= "<<segment1dist<<", seg2dist= "<<segment2dist<<", pathdist= "<<pathDistance<<std::endl<<std::endl;
-    std::cout << X << ",,," << Y<< ","<<tSpeed<<","<<std::endl;
-    wait(10,msec);
+    std::cout << X << ",,," << Y<< ","<<tSpeed<<","<<tval<<std::endl;
+    wait(15,msec);
   }
   drive_brake();
   Brain.Screen.drawRectangle(0, 0, 480, 240, green);
