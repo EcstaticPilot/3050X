@@ -24,8 +24,8 @@ int odometery()
 
   double deltaHeading = 0; // change in heading
   double absoluteOrientation = M_PI;
-  double distFromCenterL = 10;
-  double distFromCenterB = 5;
+  double distFromCenterL = 4.2;
+  double distFromCenterB = 6;
   double lRad;
   double bRad;
   double rRad;   // radius of tracking wheel
@@ -42,13 +42,10 @@ int odometery()
   double prevLE = lEncoder; // create previous encoder value left
   double prevBE = bEncoder; // create previous encoder value back
   double prevRE = rEncoder; // create previous encoder value right
-  double averageHeading;    //
+  double trackingRadius;
+  double averageHeading; //
   double deltaX;
   double deltaY;
-  double speed = 0;
-  double prevTime = 0;
-  double time = 0;
-  double acceleration = 0;
   Controller1.rumble(".");
   RotationL.resetPosition();
   RotationB.resetPosition();
@@ -56,18 +53,17 @@ int odometery()
   RB.resetPosition();
   LB.resetPosition();
   Brain.Screen.drawRectangle(0, 0, 480, 240, orange);
-  while (
-      true)
+  while (true)
   {
 
-    lEncoder = RotationL.position(turns) * 360;
-    rEncoder = RotationR.position(turns) * 360;
-    bEncoder = RotationB.position(turns) * 360;
+    lEncoder = RotationL.position(turns) *2*M_PI;
+    rEncoder = RotationR.position(turns) *2*M_PI;
+    bEncoder = RotationB.position(turns) *2*M_PI;
 
     // convert encoder distance into distance traveled
-    distL = ((lEncoder - prevLE) * M_PI / 180) * lRad;
-    distR = ((rEncoder - prevRE) * M_PI / 180) * rRad;
-    distB = ((bEncoder - prevBE) * M_PI / 180) * bRad;
+    distL = (lEncoder - prevLE) * lRad;
+    distR = (rEncoder - prevRE) * rRad;
+    distB = (bEncoder - prevBE) * bRad;
 
     // convert encoder distance into disntance traveled
 
@@ -76,20 +72,20 @@ int odometery()
     prevBE = bEncoder; // create previous encoder value back
 
     absoluteOrientation = gyro1.rotation() * M_PI / 180.0;
-    deltaHeading =
-        absoluteOrientation - prevHeading; // calculate change in heading
-    averageHeading = prevHeading + (deltaHeading) / 2;
+    deltaHeading = (distL - distR) / (distFromCenterL + distFromCenterL); // calculate change in heading
+    averageHeading = prevHeading + (deltaHeading / 2);
     prevHeading = absoluteOrientation;
-    if (distL == distR)
-    {
+    trackingRadius = (distR / deltaHeading) + distFromCenterL; // calculate radius of tracking wheel radius
+  //  if (distL == distR)
+  //  {
       deltaX = distB;
-      deltaY = distL;
-    }
+      deltaY = (distL+distR)/2;
+ /*   }
     else
     {
-      deltaX = 2 * sin(absoluteOrientation / 2) * ((distB / deltaHeading) + distFromCenterB);
-      deltaY = 2 * sin(absoluteOrientation / 2) * ((distL / deltaHeading) + distFromCenterL);
-    }
+      deltaX = 2 * sin(deltaHeading / 2) * ((distB / deltaHeading) + distFromCenterB);
+      deltaY = 2 * sin(deltaHeading / 2) * ((distR / deltaHeading) + distFromCenterL);
+    }*/
 
     X += (deltaY * sin(averageHeading)) + (deltaX * cos(averageHeading));
     Y += (deltaY * cos(averageHeading)) - (deltaX * sin(averageHeading));
@@ -103,9 +99,11 @@ int odometery()
       absoluteOrientation += 2 * M_PI;
     }
 
-    X += deltaX;
-    Y += deltaY;
-    //  std::cout<<speed<<", "<<X<<","<<Y<<","<<gyro1.acceleration(yaxis)<<std::endl;
+    if (deltaX != 0 || deltaY != 0)
+    {
+  //    std::cout << X << "," << Y << std::endl;
+    }
+
     this_thread::sleep_for(10);
   }
   return 1;

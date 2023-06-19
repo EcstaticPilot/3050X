@@ -26,8 +26,9 @@ void forward_dist(float dist);
 void DriveToPoint(double targetX, double targetY, float speedMult = 1);
 void RAMSETE(float targetX, float targetY, float targetAngle, float accuracy = 1);
 void DriveToPoint2(float targetX, float targetY);
-void stanley(float points[4][2], int length);
+void stanley(float points[][2], int length);
 void purePursuit(float points[][2], int length);
+void curveDrive(double x, double y, double speed, double wt = 10);
 // odometry
 int odometery();
 
@@ -84,13 +85,12 @@ void autonomous(void)
   Controller1.rumble("--");
   std::cout << "Autonomous Started" << std::endl;
   // allocate memory space using malloc
-
   // assign x and y values for the points
   float points[4][2] = {
-      {0, 0},
-      {0, 40},
-      {20, 10},
-      {20, 50}};
+      {0.001, 0},
+      {0, 50},
+      {24, 24},
+      {24, 70}};
   stanley(points, sizeof(points) / 8);
   // ..........................................................................
   // Insert autonomous user code here.
@@ -112,7 +112,7 @@ void usercontrol(void)
 
   while (1)
   {
-    std::cout << X << "," << Y << std::endl;
+    // std::cout << X << "," << Y << std::endl;
     LF.spin(forward, Controller1.Axis3.position() * 120, voltageUnits::mV);
     RF.spin(forward, Controller1.Axis2.position() * 120, voltageUnits::mV);
     LB.spin(forward, Controller1.Axis3.position() * 120, voltageUnits::mV);
