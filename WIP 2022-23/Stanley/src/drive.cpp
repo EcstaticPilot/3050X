@@ -1,18 +1,14 @@
 #include "vex.h"
-#include <iostream>
-#include <stdio.h>
 #include <vector>
-#include <math.h>
-#include <cmath>
-#include <string.h>
-#include <bits/stdc++.h>
+
 using namespace vex;
 
 float TrackWidth = 8.5;
 float C = M_PI * 3.25;
-extern double X, Y;
-void terminalPrint(float a=0,float b=0, float c=0,float d=0,float e=0){
-  std::cout<<a<<","<<b<<","<<c<<","<<d<<","<<e<<std::endl;
+//extern double X, Y;
+void terminalPrint(float a = 0, float b = 0, float c = 0, float d = 0, float e = 0)
+{
+  std::cout << a << "," << b << "," << c << "," << d << "," << e << std::endl;
 }
 void drive(int lSpeed, int rSpeed, double wt)
 {
@@ -248,11 +244,22 @@ void DriveToPoint3(float targetX, float targetY, float targetAngle,
 }
 
 // start off path stuff
+
 struct point
 {
   float x;
   float y;
   point(float x, float y) : x(x), y(y) {}
+};
+
+struct bezierPoint
+{
+  float x;
+  float y;
+  float tval;
+  float angle;
+  float curvature;
+  bezierPoint(float x, float y, float tval, float angle, float curvature) : x(x), y(y), tval(tval), angle(angle), curvature(curvature) {}
 };
 
 /**
@@ -312,6 +319,16 @@ float slope(std::vector<point> points, int point1, int point2)
   float y1 = points[point1].y;
   float x2 = points[point2].x;
   float y2 = points[point2].y;
+  float slope = RadToDeg(atan2(x2 - x1, y2 - y1));
+  return slope;
+}
+
+float slope(point p1, point p2)
+{
+  float x1 = p1.x;
+  float y1 = p1.y;
+  float x2 = p2.x;
+  float y2 = p2.y;
   float slope = RadToDeg(atan2(x2 - x1, y2 - y1));
   return slope;
 }
@@ -377,6 +394,26 @@ int closestPoint(std::vector<point> points, int size)
   return index;
 }
 
+/**
+ * @brief finds the closest point to the robot
+ * @param points an array containing the points as a struct
+ */
+int closestPoint(std::vector<bezierPoint> points, int size)
+{
+  double min = robotDistance(points[0].x, points[0].y);
+  int index = 0;
+
+  for (int i = 0; i < size; i++)
+  {
+    float dist = robotDistance(points[i].x, points[i].y);
+    if (dist < min)
+    {
+      min = dist;
+      index = i;
+    }
+  }
+  return index;
+}
 /**
  * @brief if the next point is closer
  * @param initial the index of the current point
@@ -445,7 +482,31 @@ point bezier(float bezierPoints[][2], float t)
       /*y points*/ (y1 * (pow(-t, 3) + 3 * pow(t, 2) - 3 * t + 1) + y2 * (3 * pow(t, 3) - 6 * pow(t, 2) + 3 * t) + y3 * (-3 * pow(t, 3) + 3 * pow(t, 2)) + y4 * pow(t, 3)));
   return (bezierPoint);
 }
-float curvature(float bezierPoints[][2], float t) {
+
+point derivativeBezier(float bezierPoints[][2], float t)
+{
+
+  int n = floor(t);
+  float x1 = bezierPoints[0 + 4 * n][0];
+  float x2 = bezierPoints[1 + 4 * n][0];
+  float x3 = bezierPoints[2 + 4 * n][0];
+  float x4 = bezierPoints[3 + 4 * n][0];
+
+  float y1 = bezierPoints[0 + 4 * n][1];
+  float y2 = bezierPoints[1 + 4 * n][1];
+  float y3 = bezierPoints[2 + 4 * n][1];
+  float y4 = bezierPoints[3 + 4 * n][1];
+  // bernestein polynomials
+  // subtracts the n value from t to get the t value for the bezier curve
+  t -= n;
+  point bezierPoint(
+      /*x points*/ (x1 * (-3 * pow(t, 2) + 6 * t - 3) + x2 * (9 * pow(t, 2) - 12 * t + 3) + x3 * (-9 * pow(t, 2) + 6 * t) + x4 * 3 * pow(t, 2)),
+      /*y points*/ (y1 * (-3 * pow(t, 2) + 6 * t - 3) + y2 * (9 * pow(t, 2) - 12 * t + 3) + y3 * (-9 * pow(t, 2) + 6 * t) + y4 * 3 * pow(t, 2)));
+  return (bezierPoint);
+}
+
+float curvature(float bezierPoints[][2], float t)
+{
   int n = floor(t);
   float x0 = bezierPoints[0 + 4 * n][0];
   float x1 = bezierPoints[1 + 4 * n][0];
@@ -460,7 +521,7 @@ float curvature(float bezierPoints[][2], float t) {
   // subtracts the n value from t to get the t value for the bezier curve
   t -= n;
   float dt = 1 - t;
-  
+
   // Calculate the components of the first and second derivatives
   float dx_dt = 3 * dt * dt * (x1 - x0) + 6 * dt * t * (x2 - x1) + 3 * t * t * (x3 - x2);
   float dy_dt = 3 * dt * dt * (y1 - y0) + 6 * dt * t * (y2 - y1) + 3 * t * t * (y3 - y2);
@@ -475,15 +536,47 @@ float curvature(float bezierPoints[][2], float t) {
 }
 
 /**
+ * @brief finds the point on a bezier curve and reutrns a bezier point struct
+ * @param bezier an array containing the control points
+ * @param t the t value
+ */
+bezierPoint bezierPointConstructor(float bezierPoints[][2], float t)
+{
+  // determines whcih bezier curve to find when working with splines
+  int n = floor(t);
+  float x1 = bezierPoints[0 + 4 * n][0];
+  float x2 = bezierPoints[1 + 4 * n][0];
+  float x3 = bezierPoints[2 + 4 * n][0];
+  float x4 = bezierPoints[3 + 4 * n][0];
+
+  float y1 = bezierPoints[0 + 4 * n][1];
+  float y2 = bezierPoints[1 + 4 * n][1];
+  float y3 = bezierPoints[2 + 4 * n][1];
+  float y4 = bezierPoints[3 + 4 * n][1];
+  // bernestein polynomials
+  // subtracts the n value from t to get the t value for the bezier curve
+  point derivativeBpoint = derivativeBezier(bezierPoints, t);
+  t -= n;
+  bezierPoint bezierPoint(
+      /*x points*/ (x1 * (pow(-t, 3) + 3 * pow(t, 2) - 3 * t + 1) + x2 * (3 * pow(t, 3) - 6 * pow(t, 2) + 3 * t) + x3 * (-3 * pow(t, 3) + 3 * pow(t, 2)) + x4 * pow(t, 3)),
+      /*y points*/ (y1 * (pow(-t, 3) + 3 * pow(t, 2) - 3 * t + 1) + y2 * (3 * pow(t, 3) - 6 * pow(t, 2) + 3 * t) + y3 * (-3 * pow(t, 3) + 3 * pow(t, 2)) + y4 * pow(t, 3)),
+      /*t value*/ t + n,
+      /*angle*/ RadToDeg(atan2(derivativeBpoint.y, derivativeBpoint.x)),
+      /*curvature*/ curvature(bezierPoints, t + n));
+  return (bezierPoint);
+}
+
+/**
  * @brief finds the distance of a point from a line
  * @param points an array containing the points of the line
  * @param point1 the index first point of the line
  * @param point2 the index second point of the line
  */
-float perpendicularDist(std::vector<point> points, int point1, int point2)
+float perpendicularDist(std::vector<bezierPoint> points, int point1, int point2)
 {
-  point p1 = points[point1];
-  point p2 = points[point2];
+  point p1(points[point1].x, points[point1].y);
+  point p2(points[point2].x, points[point2].y);
+
   point robot = point(X, Y);
   // calculate distance
   float A = p2.y - p1.y;
@@ -499,7 +592,7 @@ float perpendicularDist(std::vector<point> points, int point1, int point2)
  * @param point1 the first point
  * @param point2 the second point
  */
-int signOfDistance(std::vector<point> points, int p1, int p2)
+int signOfDistance(std::vector<bezierPoint> points, int p1, int p2)
 {
   float x1 = points[p1].x;
   float y1 = points[p1].y;
@@ -533,10 +626,10 @@ void stanley(float points[][2], int length)
   float ki = 0.000;
   float kd = 0.00;
   float ld;
-  float minSpeed=15;
-  float maxSpeed=90;
+  float minSpeed = 15;
+  float maxSpeed = 90;
   float v;
-  float kv=5;
+  float kv = 5;
   float segmentDist;
   float pathHeading;
   float tSpeed;
@@ -548,11 +641,11 @@ void stanley(float points[][2], int length)
   float tval = 0;
 
   // Initializing the 1-D vector of struct "point"
-  std::vector<point> Bpoints(10, point(0, 0));
+  std::vector<bezierPoint> Bpoints(10, bezierPoint(0, 0, 0, 0, 0));
   // Filling the vector with points
   for (int i = 0; i < 10; i++)
   {
-    Bpoints[i] = bezier(points, tval);
+    Bpoints[i] = bezierPointConstructor(points, tval);
     tval += 0.005;
   }
   Brain.Screen.drawRectangle(0, 0, 480, 240, yellow);
@@ -561,48 +654,49 @@ void stanley(float points[][2], int length)
   {
     // find the closest point
     // pointClosest =closestPoint(points,8); //alternate way to find closest point
-    pointClosest = closestPoint(Bpoints,8);
+    pointClosest = closestPoint(Bpoints, 8);
     // if the closest point is the last point of the points array
-    if ((tval - 0.1) > length / 4)
+
+    // std::cout<<"1"<<std::endl;
+    // wh
+    if (pointClosest != 0) // if you set this to one the entire thing breaks
     {
-      break;
-    }
-    //std::cout<<"1"<<std::endl;
-    //wh
-    if (pointClosest != 0)//if you set this to one the entire thing breaks
-    {
-     // std::cout<<"1.5"<<std::endl;
+      // std::cout<<"1.5"<<std::endl;
       // if the closest point is not the first point, erase all prevoius values until it is
       Bpoints.erase(Bpoints.begin(), Bpoints.begin() + pointClosest);
       // fill the vecotr until the length is 20
       while (Bpoints.size() < 10)
       {
-        Bpoints.push_back(bezier(points, tval));
+        Bpoints.push_back(bezierPointConstructor(points, tval));
         tval += 0.005;
       }
       pointClosest = 0;
     }
- //   std::cout<<"2"<<std::endl;
-    // find the distance to the line segment after the closest point
-    segmentDist = perpendicularDist(Bpoints, pointClosest, pointClosest + 1); // distance of the path segment after the closest point
 
+    if (Bpoints[pointClosest].tval > length / 4)
+    {
+      break;
+    }
     // slope of the path at the closest point
-    pathHeading = slope(Bpoints, pointClosest, pointClosest + 1);
-    //obtaining speed
-    // get the sign of the distance
+    pathHeading = Bpoints[pointClosest].angle;
+    //   std::cout<<"2"<<std::endl;
+    // find the distance to the line segment after the closest point
+
+    segmentDist = perpendicularDist(Bpoints, pointClosest, pointClosest + 1); // distance of the path segment after the closest point
     sign = signOfDistance(Bpoints, pointClosest, pointClosest + 1);
-  //  std::cout<<"3"<<std::endl;
+    //  std::cout<<"3"<<std::endl;
     // calculate lookahead distance
-    v = ((RotationR.velocity(rpm)/2) + (RotationL.velocity(rpm)/2)) / 2;//take the average of the two sides converting rpm to percent
-    v=std::max(v,minSpeed);//if velocity is less than minSpeed, set it to minSpeed
-    ld =  v / kv;
+
+    v = ((RotationR.velocity(rpm) / 2) + (RotationL.velocity(rpm) / 2)) / 2; // take the average of the two sides converting rpm to percent
+    v = fmax(v, minSpeed);                                               // if velocity is less than minSpeed, set it to minSpeed
+    ld = v / kv;
 
     // calculate the angle to the global angle to the lookahead point
     ldAngle = RadToDeg(atan2(segmentDist, ld));
 
     // calculate the error
     float error = (ldAngle * sign + pathHeading - gyro1.yaw(deg));
-   // std::cout<<"4"<<std::endl;
+    // std::cout<<"4"<<std::endl;
     // calculate the PID output
 
     // reset integral if error crosses zero
@@ -617,22 +711,22 @@ void stanley(float points[][2], int length)
     // prevoius error
 
     float output = (error * kp) + (totalError)*ki + (prevError - error) * kd;
-  //  std::cout<<"5"<<std::endl;
+    //  std::cout<<"5"<<std::endl;
     prevError = error;
     // calculate the speed of the motors
-    tSpeed=90-fabs((2*error));
-    //limit the value of tSpeed
-    tSpeed=std::max(tSpeed,minSpeed);
-    tSpeed=std::min(tSpeed,maxSpeed);
+    tSpeed = 90 - fabs((2 * error));
+    // limit the value of tSpeed
+    tSpeed = fmax(tSpeed, minSpeed);
+    tSpeed = fmin(tSpeed, maxSpeed);
     // drive
     drive(tSpeed + output, tSpeed - output, 10);
-    
+
     // print the values
     // pathDistance<<","<<ldAngle*-sign<<","<<perpendicularDist(points,0,1)<<","
     //  std::cout<<"x="<<X<<", y= "<<Y<<", pointclosest= "<<pointClosest<<" error= "<<error<<std::endl
     //  <<"seg1dist= "<<segment1dist<<", seg2dist= "<<segment2dist<<", pathdist= "<<pathDistance<<std::endl<<std::endl;
-    std::cout << X << ",,," << Y<< ","<<tSpeed<<","<<tval<<std::endl;
-    wait(15,msec);
+    std::cout << X << ",,," << Y << "," << tSpeed << "," << tval << std::endl;
+    wait(15, msec);
   }
   drive_brake();
   Brain.Screen.drawRectangle(0, 0, 480, 240, green);
@@ -654,12 +748,13 @@ void stanley(float points[][2], int length)
  * @param y y coordinate of the point
  * @param speed speed to drive at
  */
-void curveDrive(double x, double y, double speed,double wt = 10)
+void curveDrive(double x, double y, double speed, double wt = 10)
 {
   double dist = robotDistance(x, y);
   double errorX = x - X;
   double errorY = y - Y;
-  double localX = errorX*cos(gyro1.yaw())-(errorY*sin(gyro1.yaw()));;
+  double localX = errorX * cos(gyro1.yaw()) - (errorY * sin(gyro1.yaw()));
+  ;
   double curvature = (2 * localX) / (dist * dist);
   float L = speed * (2 + (curvature * TrackWidth)) / 2;
   float R = speed * (2 - (curvature * TrackWidth)) / 2;
@@ -773,17 +868,17 @@ void purePursuit(float points[][2], int length)
     tval = tval - pointLookahead;
     if (tval < 0)
     {
-     // std::cout<<"tval is less than 0"<<std::endl;
+      // std::cout<<"tval is less than 0"<<std::endl;
       x1 = points[pointClosest][0];
       y1 = points[pointClosest][1];
     }
     else
     {
-     // std::cout<<"tval is greater than 0"<<std::endl;
+      // std::cout<<"tval is greater than 0"<<std::endl;
       x1 = points[pointLookahead][0] + tval * (points[pointLookahead + 1][0] - points[pointLookahead][0]);
       y1 = points[pointLookahead][1] + tval * (points[pointLookahead + 1][1] - points[pointLookahead][1]);
     }
-    std::cout << x1 << "," << y1 <<","<<X<<","<<Y<< std::endl;
+    std::cout << x1 << "," << y1 << "," << X << "," << Y << std::endl;
     curveDrive(x1, y1, 25);
   }
 }

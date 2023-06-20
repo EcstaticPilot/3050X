@@ -8,29 +8,14 @@
 /*----------------------------------------------------------------------------*/
 
 #include "vex.h"
-#include <iostream>
+
 
 using namespace vex;
 
 // A global instance of competition
 competition Competition;
 
-// define your global instances of motors and other devices here
-extern double X, Y;
-// drive.cpp
-void drive(int lSpeed, int rSpeed, double wt);
-void drive_brake(vex::brakeType Brake = brake);
-void rotate(double dir, double accuracy = 1);
-void inchDrive(double target, double speedMod = 1);
-void forward_dist(float dist);
-void DriveToPoint(double targetX, double targetY, float speedMult = 1);
-void RAMSETE(float targetX, float targetY, float targetAngle, float accuracy = 1);
-void DriveToPoint2(float targetX, float targetY);
-void stanley(float points[][2], int length);
-void purePursuit(float points[][2], int length);
-void curveDrive(double x, double y, double speed, double wt = 10);
-// odometry
-int odometery();
+
 
 void toggleclaw()
 {
