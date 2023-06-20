@@ -23,7 +23,7 @@ int odometery()
   double prevHeading = gyro1.rotation();
 
   double deltaHeading = 0; // change in heading
-  double absoluteOrientation = M_PI;
+  double Heading = M_PI;
   double distFromCenterL = 4.2;
   double distFromCenterB = 6;
   double lRad;
@@ -50,20 +50,23 @@ int odometery()
   RotationL.resetPosition();
   RotationB.resetPosition();
   RotationR.resetPosition();
+  RotationL.setPosition(0, turns);
+  RotationB.setPosition(0, turns);
+  RotationR.setPosition(0, turns);
   RB.resetPosition();
   LB.resetPosition();
   Brain.Screen.drawRectangle(0, 0, 480, 240, orange);
   while (true)
   {
 
-    lEncoder = RotationL.position(turns) *2*M_PI;
-    rEncoder = RotationR.position(turns) *2*M_PI;
-    bEncoder = RotationB.position(turns) *2*M_PI;
+    lEncoder = RotationL.position(degrees);
+    rEncoder = RotationR.position(degrees);
+    bEncoder = RotationB.position(degrees);
 
     // convert encoder distance into distance traveled
-    distL = (lEncoder - prevLE) * lRad;
-    distR = (rEncoder - prevRE) * rRad;
-    distB = (bEncoder - prevBE) * bRad;
+    distL = ((lEncoder - prevLE) * M_PI / 180) * lRad;
+    distR = ((rEncoder - prevRE) * M_PI / 180) * rRad;
+    distB = ((bEncoder - prevBE) * M_PI / 180) * bRad;
 
     // convert encoder distance into disntance traveled
 
@@ -71,37 +74,40 @@ int odometery()
     prevRE = rEncoder; // create previous encoder value right
     prevBE = bEncoder; // create previous encoder value back
 
-    absoluteOrientation = gyro1.rotation() * M_PI / 180.0;
-    deltaHeading = (distL - distR) / (distFromCenterL + distFromCenterL); // calculate change in heading
-    averageHeading = prevHeading + (deltaHeading / 2);
-    prevHeading = absoluteOrientation;
-    trackingRadius = (distR / deltaHeading) + distFromCenterL; // calculate radius of tracking wheel radius
-  //  if (distL == distR)
-  //  {
+    Heading = (360 - gyro1.heading(rotationUnits::deg)) * M_PI / 180.0;
+
+    deltaHeading = Heading - prevHeading; // calculate change in heading
+
+    prevHeading = Heading;
+
+    if (deltaHeading == 0)
+    {
       deltaX = distB;
-      deltaY = (distL+distR)/2;
- /*   }
+      deltaY = distL;
+    }
     else
     {
       deltaX = 2 * sin(deltaHeading / 2) * ((distB / deltaHeading) + distFromCenterB);
-      deltaY = 2 * sin(deltaHeading / 2) * ((distR / deltaHeading) + distFromCenterL);
-    }*/
+      deltaY = 2 * sin(deltaHeading / 2) * ((distR / deltaHeading) - distFromCenterL);
+    }
+
+    averageHeading = prevHeading + (deltaHeading / 2);
 
     X += (deltaY * sin(averageHeading)) + (deltaX * cos(averageHeading));
     Y += (deltaY * cos(averageHeading)) - (deltaX * sin(averageHeading));
 
-    while (absoluteOrientation >= 2 * M_PI)
+    while (Heading >= 2 * M_PI)
     {
-      absoluteOrientation -= 2 * M_PI;
+      Heading -= 2 * M_PI;
     }
-    while (absoluteOrientation < 0)
+    while (Heading < 0)
     {
-      absoluteOrientation += 2 * M_PI;
+      Heading += 2 * M_PI;
     }
 
     if (deltaX != 0 || deltaY != 0)
     {
-  //    std::cout << X << "," << Y << std::endl;
+      //    std::cout << X << "," << Y << std::endl;
     }
 
     this_thread::sleep_for(10);

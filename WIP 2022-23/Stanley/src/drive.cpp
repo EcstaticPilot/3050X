@@ -654,7 +654,7 @@ void stanley(float points[][2], int length)
   {
     // find the closest point
     // pointClosest =closestPoint(points,8); //alternate way to find closest point
-    pointClosest = closestPoint(Bpoints, 8);
+    pointClosest = closestPoint(Bpoints, 9);
     // if the closest point is the last point of the points array
 
     // std::cout<<"1"<<std::endl;
@@ -714,7 +714,7 @@ void stanley(float points[][2], int length)
     //  std::cout<<"5"<<std::endl;
     prevError = error;
     // calculate the speed of the motors
-    tSpeed = 90 - fabs((2 * error));
+    tSpeed = 100-fabs(Bpoints[pointClosest].curvature*2500);
     // limit the value of tSpeed
     tSpeed = fmax(tSpeed, minSpeed);
     tSpeed = fmin(tSpeed, maxSpeed);
