@@ -93,9 +93,10 @@ int odometery()
 
     averageHeading = prevHeading + (deltaHeading / 2);
 
-    X += (deltaY * sin(averageHeading)) + (deltaX * cos(averageHeading));
+    X -= (deltaY * sin(averageHeading)) + (deltaX * cos(averageHeading));
     Y += (deltaY * cos(averageHeading)) - (deltaX * sin(averageHeading));
-
+    //x is reversed for some reason
+    
     while (Heading >= 2 * M_PI)
     {
       Heading -= 2 * M_PI;
