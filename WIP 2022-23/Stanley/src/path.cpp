@@ -35,18 +35,6 @@ struct bezierPoint
 };
 
 /**
- * @breif distance between two points
- * @param x1 x coordinate of the first point
- * @param y1 y coordinate of the first point
- * @param x2 x coordinate of the second point
- * @param y2 y coordinate of the second point
- */
-float distance2points(point p1, point p2)
-{
-  return hypot(p1.x - p2.x, p1.y - p2.y);
-}
-
-/**
  * @brief convert radians to degrees
  * @param rad radians(float)
  */
@@ -58,12 +46,17 @@ float RadToDeg(float rad)
 /**
  * @brief convert degrees to radians
  * @param deg degrees (float)
+ * @return radians (float)
  */
 float DegToRad(float deg)
 {
   return (deg * M_PI / 180);
 }
 
+/// @brief checks if 2 value have different signs
+/// @param a first value
+/// @param b second value
+/// @return true if they are different, false if they are the same sign
 bool zeroCrossing(float a, float b)
 {
   int A = fabs(a) / a;
@@ -77,33 +70,6 @@ bool zeroCrossing(float a, float b)
     return false;
   }
 }
-// a class containing the x and y coordinates of a point
-
-/**
- * @brief finds the slope between two points
- * @param points an array containing the points
- * @param point1 the first point
- * @param point2 the second point
- */
-float slope(std::vector<point> points, int point1, int point2)
-{
-  float x1 = points[point1].x;
-  float y1 = points[point1].y;
-  float x2 = points[point2].x;
-  float y2 = points[point2].y;
-  float slope = RadToDeg(atan2(x2 - x1, y2 - y1));
-  return slope;
-}
-
-float slope(point p1, point p2)
-{
-  float x1 = p1.x;
-  float y1 = p1.y;
-  float x2 = p2.x;
-  float y2 = p2.y;
-  float slope = RadToDeg(atan2(x2 - x1, y2 - y1));
-  return slope;
-}
 
 /**
  * @brief finds the distance between the robot and a point
@@ -112,63 +78,22 @@ float slope(point p1, point p2)
  */
 float robotDistance(float x, float y)
 {
-
   return (hypot(X - x, Y - y));
 }
-/**
- * @brief finds the distance between the robot and a point
- * @param p1 struct of point containing the point
- */
-float robotDistance(point p1)
-{
 
-  return (hypot(X - p1.x, Y - p1.y));
-}
-
-/**
- * @brief finds the closest point to the robot
- * @param points an array containing the points
- */
-int closestPoint(float points[][2], int size)
-{
-  double min = robotDistance(points[0][0], points[0][1]);
-  int index = 0;
-
-  for (int i = 0; i < size; i++)
-  {
-    float dist = robotDistance(points[i][0], points[i][1]);
-    if (dist < min)
-    {
-      min = dist;
-      index = i;
-    }
-  }
-  return index;
-}
-/**
- * @brief finds the closest point to the robot
- * @param points an array containing the points as a struct
- */
-int closestPoint(std::vector<point> points, int size)
-{
-  double min = robotDistance(points[0].x, points[0].y);
-  int index = 0;
-
-  for (int i = 0; i < size; i++)
-  {
-    float dist = robotDistance(points[i].x, points[i].y);
-    if (dist < min)
-    {
-      min = dist;
-      index = i;
-    }
-  }
-  return index;
-}
+/*
+███████╗ ████████╗  █████╗  ███╗   ██╗ ██╗      ███████╗ ██╗   ██╗
+██╔════╝ ╚══██╔══╝ ██╔══██╗ ████╗  ██║ ██║      ██╔════╝ ╚██╗ ██╔╝
+███████╗    ██║    ███████║ ██╔██╗ ██║ ██║      █████╗    ╚████╔╝
+╚════██║    ██║    ██╔══██║ ██║╚██╗██║ ██║      ██╔══╝     ╚██╔╝
+███████║    ██║    ██║  ██║ ██║ ╚████║ ███████╗ ███████╗    ██║
+╚══════╝    ╚═╝    ╚═╝  ╚═╝ ╚═╝  ╚═══╝ ╚══════╝ ╚══════╝    ╚═╝
+*/
 
 /**
  * @brief finds the closest point to the robot
  * @param points an array containing the points as a struct
+ * @return the index of the closest point
  */
 int closestPoint(std::vector<bezierPoint> points, int size)
 {
@@ -186,75 +111,18 @@ int closestPoint(std::vector<bezierPoint> points, int size)
   }
   return index;
 }
-/**
- * @brief if the next point is closer
- * @param initial the index of the current point
- * @param points an array containing the points
- */
-int nextPoint(int initial, std::vector<point> points)
-{
-  if (robotDistance(points[initial].x, points[initial].y) < robotDistance(points[initial + 1].x, points[initial + 1].y))
-  {
-    return initial;
-  }
-  else
-  {
-    return initial + 1;
-  }
-}
 
-int nextPoint(int initial, float points[][2])
-{
-  if (robotDistance(points[initial][0], points[initial][1]) < robotDistance(points[initial + 1][0], points[initial + 1][1]))
-  {
-    return initial;
-  }
-  else
-  {
-    return initial + 1;
-  }
-}
-
-/*
-███████╗ ████████╗  █████╗  ███╗   ██╗ ██╗      ███████╗ ██╗   ██╗
-██╔════╝ ╚══██╔══╝ ██╔══██╗ ████╗  ██║ ██║      ██╔════╝ ╚██╗ ██╔╝
-███████╗    ██║    ███████║ ██╔██╗ ██║ ██║      █████╗    ╚████╔╝
-╚════██║    ██║    ██╔══██║ ██║╚██╗██║ ██║      ██╔══╝     ╚██╔╝
-███████║    ██║    ██║  ██║ ██║ ╚████║ ███████╗ ███████╗    ██║
-╚══════╝    ╚═╝    ╚═╝  ╚═╝ ╚═╝  ╚═══╝ ╚══════╝ ╚══════╝    ╚═╝
-*/
-
-float lerp(float a, float b, float t)
-{
-  return ((1 - t) * a + t * b);
-}
 /**
  * @brief finds the point on a bezier curve and reutrns a point struct
  * @param bezier an array containing the control points
  * @param t the t value
+ * @return a point struct containing the x and y coordinates of the point
  */
-point bezier(float bezierPoints[][2], float t)
-{
-  // determines whcih bezier curve to find when working with splines
-  int n = floor(t);
-  float x1 = bezierPoints[0 + 4 * n][0];
-  float x2 = bezierPoints[1 + 4 * n][0];
-  float x3 = bezierPoints[2 + 4 * n][0];
-  float x4 = bezierPoints[3 + 4 * n][0];
 
-  float y1 = bezierPoints[0 + 4 * n][1];
-  float y2 = bezierPoints[1 + 4 * n][1];
-  float y3 = bezierPoints[2 + 4 * n][1];
-  float y4 = bezierPoints[3 + 4 * n][1];
-  // bernestein polynomials
-  // subtracts the n value from t to get the t value for the bezier curve
-  t -= n;
-  point bezierPoint(
-      /*x points*/ (x1 * (pow(-t, 3) + 3 * pow(t, 2) - 3 * t + 1) + x2 * (3 * pow(t, 3) - 6 * pow(t, 2) + 3 * t) + x3 * (-3 * pow(t, 3) + 3 * pow(t, 2)) + x4 * pow(t, 3)),
-      /*y points*/ (y1 * (pow(-t, 3) + 3 * pow(t, 2) - 3 * t + 1) + y2 * (3 * pow(t, 3) - 6 * pow(t, 2) + 3 * t) + y3 * (-3 * pow(t, 3) + 3 * pow(t, 2)) + y4 * pow(t, 3)));
-  return (bezierPoint);
-}
-
+/// @brief finds the derivative of a bezier curve
+/// @param bezierPoints an array containing the control points
+/// @param t the tvalue
+/// @return a point struct with the x and y of the derivatuve point
 point derivativeBezier(float bezierPoints[][2], float t)
 {
 
@@ -277,6 +145,10 @@ point derivativeBezier(float bezierPoints[][2], float t)
   return (bezierPoint);
 }
 
+/// @brief finds the curvature of a bezier curve
+/// @param bezierPoints an array containing the control points
+/// @param t the tval of the point
+/// @return a float containing the curvature
 float curvature(float bezierPoints[][2], float t)
 {
   int n = floor(t);
@@ -308,9 +180,10 @@ float curvature(float bezierPoints[][2], float t)
 }
 
 /**
- * @brief finds the point on a bezier curve and reutrns a bezier point struct
+ * @brief finds the point on a bezier curve
  * @param bezier an array containing the control points
  * @param t the t value
+ * @return a bezierPoint struct
  */
 bezierPoint bezierPointConstructor(float bezierPoints[][2], float t)
 {
@@ -343,6 +216,7 @@ bezierPoint bezierPointConstructor(float bezierPoints[][2], float t)
  * @param points an array containing the points of the line
  * @param point1 the index first point of the line
  * @param point2 the index second point of the line
+ * @return the distance from the point to the line
  */
 float perpendicularDist(std::vector<bezierPoint> points, int point1, int point2)
 {
@@ -363,6 +237,7 @@ float perpendicularDist(std::vector<bezierPoint> points, int point1, int point2)
  * @param points an array containing the points
  * @param point1 the first point
  * @param point2 the second point
+ * @return an integer representing the sign of the distance
  */
 int signOfDistance(std::vector<bezierPoint> points, int p1, int p2)
 {
@@ -511,6 +386,45 @@ void stanley(float points[][2], int length)
 ██║      ╚██████╔╝ ██║  ██║ ███████╗     ██║      ╚██████╔╝ ██║  ██║ ███████║ ╚██████╔╝ ██║    ██║
 ╚═╝       ╚═════╝  ╚═╝  ╚═╝ ╚══════╝     ╚═╝       ╚═════╝  ╚═╝  ╚═╝ ╚══════╝  ╚═════╝  ╚═╝    ╚═╝
 */
+/**
+ * @brief calculates if the distance between the next point is closer than the intial point
+ * @param initial the initial point
+ * @param points an array containing the points
+ * @return the next point
+*/
+int nextPoint(int initial, float points[][2])
+{
+  if (robotDistance(points[initial][0], points[initial][1]) < robotDistance(points[initial + 1][0], points[initial + 1][1]))
+  {
+    return initial;
+  }
+  else
+  {
+    return initial + 1;
+  }
+}
+
+/**
+ * @brief finds the closest point to the robot
+ * @param points an array containing the points
+ */
+int closestPoint(float points[][2], int size)
+{
+  double min = robotDistance(points[0][0], points[0][1]);
+  int index = 0;
+
+  for (int i = 0; i < size; i++)
+  {
+    float dist = robotDistance(points[i][0], points[i][1]);
+    if (dist < min)
+    {
+      min = dist;
+      index = i;
+    }
+  }
+  return index;
+}
+
 
 /**
  * @brief drive to a point with a curve
