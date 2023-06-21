@@ -1,9 +1,9 @@
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
 /*    Module:       main.cpp                                                  */
-/*    Author:       nikhi                                                     */
+/*    Author:       Nikhil Ramanuja                                           */
 /*    Created:      3/14/2023, 3:29:14 PM                                     */
-/*    Description:  Stanley Controller                                        */
+/*    Description:  testing program for path following, stanley and pure pursuit*/
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 
@@ -98,12 +98,8 @@ void usercontrol(void)
   while (1)
   {
     // std::cout << X << "," << Y << std::endl;
-    LF.spin(forward, Controller1.Axis3.position() * 120, voltageUnits::mV);
-    RF.spin(forward, Controller1.Axis2.position() * 120, voltageUnits::mV);
-    LB.spin(forward, Controller1.Axis3.position() * 120, voltageUnits::mV);
-    RB.spin(forward, Controller1.Axis2.position() * 120, voltageUnits::mV);
-
-    wait(20, msec); // Sleep the task for a short amount of time to
+    voltDrive(Controller1.Axis3.position(),Controller1.Axis2.position(),10);
+    wait(10, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
   }
 }

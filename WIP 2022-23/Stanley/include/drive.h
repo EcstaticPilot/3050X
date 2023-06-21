@@ -1,7 +1,8 @@
 #pragma once
 
 void drive(int lSpeed, int rSpeed, double wt);
-void drive_brake(vex::brakeType Brake);
+void voltDrive(double lSpeed, double rSpeed, double wt);
+void drive_brake(vex::brakeType Brake = brake);
 void forward_dist(float dist);
 void inchDrive(double target, double speedMod);
 void rotate(double dir, double accuracy);

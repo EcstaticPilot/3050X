@@ -3,6 +3,19 @@
 
 // start off path stuff
 using namespace vex;
+// an explanation for error works
+/*
+The robot knows where it is at all times. It knows this because it knows where it isn't. By subtracting where it is from where it isn't, or where it isn't from where it is
+(whichever is greater), it obtains a difference, or deviation. The guidance subsystem uses deviations to generate corrective commands to drive the robot from a position where
+it is to a position where it isn't, and arriving at a position where it wasn't, it now is. Consequently, the position where it is, is now the position that it wasn't, and
+it follows that the position that it was, is now the position that it isn't. In the event that the position that it is in is not the position that it wasn't,
+the system has acquired a variation, the variation being the difference between where the robot is, and where it wasn't. If variation is considered to be a significant factor,
+it too may be corrected by the GEA. However, the robot must also know where it was. The robot guidance computer scenario works as follows.
+Because a variation has modified some of the information the robot has obtained, it is not sure just where it is. However, it is sure where it isn't, within reason,
+and it knows where it was. It now subtracts where it should be from where it wasn't, or vice-versa, and by differentiating this from the algebraic sum of where it shouldn't be,
+and where it was, it is able to obtain the deviation and its variation, which is called error.",
+*/
+
 float TrackWidth = 8.5;
 struct point
 {
@@ -381,14 +394,14 @@ int signOfDistance(std::vector<bezierPoint> points, int p1, int p2)
  */
 void stanley(float points[][2], int length)
 {
-  float kp = .5;
-  float ki = 0.000;
-  float kd = 0.00;
+  float kp = .75;
+  float ki = 0.05;
+  float kd = 0.2;
   float ld;
-  float minSpeed = 15;
+  float minSpeed = 25;
   float maxSpeed = 90;
   float v;
-  float kv = 5;
+  float kv = 8;
   float segmentDist;
   float pathHeading;
   float tSpeed;
@@ -432,23 +445,23 @@ void stanley(float points[][2], int length)
       pointClosest = 0;
     }
 
-    if (Bpoints[pointClosest].tval >= length / 4)
+    if (fabs(Bpoints[0].tval - (length / 4)) < 0.001)
     {
       break;
     }
     // slope of the path at the closest point
-    pathHeading = Bpoints[pointClosest].angle;
+    pathHeading = Bpoints[0].angle;
     //   std::cout<<"2"<<std::endl;
     // find the distance to the line segment after the closest point
 
-    segmentDist = perpendicularDist(Bpoints, pointClosest, pointClosest + 1); // distance of the path segment after the closest point
-    sign = signOfDistance(Bpoints, pointClosest, pointClosest + 1);
+    segmentDist = perpendicularDist(Bpoints, 0, 1); // distance of the path segment after the closest point
+    sign = signOfDistance(Bpoints, 0, 1);
     //  std::cout<<"3"<<std::endl;
-    // calculate lookahead distance
+    // calculate lookahead distance 
 
     v = ((RotationR.velocity(rpm) / 2) + (RotationL.velocity(rpm) / 2)) / 2; // take the average of the two sides converting rpm to percent
-    v = fmax(v, minSpeed);                                               // if velocity is less than minSpeed, set it to minSpeed
-    ld = v / kv;
+    v = fmax(v, minSpeed);                                                   // if velocity is less than minSpeed, set it to minSpeed
+    ld = (v / kv) + 2;
 
     // calculate the angle to the global angle to the lookahead point
     ldAngle = RadToDeg(atan2(segmentDist, ld));
@@ -473,19 +486,17 @@ void stanley(float points[][2], int length)
     //  std::cout<<"5"<<std::endl;
     prevError = error;
     // calculate the speed of the motors
-    tSpeed = 100-fabs(Bpoints[pointClosest].curvature*2500);
-    // limit the value of tSpeed
+    tSpeed = 100 - (fabs(Bpoints[pointClosest].curvature * 2500) + fabs(error));
+
+    // limit the value of tSpeed using fmax and fmin
     tSpeed = fmax(tSpeed, minSpeed);
     tSpeed = fmin(tSpeed, maxSpeed);
-    // drive
-    drive(tSpeed + output, tSpeed - output, 10);
 
-    // print the values
-    // pathDistance<<","<<ldAngle*-sign<<","<<perpendicularDist(points,0,1)<<","
-    //  std::cout<<"x="<<X<<", y= "<<Y<<", pointclosest= "<<pointClosest<<" error= "<<error<<std::endl
-    //  <<"seg1dist= "<<segment1dist<<", seg2dist= "<<segment2dist<<", pathdist= "<<pathDistance<<std::endl<<std::endl;
-    std::cout << X << ",,," << Y << "," <<Bpoints[pointClosest].x<< "," <<Bpoints[pointClosest].y <<","<<Bpoints[pointClosest].angle<< std::endl;
-    wait(15, msec);
+    // drive using voltDrive
+    voltDrive(tSpeed + output, tSpeed - output, 10);
+
+    std::cout << X << ",,," << Y << "," << Bpoints[pointClosest].angle << std::endl;
+    wait(5, msec);
   }
   drive_brake(brake);
   Brain.Screen.drawRectangle(0, 0, 480, 240, green);
@@ -517,7 +528,7 @@ void curveDrive(double x, double y, double speed, double wt = 10)
   double curvature = (2 * localX) / (dist * dist);
   float L = speed * (2 + (curvature * TrackWidth)) / 2;
   float R = speed * (2 - (curvature * TrackWidth)) / 2;
-  drive(L, R, wt);
+  voltDrive(L, R, wt);
 }
 /**
  * @brief find the intersection of a line and a circle and returns the tvlaue of the intersection

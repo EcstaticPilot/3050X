@@ -4,7 +4,7 @@
 using namespace vex;
 
 float C = M_PI * 3.25;
-//extern double X, Y;
+// extern double X, Y;
 void terminalPrint(float a = 0, float b = 0, float c = 0, float d = 0, float e = 0)
 {
   std::cout << a << "," << b << "," << c << "," << d << "," << e << std::endl;
@@ -17,12 +17,26 @@ void drive(int lSpeed, int rSpeed, double wt)
   RB.spin(forward, rSpeed, pct);
   wait(wt, msec);
 }
+/**
+ * @brief drives the robot based on voltage
+ * @param lSpeed left side speed in percent
+ * @param rSpeed right side speed in percent
+ */
+void voltDrive(double lSpeed, double rSpeed, double wt)
+{
+
+  LF.spin(forward, lSpeed * 120, voltageUnits::mV);
+  RF.spin(forward, rSpeed * 120, voltageUnits::mV);
+  LB.spin(forward, lSpeed * 120, voltageUnits::mV);
+  RB.spin(forward, rSpeed * 120, voltageUnits::mV);
+  wait(wt, msec);
+}
 
 /**
  * @brief brakes the robot based on brake type
  * @param Brake brake type
  */
-void drive_brake(vex::brakeType Brake = brake)
+void drive_brake(vex::brakeType Brake)
 {
   LF.stop(Brake);
   RF.stop(Brake);
@@ -65,7 +79,7 @@ void inchDrive(double target, double speedMod = 1)
     double lSpeed = (kp * errorL) + (ki * sum) + (kd * (prevError - errorL)) + 0.2 * errorB;
     double rSpeed = (kp * errorL) + (ki * sum) + (kd * (prevError - errorL)) - 0.2 * errorB;
     ;
-    drive(-lSpeed * speedMod, -rSpeed * speedMod, 10);
+    voltDrive(-lSpeed * speedMod, -rSpeed * speedMod, 10);
     sum += errorL;
     prevError = errorL;
   }
@@ -91,7 +105,7 @@ void rotate(double dir, double accuracy = 1)
   while (fabs(error) > accuracy)
   {
     speed = (Kp * error) + (Ki * sum) + (Kd * (error - prevError));
-    drive(speed / 3, -speed / 3, 10);
+    voltDrive(speed / 3, -speed / 3, 10);
 
     wait(10, msec);
     prevError = error;
@@ -241,4 +255,3 @@ void DriveToPoint3(float targetX, float targetY, float targetAngle,
   }
   drive_brake();
 }
-
