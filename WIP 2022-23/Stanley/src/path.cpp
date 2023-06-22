@@ -1,6 +1,6 @@
 #include "vex.h"
 #include <vector>
-
+float TrackWidth = 8.5;
 // start off path stuff
 using namespace vex;
 // an explanation for error works
@@ -16,7 +16,6 @@ and it knows where it was. It now subtracts where it should be from where it was
 and where it was, it is able to obtain the deviation and its variation, which is called error.",
 */
 
-float TrackWidth = 8.5;
 struct point
 {
   float x;
@@ -24,15 +23,6 @@ struct point
   point(float x, float y) : x(x), y(y) {}
 };
 
-struct bezierPoint
-{
-  float x;
-  float y;
-  float tval;
-  float angle;
-  float curvature;
-  bezierPoint(float x, float y, float tval, float angle, float curvature) : x(x), y(y), tval(tval), angle(angle), curvature(curvature) {}
-};
 
 /**
  * @brief convert radians to degrees
@@ -82,47 +72,20 @@ float robotDistance(float x, float y)
 }
 
 /*
-███████╗ ████████╗  █████╗  ███╗   ██╗ ██╗      ███████╗ ██╗   ██╗
-██╔════╝ ╚══██╔══╝ ██╔══██╗ ████╗  ██║ ██║      ██╔════╝ ╚██╗ ██╔╝
-███████╗    ██║    ███████║ ██╔██╗ ██║ ██║      █████╗    ╚████╔╝
-╚════██║    ██║    ██╔══██║ ██║╚██╗██║ ██║      ██╔══╝     ╚██╔╝
-███████║    ██║    ██║  ██║ ██║ ╚████║ ███████╗ ███████╗    ██║
-╚══════╝    ╚═╝    ╚═╝  ╚═╝ ╚═╝  ╚═══╝ ╚══════╝ ╚══════╝    ╚═╝
+███████╗  ████████╗   █████╗   ███╗   ██╗  ██╗       ███████╗  ██╗   ██╗
+██╔════╝  ╚══██╔══╝  ██╔══██╗  ████╗  ██║  ██║       ██╔════╝  ╚██╗ ██╔╝
+███████╗     ██║     ███████║  ██╔██╗ ██║  ██║       █████╗     ╚████╔╝
+╚════██║     ██║     ██╔══██║  ██║╚██╗██║  ██║       ██╔══╝      ╚██╔╝
+███████║     ██║     ██║  ██║  ██║ ╚████║  ███████╗  ███████╗     ██║
+╚══════╝     ╚═╝     ╚═╝  ╚═╝  ╚═╝  ╚═══╝  ╚══════╝  ╚══════╝     ╚═╝
 */
 
-/**
- * @brief finds the closest point to the robot
- * @param points an array containing the points as a struct
- * @return the index of the closest point
+
+/** @brief finds the derivative of a bezier curve
+ * @param bezierPoints an array containing the control points
+ * @param t the tvalue
+ * @return a point struct with the x and y of the derivatuve point
  */
-int closestPoint(std::vector<bezierPoint> points, int size)
-{
-  double min = robotDistance(points[0].x, points[0].y);
-  int index = 0;
-
-  for (int i = 0; i < size; i++)
-  {
-    float dist = robotDistance(points[i].x, points[i].y);
-    if (dist < min)
-    {
-      min = dist;
-      index = i;
-    }
-  }
-  return index;
-}
-
-/**
- * @brief finds the point on a bezier curve and reutrns a point struct
- * @param bezier an array containing the control points
- * @param t the t value
- * @return a point struct containing the x and y coordinates of the point
- */
-
-/// @brief finds the derivative of a bezier curve
-/// @param bezierPoints an array containing the control points
-/// @param t the tvalue
-/// @return a point struct with the x and y of the derivatuve point
 point derivativeBezier(float bezierPoints[][2], float t)
 {
 
@@ -149,7 +112,7 @@ point derivativeBezier(float bezierPoints[][2], float t)
 /// @param bezierPoints an array containing the control points
 /// @param t the tval of the point
 /// @return a float containing the curvature
-float curvature(float bezierPoints[][2], float t)
+float findcurvature(float bezierPoints[][2], float t)
 {
   int n = floor(t);
   float x0 = bezierPoints[0 + 4 * n][0];
@@ -178,17 +141,18 @@ float curvature(float bezierPoints[][2], float t)
   float curvature = numerator / denominator;
   return curvature;
 }
-
-/**
- * @brief finds the point on a bezier curve
- * @param bezier an array containing the control points
- * @param t the t value
- * @return a bezierPoint struct
- */
-bezierPoint bezierPointConstructor(float bezierPoints[][2], float t)
+class bezierPoint
 {
-  // determines whcih bezier curve to find when working with splines
-  int n = floor(t);
+  public:
+  float x;
+  float y;
+  float tval;
+  float angle;
+  float curvature;
+  bezierPoint(float x, float y, float tval, float angle, float curvature) : x(x), y(y), tval(tval), angle(angle), curvature(curvature) {}
+  bezierPoint(float bezierPoints[][2], float t) 
+  {
+      int n = floor(t);
   float x1 = bezierPoints[0 + 4 * n][0];
   float x2 = bezierPoints[1 + 4 * n][0];
   float x3 = bezierPoints[2 + 4 * n][0];
@@ -203,14 +167,35 @@ bezierPoint bezierPointConstructor(float bezierPoints[][2], float t)
   point derivativeBpoint = derivativeBezier(bezierPoints, t);
   t -= n;
   bezierPoint bezierPoint(
-      /*x points*/ (x1 * (pow(-t, 3) + 3 * pow(t, 2) - 3 * t + 1) + x2 * (3 * pow(t, 3) - 6 * pow(t, 2) + 3 * t) + x3 * (-3 * pow(t, 3) + 3 * pow(t, 2)) + x4 * pow(t, 3)),
-      /*y points*/ (y1 * (pow(-t, 3) + 3 * pow(t, 2) - 3 * t + 1) + y2 * (3 * pow(t, 3) - 6 * pow(t, 2) + 3 * t) + y3 * (-3 * pow(t, 3) + 3 * pow(t, 2)) + y4 * pow(t, 3)),
-      /*t value*/ t + n,
-      /*angle*/ RadToDeg(atan2(derivativeBpoint.x, derivativeBpoint.y)),
-      /*curvature*/ curvature(bezierPoints, t + n));
-  return (bezierPoint);
-}
+      this->x= (x1 * (pow(-t, 3) + 3 * pow(t, 2) - 3 * t + 1) + x2 * (3 * pow(t, 3) - 6 * pow(t, 2) + 3 * t) + x3 * (-3 * pow(t, 3) + 3 * pow(t, 2)) + x4 * pow(t, 3)),
+      this->y= (y1 * (pow(-t, 3) + 3 * pow(t, 2) - 3 * t + 1) + y2 * (3 * pow(t, 3) - 6 * pow(t, 2) + 3 * t) + y3 * (-3 * pow(t, 3) + 3 * pow(t, 2)) + y4 * pow(t, 3)),
+      this->tval= t + n,
+      this->angle= RadToDeg(atan2(derivativeBpoint.x, derivativeBpoint.y)),
+      this->curvature= findcurvature(bezierPoints, t + n));
+  }
+};
 
+/**
+ * @brief finds the closest point to the robot
+ * @param points an array containing the points as a struct
+ * @return the index of the closest point
+ */
+int closestPoint(std::vector<bezierPoint> points, int size)
+{
+  double min = robotDistance(points[0].x, points[0].y);
+  int index = 0;
+
+  for (int i = 0; i < size; i++)
+  {
+    float dist = robotDistance(points[i].x, points[i].y);
+    if (dist < min)
+    {
+      min = dist;
+      index = i;
+    }
+  }
+  return index;
+}
 /**
  * @brief finds the distance of a point from a line
  * @param points an array containing the points of the line
@@ -270,13 +255,13 @@ int signOfDistance(std::vector<bezierPoint> points, int p1, int p2)
 void stanley(float points[][2], int length)
 {
   float kp = .75;
-  float ki = 0.05;
-  float kd = 0.2;
+  float ki = 0.00;
+  float kd = 0.0;
   float ld;
   float minSpeed = 25;
   float maxSpeed = 90;
   float v;
-  float kv = 8;
+  float kv = 7;
   float segmentDist;
   float pathHeading;
   float tSpeed;
@@ -292,7 +277,7 @@ void stanley(float points[][2], int length)
   // Filling the vector with points
   for (int i = 0; i < 10; i++)
   {
-    Bpoints[i] = bezierPointConstructor(points, tval);
+    Bpoints[i] = bezierPoint(points, tval);
     tval += 0.005;
   }
   Brain.Screen.drawRectangle(0, 0, 480, 240, yellow);
@@ -314,7 +299,7 @@ void stanley(float points[][2], int length)
       // fill the vecotr until the length is 20
       while (Bpoints.size() < 10)
       {
-        Bpoints.push_back(bezierPointConstructor(points, tval));
+        Bpoints.push_back(bezierPoint(points, tval));
         tval += 0.005;
       }
       pointClosest = 0;
@@ -332,7 +317,7 @@ void stanley(float points[][2], int length)
     segmentDist = perpendicularDist(Bpoints, 0, 1); // distance of the path segment after the closest point
     sign = signOfDistance(Bpoints, 0, 1);
     //  std::cout<<"3"<<std::endl;
-    // calculate lookahead distance 
+    // calculate lookahead distance
 
     v = ((RotationR.velocity(rpm) / 2) + (RotationL.velocity(rpm) / 2)) / 2; // take the average of the two sides converting rpm to percent
     v = fmax(v, minSpeed);                                                   // if velocity is less than minSpeed, set it to minSpeed
@@ -379,19 +364,19 @@ void stanley(float points[][2], int length)
 }
 
 /*
-██████╗  ██╗   ██╗ ██████╗  ███████╗     ██████╗  ██╗   ██╗ ██████╗  ███████╗ ██╗   ██╗ ██╗ ████████╗
-██╔══██╗ ██║   ██║ ██╔══██╗ ██╔════╝     ██╔══██╗ ██║   ██║ ██╔══██╗ ██╔════╝ ██║   ██║ ██║ ╚══██╔══╝
-██████╔╝ ██║   ██║ ██████╔╝ █████╗       ██████╔╝ ██║   ██║ ██████╔╝ ███████╗ ██║   ██║ ██║    ██║
-██╔═══╝  ██║   ██║ ██╔══██╗ ██╔══╝       ██╔═══╝  ██║   ██║ ██╔══██╗ ╚════██║ ██║   ██║ ██║    ██║
-██║      ╚██████╔╝ ██║  ██║ ███████╗     ██║      ╚██████╔╝ ██║  ██║ ███████║ ╚██████╔╝ ██║    ██║
-╚═╝       ╚═════╝  ╚═╝  ╚═╝ ╚══════╝     ╚═╝       ╚═════╝  ╚═╝  ╚═╝ ╚══════╝  ╚═════╝  ╚═╝    ╚═╝
+██████╗   ██╗   ██╗  ██████╗   ███████╗      ██████╗   ██╗   ██╗  ██████╗   ███████╗  ██╗   ██╗  ██╗  ████████╗
+██╔══██╗  ██║   ██║  ██╔══██╗  ██╔════╝      ██╔══██╗  ██║   ██║  ██╔══██╗  ██╔════╝  ██║   ██║  ██║  ╚══██╔══╝
+██████╔╝  ██║   ██║  ██████╔╝  █████╗        ██████╔╝  ██║   ██║  ██████╔╝  ███████╗  ██║   ██║  ██║     ██║
+██╔═══╝   ██║   ██║  ██╔══██╗  ██╔══╝        ██╔═══╝   ██║   ██║  ██╔══██╗  ╚════██║  ██║   ██║  ██║     ██║
+██║       ╚██████╔╝  ██║  ██║  ███████╗      ██║       ╚██████╔╝  ██║  ██║  ███████║  ╚██████╔╝  ██║     ██║
+╚═╝        ╚═════╝   ╚═╝  ╚═╝  ╚══════╝      ╚═╝        ╚═════╝   ╚═╝  ╚═╝  ╚══════╝   ╚═════╝   ╚═╝     ╚═╝
 */
 /**
  * @brief calculates if the distance between the next point is closer than the intial point
  * @param initial the initial point
  * @param points an array containing the points
  * @return the next point
-*/
+ */
 int nextPoint(int initial, float points[][2])
 {
   if (robotDistance(points[initial][0], points[initial][1]) < robotDistance(points[initial + 1][0], points[initial + 1][1]))
@@ -424,7 +409,6 @@ int closestPoint(float points[][2], int size)
   }
   return index;
 }
-
 
 /**
  * @brief drive to a point with a curve
