@@ -171,7 +171,7 @@ class bezierPoint
       this->y= (y1 * (pow(-t, 3) + 3 * pow(t, 2) - 3 * t + 1) + y2 * (3 * pow(t, 3) - 6 * pow(t, 2) + 3 * t) + y3 * (-3 * pow(t, 3) + 3 * pow(t, 2)) + y4 * pow(t, 3)),
       this->tval= t + n,
       this->angle= RadToDeg(atan2(derivativeBpoint.x, derivativeBpoint.y)),
-      this->curvature= findcurvature(bezierPoints, t + n));
+      this->curvature= findcurvature(bezierPoints, t + n+0.1));
   }
 };
 
@@ -258,14 +258,22 @@ int signOfDistance(std::vector<bezierPoint> points, int p1, int p2)
  */
 void stanley(float points[][2], int length)
 {
-  float kp = .75;
-  float ki = 0.005;
-  float kd = 0;
+  //constants for reaction to error
+  float kp = 1;
+  float ki = 0.01;
+  float kd = 1.5;
+  //lookahead distance
   float ld;
+  //minimum and maximum speed
   float minSpeed = 25;
   float maxSpeed = 90;
   float v;
-  float kv = 10;
+  //konstant for determining ld
+  float kv = 25;
+  //konstant for how much error changes the speed
+  float ke= 1;
+  //konstant for how much the curvature changes the speed
+  float kc = 750;
   float segmentDist;
   float pathHeading;
   float tSpeed;
@@ -313,7 +321,7 @@ void stanley(float points[][2], int length)
       pointClosest = 0;
     }
 
-    if (fabs(Bpoints[0].tval - (length / 4)) < 0.001)
+    if (fabs(Bpoints[0].tval-length/4)<0.001)
     {
       break;
     }
@@ -350,11 +358,11 @@ void stanley(float points[][2], int length)
     }
     // prevoius error
 
-    output = (error * kp) + (totalError)*ki + (prevError - error) * kd;
+    output = (error * kp) + (totalError)*ki + (error-prevError) * kd;
     //  std::cout<<"5"<<std::endl;
     
     // calculate the speed of the motors
-    tSpeed = 100 - (fabs(Bpoints[pointClosest].curvature * 500) + fabs(error));
+    tSpeed = 100 - (fabs(Bpoints[pointClosest].curvature *kc) + fabs(error*ke));
 
     // limit the value of tSpeed using fmax and fmin
     tSpeed = fmax(tSpeed, minSpeed);
@@ -363,12 +371,12 @@ void stanley(float points[][2], int length)
     // drive using voltDrive
     ffDrive(tSpeed + output, tSpeed - output, 10);
 
-   // std::cout << X << ",,," << Y << "," <<totalError<< std::endl;
-    std::cout <<output<<","<<error*kp<<","<<(prevError - error) * kd<<std::endl;
+    std::cout << X << ",,," << Y <<","<<Bpoints[0].tval<< std::endl;
+   // std::cout <<output<<","<<error*kp<<","<<(prevError - error) * kd<<std::endl;
     prevError = error;
     wait(5, msec);
   }
-  drive_brake(brake);
+  drive_brake(hold);
   Brain.Screen.drawRectangle(0, 0, 480, 240, green);
   std::cout << "done" << std::endl;
 }

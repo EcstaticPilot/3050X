@@ -68,16 +68,11 @@ void autonomous(void)
   std::cout << "Autonomous Started" << std::endl;
   // allocate memory space using malloc
   // assign x and y values for the points
-  float points[8][2] = {
+  float points[4][2] = {
       {0, 0},
-      {0, 15},
-      {10.4, 24},
-      {0, 30},
-      {0,30},
-      {-10.4,36},
-      {-74,40},
-      {-80,35}
-      };
+      {0, 50},
+      {24, 24},
+      {24, 70}};
   stanley(points, sizeof(points) / 8);
   // ..........................................................................
   // Insert autonomous user code here.
