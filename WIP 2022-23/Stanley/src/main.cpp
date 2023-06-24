@@ -9,25 +9,22 @@
 
 #include "vex.h"
 
-
 using namespace vex;
 
 // A global instance of competition
 competition Competition;
 
-
-
 void toggleclaw()
 {
   claw.set(!claw.value());
 }
+
 int ControllerPrint()
 {
-
-  while (1)
+  while (true)
   {
     Controller1.Screen.setCursor(1, 1);
-    Controller1.Screen.print("pos= (%.1f,%.1f)", X, Y);
+    Controller1.Screen.print("pos= (%.1f  , %.1f  )       ", X, Y);
     Controller1.Screen.setCursor(2, 1);
     Controller1.Screen.print("%.1f", gyro1.yaw(deg));
     this_thread::sleep_for(100);
@@ -71,11 +68,16 @@ void autonomous(void)
   std::cout << "Autonomous Started" << std::endl;
   // allocate memory space using malloc
   // assign x and y values for the points
-  float points[4][2] = {
+  float points[8][2] = {
       {0, 0},
-      {0, 50},
-      {24, 24},
-      {24, 70}};
+      {0, 15},
+      {10.4, 24},
+      {0, 30},
+      {0,30},
+      {-10.4,36},
+      {-74,40},
+      {-80,35}
+      };
   stanley(points, sizeof(points) / 8);
   // ..........................................................................
   // Insert autonomous user code here.
@@ -97,8 +99,8 @@ void usercontrol(void)
 
   while (1)
   {
-    // std::cout << X << "," << Y << std::endl;
-    voltDrive(Controller1.Axis3.position(),Controller1.Axis2.position(),10);
+     std::cout << X << "," << Y << std::endl;
+    voltDrive(Controller1.Axis3.position(), Controller1.Axis2.position(), 10);
     wait(10, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
   }

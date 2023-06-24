@@ -175,6 +175,10 @@ class bezierPoint
   }
 };
 
+float slopeAngle(std::vector<bezierPoint> bezierPoints,int i)
+{
+  return atan2(bezierPoints[i].x - bezierPoints[i + 1].x, bezierPoints[i].y - bezierPoints[i + 1].y);
+}
 /**
  * @brief finds the closest point to the robot
  * @param points an array containing the points as a struct
@@ -255,19 +259,21 @@ int signOfDistance(std::vector<bezierPoint> points, int p1, int p2)
 void stanley(float points[][2], int length)
 {
   float kp = .75;
-  float ki = 0.00;
-  float kd = 0.0;
+  float ki = 0.005;
+  float kd = 0;
   float ld;
   float minSpeed = 25;
   float maxSpeed = 90;
   float v;
-  float kv = 7;
+  float kv = 10;
   float segmentDist;
   float pathHeading;
   float tSpeed;
   float ldAngle;
   float prevError = 0;
   float totalError = 0;
+  float error;
+  float output;
   int sign;
   int pointClosest = 0;
   float tval = 0;
@@ -280,10 +286,12 @@ void stanley(float points[][2], int length)
     Bpoints[i] = bezierPoint(points, tval);
     tval += 0.005;
   }
-  Brain.Screen.drawRectangle(0, 0, 480, 240, yellow);
+  Brain.Screen.drawRectangle(0, 0, 480, 240, vex::yellow);
   Brain.Screen.print("stanley in progress");
+  int i =0;
   while (true)
   {
+    i++;
     // find the closest point
     // pointClosest =closestPoint(points,8); //alternate way to find closest point
     pointClosest = closestPoint(Bpoints, 9);
@@ -321,13 +329,13 @@ void stanley(float points[][2], int length)
 
     v = ((RotationR.velocity(rpm) / 2) + (RotationL.velocity(rpm) / 2)) / 2; // take the average of the two sides converting rpm to percent
     v = fmax(v, minSpeed);                                                   // if velocity is less than minSpeed, set it to minSpeed
-    ld = (v / kv) + 2;
+    ld = (v / kv)+2;
 
     // calculate the angle to the global angle to the lookahead point
     ldAngle = RadToDeg(atan2(segmentDist, ld));
 
     // calculate the error
-    float error = (ldAngle * sign + pathHeading - gyro1.yaw(deg));
+    error = (ldAngle * sign + pathHeading - gyro1.yaw(deg));
     // std::cout<<"4"<<std::endl;
     // calculate the PID output
 
@@ -342,20 +350,22 @@ void stanley(float points[][2], int length)
     }
     // prevoius error
 
-    float output = (error * kp) + (totalError)*ki + (prevError - error) * kd;
+    output = (error * kp) + (totalError)*ki + (prevError - error) * kd;
     //  std::cout<<"5"<<std::endl;
-    prevError = error;
+    
     // calculate the speed of the motors
-    tSpeed = 100 - (fabs(Bpoints[pointClosest].curvature * 2500) + fabs(error));
+    tSpeed = 100 - (fabs(Bpoints[pointClosest].curvature * 500) + fabs(error));
 
     // limit the value of tSpeed using fmax and fmin
     tSpeed = fmax(tSpeed, minSpeed);
     tSpeed = fmin(tSpeed, maxSpeed);
 
     // drive using voltDrive
-    voltDrive(tSpeed + output, tSpeed - output, 10);
+    ffDrive(tSpeed + output, tSpeed - output, 10);
 
-    std::cout << X << ",,," << Y << "," << Bpoints[pointClosest].angle << std::endl;
+   // std::cout << X << ",,," << Y << "," <<totalError<< std::endl;
+    std::cout <<output<<","<<error*kp<<","<<(prevError - error) * kd<<std::endl;
+    prevError = error;
     wait(5, msec);
   }
   drive_brake(brake);

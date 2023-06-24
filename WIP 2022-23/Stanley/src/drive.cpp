@@ -32,6 +32,21 @@ void voltDrive(double lSpeed, double rSpeed, double wt)
   wait(wt, msec);
 }
 
+void ffDrive(double lSpeed, double rSpeed, double wt)
+{
+  float kp=2;
+  float lfSpeed = lSpeed + (kp * (lSpeed - LF.velocity(pct)));
+  float rfSpeed = rSpeed + (kp * (rSpeed - RF.velocity(pct)));
+  float lbSpeed = lSpeed + (kp * (lSpeed - LB.velocity(pct)));
+  float rbSpeed = rSpeed + (kp * (rSpeed - RB.velocity(pct)));
+  LF.spin(forward, lfSpeed*120, voltageUnits::mV);
+  RF.spin(forward, rfSpeed*120, voltageUnits::mV);
+  LB.spin(forward, lbSpeed*120, voltageUnits::mV);
+  RB.spin(forward, rbSpeed*120, voltageUnits::mV);
+  wait(wt, msec);
+}
+
+
 /**
  * @brief brakes the robot based on brake type
  * @param Brake brake type
