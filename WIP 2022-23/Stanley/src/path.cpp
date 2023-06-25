@@ -259,9 +259,9 @@ int signOfDistance(std::vector<bezierPoint> points, int p1, int p2)
 void stanley(float points[][2], int length)
 {
   //constants for reaction to error
-  float kp = 1;
-  float ki = 0.01;
-  float kd = 1.5;
+  float kp = .85;
+  float ki = 0.0075;
+  float kd = 1.3;
   //lookahead distance
   float ld;
   //minimum and maximum speed
@@ -271,7 +271,7 @@ void stanley(float points[][2], int length)
   //konstant for determining ld
   float kv = 25;
   //konstant for how much error changes the speed
-  float ke= 1;
+  float ke= .5;
   //konstant for how much the curvature changes the speed
   float kc = 750;
   float segmentDist;
