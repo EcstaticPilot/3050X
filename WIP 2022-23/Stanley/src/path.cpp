@@ -1,5 +1,6 @@
 #include "vex.h"
 #include <vector>
+#include <iomanip>
 float TrackWidth = 8.5;
 // start off path stuff
 using namespace vex;
@@ -13,7 +14,8 @@ the system has acquired a variation, the variation being the difference between 
 it too may be corrected by the GEA. However, the robot must also know where it was. The robot guidance computer scenario works as follows.
 Because a variation has modified some of the information the robot has obtained, it is not sure just where it is. However, it is sure where it isn't, within reason,
 and it knows where it was. It now subtracts where it should be from where it wasn't, or vice-versa, and by differentiating this from the algebraic sum of where it shouldn't be,
-and where it was, it is able to obtain the deviation and its variation, which is called error.",
+and where it was, it is able to obtain the deviation and its variation, which is called error."
+
 */
 
 struct point
@@ -42,6 +44,8 @@ float DegToRad(float deg)
 {
   return (deg * M_PI / 180);
 }
+
+
 
 /// @brief checks if 2 value have different signs
 /// @param a first value
@@ -153,15 +157,17 @@ class bezierPoint
   bezierPoint(float bezierPoints[][2], float t) 
   {
       int n = floor(t);
-  float x1 = bezierPoints[0 + 4 * n][0];
-  float x2 = bezierPoints[1 + 4 * n][0];
-  float x3 = bezierPoints[2 + 4 * n][0];
-  float x4 = bezierPoints[3 + 4 * n][0];
+  float x1 = bezierPoints[0 + 4 * n][0];//a
+  float x2 = bezierPoints[1 + 4 * n][0];//b
+  float x3 = bezierPoints[2 + 4 * n][0];//c
+  float x4 = bezierPoints[3 + 4 * n][0];//d
 
-  float y1 = bezierPoints[0 + 4 * n][1];
-  float y2 = bezierPoints[1 + 4 * n][1];
-  float y3 = bezierPoints[2 + 4 * n][1];
-  float y4 = bezierPoints[3 + 4 * n][1];
+  float y1 = bezierPoints[0 + 4 * n][1];//e
+  float y2 = bezierPoints[1 + 4 * n][1];//f
+  float y3 = bezierPoints[2 + 4 * n][1];//g
+  float y4 = bezierPoints[3 + 4 * n][1];//h
+  //X=i
+  //Y=j
   // bernestein polynomials
   // subtracts the n value from t to get the t value for the bezier curve
   point derivativeBpoint = derivativeBezier(bezierPoints, t);
@@ -174,6 +180,15 @@ class bezierPoint
       this->curvature= findcurvature(bezierPoints, t + n+0.1));
   }
 };
+/*
+0 = (m*((a(-t^3+3t^2-3t+1)+b(3t^3-6t^2+3t)+c(-3t^3+3t^2)+d(t^3))*m - e(-t^3+3t^2-3t+1)+f(3t^3-6t^2+3t)+g(-3t^3+3t^2)+h(t^3)+j)+i)/(m^2+1)    -    a(-t^3+3t^2-3t+1)+b(3t^3-6t^2+3t)+c(-3t^3+3t^2)+d(t^3)
+
+
+0=m^3⋅(a(−t^3+3t^2−3t+1)+b(3t^3−6t^2+3t)+c(−3t^3+3t^2)+d(t^3))−m^2⋅(a(−t^3+3t^2−3t+1)+b(3t^3−6t^2+3t)+c(−3t^3+3t^2)+d(t^3))−(a(−t^3+3t^2−3t+1)+b(3t^3−6t^2+3t)+c(−3t^3+3t^2)+d(t^3))+(e(−t^3+3t^2−3t+1)−f(3t^3−6t^2+3t)−g(−3t^3+3t^2)−h(t^3))+j+i
+
+
+*/
+
 
 float slopeAngle(std::vector<bezierPoint> bezierPoints,int i)
 {
@@ -259,9 +274,9 @@ int signOfDistance(std::vector<bezierPoint> points, int p1, int p2)
 void stanley(float points[][2], int length)
 {
   //constants for reaction to error
-  float kp = .85;
-  float ki = 0.0075;
-  float kd = 1.3;
+  float kp = 1;
+  float ki = 0.000;
+  float kd = 1.75;
   //lookahead distance
   float ld;
   //minimum and maximum speed
@@ -269,13 +284,14 @@ void stanley(float points[][2], int length)
   float maxSpeed = 90;
   float v;
   //konstant for determining ld
-  float kv = 25;
+  float kv = 5;
   //konstant for how much error changes the speed
-  float ke= .5;
+  float ke= 1;
   //konstant for how much the curvature changes the speed
-  float kc = 750;
+  float kc = 500;
   float segmentDist;
   float pathHeading;
+  float robotAngle;
   float tSpeed;
   float ldAngle;
   float prevError = 0;
@@ -341,13 +357,16 @@ void stanley(float points[][2], int length)
 
     // calculate the angle to the global angle to the lookahead point
     ldAngle = RadToDeg(atan2(segmentDist, ld));
+    
 
     // calculate the error
-    error = (ldAngle * sign + pathHeading - gyro1.yaw(deg));
+    robotAngle=fmod(gyro1.rotation(degrees),360);
+    error = (ldAngle * sign + pathHeading - robotAngle);
     // std::cout<<"4"<<std::endl;
     // calculate the PID output
 
     // reset integral if error crosses zero
+
     if (zeroCrossing(error, prevError))
     {
       totalError = 0;
@@ -369,9 +388,10 @@ void stanley(float points[][2], int length)
     tSpeed = fmin(tSpeed, maxSpeed);
 
     // drive using voltDrive
-    ffDrive(tSpeed + output, tSpeed - output, 10);
+    voltDrive(tSpeed + output, tSpeed - output, 10);
 
-    std::cout << X << ",,," << Y <<","<<Bpoints[0].tval<< std::endl;
+    std::cout<< std::left   << std::setw(20) << X << ",,,";
+   std::cout << std::left   << Y << std::endl;
    // std::cout <<output<<","<<error*kp<<","<<(prevError - error) * kd<<std::endl;
     prevError = error;
     wait(5, msec);
