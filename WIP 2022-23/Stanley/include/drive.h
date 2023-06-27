@@ -7,7 +7,7 @@ void ffDrive(double lSpeed, double rSpeed, double wt);
 void drive_brake(vex::brakeType Brake = brake);
 void forward_dist(float dist);
 void inchDrive(double target, double speedMod);
-void rotate(double dir, double accuracy);
+void rotate(double dir, double accuracy=1);
 void DriveToPoint(double targetX, double targetY, float speedMult);
 void DriveToPoint2(float targetX, float targetY);
 void RAMSETE(float targetX, float targetY, float targetAngle,

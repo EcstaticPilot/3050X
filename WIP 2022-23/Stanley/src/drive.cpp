@@ -34,7 +34,7 @@ void voltDrive(double lSpeed, double rSpeed, double wt)
 
 void ffDrive(double lSpeed, double rSpeed, double wt)
 {
-  float kp=2;
+  float kp=1;
   float lfSpeed = lSpeed + (kp * (lSpeed - LF.velocity(pct)));
   float rfSpeed = rSpeed + (kp * (rSpeed - RF.velocity(pct)));
   float lbSpeed = lSpeed + (kp * (lSpeed - LB.velocity(pct)));
@@ -102,7 +102,7 @@ void inchDrive(double target, double speedMod = 1)
 /**
  * @brief rotates the robot to a certain direction globally
  */
-void rotate(double dir, double accuracy = 1)
+void rotate(double dir, double accuracy)
 {
   double speed = 100;
   double error = dir - gyro1.rotation(degrees);
@@ -149,7 +149,7 @@ void DriveToPoint(double targetX, double targetY, float speedMult = 1)
 
   while ((fabs(targetX - X) > accuracy) || (fabs(targetY - Y) > accuracy))
   {
-
+    
     tError = -gyro1.orientation(yaw, degrees) -
              (atan2(targetY - Y, X - targetX) * 180 / M_PI);
     dError =
@@ -237,12 +237,12 @@ void DriveToPoint3(float targetX, float targetY, float targetAngle,
   float errorY = targetY - Y;
   float
       vp = 15,
-      vi = 1,
+      vi = 0,
       vd = 3;
   float
-      wp = 5,
-      wi = 0.5,
-      wd = 1;
+      wp = .5,
+      wi = 0.0,
+      wd = 0;
   float ySum = 0;
   float xSum = 0;
   float ey = cos(gyro1.rotation()) * errorY + sin(gyro1.rotation()) * errorX;
@@ -257,7 +257,7 @@ void DriveToPoint3(float targetX, float targetY, float targetAngle,
 
     ey = cos(gyro1.rotation()) * errorY + sin(gyro1.rotation()) * errorX;
     ex = -sin(gyro1.rotation()) * errorY + cos(gyro1.rotation()) * errorX;
-
+    std::cout << ex << "," << ey << std::endl;
     float v = vp * ey + vi * ySum + vd * (prevY - ey);
     float w = wp * ex + wi * xSum + wd * (prevX - ex);
 
