@@ -57,6 +57,7 @@ int odometery()
   LB.resetPosition();
   gyro1.resetHeading();
   Brain.Screen.drawRectangle(0, 0, 480, 240, orange);
+
   while (true)
   {
 
@@ -75,8 +76,8 @@ int odometery()
     prevRE = rEncoder; // create previous encoder value right
     prevBE = bEncoder; // create previous encoder value back
 
-    Heading = ((gyro1.heading()*M_PI/180));
-
+    Heading = ((gyro1.rotation()*M_PI/180));
+    Heading = fmod(Heading, 2 * M_PI);
     deltaHeading = Heading - prevHeading; // calculate change in heading
 
     prevHeading = Heading;
@@ -96,15 +97,6 @@ int odometery()
 
     X += (deltaY * sin(averageHeading)) + (deltaX * cos(averageHeading));
     Y += (deltaY * cos(averageHeading)) - (deltaX * sin(averageHeading));
-
-    while (Heading >= 2 * M_PI)
-    {
-      Heading -= 2 * M_PI;
-    }
-    while (Heading < 0)
-    {
-      Heading += 2 * M_PI;
-    }
 
     if (deltaX != 0 || deltaY != 0)
     {

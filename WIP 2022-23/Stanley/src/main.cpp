@@ -19,8 +19,11 @@ void toggleclaw()
   claw.set(!claw.value());
 }
 
-bool devicesCheck(){
-  if( LF.installed() && RF.installed() && LB.installed() && RB.installed() && gyro1.installed()&&RotationR.installed()&&RotationB.installed()&&RotationL.installed())
+bool devicesCheck()
+{
+  if (LF.installed() && RF.installed() && LB.installed() && RB.installed() &&
+      gyro1.installed() &&
+      RotationR.installed() && RotationB.installed() && RotationL.installed())
   {
     return true;
   }
@@ -38,17 +41,17 @@ int ControllerPrint()
     Controller1.Screen.print("pos= (%.1f  , %.1f  )       ", X, Y);
     Controller1.Screen.setCursor(2, 1);
     Controller1.Screen.print("%.1f", gyro1.yaw(deg));
-    if(devicesCheck())
+    if (devicesCheck())
     {
       Controller1.Screen.setCursor(3, 1);
-      Controller1.Screen.print("Devices Connected     ");
+      Controller1.Screen.print(":) Devices Connected         ");
     }
     else
     {
       Controller1.Screen.setCursor(3, 1);
-      Controller1.Screen.print("Devices Not Connected");
+      Controller1.Screen.print("Devices Not Connected ");
       Controller1.rumble(".");
-      wait(100,msec);
+      wait(100, msec);
     }
     this_thread::sleep_for(100);
   }
@@ -68,7 +71,7 @@ void pre_auton(void)
   Brain.Screen.drawRectangle(0, 0, 480, 240, red);
   gyro1.calibrate();
   waitUntil(gyro1.isCalibrating() == false);
-  if(devicesCheck())
+  if (devicesCheck())
   {
     Brain.Screen.clearScreen();
     Brain.Screen.print("Devices Connected");
@@ -76,11 +79,15 @@ void pre_auton(void)
   else
   {
     Brain.Screen.clearScreen();
-    Controller1.rumble("------------");
+    Controller1.rumble("....");
     Brain.Screen.print("Devices Not Connected");
   }
   thread ControllerPrinting = thread(ControllerPrint);
+  ControllerPrinting.setPriority(1);
+  int i = thread::hardware_concurrency();
+  std::cout <<"hardware limit =" <<i << std::endl;
   thread posTrack = thread(odometery);
+  posTrack.setPriority(15);
   // All activities that occur before the competition starts
   // Example: clearing encoders, setting servo positions, ...
 }
@@ -98,23 +105,16 @@ void pre_auton(void)
 void autonomous(void)
 {
 
-//  Controller1.rumble("--");
-  std::cout << "Autonomous Started" << std::endl;
-  // allocate memory space using malloc
-  // assign x and y values for the points
- // DriveToPoint(-24,70,1);
+
+  std::cout << "Autonomous Started yes" << std::endl;
+
   float points[4][2] = {
       {0, 0},
       {-15, 15},
       {-24, 50},
-      {-24, 70}
-      };
+      {-24, 70}};
   stanley(points, sizeof(points) / 8);
 
-
-  // ..........................................................................
-  // Insert autonomous user code here.
-  // ..........................................................................
 }
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
@@ -133,7 +133,6 @@ void usercontrol(void)
   while (1)
   {
     std::cout << X << "," << Y << std::endl;
-
     voltDrive(Controller1.Axis3.position(), Controller1.Axis2.position(), 10);
     wait(10, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.

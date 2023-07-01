@@ -276,8 +276,8 @@ void stanley(float points[][2], int length)
 {
   // constants for reaction to error
   float kp = 1;
-  float ki = 0.005;
-  float kd = 2;
+  float ki = 0.000;
+  float kd = 0;
   // lookahead distance
   float ld;
   // minimum and maximum speed
@@ -285,7 +285,7 @@ void stanley(float points[][2], int length)
   float maxSpeed = 100;
   float v;
   // konstant for determining ld
-  float kv = 5;
+  float kv = 15;
   // konstant for how much error changes the speed
   float ke = 1;
   // konstant for how much the curvature changes the speed
@@ -312,7 +312,7 @@ void stanley(float points[][2], int length)
   for (int i = 0; i < 10; i++)
   {
     Bpoints[i] = bezierPoint(points, tval);
-    tval += 0.005;
+    tval += 0.0025;
   }
   Brain.Screen.drawRectangle(0, 0, 480, 240, yellow);
   Brain.Screen.print("stanley in progress");
@@ -410,12 +410,11 @@ void stanley(float points[][2], int length)
     voltDrive(vL, vR, 10);
 
     // print the values to the console with nice formatting
-    std::cout << std::left << std::setw(20) << X << ",,,";
-    std::cout << std::left << Y << std::endl;
+    std::cout << X << ",,,"<< Y <<","<<error<<","<<pathHeading-robotAngle<< std::endl;
 
     // std::cout <<output<<","<<error*kp<<","<<(prevError - error) * kd<<std::endl;
 
-    wait(5, msec);
+    wait(10, msec);
   }
   drive_brake(hold);
   Brain.Screen.drawRectangle(0, 0, 480, 240, green);
