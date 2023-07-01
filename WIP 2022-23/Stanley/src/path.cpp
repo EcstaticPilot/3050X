@@ -18,13 +18,18 @@ and where it was, it is able to obtain the deviation and its variation, which is
 
 */
 
-struct point
+class point
 {
+public:
   float x;
   float y;
   point(float x, float y) : x(x), y(y) {}
-};
 
+  float robotDistance(float x, float y)
+  {
+    return (hypot(X - x, Y - y));
+  }
+};
 
 /**
  * @brief convert radians to degrees
@@ -45,14 +50,14 @@ float DegToRad(float deg)
   return (deg * M_PI / 180);
 }
 
-
-
-/// @brief checks if 2 value have different signs
-/// @param a first value
-/// @param b second value
-/// @return true if they are different, false if they are the same sign
+/** @brief checks if 2 value have different signs
+ * @param a first value
+ * @param b second value
+ * @return true if they are different, false if they are the same sign
+ */
 bool zeroCrossing(float a, float b)
 {
+
   int A = fabs(a) / a;
   int B = fabs(b) / b;
   if (A != B)
@@ -83,7 +88,6 @@ float robotDistance(float x, float y)
 ███████║     ██║     ██║  ██║  ██║ ╚████║  ███████╗  ███████╗     ██║
 ╚══════╝     ╚═╝     ╚═╝  ╚═╝  ╚═╝  ╚═══╝  ╚══════╝  ╚══════╝     ╚═╝
 */
-
 
 /** @brief finds the derivative of a bezier curve
  * @param bezierPoints an array containing the control points
@@ -145,39 +149,41 @@ float findcurvature(float bezierPoints[][2], float t)
   float curvature = numerator / denominator;
   return curvature;
 }
+
+
 class bezierPoint
 {
-  public:
-  float x;
+public:
+  float x; 
   float y;
   float tval;
   float angle;
   float curvature;
   bezierPoint(float x, float y, float tval, float angle, float curvature) : x(x), y(y), tval(tval), angle(angle), curvature(curvature) {}
-  bezierPoint(float bezierPoints[][2], float t) 
+  bezierPoint(float bezierPoints[][2], float t)
   {
-      int n = floor(t);
-  float x1 = bezierPoints[0 + 4 * n][0];//a
-  float x2 = bezierPoints[1 + 4 * n][0];//b
-  float x3 = bezierPoints[2 + 4 * n][0];//c
-  float x4 = bezierPoints[3 + 4 * n][0];//d
+    int n = floor(t);
+    float x1 = bezierPoints[0 + 4 * n][0]; // a
+    float x2 = bezierPoints[1 + 4 * n][0]; // b
+    float x3 = bezierPoints[2 + 4 * n][0]; // c
+    float x4 = bezierPoints[3 + 4 * n][0]; // d
 
-  float y1 = bezierPoints[0 + 4 * n][1];//e
-  float y2 = bezierPoints[1 + 4 * n][1];//f
-  float y3 = bezierPoints[2 + 4 * n][1];//g
-  float y4 = bezierPoints[3 + 4 * n][1];//h
-  //X=i
-  //Y=j
-  // bernestein polynomials
-  // subtracts the n value from t to get the t value for the bezier curve
-  point derivativeBpoint = derivativeBezier(bezierPoints, t);
-  t -= n;
-  bezierPoint bezierPoint(
-      this->x= (x1 * (pow(-t, 3) + 3 * pow(t, 2) - 3 * t + 1) + x2 * (3 * pow(t, 3) - 6 * pow(t, 2) + 3 * t) + x3 * (-3 * pow(t, 3) + 3 * pow(t, 2)) + x4 * pow(t, 3)),
-      this->y= (y1 * (pow(-t, 3) + 3 * pow(t, 2) - 3 * t + 1) + y2 * (3 * pow(t, 3) - 6 * pow(t, 2) + 3 * t) + y3 * (-3 * pow(t, 3) + 3 * pow(t, 2)) + y4 * pow(t, 3)),
-      this->tval= t + n,
-      this->angle= RadToDeg(atan2(derivativeBpoint.x, derivativeBpoint.y)),
-      this->curvature= findcurvature(bezierPoints, t + n+0.1));
+    float y1 = bezierPoints[0 + 4 * n][1]; // e
+    float y2 = bezierPoints[1 + 4 * n][1]; // f
+    float y3 = bezierPoints[2 + 4 * n][1]; // g
+    float y4 = bezierPoints[3 + 4 * n][1]; // h
+    // X=i
+    // Y=j
+    //  bernestein polynomials
+    //  subtracts the n value from t to get the t value for the bezier curve
+    point derivativeBpoint = derivativeBezier(bezierPoints, t);
+    t -= n;
+    bezierPoint bezierPoint(
+        this->x = (x1 * (pow(-t, 3) + 3 * pow(t, 2) - 3 * t + 1) + x2 * (3 * pow(t, 3) - 6 * pow(t, 2) + 3 * t) + x3 * (-3 * pow(t, 3) + 3 * pow(t, 2)) + x4 * pow(t, 3)),
+        this->y = (y1 * (pow(-t, 3) + 3 * pow(t, 2) - 3 * t + 1) + y2 * (3 * pow(t, 3) - 6 * pow(t, 2) + 3 * t) + y3 * (-3 * pow(t, 3) + 3 * pow(t, 2)) + y4 * pow(t, 3)),
+        this->tval = t + n,
+        this->angle = RadToDeg(atan2(derivativeBpoint.x, derivativeBpoint.y)),
+        this->curvature = findcurvature(bezierPoints, t + n));
   }
 };
 /*
@@ -189,11 +195,6 @@ class bezierPoint
 
 */
 
-
-float slopeAngle(std::vector<bezierPoint> bezierPoints,int i)
-{
-  return atan2(bezierPoints[i].x - bezierPoints[i + 1].x, bezierPoints[i].y - bezierPoints[i + 1].y);
-}
 /**
  * @brief finds the closest point to the robot
  * @param points an array containing the points as a struct
@@ -273,21 +274,21 @@ int signOfDistance(std::vector<bezierPoint> points, int p1, int p2)
  */
 void stanley(float points[][2], int length)
 {
-  //constants for reaction to error
+  // constants for reaction to error
   float kp = 1;
-  float ki = 0.000;
-  float kd = 1.75;
-  //lookahead distance
+  float ki = 0.005;
+  float kd = 2;
+  // lookahead distance
   float ld;
-  //minimum and maximum speed
+  // minimum and maximum speed
   float minSpeed = 25;
-  float maxSpeed = 90;
+  float maxSpeed = 100;
   float v;
-  //konstant for determining ld
+  // konstant for determining ld
   float kv = 5;
-  //konstant for how much error changes the speed
-  float ke= 1;
-  //konstant for how much the curvature changes the speed
+  // konstant for how much error changes the speed
+  float ke = 1;
+  // konstant for how much the curvature changes the speed
   float kc = 500;
   float segmentDist;
   float pathHeading;
@@ -297,76 +298,78 @@ void stanley(float points[][2], int length)
   float prevError = 0;
   float totalError = 0;
   float error;
+  float vL;
+  float vR;
+  float normFactor;
   float output;
   int sign;
   int pointClosest = 0;
   float tval = 0;
 
-  // Initializing the 1-D vector of struct "point"
-  std::vector<bezierPoint> Bpoints(10, bezierPoint(0, 0, 0, 0, 0));
+  // the 1-D vector ofP struct "point"
+  std::vector<bezierPoint> Bpoints(10, bezierPoint(0,0,0,0,0));
   // Filling the vector with points
   for (int i = 0; i < 10; i++)
   {
     Bpoints[i] = bezierPoint(points, tval);
     tval += 0.005;
   }
-  Brain.Screen.drawRectangle(0, 0, 480, 240, vex::yellow);
+  Brain.Screen.drawRectangle(0, 0, 480, 240, yellow);
   Brain.Screen.print("stanley in progress");
-  int i =0;
+  int i = 0;
   while (true)
   {
     i++;
-    // find the closest point
-    // pointClosest =closestPoint(points,8); //alternate way to find closest point
-    pointClosest = closestPoint(Bpoints, 9);
-    // if the closest point is the last point of the points array
+    // find the closest point to the robot
+    pointClosest = closestPoint(Bpoints, 8);
 
-    // std::cout<<"1"<<std::endl;
-    // wh
-    if (pointClosest != 0) // if you set this to one the entire thing breaks
+    // if the closest point is the last point of the points array
+    if (pointClosest != 0) // if you set this to one the entire thing breaks  ¯⁠\⁠_⁠(⁠ツ⁠)⁠_⁠/⁠¯
     {
-      // std::cout<<"1.5"<<std::endl;
       // if the closest point is not the first point, erase all prevoius values until it is
       Bpoints.erase(Bpoints.begin(), Bpoints.begin() + pointClosest);
-      // fill the vecotr until the length is 20
+
+      // fill the vecotr until the length is 10
       while (Bpoints.size() < 10)
       {
         Bpoints.push_back(bezierPoint(points, tval));
-        tval += 0.005;
+        tval += 0.0025;
       }
+      // set the pointClosest to 0
       pointClosest = 0;
     }
-
-    if (fabs(Bpoints[0].tval-length/4)<0.001)
+    // check if the tval is past the lenth of the total bezier spline. the 0.001 exists because computers are bad at math and error builds up due to thats
+    if (fabs(Bpoints[0].tval - length / 4) < 0.001)
     {
       break;
     }
+
     // slope of the path at the closest point
     pathHeading = Bpoints[0].angle;
-    //   std::cout<<"2"<<std::endl;
+
     // find the distance to the line segment after the closest point
-
     segmentDist = perpendicularDist(Bpoints, 0, 1); // distance of the path segment after the closest point
-    sign = signOfDistance(Bpoints, 0, 1);
-    //  std::cout<<"3"<<std::endl;
-    // calculate lookahead distance
 
+    // find the sign of the distance
+    sign = signOfDistance(Bpoints, 0, 1);
+
+    // calculate lookahead distance
     v = ((RotationR.velocity(rpm) / 2) + (RotationL.velocity(rpm) / 2)) / 2; // take the average of the two sides converting rpm to percent
-    v = fmax(v, minSpeed);                                                   // if velocity is less than minSpeed, set it to minSpeed
-    ld = (v / kv)+2;
+    v = fmax(v, minSpeed);                                                   // if velocity is less than minSpeed, set it to minSpeeds
+
+    // calculate the lookahead distance
+    ld = (v / kv) + 3;
 
     // calculate the angle to the global angle to the lookahead point
     ldAngle = RadToDeg(atan2(segmentDist, ld));
-    
+
+    // find the robot angle and limit it to 360 idk if it matters or not. it probably does since rotation is uncapped
+    robotAngle = fmod(gyro1.rotation(degrees), 360);
 
     // calculate the error
-    robotAngle=fmod(gyro1.rotation(degrees),360);
     error = (ldAngle * sign + pathHeading - robotAngle);
-    // std::cout<<"4"<<std::endl;
-    // calculate the PID output
 
     // reset integral if error crosses zero
-
     if (zeroCrossing(error, prevError))
     {
       totalError = 0;
@@ -375,25 +378,43 @@ void stanley(float points[][2], int length)
     {
       totalError += error;
     }
-    // prevoius error
 
-    output = (error * kp) + (totalError)*ki + (error-prevError) * kd;
-    //  std::cout<<"5"<<std::endl;
-    
+    // calculate the PID output
+    output = (error * kp) + (totalError)*ki + (error - prevError) * kd;
+
+    // set the previous error to the current error
+    prevError = error;
+
     // calculate the speed of the motors
-    tSpeed = 100 - (fabs(Bpoints[pointClosest].curvature *kc) + fabs(error*ke));
+    tSpeed = 100 - (fabs(Bpoints[pointClosest].curvature * kc) + fabs(error * ke));
 
     // limit the value of tSpeed using fmax and fmin
     tSpeed = fmax(tSpeed, minSpeed);
     tSpeed = fmin(tSpeed, maxSpeed);
 
-    // drive using voltDrive
-    voltDrive(tSpeed + output, tSpeed - output, 10);
+    // calculate the speed of the left and right motors
+    vL = tSpeed + output;
+    vR = tSpeed - output;
 
-    std::cout<< std::left   << std::setw(20) << X << ",,,";
-   std::cout << std::left   << Y << std::endl;
-   // std::cout <<output<<","<<error*kp<<","<<(prevError - error) * kd<<std::endl;
-    prevError = error;
+    // calculate the normalization factor
+    normFactor = maxSpeed / fmax(fabs(vL), fabs(vR));
+
+    // clip speed if necessary
+    if (normFactor < 1)
+    {
+      vL *= normFactor;
+      vR *= normFactor;
+    }
+
+    // drive using voltDrive
+    voltDrive(vL, vR, 10);
+
+    // print the values to the console with nice formatting
+    std::cout << std::left << std::setw(20) << X << ",,,";
+    std::cout << std::left << Y << std::endl;
+
+    // std::cout <<output<<","<<error*kp<<","<<(prevError - error) * kd<<std::endl;
+
     wait(5, msec);
   }
   drive_brake(hold);
