@@ -275,9 +275,9 @@ int signOfDistance(std::vector<bezierPoint> points, int p1, int p2)
 void stanley(float points[][2], int length)
 {
   // constants for reaction to error
-  float kp = 1;
-  float ki = 0.000;
-  float kd = 0;
+  float kp = 1.25;
+  float ki = 0.01;
+  float kd = 15;
   // lookahead distance
   float ld;
   // minimum and maximum speed
@@ -285,7 +285,7 @@ void stanley(float points[][2], int length)
   float maxSpeed = 100;
   float v;
   // konstant for determining ld
-  float kv = 15;
+  float kv = 7.5;
   // konstant for how much error changes the speed
   float ke = 1;
   // konstant for how much the curvature changes the speed
@@ -339,7 +339,7 @@ void stanley(float points[][2], int length)
       pointClosest = 0;
     }
     // check if the tval is past the lenth of the total bezier spline. the 0.001 exists because computers are bad at math and error builds up due to thats
-    if (fabs(Bpoints[0].tval - length / 4) < 0.001)
+    if (Bpoints[0].tval >= length/4)
     {
       break;
     }
@@ -410,9 +410,9 @@ void stanley(float points[][2], int length)
     voltDrive(vL, vR, 10);
 
     // print the values to the console with nice formatting
-    std::cout << X << ",,,"<< Y <<","<<error<<","<<pathHeading-robotAngle<< std::endl;
+    std::cout << X << ",,,"<< Y <<","<<error<< std::endl;
 
-    // std::cout <<output<<","<<error*kp<<","<<(prevError - error) * kd<<std::endl;
+   
 
     wait(10, msec);
   }

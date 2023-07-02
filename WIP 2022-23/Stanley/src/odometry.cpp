@@ -50,6 +50,10 @@ int odometery()
   RotationL.resetPosition();
   RotationB.resetPosition();
   RotationR.resetPosition();
+  RotationB.datarate(10);
+  RotationL.datarate(10);
+  RotationR.datarate(10);
+  gyro1.datarate(10);
   RotationL.setPosition(0, degrees);
   RotationB.setPosition(0, degrees);
   RotationR.setPosition(0, degrees);

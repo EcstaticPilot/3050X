@@ -27,4 +27,4 @@ INC_F  = include
 all: $(BUILD)/$(PROJECT).bin
 
 # include build rules
-include vex/mkrules.mk
+include vex/mkrules.mk #ygguy

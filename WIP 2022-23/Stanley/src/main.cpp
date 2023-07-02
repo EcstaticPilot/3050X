@@ -49,8 +49,34 @@ int ControllerPrint()
     else
     {
       Controller1.Screen.setCursor(3, 1);
-      Controller1.Screen.print("Devices Not Connected ");
       Controller1.rumble(".");
+      if(!RotationB.installed()){
+        Controller1.Screen.print("RotationB not connected");
+      }
+      else if (!RotationR.installed()){
+        Controller1.Screen.print("RotationR not connected");
+      }
+      else if (!RotationL.installed()){
+        Controller1.Screen.print("RotationL not connected");
+      }
+      else if (!LF.installed()){
+        Controller1.Screen.print("LF not connected");
+      }
+      else if (!RF.installed()){
+        Controller1.Screen.print("RF not connected");
+      }
+      else if (!LB.installed()){
+        Controller1.Screen.print("LB not connected");
+      }
+      else if (!RB.installed()){
+        Controller1.Screen.print("RB not connected");
+      }
+      else if (!gyro1.installed()){
+        Controller1.Screen.print("gyro not connected");
+      }
+      else{
+        Controller1.Screen.print("unknown device not connected");
+      }
       wait(100, msec);
     }
     this_thread::sleep_for(100);
@@ -70,6 +96,7 @@ void pre_auton(void)
 {
   Brain.Screen.drawRectangle(0, 0, 480, 240, red);
   gyro1.calibrate();
+  std::cout << "gyro calibrating" << std::endl;
   waitUntil(gyro1.isCalibrating() == false);
   if (devicesCheck())
   {
@@ -82,12 +109,13 @@ void pre_auton(void)
     Controller1.rumble("....");
     Brain.Screen.print("Devices Not Connected");
   }
+  Brain.Screen.drawCircle(240, 120, 50, green);
   thread ControllerPrinting = thread(ControllerPrint);
   ControllerPrinting.setPriority(1);
-  int i = thread::hardware_concurrency();
-  std::cout <<"hardware limit =" <<i << std::endl;
+ // int i = thread::hardware_concurrency();
+ // std::cout <<"hardware limit =" <<i << std::endl;
   thread posTrack = thread(odometery);
-  posTrack.setPriority(15);
+
   // All activities that occur before the competition starts
   // Example: clearing encoders, setting servo positions, ...
 }
@@ -107,13 +135,14 @@ void autonomous(void)
 
 
   std::cout << "Autonomous Started yes" << std::endl;
-
+  
   float points[4][2] = {
-      {0, 0},
-      {-15, 15},
-      {-24, 50},
-      {-24, 70}};
-  stanley(points, sizeof(points) / 8);
+      {0, 2},
+      {-40, 2},
+      {-40,2 },
+      {-80,2},
+      };
+  stanley(points, sizeof(points) / (2*sizeof(float)));
 
 }
 /*---------------------------------------------------------------------------*/
@@ -132,7 +161,9 @@ void usercontrol(void)
 
   while (1)
   {
-    std::cout << X << "," << Y << std::endl;
+      Brain.Screen.drawCircle(240, 120, 50, green);
+    //  Controller1.rumble(".");
+    //std::cout << X << "," << Y << std::endl;
     voltDrive(Controller1.Axis3.position(), Controller1.Axis2.position(), 10);
     wait(10, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
@@ -158,5 +189,6 @@ int main()
   while (true)
   {
     wait(100, msec);
+
   }
 }
