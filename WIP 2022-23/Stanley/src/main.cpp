@@ -135,12 +135,12 @@ void autonomous(void)
 
 
   std::cout << "Autonomous Started yes" << std::endl;
-  
+  wait(1,sec);
   float points[4][2] = {
-      {0, 2},
-      {-40, 2},
-      {-40,2 },
-      {-80,2},
+      {0, 0},
+      {0, 40},
+      {-24,40 },
+      {-24,80}
       };
   stanley(points, sizeof(points) / (2*sizeof(float)));
 

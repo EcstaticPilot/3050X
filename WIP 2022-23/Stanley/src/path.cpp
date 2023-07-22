@@ -1,7 +1,7 @@
 #include "vex.h"
 #include <vector>
 #include <iomanip>
-float TrackWidth = 8.5;
+const float TrackWidth = 8.5;
 // start off path stuff
 using namespace vex;
 // an explanation for error works
@@ -150,11 +150,10 @@ float findcurvature(float bezierPoints[][2], float t)
   return curvature;
 }
 
-
 class bezierPoint
 {
 public:
-  float x; 
+  float x;
   float y;
   float tval;
   float angle;
@@ -275,9 +274,9 @@ int signOfDistance(std::vector<bezierPoint> points, int p1, int p2)
 void stanley(float points[][2], int length)
 {
   // constants for reaction to error
-  float kp = 1.25;
-  float ki = 0.01;
-  float kd = 15;
+  float kp = 1.5;
+  float ki = 0.05;
+  float kd = 10;
   // lookahead distance
   float ld;
   // minimum and maximum speed
@@ -285,7 +284,7 @@ void stanley(float points[][2], int length)
   float maxSpeed = 100;
   float v;
   // konstant for determining ld
-  float kv = 7.5;
+  float kv = 5;
   // konstant for how much error changes the speed
   float ke = 1;
   // konstant for how much the curvature changes the speed
@@ -297,7 +296,7 @@ void stanley(float points[][2], int length)
   float ldAngle;
   float prevError = 0;
   float totalError = 0;
-  float error;
+  float error = 0;
   float vL;
   float vR;
   float normFactor;
@@ -307,7 +306,7 @@ void stanley(float points[][2], int length)
   float tval = 0;
 
   // the 1-D vector ofP struct "point"
-  std::vector<bezierPoint> Bpoints(10, bezierPoint(0,0,0,0,0));
+  std::vector<bezierPoint> Bpoints(10, bezierPoint(0, 0, 0, 0, 0));
   // Filling the vector with points
   for (int i = 0; i < 10; i++)
   {
@@ -339,7 +338,7 @@ void stanley(float points[][2], int length)
       pointClosest = 0;
     }
     // check if the tval is past the lenth of the total bezier spline. the 0.001 exists because computers are bad at math and error builds up due to thats
-    if (Bpoints[0].tval >= length/4)
+    if (Bpoints[0].tval >= floor(length / 4) - 0.00001)
     {
       break;
     }
@@ -366,6 +365,7 @@ void stanley(float points[][2], int length)
     // find the robot angle and limit it to 360 idk if it matters or not. it probably does since rotation is uncapped
     robotAngle = fmod(gyro1.rotation(degrees), 360);
 
+    prevError = error;
     // calculate the error
     error = (ldAngle * sign + pathHeading - robotAngle);
 
@@ -383,7 +383,6 @@ void stanley(float points[][2], int length)
     output = (error * kp) + (totalError)*ki + (error - prevError) * kd;
 
     // set the previous error to the current error
-    prevError = error;
 
     // calculate the speed of the motors
     tSpeed = 100 - (fabs(Bpoints[pointClosest].curvature * kc) + fabs(error * ke));
@@ -410,11 +409,9 @@ void stanley(float points[][2], int length)
     voltDrive(vL, vR, 10);
 
     // print the values to the console with nice formatting
-    std::cout << X << ",,,"<< Y <<","<<error<< std::endl;
-
-   
-
-    wait(10, msec);
+     std::cout << X << ",,,"<< Y <<","<<error<< std::endl;
+    //std::cout << error << "," << output << "," << kp * error << "," << ki * totalError << "," << kd * (error - prevError) << std::endl; // pid tuning config
+    wait(12.5, msec);
   }
   drive_brake(hold);
   Brain.Screen.drawRectangle(0, 0, 480, 240, green);
