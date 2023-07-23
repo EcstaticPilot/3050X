@@ -2,7 +2,7 @@
 #include <vector>
 
 using namespace vex;
-//float TrackWidth = 8.5;
+// float TrackWidth = 8.5;
 float C = M_PI * 3.25;
 // extern double X, Y;
 void terminalPrint(float a = 0, float b = 0, float c = 0, float d = 0, float e = 0)
@@ -34,18 +34,17 @@ void voltDrive(double lSpeed, double rSpeed, double wt)
 
 void ffDrive(double lSpeed, double rSpeed, double wt)
 {
-  float kp=1;
+  float kp = 1;
   float lfSpeed = lSpeed + (kp * (lSpeed - LF.velocity(pct)));
   float rfSpeed = rSpeed + (kp * (rSpeed - RF.velocity(pct)));
   float lbSpeed = lSpeed + (kp * (lSpeed - LB.velocity(pct)));
   float rbSpeed = rSpeed + (kp * (rSpeed - RB.velocity(pct)));
-  LF.spin(forward, lfSpeed*120, voltageUnits::mV);
-  RF.spin(forward, rfSpeed*120, voltageUnits::mV);
-  LB.spin(forward, lbSpeed*120, voltageUnits::mV);
-  RB.spin(forward, rbSpeed*120, voltageUnits::mV);
+  LF.spin(forward, lfSpeed * 120, voltageUnits::mV);
+  RF.spin(forward, rfSpeed * 120, voltageUnits::mV);
+  LB.spin(forward, lbSpeed * 120, voltageUnits::mV);
+  RB.spin(forward, rbSpeed * 120, voltageUnits::mV);
   wait(wt, msec);
 }
-
 
 /**
  * @brief brakes the robot based on brake type
@@ -149,7 +148,7 @@ void DriveToPoint(double targetX, double targetY, float speedMult = 1)
 
   while ((fabs(targetX - X) > accuracy) || (fabs(targetY - Y) > accuracy))
   {
-    
+
     tError = -gyro1.orientation(yaw, degrees) -
              (atan2(targetY - Y, X - targetX) * 180 / M_PI);
     dError =
@@ -269,4 +268,55 @@ void DriveToPoint3(float targetX, float targetY, float targetAngle,
     drive(left, right, 10);
   }
   drive_brake();
+}
+
+void driveAtAngle(float angle, float baseSpeed, float time)
+{
+  time = time * 1000;
+  float kp = 6;
+  float ki = 0.00;
+  float kd = 30;
+  float error = angle - gyro1.rotation();
+  float prevError = error;
+  float sum = 0;
+  float speed;
+  float vL, vR;
+  float normFactor;
+  float maxSpeed = 100;
+  Brain.Timer.reset();
+  Brain.Timer.clear();
+  while (Brain.Timer.time() <= time)
+  {
+    error = angle - gyro1.rotation();
+    speed = (kp * error) + (ki * sum) + (kd * (error - prevError));
+    vL = baseSpeed + speed;
+    vR = baseSpeed - speed;
+
+    // calculate the normalization factor
+    normFactor = maxSpeed / fmax(fabs(vL), fabs(vR));
+
+    // clip speed if necessary
+    if (normFactor < 1)
+    {
+      vL *= normFactor;
+      vR *= normFactor;
+    }
+
+    // drive using voltDrive
+    voltDrive(vL, vR, 10);
+    
+
+    if (fabs(error) / error != fabs(prevError) / prevError)
+    {
+      sum = 0;
+    }
+    else
+    {
+      sum += error;
+    }
+    std::cout <<Brain.Timer.time()<<","<< error << "," << speed << "," << kp * error << "," << ki * sum << "," << kd * (error - prevError) << std::endl; // pid tuning config
+    wait(10,msec);
+prevError = error;
+  }
+  drive_brake(coast);
 }

@@ -86,10 +86,10 @@ int odometery()
 
     prevHeading = Heading;
 
-    if (deltaHeading == 0)
+    if (true/*deltaHeading == 0*/)
     {
       deltaX = distB;
-      deltaY = distL;
+      deltaY = (distL+distR)/2;
     }
     else
     {

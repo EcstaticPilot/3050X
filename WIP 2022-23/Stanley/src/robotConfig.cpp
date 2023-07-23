@@ -14,9 +14,9 @@ motor LB = motor(PORT9, ratio18_1, false);
 motor RF = motor(PORT1, ratio18_1, false);
 motor RB = motor(PORT2, ratio18_1, true);
 inertial gyro1 = inertial(PORT8);
-rotation RotationL = rotation(PORT4, true);
+rotation RotationL = rotation(PORT4, false);
 rotation RotationR = rotation(PORT5, false);
-rotation RotationB = rotation(PORT10, false);
+rotation RotationB = rotation(PORT10, true);
 pneumatics claw = pneumatics(Brain.ThreeWirePort.B);
 
 

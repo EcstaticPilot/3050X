@@ -274,9 +274,10 @@ int signOfDistance(std::vector<bezierPoint> points, int p1, int p2)
 void stanley(float points[][2], int length)
 {
   // constants for reaction to error
-  float kp = 1.5;
-  float ki = 0.05;
+  float kp = 2;
+  float ki = 0.00;
   float kd = 10;
+  //it would apeear that kd=kp*5 is good for some reason
   // lookahead distance
   float ld;
   // minimum and maximum speed
@@ -284,9 +285,9 @@ void stanley(float points[][2], int length)
   float maxSpeed = 100;
   float v;
   // konstant for determining ld
-  float kv = 5;
+  float kv = 8;
   // konstant for how much error changes the speed
-  float ke = 1;
+  float ke = 0.5;
   // konstant for how much the curvature changes the speed
   float kc = 500;
   float segmentDist;
@@ -316,6 +317,8 @@ void stanley(float points[][2], int length)
   Brain.Screen.drawRectangle(0, 0, 480, 240, yellow);
   Brain.Screen.print("stanley in progress");
   int i = 0;
+  Brain.Timer.reset();
+  std::cout<<"kp="<<kp<<",ki="<<ki<<",kd="<<kd<<",kv="<<kv<<",ke="<<ke<<",kc="<<kc<<std::endl;
   while (true)
   {
     i++;
@@ -357,14 +360,14 @@ void stanley(float points[][2], int length)
     v = fmax(v, minSpeed);                                                   // if velocity is less than minSpeed, set it to minSpeeds
 
     // calculate the lookahead distance
-    ld = (v / kv) + 3;
-
+    ld = (v / kv)+3 ;
+    //ld=15;
     // calculate the angle to the global angle to the lookahead point
     ldAngle = RadToDeg(atan2(segmentDist, ld));
 
     // find the robot angle and limit it to 360 idk if it matters or not. it probably does since rotation is uncapped
-    robotAngle = fmod(gyro1.rotation(degrees), 360);
-
+   // robotAngle = fmod(gyro1.rotation(degrees), 360);
+    robotAngle = gyro1.rotation(degrees);
     prevError = error;
     // calculate the error
     error = (ldAngle * sign + pathHeading - robotAngle);
@@ -409,9 +412,9 @@ void stanley(float points[][2], int length)
     voltDrive(vL, vR, 10);
 
     // print the values to the console with nice formatting
-     std::cout << X << ",,,"<< Y <<","<<error<< std::endl;
-    //std::cout << error << "," << output << "," << kp * error << "," << ki * totalError << "," << kd * (error - prevError) << std::endl; // pid tuning config
-    wait(12.5, msec);
+     std::cout << X << ",,,"<< Y <<","<<error<<","<<ld<< std::endl;
+    //std::cout <<Brain.Timer.time()<<","<< error << "," << output << "," << kp * error << "," << ki * totalError << "," << kd * (error - prevError) << std::endl; // pid tuning config
+    wait(10, msec);
   }
   drive_brake(hold);
   Brain.Screen.drawRectangle(0, 0, 480, 240, green);

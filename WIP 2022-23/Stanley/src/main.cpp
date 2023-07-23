@@ -135,15 +135,32 @@ void autonomous(void)
 
 
   std::cout << "Autonomous Started yes" << std::endl;
-  wait(1,sec);
-  float points[4][2] = {
+  //driveAtAngle(-90,90,1);
+  
+ // wait(1,sec);
+  float points[16][2] = {
       {0, 0},
-      {0, 40},
-      {-24,40 },
-      {-24,80}
+      {5, 95},
+      {-37,90 },
+      {-41,90},
+
+      {-41,90},
+      {-45,90},
+      {-85,90},
+      {-90,90},
+
+      {-90,90},
+      {-95,90},
+      {-113,84},
+      {-113,60},
+
+      {-113,60},
+      {-113,36},
+      {-113,30},
+      {-113,-10}
       };
   stanley(points, sizeof(points) / (2*sizeof(float)));
-
+  
 }
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
@@ -163,9 +180,10 @@ void usercontrol(void)
   {
       Brain.Screen.drawCircle(240, 120, 50, green);
     //  Controller1.rumble(".");
-    //std::cout << X << "," << Y << std::endl;
+
     voltDrive(Controller1.Axis3.position(), Controller1.Axis2.position(), 10);
-    wait(10, msec); // Sleep the task for a short amount of time to
+        std::cout << X << ",,," << Y << std::endl;
+    wait(15, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
   }
 }
