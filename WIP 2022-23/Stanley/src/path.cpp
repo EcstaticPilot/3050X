@@ -6,7 +6,7 @@ const float TrackWidth = 8.5;
 using namespace vex;
 // an explanation for error works
 /*
-The robot knows where it is at all times. It knows this because it knows where it isn't. By subtracting where it is from where it isn't, or where it isn't from where it is
+The robot knows where it is at all times. It knows this because it knows where it was. By adding where it was from where it isn't, or where it isn't from where it is
 (whichever is greater), it obtains a difference, or deviation. The guidance subsystem uses deviations to generate corrective commands to drive the robot from a position where
 it is to a position where it isn't, and arriving at a position where it wasn't, it now is. Consequently, the position where it is, is now the position that it wasn't, and
 it follows that the position that it was, is now the position that it isn't. In the event that the position that it is in is not the position that it wasn't,
@@ -40,6 +40,14 @@ float RadToDeg(float rad)
   return (rad * 180 / M_PI);
 }
 
+int signOf(float x)
+{
+  if (x > 0)
+    return 1;
+  if (x < 0)
+    return -1;
+  return 0;
+}
 /**
  * @brief convert degrees to radians
  * @param deg degrees (float)
@@ -271,25 +279,31 @@ int signOfDistance(std::vector<bezierPoint> points, int p1, int p2)
  * @param points an array containing points to follow
  * @param length the length of the array
  */
-void stanley(float points[][2], int length)
+void stanley(float points[][2], int length, bool isReversed)
 {
+  bool isPID=false;
+  float robotlength = 10;
+  float width =9;
   // constants for reaction to error
   float kp = 2;
+
   float ki = 0.00;
-  float kd = 10;
-  //it would apeear that kd=kp*5 is good for some reason
-  // lookahead distance
+  
+  float kd = 12;
+
+  // it would apeear that kd=kp*5 is good for some reason
+  //  lookahead distance
   float ld;
   // minimum and maximum speed
   float minSpeed = 25;
   float maxSpeed = 100;
   float v;
   // konstant for determining ld
-  float kv = 8;
+  float kv = 6; //v/kv
   // konstant for how much error changes the speed
-  float ke = 0.5;
+  float ke = 0;
   // konstant for how much the curvature changes the speed
-  float kc = 500;
+  float kc = 0;
   float segmentDist;
   float pathHeading;
   float robotAngle;
@@ -303,6 +317,7 @@ void stanley(float points[][2], int length)
   float normFactor;
   float output;
   int sign;
+  int bezierCount = floor(length / 4);
   int pointClosest = 0;
   float tval = 0;
 
@@ -318,12 +333,12 @@ void stanley(float points[][2], int length)
   Brain.Screen.print("stanley in progress");
   int i = 0;
   Brain.Timer.reset();
-  std::cout<<"kp="<<kp<<",ki="<<ki<<",kd="<<kd<<",kv="<<kv<<",ke="<<ke<<",kc="<<kc<<std::endl;
+  std::cout << "kp=" << kp << ",ki=" << ki << ",kd=" << kd << ",kv=" << kv << ",ke=" << ke << ",kc=" << kc << std::endl;
   while (true)
   {
     i++;
     // find the closest point to the robot
-    pointClosest = closestPoint(Bpoints, 8);
+    pointClosest = closestPoint(Bpoints, 9);
 
     // if the closest point is the last point of the points array
     if (pointClosest != 0) // if you set this to one the entire thing breaks  ¯⁠\⁠_⁠(⁠ツ⁠)⁠_⁠/⁠¯
@@ -341,14 +356,14 @@ void stanley(float points[][2], int length)
       pointClosest = 0;
     }
     // check if the tval is past the lenth of the total bezier spline. the 0.001 exists because computers are bad at math and error builds up due to thats
-    if (Bpoints[0].tval >= floor(length / 4) - 0.00001)
+    if (Bpoints[1].tval >= bezierCount)
     {
       break;
     }
 
     // slope of the path at the closest point
     pathHeading = Bpoints[0].angle;
-
+  
     // find the distance to the line segment after the closest point
     segmentDist = perpendicularDist(Bpoints, 0, 1); // distance of the path segment after the closest point
 
@@ -357,20 +372,31 @@ void stanley(float points[][2], int length)
 
     // calculate lookahead distance
     v = ((RotationR.velocity(rpm) / 2) + (RotationL.velocity(rpm) / 2)) / 2; // take the average of the two sides converting rpm to percent
-    v = fmax(v, minSpeed);                                                   // if velocity is less than minSpeed, set it to minSpeeds
+    v = fabs(fmax(v, minSpeed));                                             // if velocity is less than minSpeed, set it to minSpeeds
 
     // calculate the lookahead distance
-    ld = (v / kv)+3 ;
-    //ld=15;
-    // calculate the angle to the global angle to the lookahead point
+    ld = (v / kv); // + 3;
+    //ld=30;
+    //  calculate the angle to the global angle to the lookahead point
     ldAngle = RadToDeg(atan2(segmentDist, ld));
 
     // find the robot angle and limit it to 360 idk if it matters or not. it probably does since rotation is uncapped
-   // robotAngle = fmod(gyro1.rotation(degrees), 360);
-    robotAngle = gyro1.rotation(degrees);
+    robotAngle = fmod(gyro1.rotation(degrees), 360);
+    if (isReversed)
+    {
+      robotAngle = fmod(gyro1.rotation(degrees) + 180, 360);
+    }
+    // robotAngle = gyro1.rotation(degrees);
+
     prevError = error;
     // calculate the error
     error = (ldAngle * sign + pathHeading - robotAngle);
+    // if the error is greater than 180, subtract 360 from it and make sure its pointing the right way
+    error = fmod(error, 360);
+    if (fabs(error) > 180)
+    {
+      error = error - (signOf(error) * 360);
+    }
 
     // reset integral if error crosses zero
     if (zeroCrossing(error, prevError))
@@ -383,21 +409,38 @@ void stanley(float points[][2], int length)
     }
 
     // calculate the PID output
+
     output = (error * kp) + (totalError)*ki + (error - prevError) * kd;
+
 
     // set the previous error to the current error
 
     // calculate the speed of the motors
-    tSpeed = 100 - (fabs(Bpoints[pointClosest].curvature * kc) + fabs(error * ke));
+    tSpeed = 100 - (fabs(Bpoints[1].curvature * kc) + fabs(error * ke));
 
     // limit the value of tSpeed using fmax and fmin
+
     tSpeed = fmax(tSpeed, minSpeed);
     tSpeed = fmin(tSpeed, maxSpeed);
+    // tval is between 0.1 and 0
+    if (Bpoints[0].tval > (bezierCount - 0.05))
+    {
+      tSpeed = (bezierCount - Bpoints[0].tval) * 2000;
+    }
 
     // calculate the speed of the left and right motors
-    vL = tSpeed + output;
-    vR = tSpeed - output;
-
+    if(isPID){
+      vL = tSpeed + output;
+      vR = tSpeed - output;
+    }
+    else{
+      float d=(robotlength/2)*tanf(DegToRad(90-error));
+      float rl=d+(width/2);
+      float rr=d-(width/2);
+      float ratio = rl/rr;
+      vL=tSpeed*ratio;
+      vR=tSpeed;
+    }
     // calculate the normalization factor
     normFactor = maxSpeed / fmax(fabs(vL), fabs(vR));
 
@@ -409,14 +452,22 @@ void stanley(float points[][2], int length)
     }
 
     // drive using voltDrive
-    voltDrive(vL, vR, 10);
+    if (!isReversed)
+    {
+      voltDrive(vL, vR, 10);
+    }
+    else
+    {
+      voltDrive(-vR, -vL, 10);
+    }
 
     // print the values to the console with nice formatting
-     std::cout << X << ",,,"<< Y <<","<<error<<","<<ld<< std::endl;
-    //std::cout <<Brain.Timer.time()<<","<< error << "," << output << "," << kp * error << "," << ki * totalError << "," << kd * (error - prevError) << std::endl; // pid tuning config
-    wait(10, msec);
+    //std::cout << error << "," << vL <<","<<vR<< "\n";
+    std::cout<<X<<",,,,"<<Y<<"\n";
+    // std::cout <<Brain.Timer.time()<<","<< error << "," << output << "," << kp * error << "," << ki * totalError << "," << kd * (error - prevError) << std::endl; // pid tuning config
+    // wait(15, msec);
   }
-  drive_brake(hold);
+  drive_brake(brake);
   Brain.Screen.drawRectangle(0, 0, 480, 240, green);
   std::cout << "done" << std::endl;
 }

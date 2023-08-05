@@ -36,30 +36,38 @@ int odometery()
   double lEncoder = 0;      // declaring encoder variable left
   double bEncoder = 0;      // declaring encoder variable back
   double rEncoder = 0;      // declaring encoder variable right
+
   double distL = 0;         // distance left encoder has traveled
   double distB = 0;         // distance back encoder has traveled
   double distR = 0;         // distance right encoder has traveled
+
   double prevLE = lEncoder; // create previous encoder value left
   double prevBE = bEncoder; // create previous encoder value back
   double prevRE = rEncoder; // create previous encoder value right
-  double trackingRadius;
+
   double averageHeading; //
   double deltaX;
   double deltaY;
-  Controller1.rumble(".");
+
   RotationL.resetPosition();
   RotationB.resetPosition();
   RotationR.resetPosition();
+
   RotationB.datarate(10);
   RotationL.datarate(10);
   RotationR.datarate(10);
+
   gyro1.datarate(10);
+
   RotationL.setPosition(0, degrees);
   RotationB.setPosition(0, degrees);
   RotationR.setPosition(0, degrees);
+
   RB.resetPosition();
   LB.resetPosition();
+
   gyro1.resetHeading();
+  
   Brain.Screen.drawRectangle(0, 0, 480, 240, orange);
 
   while (true)
@@ -89,7 +97,14 @@ int odometery()
     if (true/*deltaHeading == 0*/)
     {
       deltaX = distB;
+      if(RotationR.installed()&&RotationL.installed())
       deltaY = (distL+distR)/2;
+      else if(RotationR.installed())
+      deltaY = distR;
+      else if(RotationL.installed())
+      deltaY = distL;
+      else 
+      deltaY = 0;
     }
     else
     {

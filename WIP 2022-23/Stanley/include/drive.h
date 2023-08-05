@@ -15,7 +15,7 @@ void RAMSETE(float targetX, float targetY, float targetAngle,
 void DriveToPoint3(float targetX, float targetY, float targetAngle,
                    float accuracy);
 void driveAtAngle(float angle, float baseSpeed, float time);
-void stanley(float points[][2], int length);
+void stanley(float points[][2], int length, bool isReversed = false);
 void curveDrive(double x, double y, double speed, double wt);
 void purePursuit(float points[][2], int length);
 

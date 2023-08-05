@@ -40,7 +40,7 @@ int ControllerPrint()
     Controller1.Screen.setCursor(1, 1);
     Controller1.Screen.print("pos= (%.1f  , %.1f  )       ", X, Y);
     Controller1.Screen.setCursor(2, 1);
-    Controller1.Screen.print("%.1f", gyro1.yaw(deg));
+    Controller1.Screen.print("%f", gyro1.angle(degrees));
     if (devicesCheck())
     {
       Controller1.Screen.setCursor(3, 1);
@@ -50,31 +50,40 @@ int ControllerPrint()
     {
       Controller1.Screen.setCursor(3, 1);
       Controller1.rumble(".");
-      if(!RotationB.installed()){
+      if (!RotationB.installed())
+      {
         Controller1.Screen.print("RotationB not connected");
       }
-      else if (!RotationR.installed()){
+      else if (!RotationR.installed())
+      {
         Controller1.Screen.print("RotationR not connected");
       }
-      else if (!RotationL.installed()){
+      else if (!RotationL.installed())
+      {
         Controller1.Screen.print("RotationL not connected");
       }
-      else if (!LF.installed()){
+      else if (!LF.installed())
+      {
         Controller1.Screen.print("LF not connected");
       }
-      else if (!RF.installed()){
+      else if (!RF.installed())
+      {
         Controller1.Screen.print("RF not connected");
       }
-      else if (!LB.installed()){
+      else if (!LB.installed())
+      {
         Controller1.Screen.print("LB not connected");
       }
-      else if (!RB.installed()){
+      else if (!RB.installed())
+      {
         Controller1.Screen.print("RB not connected");
       }
-      else if (!gyro1.installed()){
+      else if (!gyro1.installed())
+      {
         Controller1.Screen.print("gyro not connected");
       }
-      else{
+      else
+      {
         Controller1.Screen.print("unknown device not connected");
       }
       wait(100, msec);
@@ -112,8 +121,8 @@ void pre_auton(void)
   Brain.Screen.drawCircle(240, 120, 50, green);
   thread ControllerPrinting = thread(ControllerPrint);
   ControllerPrinting.setPriority(1);
- // int i = thread::hardware_concurrency();
- // std::cout <<"hardware limit =" <<i << std::endl;
+  // int i = thread::hardware_concurrency();
+  // std::cout <<"hardware limit =" <<i << std::endl;
   thread posTrack = thread(odometery);
 
   // All activities that occur before the competition starts
@@ -133,35 +142,17 @@ void pre_auton(void)
 void autonomous(void)
 {
 
-
   std::cout << "Autonomous Started yes" << std::endl;
-  //driveAtAngle(-90,90,1);
-  
- // wait(1,sec);
-  float points[16][2] = {
+
+  float points[4][2] = {
       {0, 0},
-      {5, 95},
-      {-37,90 },
-      {-41,90},
-
-      {-41,90},
-      {-45,90},
-      {-85,90},
-      {-90,90},
-
-      {-90,90},
-      {-95,90},
-      {-113,84},
-      {-113,60},
-
-      {-113,60},
-      {-113,36},
-      {-113,30},
-      {-113,-10}
+      {0, 40},
+      {20, 40},
+      {20, 80},
       };
-  stanley(points, sizeof(points) / (2*sizeof(float)));
-  
-}
+  stanley(points, sizeof(points) / (2 * sizeof(float)));
+};
+
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
 /*                              User Control Task                            */
@@ -175,16 +166,14 @@ void autonomous(void)
 void usercontrol(void)
 {
   // User control code here, inside the loop
-
   while (1)
   {
-      Brain.Screen.drawCircle(240, 120, 50, green);
+    Brain.Screen.drawCircle(240, 120, 50, green);
     //  Controller1.rumble(".");
 
     voltDrive(Controller1.Axis3.position(), Controller1.Axis2.position(), 10);
-        std::cout << X << ",,," << Y << std::endl;
-    wait(15, msec); // Sleep the task for a short amount of time to
-                    // prevent wasted resources.
+    std::cout << X << ",,," << Y << "\n";
+    wait(15, msec);
   }
 }
 
@@ -198,7 +187,6 @@ int main()
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
   //  Controller1.ButtonX.pressed(autonomous);
-
   Controller1.ButtonA.pressed(toggleclaw);
   // Run the pre-autonomous function.
   pre_auton();
@@ -207,6 +195,5 @@ int main()
   while (true)
   {
     wait(100, msec);
-
   }
 }
