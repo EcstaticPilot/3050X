@@ -282,6 +282,7 @@ int signOfDistance(std::vector<bezierPoint> points, int p1, int p2)
 void stanley(float points[][2], int length, bool isReversed)
 {
   bool isPID=false;
+  float kf = 0;
   float robotlength = 10;
   float width =9;
   // constants for reaction to error
@@ -289,7 +290,7 @@ void stanley(float points[][2], int length, bool isReversed)
 
   float ki = 0.00;
   
-  float kd = 12;
+  float kd = 10;
 
   // it would apeear that kd=kp*5 is good for some reason
   //  lookahead distance
@@ -299,11 +300,15 @@ void stanley(float points[][2], int length, bool isReversed)
   float maxSpeed = 100;
   float v;
   // konstant for determining ld
-  float kv = 6; //v/kv
+  float kv = 7; //v/kv
   // konstant for how much error changes the speed
   float ke = 0;
   // konstant for how much the curvature changes the speed
   float kc = 0;
+
+  float radius;
+  float totalRadius;
+
   float segmentDist;
   float pathHeading;
   float robotAngle;
@@ -433,10 +438,13 @@ void stanley(float points[][2], int length, bool isReversed)
       vL = tSpeed + output;
       vR = tSpeed - output;
     }
-    else{
-      float d=(robotlength/2)*tanf(DegToRad(90-error));
-      float rl=d+(width/2);
-      float rr=d-(width/2);
+    else
+    {
+      radius=(robotlength/2)*tanf(DegToRad(90-error)+ 0.0001);
+      float curvature = 1/radius;
+      totalRadius=1/(curvature+(Bpoints[0].curvature*kf));
+      float rl=totalRadius+(width/2);
+      float rr=totalRadius-(width/2);
       float ratio = rl/rr;
       vL=tSpeed*ratio;
       vR=tSpeed;
@@ -454,16 +462,17 @@ void stanley(float points[][2], int length, bool isReversed)
     // drive using voltDrive
     if (!isReversed)
     {
-      voltDrive(vL, vR, 10);
+      voltDrive(vL, vR, 0);
     }
     else
     {
-      voltDrive(-vR, -vL, 10);
+      voltDrive(-vR, -vL, 0);
     }
 
     // print the values to the console with nice formatting
     //std::cout << error << "," << vL <<","<<vR<< "\n";
-    std::cout<<X<<",,,,"<<Y<<"\n";
+    std::cout<<"e="<<error<<",er="<<radius<<",pr="<<1/Bpoints[0].curvature<<",tval="<<Bpoints[0].tval<<std::endl;
+    wait(15,msec);
     // std::cout <<Brain.Timer.time()<<","<< error << "," << output << "," << kp * error << "," << ki * totalError << "," << kd * (error - prevError) << std::endl; // pid tuning config
     // wait(15, msec);
   }
