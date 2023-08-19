@@ -144,27 +144,12 @@ void autonomous(void)
 
   std::cout << "Autonomous Started yes" << std::endl;
 
-  float points[16][2] = {
+  float points[4][2] = {
       {0, 0},
-{0, 120},
-{-10, 120},
-{35, 120},
-// mirror over 36.5
-{35, 120},
-{80, 120},
-{68, 120},
-{68, 60},
-
-{68,60},
-{68,0},
-{80,0},
-{34,0},
-
-{34,0},
-{-10,0},
-{0,0},
-{0,60}
-      };
+{0, 40},
+{20, 40},
+{20, 80},
+};
   stanley(points, sizeof(points) / (2 * sizeof(float)));
 };
 
