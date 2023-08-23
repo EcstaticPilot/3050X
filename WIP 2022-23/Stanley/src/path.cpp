@@ -291,12 +291,13 @@ void stanley(float points[][2], int length, bool isReversed)
 
   float ki = 0;
 
-  float kd = 6.66;
+  float kd = 2; //6.666666
 
-  float kv = 7.5; // v/kv
+  float kv = 10; // v/kv   7.5
   // it would apeear that kd=kp*5 is good for some reason
   //  lookahead distance
   float ld;
+  int lead = 0;
   // minimum and maximum speed
   float minSpeed = 25;
   float maxSpeed = 100;
@@ -369,13 +370,13 @@ void stanley(float points[][2], int length, bool isReversed)
     }
 
     // slope of the path at the closest point
-    pathHeading = Bpoints[0].angle;
+    pathHeading = Bpoints[0+lead].angle;
 
     // find the distance to the line segment after the closest point
-    segmentDist = perpendicularDist(Bpoints, 0, 1); // distance of the path segment after the closest point
+    segmentDist = perpendicularDist(Bpoints, 0+lead, 1+lead); // distance of the path segment after the closest point
 
     // find the sign of the distance
-    sign = signOfDistance(Bpoints, 0, 1);
+    sign = signOfDistance(Bpoints, 0+lead, 1+lead);
 
     // calculate lookahead distance
     v = ((RotationR.velocity(rpm) / 2) + (RotationL.velocity(rpm) / 2)) / 2; // take the average of the two sides converting rpm to percent
@@ -389,6 +390,7 @@ void stanley(float points[][2], int length, bool isReversed)
 
     // find the robot angle and limit it to 360 idk if it matters or not. it probably does since rotation is uncapped
     robotAngle = fmod(gyro1.rotation(degrees), 360);
+
     if (isReversed)
     {
       robotAngle = fmod(gyro1.rotation(degrees) + 180, 360);
@@ -454,14 +456,16 @@ void stanley(float points[][2], int length, bool isReversed)
     }
     else
     {
-      radius = (robotlength / 2) * tanf(DegToRad(90 - error) + 0.0001);
-      float pathcurvature = 1 / Bpoints[0].curvature;
-      totalRadius = 1 / (pathcurvature + 1 / radius);
-      float rl = totalRadius + (width / 2);
-      float rr = totalRadius - (width / 2);
-      float ratio = rl / rr;
-      vL = tSpeed * ratio;
-      vR = tSpeed;
+      radius=(robotlength/2)*tanf(DegToRad(90-error)+ 0.0001);
+      if(kf>0){
+      float curvature = 1/radius;
+      radius=1/(curvature+(Bpoints[0].curvature*kf));
+      }
+      float rl=radius+(width/2);
+      float rr = radius-(width/2);
+      float ratio = rl/rr;
+      vL=tSpeed*ratio;
+      vR=tSpeed;
     }
     // calculate the normalization factor
     normFactor = maxSpeed / fmax(fabs(vL), fabs(vR));
@@ -485,12 +489,12 @@ void stanley(float points[][2], int length, bool isReversed)
 
     // print the values to the console with nice formatting
     // std::cout << error << "," << vL <<","<<vR<< "\n";
-    std::cout << X << ",,," << Y << std::endl;
+    std::cout << X << ",,," << Y <<std::endl;
     wait(10, msec);
     // std::cout <<Brain.Timer.time()<<","<< error << "," << output << "," << kp * error << "," << ki * totalError << "," << kd * (error - prevError) << std::endl; // pid tuning config
     // wait(15, msec);
   }
-  drive_brake(brake);
+  drive_brake(brake); 
   Brain.Screen.drawRectangle(0, 0, 480, 240, green);
   std::cout << "done" << std::endl;
 }
