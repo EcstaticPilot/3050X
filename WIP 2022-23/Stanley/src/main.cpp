@@ -14,11 +14,11 @@ using namespace vex;
 // A global instance of competition
 competition Competition;
 
-void toggleclaw(){ claw.set(!claw.value()); }
+void toggleclaw() { claw.set(!claw.value()); }
 
 bool devicesCheck()
 {
-  
+
   if (LF.installed() && RF.installed() && LB.installed() && RB.installed() &&
       gyro1.installed() &&
       RotationR.installed() && RotationB.installed() && RotationL.installed())
@@ -100,7 +100,7 @@ int ControllerPrint()
 
 void pre_auton(void)
 {
-  
+
   Brain.Screen.drawRectangle(0, 0, 480, 240, red);
   gyro1.calibrate();
   std::cout << "gyro calibrating" << std::endl;
@@ -140,18 +140,24 @@ void pre_auton(void)
 void autonomous(void)
 {
 
-
   std::cout << "Autonomous Started yes" << std::endl;
 
   float points[4][2] = {
-{0, 0},
-{0, 60},
-{-80, 60},
-{-80, 0}
-
-};
+      {0,0},
+      {0, 40},
+      {-20, 40},
+      {-20, 80}
+      };
   stanley(points, sizeof(points) / (2 * sizeof(float)));
-};
+
+  float points2[4][2] = {
+      {-20, 80},
+      {-20, 40},
+      {0, 40},
+      {0,0}
+      };
+  stanley(points, sizeof(points2) / (2 * sizeof(float)),true);
+}
 
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
@@ -184,7 +190,7 @@ int main()
 {
 
   // Set up callbacks for autonomous and driver control periods.
-  //Competition.bStopAllTasksBetweenModes = true;
+  // Competition.bStopAllTasksBetweenModes = true;
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
   //  Controller1.ButtonX.pressed(autonomous);

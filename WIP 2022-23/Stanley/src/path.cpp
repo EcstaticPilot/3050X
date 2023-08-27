@@ -278,6 +278,7 @@ int signOfDistance(std::vector<bezierPoint> points, int p1, int p2)
  * @brief stanley controller for following a path of points
  * @param points an array containing points to follow
  * @param length the length of the array
+ * 
  */
 void stanley(float points[][2], int length, bool isReversed)
 {
@@ -285,13 +286,15 @@ void stanley(float points[][2], int length, bool isReversed)
   float kf = 0;
   float robotlength = 10;
   float width = 9;
+
+  float waitTime = 15;
   // constants for reaction to error
   //untested values
   float kp = 2;
 
   float ki = 0;
-
-  float kd = 2; //6.666666
+ 
+  float kd = 10; //6.666666
 
   float kv = 10; // v/kv   7.5
   // it would apeear that kd=kp*5 is good for some reason
@@ -302,7 +305,6 @@ void stanley(float points[][2], int length, bool isReversed)
   float minSpeed = 25;
   float maxSpeed = 100;
   float v;
-  // konstant for determining ld
 
   // konstant for how much error changes the speed
   float ke = 0;
@@ -317,13 +319,16 @@ void stanley(float points[][2], int length, bool isReversed)
   float robotAngle;
   float tSpeed;
   float ldAngle;
+
   float prevError = 0;
   float totalError = 0;
   float error = 0;
+
   float vL;
   float vR;
   float normFactor;
   float output;
+
   int sign;
   int bezierCount = floor(length / 4);
   int pointClosest = 0;
@@ -342,8 +347,10 @@ void stanley(float points[][2], int length, bool isReversed)
   int i = 0;
   Brain.Timer.reset();
   std::cout << "kp=" << kp << ",ki=" << ki << ",kd=" << kd << ",kv=" << kv << ",ke=" << ke << ",kc=" << kc << std::endl;
+  std::cout <<"segmentDist,error,output,vL,vR, ld"<<std::endl;
   while (true)
   {
+    
     i++;
     // find the closest point to the robot
     pointClosest = closestPoint(Bpoints, 9);
@@ -377,14 +384,16 @@ void stanley(float points[][2], int length, bool isReversed)
 
     // find the sign of the distance
     sign = signOfDistance(Bpoints, 0+lead, 1+lead);
-
+    if(isReversed){
+     // sign*=-1;
+    }
     // calculate lookahead distance
     v = ((RotationR.velocity(rpm) / 2) + (RotationL.velocity(rpm) / 2)) / 2; // take the average of the two sides converting rpm to percent
-    v = fabs(fmax(v, minSpeed));                                             // if velocity is less than minSpeed, set it to minSpeeds
+    v = fmax(fabs(v), minSpeed);                                             // if velocity is less than minSpeed, set it to minSpeeds
 
     // calculate the lookahead distance
-    ld = (v / kv); // + 3;
-    // ld=30;
+    ld = (v / kv);
+    // ld=7.5;
     //   calculate the angle to the global angle to the lookahead point
     ldAngle = RadToDeg(atan2(segmentDist, ld));
 
@@ -438,6 +447,7 @@ void stanley(float points[][2], int length, bool isReversed)
     if (isPID)
     {
       output = (error)*kp + (totalError)*ki + (error - prevError) * kd;
+
       if (kf > 0)
       {
 
@@ -488,9 +498,12 @@ void stanley(float points[][2], int length, bool isReversed)
     }
 
     // print the values to the console with nice formatting
+    if(fabs(segmentDist)>500){
+      Controller1.rumble(".");
+    }
     // std::cout << error << "," << vL <<","<<vR<< "\n";
-    std::cout << X << ",,," << Y <<std::endl;
-    wait(10, msec);
+    std::cout <<X<<","<<Y<<","<<segmentDist*sign<<","<<error<<","<<output<<","<<vL<<","<<vR<<","<<ld<<std::endl;
+    wait(waitTime, msec);
     // std::cout <<Brain.Timer.time()<<","<< error << "," << output << "," << kp * error << "," << ki * totalError << "," << kd * (error - prevError) << std::endl; // pid tuning config
     // wait(15, msec);
   }
