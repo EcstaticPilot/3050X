@@ -278,7 +278,8 @@ int signOfDistance(std::vector<bezierPoint> points, int p1, int p2)
  * @brief stanley controller for following a path of points
  * @param points an array containing points to follow
  * @param length the length of the array
- * 
+ * @param isReversed if the robot is reversed when following the path
+ *
  */
 void stanley(float points[][2], int length, bool isReversed)
 {
@@ -287,14 +288,14 @@ void stanley(float points[][2], int length, bool isReversed)
   float robotlength = 10;
   float width = 9;
 
-  float waitTime = 15;
+  float waitTime = 10;
   // constants for reaction to error
-  //untested values
+  // untested values
   float kp = 2;
 
   float ki = 0;
- 
-  float kd = 10; //6.666666
+
+  float kd = 6.25; // 6.666666
 
   float kv = 10; // v/kv   7.5
   // it would apeear that kd=kp*5 is good for some reason
@@ -344,14 +345,12 @@ void stanley(float points[][2], int length, bool isReversed)
   }
   Brain.Screen.drawRectangle(0, 0, 480, 240, yellow);
   Brain.Screen.print("stanley in progress");
-  int i = 0;
+
   Brain.Timer.reset();
   std::cout << "kp=" << kp << ",ki=" << ki << ",kd=" << kd << ",kv=" << kv << ",ke=" << ke << ",kc=" << kc << std::endl;
-  std::cout <<"segmentDist,error,output,vL,vR, ld"<<std::endl;
+  std::cout << "X,Y,error" << std::endl;
   while (true)
   {
-    
-    i++;
     // find the closest point to the robot
     pointClosest = closestPoint(Bpoints, 9);
 
@@ -377,15 +376,16 @@ void stanley(float points[][2], int length, bool isReversed)
     }
 
     // slope of the path at the closest point
-    pathHeading = Bpoints[0+lead].angle;
+    pathHeading = Bpoints[0 + lead].angle;
 
     // find the distance to the line segment after the closest point
-    segmentDist = perpendicularDist(Bpoints, 0+lead, 1+lead); // distance of the path segment after the closest point
+    segmentDist = perpendicularDist(Bpoints, 0 + lead, 1 + lead); // distance of the path segment after the closest point
 
     // find the sign of the distance
-    sign = signOfDistance(Bpoints, 0+lead, 1+lead);
-    if(isReversed){
-     // sign*=-1;
+    sign = signOfDistance(Bpoints, 0 + lead, 1 + lead);
+    if (isReversed)
+    {
+      // sign*=-1;
     }
     // calculate lookahead distance
     v = ((RotationR.velocity(rpm) / 2) + (RotationL.velocity(rpm) / 2)) / 2; // take the average of the two sides converting rpm to percent
@@ -466,16 +466,17 @@ void stanley(float points[][2], int length, bool isReversed)
     }
     else
     {
-      radius=(robotlength/2)*tanf(DegToRad(90-error)+ 0.0001);
-      if(kf>0){
-      float curvature = 1/radius;
-      radius=1/(curvature+(Bpoints[0].curvature*kf));
+      radius = (robotlength / 2) * tanf(DegToRad(90 - error) + 0.0001);
+      if (kf > 0)
+      {
+        float curvature = 1 / radius;
+        radius = 1 / (curvature + (Bpoints[0].curvature * kf));
       }
-      float rl=radius+(width/2);
-      float rr = radius-(width/2);
-      float ratio = rl/rr;
-      vL=tSpeed*ratio;
-      vR=tSpeed;
+      float rl = radius + (width / 2);
+      float rr = radius - (width / 2);
+      float ratio = rl / rr;
+      vL = tSpeed * ratio;
+      vR = tSpeed;
     }
     // calculate the normalization factor
     normFactor = maxSpeed / fmax(fabs(vL), fabs(vR));
@@ -497,17 +498,13 @@ void stanley(float points[][2], int length, bool isReversed)
       voltDrive(-vR, -vL, 0);
     }
 
-    // print the values to the console with nice formatting
-    if(fabs(segmentDist)>500){
-      Controller1.rumble(".");
-    }
     // std::cout << error << "," << vL <<","<<vR<< "\n";
-    std::cout <<X<<","<<Y<<","<<segmentDist*sign<<","<<error<<","<<output<<","<<vL<<","<<vR<<","<<ld<<std::endl;
+    std::cout << X << "," << Y << ","<<error<<std::endl;
     wait(waitTime, msec);
     // std::cout <<Brain.Timer.time()<<","<< error << "," << output << "," << kp * error << "," << ki * totalError << "," << kd * (error - prevError) << std::endl; // pid tuning config
     // wait(15, msec);
   }
-  drive_brake(brake); 
+  drive_brake(brake);
   Brain.Screen.drawRectangle(0, 0, 480, 240, green);
   std::cout << "done" << std::endl;
 }

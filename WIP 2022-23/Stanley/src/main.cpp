@@ -142,21 +142,21 @@ void autonomous(void)
 
   std::cout << "Autonomous Started yes" << std::endl;
 
-  float points[4][2] = {
+  float Leave[4][2] = {
       {0,0},
       {0, 40},
       {-20, 40},
       {-20, 80}
       };
-  stanley(points, sizeof(points) / (2 * sizeof(float)));
-
-  float points2[4][2] = {
+  stanley(Leave, sizeof(Leave) / (2 * sizeof(float)));
+  wait(0.5,sec);
+  float Return[4][2] = {
       {-20, 80},
       {-20, 40},
       {0, 40},
       {0,0}
       };
-  stanley(points, sizeof(points2) / (2 * sizeof(float)),true);
+  stanley(Return, sizeof(Return) / (2 * sizeof(float)),true);
 }
 
 /*---------------------------------------------------------------------------*/
