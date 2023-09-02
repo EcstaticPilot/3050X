@@ -383,10 +383,7 @@ void stanley(float points[][2], int length, bool isReversed)
 
     // find the sign of the distance
     sign = signOfDistance(Bpoints, 0 + lead, 1 + lead);
-    if (isReversed)
-    {
-      // sign*=-1;
-    }
+
     // calculate lookahead distance
     v = ((RotationR.velocity(rpm) / 2) + (RotationL.velocity(rpm) / 2)) / 2; // take the average of the two sides converting rpm to percent
     v = fmax(fabs(v), minSpeed);                                             // if velocity is less than minSpeed, set it to minSpeeds
@@ -404,6 +401,7 @@ void stanley(float points[][2], int length, bool isReversed)
     {
       robotAngle = fmod(gyro1.rotation(degrees) + 180, 360);
     }
+
     // robotAngle = gyro1.rotation(degrees);
 
     prevError = error;
@@ -499,7 +497,7 @@ void stanley(float points[][2], int length, bool isReversed)
     }
 
     // std::cout << error << "," << vL <<","<<vR<< "\n";
-    std::cout << X << "," << Y << ","<<error<<std::endl;
+    std::cout << X << "," << Y << "," << error << std::endl;
     wait(waitTime, msec);
     // std::cout <<Brain.Timer.time()<<","<< error << "," << output << "," << kp * error << "," << ki * totalError << "," << kd * (error - prevError) << std::endl; // pid tuning config
     // wait(15, msec);

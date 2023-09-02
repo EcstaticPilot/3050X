@@ -16,6 +16,55 @@ competition Competition;
 
 void toggleclaw() { claw.set(!claw.value()); }
 
+button red1;
+button red2;
+button blue1;
+button blue2;
+
+enum Auton {RED_1, RED_2, BLUE_1, BLUE_2};
+
+Auton selectedAuton = RED_1;
+
+void onScreenPress()
+{
+  if (red1.checkTouch())
+  {
+    red1.setFill(true);
+    red2.setFill(false);
+    blue1.setFill(false);
+    blue2.setFill(false);
+
+    selectedAuton = RED_1;
+  }
+  else if (red2.checkTouch())
+  {
+    red1.setFill(false);
+    red2.setFill(true);
+    blue1.setFill(false);
+    blue2.setFill(false);
+
+    selectedAuton = RED_2;
+  }
+  else if (blue1.checkTouch())
+  {
+    red1.setFill(false);
+    red2.setFill(false);
+    blue1.setFill(true);
+    blue2.setFill(false);
+
+    selectedAuton = BLUE_1;
+  }
+  else if (blue2.checkTouch())
+  {
+    red1.setFill(false);
+    red2.setFill(false);
+    blue1.setFill(false);
+    blue2.setFill(true);
+    
+    selectedAuton = BLUE_2;
+  }
+}
+
 bool devicesCheck()
 {
 
@@ -100,10 +149,17 @@ int ControllerPrint()
 
 void pre_auton(void)
 {
+  red1 =  button(60, 60, 120, 60, red, "red1");
+  red2 =  button(60, 130, 120, 60, red, "red2");
+  blue1 = button(300, 60, 120, 60, blue, "blue1");
+  blue2 = button(300, 130, 120, 60, blue, "blue2");
 
-  Brain.Screen.drawRectangle(0, 0, 480, 240, red);
+  Brain.Screen.pressed(onScreenPress);
+
   gyro1.calibrate();
+
   std::cout << "gyro calibrating" << std::endl;
+
   waitUntil(gyro1.isCalibrating() == false);
   if (devicesCheck())
   {
@@ -116,15 +172,12 @@ void pre_auton(void)
     Controller1.rumble("....");
     Brain.Screen.print("Devices Not Connected");
   }
-  Brain.Screen.drawCircle(240, 120, 50, green);
+
+  //launch threads
   thread ControllerPrinting = thread(ControllerPrint);
   ControllerPrinting.setPriority(1);
-  // int i = thread::hardware_concurrency();
-  // std::cout <<"hardware limit =" <<i << std::endl;
   thread posTrack = thread(odometery);
 
-  // All activities that occur before the competition starts
-  // Example: clearing encoders, setting servo positions, ...
 }
 
 /*---------------------------------------------------------------------------*/
@@ -143,20 +196,37 @@ void autonomous(void)
   std::cout << "Autonomous Started yes" << std::endl;
 
   float Leave[4][2] = {
-      {0,0},
+      {0, 0},
       {0, 40},
       {-20, 40},
-      {-20, 80}
-      };
+      {-20, 80}};
   stanley(Leave, sizeof(Leave) / (2 * sizeof(float)));
-  wait(0.5,sec);
+  wait(0.5, sec);
   float Return[4][2] = {
       {-20, 80},
       {-20, 40},
       {0, 40},
-      {0,0}
-      };
-  stanley(Return, sizeof(Return) / (2 * sizeof(float)),true);
+      {0, 0}};
+  stanley(Return, sizeof(Return) / (2 * sizeof(float)), true);
+
+  switch (selectedAuton)
+  {
+  case RED_1:
+    // code for red auton 1
+    break;
+  case RED_2:
+    // code for red auton 2
+    break;
+  case BLUE_1:
+    // code for blue auton 1
+    break;
+  case BLUE_2:
+    // code for blue auton 2
+    break;
+  default:
+    // code for default case
+    break;
+  }
 }
 
 /*---------------------------------------------------------------------------*/

@@ -12,6 +12,7 @@
 //my files
 #include "drive.h"
 #include "odometry.h"
+#include "autonSelector.h"
 
 #define waitUntil(condition)                                                   \
   do {                                                                         \
