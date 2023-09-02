@@ -9,6 +9,8 @@ extern motor LF;
 extern motor LB;
 extern motor RF;
 extern motor RB;
+extern motor RM;
+extern motor LM;
 extern inertial gyro1;
 extern rotation RotationL;
 extern rotation RotationB;

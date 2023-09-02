@@ -69,8 +69,8 @@ bool devicesCheck()
 {
 
   if (LF.installed() && RF.installed() && LB.installed() && RB.installed() &&
-      gyro1.installed() &&
-      RotationR.installed() && RotationB.installed() && RotationL.installed())
+      gyro1.installed()
+      )
   {
     return true;
   }
@@ -96,19 +96,7 @@ int ControllerPrint()
     else
     {
       Controller1.rumble(".");
-      if (!RotationB.installed())
-      {
-        Controller1.Screen.print("RotationB not connected");
-      }
-      else if (!RotationR.installed())
-      {
-        Controller1.Screen.print("RotationR not connected");
-      }
-      else if (!RotationL.installed())
-      {
-        Controller1.Screen.print("RotationL not connected");
-      }
-      else if (!LF.installed())
+      if (!LF.installed())
       {
         Controller1.Screen.print("LF not connected");
       }
@@ -149,12 +137,12 @@ int ControllerPrint()
 
 void pre_auton(void)
 {
-  red1 =  button(60, 60, 120, 60, red, "red1");
-  red2 =  button(60, 130, 120, 60, red, "red2");
-  blue1 = button(300, 60, 120, 60, blue, "blue1");
-  blue2 = button(300, 130, 120, 60, blue, "blue2");
+//  red1 =  button(60, 60, 120, 60, red, "red1");
+ // red2 =  button(60, 130, 120, 60, red, "red2");
+ // blue1 = button(300, 60, 120, 60, blue, "blue1");
+ // blue2 = button(300, 130, 120, 60, blue, "blue2");
 
-  Brain.Screen.pressed(onScreenPress);
+ // Brain.Screen.pressed(onScreenPress);
 
   gyro1.calibrate();
 
@@ -195,21 +183,31 @@ void autonomous(void)
 
   std::cout << "Autonomous Started yes" << std::endl;
 
-  float Leave[4][2] = {
+  float throughGoal[16][2] = {
       {0, 0},
-      {0, 40},
-      {-20, 40},
-      {-20, 80}};
-  stanley(Leave, sizeof(Leave) / (2 * sizeof(float)));
-  wait(0.5, sec);
-  float Return[4][2] = {
-      {-20, 80},
-      {-20, 40},
-      {0, 40},
-      {0, 0}};
-  stanley(Return, sizeof(Return) / (2 * sizeof(float)), true);
+{0, 120},
+{-10, 120},
+{35, 120},
+// mirror over 36.5
+{35, 120},
+{80, 120},
+{68, 120},
+{68, 60},
 
-  switch (selectedAuton)
+{68,60},
+{68,0},
+{80,0},
+{34,0},
+
+{34,0},
+{-10,0},
+{0,0},
+{0,60}};
+  stanley(throughGoal, sizeof(throughGoal) / (2 * sizeof(float)));
+  wait(0.5, sec);
+
+
+ switch (selectedAuton)
   {
   case RED_1:
     // code for red auton 1
@@ -224,8 +222,9 @@ void autonomous(void)
     // code for blue auton 2
     break;
   default:
-    // code for default case
+    
     break;
+    
   }
 }
 

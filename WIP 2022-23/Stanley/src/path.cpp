@@ -295,9 +295,9 @@ void stanley(float points[][2], int length, bool isReversed)
 
   float ki = 0;
 
-  float kd = 6.25; // 6.666666
+  float kd = 10; // 6.666666
 
-  float kv = 10; // v/kv   7.5
+  float kv = 7.5; // v/kv   7.5
   // it would apeear that kd=kp*5 is good for some reason
   //  lookahead distance
   float ld;
@@ -385,7 +385,8 @@ void stanley(float points[][2], int length, bool isReversed)
     sign = signOfDistance(Bpoints, 0 + lead, 1 + lead);
 
     // calculate lookahead distance
-    v = ((RotationR.velocity(rpm) / 2) + (RotationL.velocity(rpm) / 2)) / 2; // take the average of the two sides converting rpm to percent
+   // v = ((RotationR.velocity(rpm) / 2) + (RotationL.velocity(rpm) / 2)) / 2; // take the average of the two sides converting rpm to percent
+   v= (RB.velocity(pct)+LB.velocity(pct))/2;
     v = fmax(fabs(v), minSpeed);                                             // if velocity is less than minSpeed, set it to minSpeeds
 
     // calculate the lookahead distance
@@ -436,9 +437,9 @@ void stanley(float points[][2], int length, bool isReversed)
     tSpeed = fmax(tSpeed, minSpeed);
     tSpeed = fmin(tSpeed, maxSpeed);
     // tval is between 0.1 and 0, start slowing down
-    if (Bpoints[1].tval > (bezierCount - 0.05))
+    if (Bpoints[1].tval > (bezierCount - 0.1))
     {
-      tSpeed = (bezierCount - Bpoints[0].tval) * 2000;
+      tSpeed = (bezierCount - Bpoints[0].tval) * 1000;
     }
 
     // calculate the speed of the left and right motors

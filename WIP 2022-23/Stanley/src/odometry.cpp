@@ -29,9 +29,9 @@ int odometery()
   double lRad;
   double bRad;
   double rRad;   // radius of tracking wheel
-  lRad = 1.3926; // radius of tracking wheel
-  bRad = 1.3926;
-  rRad = 1.3926;
+  lRad = 2; // radius of tracking wheel
+  bRad = 0;
+  rRad = 2;
   // radius of tracking wheel
   double lEncoder = 0;      // declaring encoder variable left
   double bEncoder = 0;      // declaring encoder variable back
@@ -48,8 +48,8 @@ int odometery()
   double averageHeading; //
   double deltaX;
   double deltaY;
-
-  RotationL.resetPosition();
+  gyro1.datarate(10);
+/*  RotationL.resetPosition();
   RotationB.resetPosition();
   RotationR.resetPosition();
 
@@ -57,36 +57,38 @@ int odometery()
   RotationL.datarate(10);
   RotationR.datarate(10);
 
-  gyro1.datarate(10);
+
 
   RotationL.setPosition(0, degrees);
   RotationB.setPosition(0, degrees);
   RotationR.setPosition(0, degrees);
+  */
 
   RB.resetPosition();
   LB.resetPosition();
 
   gyro1.resetHeading();
-  
-  Brain.Screen.drawRectangle(0, 0, 480, 240, orange);
 
   while (true)
   {
-
+    /*
     lEncoder = RotationL.position(degrees);
     rEncoder = RotationR.position(degrees);
     bEncoder = RotationB.position(degrees);
+    */
+    lEncoder = LB.position(degrees) * 3 / 6;
+    rEncoder = RB.position(degrees) * 3 / 6;
 
     // convert encoder distance into distance traveled
     distL = ((lEncoder - prevLE) * M_PI / 180) * lRad;
     distR = ((rEncoder - prevRE) * M_PI / 180) * rRad;
-    distB = ((bEncoder - prevBE) * M_PI / 180) * bRad;
+    //distB = ((bEncoder - prevBE) * M_PI / 180) * bRad;
 
     // convert encoder distance into disntance traveled
 
     prevLE = lEncoder; // create previous encoder value left
     prevRE = rEncoder; // create previous encoder value right
-    prevBE = bEncoder; // create previous encoder value back
+    //prevBE = bEncoder; // create previous encoder value back
 
     Heading = ((gyro1.rotation()*M_PI/180));
     Heading = fmod(Heading, 2 * M_PI);
@@ -97,14 +99,8 @@ int odometery()
     if (true/*deltaHeading == 0*/)
     {
       deltaX = distB;
-      if(RotationR.installed()&&RotationL.installed())
+      if(RB.installed() && LB.installed())
       deltaY = (distL+distR)/2;
-      else if(RotationR.installed())
-      deltaY = distR;
-      else if(RotationL.installed())
-      deltaY = distL;
-      else 
-      deltaY = 0;
     }
     else
     {

@@ -9,14 +9,20 @@ brain  Brain;
 
 // VEXcode device constructors
 controller Controller1 = controller(primary);
-motor LF = motor(PORT4, ratio18_1, true);
-motor LB = motor(PORT9, ratio18_1, false);
-motor RF = motor(PORT7, ratio18_1, false);
-motor RB = motor(PORT2, ratio18_1, true);
-inertial gyro1 = inertial(PORT1);
+motor LF = motor(PORT7, ratio6_1, true);
+motor LB = motor(PORT5, ratio6_1, false);
+motor LM = motor(PORT20, ratio6_1, false);
+
+motor RF = motor(PORT3, ratio6_1, false);
+motor RB = motor(PORT9, ratio6_1, false);
+motor RM = motor(PORT6, ratio6_1, true);
+
+inertial gyro1 = inertial(PORT10);
+/*
 rotation RotationL = rotation(PORT17, false);
 rotation RotationR = rotation(PORT5, false);
 rotation RotationB = rotation(PORT10, true);
+*/
 pneumatics claw = pneumatics(Brain.ThreeWirePort.B);
 
 
