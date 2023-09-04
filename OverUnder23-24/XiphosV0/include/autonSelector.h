@@ -1,4 +1,6 @@
 #pragma once
+#include "vex.h"
+
 class button {
     
     private:
@@ -8,6 +10,7 @@ class button {
     int width;
     vex::color boxColor;
     std::string text;
+    bool isFilled;
     public:
     /**
      * @brief Construct a new button object
@@ -26,3 +29,4 @@ class button {
     bool checkTouch(){ }
     void setFill(bool fill){}
 };
+

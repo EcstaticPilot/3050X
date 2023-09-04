@@ -3,7 +3,8 @@
 /*    Module:       main.cpp                                                  */
 /*    Author:       Nikhil Ramanuja                                           */
 /*    Created:      3/14/2023, 3:29:14 PM                                     */
-/*    Description:  testing program for path following, stanley and pure pursuit*/
+/*    Description:  program for palos verdes peninsula high school team 3050X */
+/*                  robot version 0                                           */
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 
