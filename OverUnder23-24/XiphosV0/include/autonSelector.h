@@ -22,11 +22,9 @@ class button {
      * @param boxColor 
      * @param text 
      */
-    button(int x, int y, int height, int width, vex::color boxColor, std::string text) : x(x),y(y),height(height), width(width), boxColor(boxColor), text(text){
-
-    };
-
-    bool checkTouch(){ }
-    void setFill(bool fill){}
+    button(int x, int y, int height, int width, vex::color boxColor, std::string text);
+    button(){}; //default constructor
+    bool checkTouch();
+    void setFill(bool fill);
 };
 
