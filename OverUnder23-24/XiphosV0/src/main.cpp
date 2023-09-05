@@ -2,7 +2,7 @@
 /*                                                                            */
 /*    Module:       main.cpp                                                  */
 /*    Author:       Nikhil Ramanuja                                           */
-/*    Created:      3/14/2023, 3:29:14 PM                                     */
+/*    Created:      9/3/2023, 5:15:15 PM                                     */
 /*    Description:  program for palos verdes peninsula high school team 3050X */
 /*                  robot version 0                                           */
 /*                                                                            */
@@ -28,6 +28,7 @@ Auton selectedAuton = RED_1;
 
 void onScreenPress()
 {
+
   if (red1.checkTouch())
   {
     red1.setFill(true);
