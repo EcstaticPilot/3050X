@@ -17,18 +17,19 @@ competition Competition;
 
 void toggleclaw() { claw.set(!claw.value()); }
 
+//initailization of buttons for auton
 button red1;
 button red2;
 button blue1;
 button blue2;
-
+//define the enum for the autons
 enum Auton {RED_1, RED_2, BLUE_1, BLUE_2};
-
+//default auton
 Auton selectedAuton = RED_1;
 
+//funtion to call when brain screen is pressed
 void onScreenPress()
 {
-
   if (red1.checkTouch())
   {
     red1.setFill(true);
@@ -70,7 +71,7 @@ void onScreenPress()
 bool devicesCheck()
 {
 
-  if (LF.installed() && RF.installed() && LB.installed() && RB.installed() &&
+  if (LF.installed() && RF.installed() && LB.installed() && RB.installed() && LM.installed() && RM.installed() &&
       gyro1.installed()
       )
   {
@@ -93,7 +94,7 @@ int ControllerPrint()
     Controller1.Screen.setCursor(3, 1);
     if (devicesCheck())
     {
-      Controller1.Screen.print(":) Devices Connected         ");
+      Controller1.Screen.print("All Devices Connected :]       ");
     }
     else
     {
@@ -118,6 +119,12 @@ int ControllerPrint()
       {
         Controller1.Screen.print("gyro not connected");
       }
+      else if(!LM.installed()){
+        Controller1.Screen.print("LM not connected");
+      }
+      else if(!RM.installed()){
+        Controller1.Screen.print("RM not connected");
+      }
       else
       {
         Controller1.Screen.print("unknown device not connected");
@@ -139,19 +146,26 @@ int ControllerPrint()
 
 void pre_auton(void)
 {
-  red1 =  button(60, 60, 120, 60, red, "red1");
-  red2 =  button(60, 130, 120, 60, red, "red2");
-  blue1 = button(300, 60, 120, 60, blue, "blue1");
-  blue2 = button(300, 130, 120, 60, blue, "blue2");
+  red1 =  button(170.440, 30, 30, 30, red, "red1");
+  red2 =  button(287.081, 30, 30, 30, red, "red2");
+  blue1 = button(168.373, 225, 30, 30, blue, "blue1");
+  blue2 = button(288.005, 225, 30, 30, blue, "blue2");
 
-
- // Brain.Screen.pressed(onScreenPress);
+  //brain pressed callback
+  Brain.Screen.pressed(onScreenPress);
 
   gyro1.calibrate();
 
   std::cout << "gyro calibrating" << std::endl;
 
   waitUntil(gyro1.isCalibrating() == false);
+
+  //launch threads
+  //? maybe these could be tasks instead of threads that get stopped between mode and reintialized
+  thread ControllerPrinting = thread(ControllerPrint);
+  ControllerPrinting.setPriority(1);
+  thread posTrack = thread(odometery);
+
   if (devicesCheck())
   {
     Brain.Screen.clearScreen();
@@ -163,12 +177,6 @@ void pre_auton(void)
     Controller1.rumble("....");
     Brain.Screen.print("Devices Not Connected");
   }
-
-  //launch threads
-  thread ControllerPrinting = thread(ControllerPrint);
-  ControllerPrinting.setPriority(1);
-  thread posTrack = thread(odometery);
-
 }
 
 /*---------------------------------------------------------------------------*/
@@ -224,10 +232,6 @@ void autonomous(void)
   case BLUE_2:
     // code for blue auton 2
     break;
-  default:
-    
-    break;
-    
   }
 }
 
@@ -246,12 +250,9 @@ void usercontrol(void)
   // User control code here, inside the loop
   while (1)
   {
-    Brain.Screen.drawCircle(240, 120, 50, green);
-    //  Controller1.rumble(".");
-
-    voltDrive(Controller1.Axis3.position(), Controller1.Axis2.position(), 10);
-    std::cout << X << ",,," << Y << "\n";
-    wait(15, msec);
+    voltDrive(Controller1.Axis3.position(), Controller1.Axis2.position(), 0);
+    //std::cout << X << ",,," << Y << "\n";
+    wait(10, msec);
   }
 }
 
@@ -262,11 +263,10 @@ int main()
 {
 
   // Set up callbacks for autonomous and driver control periods.
-  // Competition.bStopAllTasksBetweenModes = true;
+  Competition.bStopAllTasksBetweenModes = true;
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
-  //  Controller1.ButtonX.pressed(autonomous);
-  Controller1.ButtonA.pressed(toggleclaw);
+
   // Run the pre-autonomous function.
   pre_auton();
 

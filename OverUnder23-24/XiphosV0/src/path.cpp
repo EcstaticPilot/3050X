@@ -125,10 +125,11 @@ point derivativeBezier(float bezierPoints[][2], float t)
   return (bezierPoint);
 }
 
-/// @brief finds the curvature of a bezier curve
-/// @param bezierPoints an array containing the control points
-/// @param t the tval of the point
-/// @return a float containing the curvature
+/** @brief finds the curvature of a bezier curve
+* @param bezierPoints an array containing the control points
+* @param t the tval of the point
+* @return a float containing the curvature
+*/
 float findcurvature(float bezierPoints[][2], float t)
 {
   int n = floor(t);
@@ -180,12 +181,13 @@ public:
     float y2 = bezierPoints[1 + 4 * n][1]; // f
     float y3 = bezierPoints[2 + 4 * n][1]; // g
     float y4 = bezierPoints[3 + 4 * n][1]; // h
-    // X=i
-    // Y=j
-    //  bernestein polynomials
-    //  subtracts the n value from t to get the t value for the bezier curve
+
+    //get the derivative point of the bezier curve
     point derivativeBpoint = derivativeBezier(bezierPoints, t);
+
+    //  subtracts the n value from t to get the t value for the bezier curve
     t -= n;
+
     bezierPoint bezierPoint(
         this->x = (x1 * (pow(-t, 3) + 3 * pow(t, 2) - 3 * t + 1) + x2 * (3 * pow(t, 3) - 6 * pow(t, 2) + 3 * t) + x3 * (-3 * pow(t, 3) + 3 * pow(t, 2)) + x4 * pow(t, 3)),
         this->y = (y1 * (pow(-t, 3) + 3 * pow(t, 2) - 3 * t + 1) + y2 * (3 * pow(t, 3) - 6 * pow(t, 2) + 3 * t) + y3 * (-3 * pow(t, 3) + 3 * pow(t, 2)) + y4 * pow(t, 3)),
@@ -194,14 +196,6 @@ public:
         this->curvature = findcurvature(bezierPoints, t + n));
   }
 };
-/*
-0 = (m*((a(-t^3+3t^2-3t+1)+b(3t^3-6t^2+3t)+c(-3t^3+3t^2)+d(t^3))*m - e(-t^3+3t^2-3t+1)+f(3t^3-6t^2+3t)+g(-3t^3+3t^2)+h(t^3)+j)+i)/(m^2+1)    -    a(-t^3+3t^2-3t+1)+b(3t^3-6t^2+3t)+c(-3t^3+3t^2)+d(t^3)
-
-
-0=m^3⋅(a(−t^3+3t^2−3t+1)+b(3t^3−6t^2+3t)+c(−3t^3+3t^2)+d(t^3))−m^2⋅(a(−t^3+3t^2−3t+1)+b(3t^3−6t^2+3t)+c(−3t^3+3t^2)+d(t^3))−(a(−t^3+3t^2−3t+1)+b(3t^3−6t^2+3t)+c(−3t^3+3t^2)+d(t^3))+(e(−t^3+3t^2−3t+1)−f(3t^3−6t^2+3t)−g(−3t^3+3t^2)−h(t^3))+j+i
-
-
-*/
 
 /**
  * @brief finds the closest point to the robot
@@ -224,6 +218,7 @@ int closestPoint(std::vector<bezierPoint> points, int size)
   }
   return index;
 }
+
 /**
  * @brief finds the distance of a point from a line
  * @param points an array containing the points of the line
@@ -302,7 +297,7 @@ void stanley(float points[][2], int length, bool isReversed)
   // it would apeear that kd=kp*5 is good for some reason
   //  lookahead distance
   float ld;
-  int lead = 0;
+
   // minimum and maximum speed
   float minSpeed = 25;
   float maxSpeed = 100;
@@ -335,20 +330,20 @@ void stanley(float points[][2], int length, bool isReversed)
   int pointClosest = 0;
   float tval = 0;
 
-  // the 1-D vector ofP struct "point"
+  // the 1-D vector of bezier point class
   std::vector<bezierPoint> Bpoints(10, bezierPoint(0, 0, 0, 0, 0));
+
   // Filling the vector with points
   for (int i = 0; i < 10; i++)
   {
     Bpoints[i] = bezierPoint(points, tval);
     tval += 0.0025;
   }
-  Brain.Screen.drawRectangle(0, 0, 480, 240, yellow);
+
   Brain.Screen.print("stanley in progress");
 
-  Brain.Timer.reset();
   std::cout << "kp=" << kp << ",ki=" << ki << ",kd=" << kd << ",kv=" << kv << ",ke=" << ke << ",kc=" << kc << std::endl;
-  std::cout << "X,Y,error" << std::endl;
+
   while (true)
   {
     // find the closest point to the robot
@@ -369,45 +364,48 @@ void stanley(float points[][2], int length, bool isReversed)
       // set the pointClosest to 0
       pointClosest = 0;
     }
-    // check if the tval is past the lenth of the total bezier spline. the 0.001 exists because computers are bad at math and error builds up due to thats
+    // check if the tval is past the lenth of the total bezier spline. if it is, break the loop
     if (Bpoints[1].tval >= bezierCount)
     {
       break;
     }
 
     // slope of the path at the closest point
-    pathHeading = Bpoints[0 + lead].angle;
+    pathHeading = Bpoints[0].angle;
 
     // find the distance to the line segment after the closest point
-    segmentDist = perpendicularDist(Bpoints, 0 + lead, 1 + lead); // distance of the path segment after the closest point
+    segmentDist = perpendicularDist(Bpoints, 0, 1); 
 
     // find the sign of the distance
-    sign = signOfDistance(Bpoints, 0 + lead, 1 + lead);
+    sign = signOfDistance(Bpoints, 0, 1);
 
-    // calculate lookahead distance
-   // v = ((RotationR.velocity(rpm) / 2) + (RotationL.velocity(rpm) / 2)) / 2; // take the average of the two sides converting rpm to percent
-   v= (RB.velocity(pct)+LB.velocity(pct))/2;
-    v = fmax(fabs(v), minSpeed);                                             // if velocity is less than minSpeed, set it to minSpeeds
+    // calculate the velocity of the robot in percent using the average speeds of the motors
+    v = (RB.velocity(pct) + LB.velocity(pct)) / 2;
+
+    // if velocity is less than minSpeed, set it to the minSpeed
+    v = fmax(fabs(v), minSpeed); 
 
     // calculate the lookahead distance
     ld = (v / kv);
-    // ld=7.5;
-    //   calculate the angle to the global angle to the lookahead point
+ 
+    //calculate the angle to the global angle to the lookahead point
     ldAngle = RadToDeg(atan2(segmentDist, ld));
 
     // find the robot angle and limit it to 360 idk if it matters or not. it probably does since rotation is uncapped
     robotAngle = fmod(gyro1.rotation(degrees), 360);
 
+    //if the robot is following the path backward, flip around the angle
     if (isReversed)
     {
       robotAngle = fmod(gyro1.rotation(degrees) + 180, 360);
     }
-
-    // robotAngle = gyro1.rotation(degrees);
-
+    
+    // set the previous error to the error
     prevError = error;
+
     // calculate the error
     error = (ldAngle * sign + pathHeading - robotAngle);
+
     // if the error is greater than 180, subtract 360 from it and make sure its pointing the right way
     error = fmod(error, 360);
     if (fabs(error) > 180)
@@ -420,23 +418,19 @@ void stanley(float points[][2], int length, bool isReversed)
     {
       totalError = 0;
     }
-    else
+    else //otherwise add the error to the total error
     {
       totalError += error;
     }
-
-    // calculate the PID output
-
-    // set the previous error to the current error
 
     // calculate the speed of the motors
     tSpeed = 100 - (fabs(Bpoints[1].curvature * kc) + fabs(error * ke));
 
     // limit the value of tSpeed using fmax and fmin
-
     tSpeed = fmax(tSpeed, minSpeed);
     tSpeed = fmin(tSpeed, maxSpeed);
-    // tval is between 0.1 and 0, start slowing down
+
+    // if the robot is toward the end of the path, start slowing down
     if (Bpoints[1].tval > (bezierCount - 0.1))
     {
       tSpeed = (bezierCount - Bpoints[0].tval) * 1000;
@@ -445,38 +439,37 @@ void stanley(float points[][2], int length, bool isReversed)
     // calculate the speed of the left and right motors
     if (isPID)
     {
+      //PID equation
       output = (error)*kp + (totalError)*ki + (error - prevError) * kd;
-
-      if (kf > 0)
-      {
-
-        float pathRadius = 1 / (Bpoints[0].curvature * kf);
-        float rl = pathRadius + (width / 2);
-        float rr = pathRadius - (width / 2);
-        float ratio = rl / rr;
-        vL = (tSpeed * ratio) + output;
-        vR = tSpeed - output;
-      }
-      else
-      {
-        vL = tSpeed + output;
-        vR = tSpeed - output;
-      }
+      
+      //calculate the left and right motor values
+      vL = tSpeed + output;
+      vR = tSpeed - output;
     }
     else
     {
+      //geometric equation
       radius = (robotlength / 2) * tanf(DegToRad(90 - error) + 0.0001);
+
+      //if feedforward is enbaled, use the path curvature
       if (kf > 0)
       {
         float curvature = 1 / radius;
         radius = 1 / (curvature + (Bpoints[0].curvature * kf));
       }
+
+      //calculate the turning radius of the left and right motors
       float rl = radius + (width / 2);
       float rr = radius - (width / 2);
+
+      //calculate the ratio between the 2 radii
       float ratio = rl / rr;
+
+      //calculate the left and right motor values
       vL = tSpeed * ratio;
       vR = tSpeed;
     }
+
     // calculate the normalization factor
     normFactor = maxSpeed / fmax(fabs(vL), fabs(vR));
 
@@ -488,20 +481,18 @@ void stanley(float points[][2], int length, bool isReversed)
     }
 
     // drive using voltDrive
-    if (!isReversed)
+    if (isReversed == false)
     {
       voltDrive(vL, vR, 0);
     }
-    else
+    else // if the robot is reversed, flip the left and right motor values
     {
       voltDrive(-vR, -vL, 0);
     }
 
-    // std::cout << error << "," << vL <<","<<vR<< "\n";
     std::cout << X << "," << Y << "," << error << std::endl;
     wait(waitTime, msec);
     // std::cout <<Brain.Timer.time()<<","<< error << "," << output << "," << kp * error << "," << ki * totalError << "," << kd * (error - prevError) << std::endl; // pid tuning config
-    // wait(15, msec);
   }
   drive_brake(brake);
   Brain.Screen.drawRectangle(0, 0, 480, 240, green);
@@ -516,6 +507,7 @@ void stanley(float points[][2], int length, bool isReversed)
 ██║       ╚██████╔╝  ██║  ██║  ███████╗      ██║       ╚██████╔╝  ██║  ██║  ███████║  ╚██████╔╝  ██║     ██║
 ╚═╝        ╚═════╝   ╚═╝  ╚═╝  ╚══════╝      ╚═╝        ╚═════╝   ╚═╝  ╚═╝  ╚══════╝   ╚═════╝   ╚═╝     ╚═╝
 */
+
 /**
  * @brief calculates if the distance between the next point is closer than the intial point
  * @param initial the initial point
