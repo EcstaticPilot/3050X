@@ -50,3 +50,22 @@ using namespace vex;
         }
     }
 
+
+void drawField(){
+    color grey = color(132,132,132);
+    Brain.Screen.setFillColor(grey);
+    Brain.Screen.drawRectangle(130,30,227,227);
+    Brain.Screen.setFillColor(black);
+    Brain.Screen.drawRectangle(205,56,76,8);
+    Brain.Screen.drawRectangle(239,58,8,170);
+    Brain.Screen.drawRectangle(205,223,76,8);
+    Brain.Screen.setFillColor(red);
+    Brain.Screen.drawRectangle(129,86,38,113);
+    Brain.Screen.drawRectangle(239,29,8,30);
+    Brain.Screen.setFillColor(blue);
+    Brain.Screen.drawRectangle(318,86,38,114);
+    Brain.Screen.drawRectangle(239,227,8,30);
+    Brain.Screen.setFillColor(yellow);
+    Brain.Screen.drawCircle(239 + 4, 55 + 4, 4);
+    Brain.Screen.drawCircle(239 + 4, 223 + 4 ,4);
+}

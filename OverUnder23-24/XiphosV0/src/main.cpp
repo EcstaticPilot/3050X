@@ -146,10 +146,10 @@ int ControllerPrint()
 
 void pre_auton(void)
 {
-  red1 =  button(170.440, 30, 30, 30, red, "red1");
-  red2 =  button(287.081, 30, 30, 30, red, "red2");
-  blue1 = button(168.373, 225, 30, 30, blue, "blue1");
-  blue2 = button(288.005, 225, 30, 30, blue, "blue2");
+  red1 =  button(170, 30, 30, 30, red, "red1");
+  red2 =  button(287, 30, 30, 30, red, "red2");
+  blue1 = button(168, 225, 30, 30, blue, "blue1");
+  blue2 = button(288, 225, 30, 30, blue, "blue2");
 
   //brain pressed callback
   Brain.Screen.pressed(onScreenPress);
