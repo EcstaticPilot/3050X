@@ -1,4 +1,5 @@
 #include "vex.h"
+
 #include <vector>
 #include <iomanip>
 const float TrackWidth = 8.5;
@@ -313,7 +314,6 @@ void stanley(float points[][2], int length, bool isReversed)
   float kc = 0;
 
   float radius;
-  float totalRadius;
 
   float segmentDist;
   float pathHeading;
