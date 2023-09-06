@@ -52,7 +52,9 @@ using namespace vex;
 
 
 void drawField(){
+
     color grey = color(132,132,132);
+    /*
     Brain.Screen.setFillColor(grey);
     Brain.Screen.drawRectangle(130,30,227,227);
     Brain.Screen.setFillColor(black);
@@ -68,4 +70,22 @@ void drawField(){
     Brain.Screen.setFillColor(yellow);
     Brain.Screen.drawCircle(239 + 4, 55 + 4, 4);
     Brain.Screen.drawCircle(239 + 4, 223 + 4 ,4);
+    */
+
+   //V2
+    Brain.Screen.setFillColor(grey);
+    Brain.Screen.drawRectangle(50,15,250,250);
+    Brain.Screen.setFillColor(black);
+    Brain.Screen.drawRectangle(132,54,87,5);
+    Brain.Screen.drawRectangle(173,55,5,172);
+    Brain.Screen.drawRectangle(132,222,86,5);
+    Brain.Screen.setFillColor(red);
+    Brain.Screen.drawRectangle(255,95,45,90);
+    Brain.Screen.drawRectangle(173,227,5,38);
+    Brain.Screen.setFillColor(blue);
+    Brain.Screen.drawRectangle(50,95,45,90);
+    Brain.Screen.drawRectangle(173,15,4,40);
+    Brain.Screen.setFillColor(yellow);
+    Brain.Screen.drawCircle(173 + 5, 53 + 5, 5);
+    Brain.Screen.drawCircle(173 + 5, 222 + 5 , 5);
 }
