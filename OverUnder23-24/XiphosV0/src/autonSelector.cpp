@@ -2,58 +2,67 @@
 #include "autonSelector.h"
 using namespace vex;
 #include <string>
-    /**
-     * @brief Construct a new button::button object
-     * 
-     * @param x 
-     * @param y 
-     * @param height 
-     * @param width 
-     * @param boxColor 
-     * @param text 
-     */
-    button::button(int x, int y, int height, int width, vex::color boxColor, std::string text): x(x),y(y),height(height), width(width), boxColor(boxColor), text(text) {
-        Brain.Screen.setPenColor(boxColor);
-        Brain.Screen.drawRectangle(x,y,width,height);
-        Brain.Screen.printAt(x+width/2,y+height/2,text.c_str());
-    }
-    /**
-     * @brief checks if the button is being touched
-     * 
-     * @return true 
-     * @return false 
-     */
-    bool button::checkTouch(){
-       int xTouch =  Brain.Screen.xPosition();
-       int yTouch =  Brain.Screen.yPosition();
-       if((xTouch<=x+width&&xTouch>x)&&(yTouch<=y+height&&xTouch>y)){
+/**
+ * @brief Construct a new button::button object
+ *
+ * @param x
+ * @param y
+ * @param height
+ * @param width
+ * @param boxColor
+ * @param text
+ */
+button::button(int x, int y, int height, int width, vex::color boxColor, std::string text) : x(x), y(y), height(height), width(width), boxColor(boxColor), text(text)
+{
+    Brain.Screen.setPenColor(boxColor);
+    Brain.Screen.drawRectangle(x, y, width, height);
+    Brain.Screen.printAt(x, y + height / 2, text.c_str());
+}
+/**
+ * @brief checks if the button is being touched
+ *
+ * @return true
+ * @return false
+ */
+bool button::checkTouch()
+{
+    int xTouch = Brain.Screen.xPosition();
+    int yTouch = Brain.Screen.yPosition();
+    if ((xTouch <= x + width && xTouch > x) && (yTouch <= y + height && yTouch > y))
+    {
         return true;
-       } else{
+    }
+    else
+    {
         return false;
-       }
     }
-    /**
-     * @brief sets the button to be filled or not
-     * 
-     * @param fill 
-     */
-    void button::setFill(bool fill){
-        if(isFilled!=fill){
-            isFilled = fill;
-            if(isFilled){
-                Brain.Screen.setFillColor(boxColor);
-            } else {
-                Brain.Screen.setPenColor(boxColor);
-            }
-            Brain.Screen.drawRectangle(x,y,width,height,boxColor);
-            Brain.Screen.printAt(x+width/2,y+height/2,text.c_str());
-        }
+}
+/**
+ * @brief sets the button to be filled or not
+ *
+ * @param fill
+ */
+void button::setFill(bool fill)
+{
+    Brain.Screen.setPenColor(boxColor);
+    if (fill)
+    {
+        Brain.Screen.drawRectangle(x, y, width, height, boxColor);
+    }
+    else
+    {
+
+        Brain.Screen.drawRectangle(x, y, width, height, black);
+        // Brain.Screen.setPenColor(boxColor);
     }
 
+    Brain.Screen.printAt(x, y + height / 2, text.c_str());
+}
 
-void drawField(){
+void drawField()
+{
 
-    color grey = color(132,132,132);
+    color grey = color(132, 132, 132);
     /*
     Brain.Screen.setFillColor(grey);
     Brain.Screen.drawRectangle(130,30,227,227);
@@ -72,20 +81,29 @@ void drawField(){
     Brain.Screen.drawCircle(239 + 4, 223 + 4 ,4);
     */
 
-   //V2
+    // V2
+    int yOffset = -20;
+    
     Brain.Screen.setFillColor(grey);
-    Brain.Screen.drawRectangle(50,15,250,250);
+    Brain.Screen.setPenColor(grey);
+    Brain.Screen.drawRectangle(50, 15+yOffset, 250, 250);
     Brain.Screen.setFillColor(black);
-    Brain.Screen.drawRectangle(132,54,87,5);
-    Brain.Screen.drawRectangle(173,55,5,172);
-    Brain.Screen.drawRectangle(132,222,86,5);
+    Brain.Screen.setPenColor(black);
+    Brain.Screen.drawRectangle(132, 54+yOffset, 87, 5);
+    Brain.Screen.drawRectangle(173, 55+yOffset, 5, 172);
+    Brain.Screen.drawRectangle(132, 222+yOffset, 86, 5);
     Brain.Screen.setFillColor(red);
-    Brain.Screen.drawRectangle(255,95,45,90);
-    Brain.Screen.drawRectangle(173,227,5,38);
+    Brain.Screen.setPenColor(red);
+    Brain.Screen.drawRectangle(255, 95+yOffset, 45, 90);
+    Brain.Screen.drawRectangle(173, 227+yOffset, 5, 38);
     Brain.Screen.setFillColor(blue);
-    Brain.Screen.drawRectangle(50,95,45,90);
-    Brain.Screen.drawRectangle(173,15,4,40);
+    Brain.Screen.setPenColor(blue);
+    Brain.Screen.drawRectangle(50, 95+yOffset, 45, 90);
+    Brain.Screen.drawRectangle(173, 15+yOffset, 4, 40);
     Brain.Screen.setFillColor(yellow);
-    Brain.Screen.drawCircle(173 + 5, 53 + 5, 5);
-    Brain.Screen.drawCircle(173 + 5, 222 + 5 , 5);
+    Brain.Screen.setPenColor(yellow);
+    Brain.Screen.drawCircle(173+2 , 53+2+yOffset , 2);
+    Brain.Screen.drawCircle(173+2 , 222+2+yOffset, 2);
+    Brain.Screen.setFillColor(black);
+    Brain.Screen.setPenColor(black);
 }

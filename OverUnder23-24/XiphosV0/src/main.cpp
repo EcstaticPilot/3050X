@@ -30,8 +30,10 @@ Auton selectedAuton = RED_1;
 //funtion to call when brain screen is pressed
 void onScreenPress()
 {
+  //Brain.Screen.print("screen pressed                          ");
   if (red1.checkTouch())
   {
+  
     red1.setFill(true);
     red2.setFill(false);
     blue1.setFill(false);
@@ -39,8 +41,9 @@ void onScreenPress()
 
     selectedAuton = RED_1;
   }
-  else if (red2.checkTouch())
+  if (red2.checkTouch())
   {
+
     red1.setFill(false);
     red2.setFill(true);
     blue1.setFill(false);
@@ -48,7 +51,7 @@ void onScreenPress()
 
     selectedAuton = RED_2;
   }
-  else if (blue1.checkTouch())
+  if (blue1.checkTouch())
   {
     red1.setFill(false);
     red2.setFill(false);
@@ -57,7 +60,7 @@ void onScreenPress()
 
     selectedAuton = BLUE_1;
   }
-  else if (blue2.checkTouch())
+  if (blue2.checkTouch())
   {
     red1.setFill(false);
     red2.setFill(false);
@@ -71,7 +74,7 @@ void onScreenPress()
 bool devicesCheck()
 {
 
-  if (LF.installed() && RF.installed() && LB.installed() && RB.installed() && LM.installed() && RM.installed() &&
+  if (LF.installed() && RF.installed() && /*LB.installed() && RB.installed() &&*/ LM.installed() && RM.installed() &&
       gyro1.installed()
       )
   {
@@ -92,6 +95,7 @@ int ControllerPrint()
     Controller1.Screen.setCursor(2, 1);
     Controller1.Screen.print("%f", gyro1.angle(degrees));
     Controller1.Screen.setCursor(3, 1);
+    /*
     if (devicesCheck())
     {
       Controller1.Screen.print("All Devices Connected :]       ");
@@ -129,8 +133,10 @@ int ControllerPrint()
       {
         Controller1.Screen.print("unknown device not connected");
       }
+      
       wait(100, msec);
     }
+    */
     this_thread::sleep_for(100);
   }
 }
@@ -145,7 +151,9 @@ int ControllerPrint()
 /*---------------------------------------------------------------------------*/
 
 void pre_auton(void)
-{/* v1
+{
+
+  /* v1
   red1 =  button(170, 30, 30, 30, red, "red1");
   red2 =  button(287, 30, 30, 30, red, "red2");
   blue1 = button(168, 225, 30, 30, blue, "blue1");
@@ -154,14 +162,14 @@ void pre_auton(void)
 
 
   //v2
+  drawField();
+  red1 = button(70, 190, 50, 50, red, "red1");
+  red2 =  button(228, 190, 50, 50, red, "red2");
+  blue1 =  button(70, 0, 50, 50, blue, "blue1");  
+  blue2 = button(228, 0, 50, 50, blue, "blue2");
 
-  red1 = button(90, 225, 40, 40, red, "red1");
-  red2 =  button(218, 225, 40, 40, red, "red2");
-  blue1 =  button(93, 18, 40, 40, blue, "blue1");  
-  blue2 = button(218, 18, 40, 40, blue, "blue2");
-  
   //brain pressed callback
-  Brain.Screen.pressed(onScreenPress);
+
 
   gyro1.calibrate();
 
@@ -177,14 +185,14 @@ void pre_auton(void)
 
   if (devicesCheck())
   {
-    Brain.Screen.clearScreen();
-    Brain.Screen.print("Devices Connected");
+    //Brain.Screen.clearScreen();
+    //Brain.Screen.print("Devices Connected");
   }
   else
   {
-    Brain.Screen.clearScreen();
-    Controller1.rumble("....");
-    Brain.Screen.print("Devices Not Connected");
+    //Brain.Screen.clearScreen();
+   // Controller1.rumble("....");
+    //Brain.Screen.print("Devices Not Connected");
   }
 }
 
@@ -270,9 +278,9 @@ void usercontrol(void)
 //
 int main()
 {
-
+    Brain.Screen.pressed(onScreenPress);
   // Set up callbacks for autonomous and driver control periods.
-  Competition.bStopAllTasksBetweenModes = true;
+  //Competition.bStopAllTasksBetweenModes = true;
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
 
