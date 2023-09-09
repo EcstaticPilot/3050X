@@ -29,9 +29,9 @@ int odometery()
   double lRad;
   double bRad;
   double rRad;   // radius of tracking wheel
-  lRad = 2; // radius of tracking wheel
+  lRad = 1.625; // radius of tracking wheel
   bRad = 0;
-  rRad = 2;
+  rRad = 1.625;
   // radius of tracking wheel
   double lEncoder = 0;      // declaring encoder variable left
   double bEncoder = 0;      // declaring encoder variable back
@@ -76,8 +76,8 @@ int odometery()
     rEncoder = RotationR.position(degrees);
     bEncoder = RotationB.position(degrees);
     */
-    lEncoder = LB.position(degrees) * 3 / 6;
-    rEncoder = RB.position(degrees) * 3 / 6;
+    lEncoder = LB.position(degrees) * 3 / 5;
+    rEncoder = RB.position(degrees) * 3 / 5;
 
     // convert encoder distance into distance traveled
     distL = ((lEncoder - prevLE) * M_PI / 180) * lRad;
