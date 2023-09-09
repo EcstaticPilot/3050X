@@ -95,7 +95,7 @@ int ControllerPrint()
     Controller1.Screen.setCursor(2, 1);
     Controller1.Screen.print("%f", gyro1.angle(degrees));
     Controller1.Screen.setCursor(3, 1);
-    /*
+    
     if (devicesCheck())
     {
       Controller1.Screen.print("All Devices Connected :]       ");
@@ -136,7 +136,7 @@ int ControllerPrint()
       
       wait(100, msec);
     }
-    */
+    
     this_thread::sleep_for(100);
   }
 }
@@ -163,6 +163,7 @@ void pre_auton(void)
 
   //v2
   drawField();
+  std::cout<<"yes";
   red1 = button(70, 190, 50, 50, red, "red1");
   red2 =  button(228, 190, 50, 50, red, "red2");
   blue1 =  button(70, 0, 50, 50, blue, "blue1");  
@@ -191,8 +192,8 @@ void pre_auton(void)
   else
   {
     //Brain.Screen.clearScreen();
-   // Controller1.rumble("....");
-    //Brain.Screen.print("Devices Not Connected");
+    Controller1.rumble("....");
+    Brain.Screen.print("Devices Not Connected");
   }
 }
 

@@ -26,8 +26,11 @@ void voltDrive(double lSpeed, double rSpeed, double wt)
 {
 
   LF.spin(forward, lSpeed * 120, voltageUnits::mV);
-  RF.spin(forward, rSpeed * 120, voltageUnits::mV);
+  LM.spin(forward, lSpeed * 120, voltageUnits::mV);
   LB.spin(forward, lSpeed * 120, voltageUnits::mV);
+
+  RF.spin(forward, rSpeed * 120, voltageUnits::mV);
+  RM.spin(forward, rSpeed * 120, voltageUnits::mV);
   RB.spin(forward, rSpeed * 120, voltageUnits::mV);
   wait(wt, msec);
 }
