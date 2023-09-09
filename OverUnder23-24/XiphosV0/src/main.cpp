@@ -278,7 +278,8 @@ void usercontrol(void)
 //
 int main()
 {
-    Brain.Screen.pressed(onScreenPress);
+  std::cout<<"yes";
+  Brain.Screen.pressed(onScreenPress);
   // Set up callbacks for autonomous and driver control periods.
   //Competition.bStopAllTasksBetweenModes = true;
   Competition.autonomous(autonomous);
