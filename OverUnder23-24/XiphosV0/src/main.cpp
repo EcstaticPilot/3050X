@@ -1,7 +1,7 @@
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
 /*    Module:       main.cpp                                                  */
-/*    Author:       Nikhil Ramanuja                                           */
+/*    Author:       Nicool Ramanuja                                           */
 /*    Created:      9/3/2023, 5:15:15 PM                                     */
 /*    Description:  program for palos verdes peninsula high school team 3050X */
 /*                  robot version 0                                           */
