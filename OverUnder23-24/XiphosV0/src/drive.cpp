@@ -9,12 +9,18 @@ void terminalPrint(float a = 0, float b = 0, float c = 0, float d = 0, float e =
 {
   std::cout << a << "," << b << "," << c << "," << d << "," << e << std::endl;
 }
+double driveCurve(double x){
+  return pow(x,2)/100 * (x/fabs(x));
+  return pow(M_E,(fabs(x)-100)/100)*x;
+}
 void drive(int lSpeed, int rSpeed, double wt)
 {
   LF.spin(forward, lSpeed, pct);
   RF.spin(forward, rSpeed, pct);
   LB.spin(forward, lSpeed, pct);
   RB.spin(forward, rSpeed, pct);
+  LM.spin(forward, lSpeed, pct);
+  RM.spin(forward, rSpeed, pct);
   wait(wt, msec);
 }
 /**

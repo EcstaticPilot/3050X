@@ -1,6 +1,7 @@
 #pragma once
 
 //
+double driveCurve(double x);
 void drive(int lSpeed, int rSpeed, double wt);
 void voltDrive(double lSpeed, double rSpeed, double wt);
 void ffDrive(double lSpeed, double rSpeed, double wt);

@@ -252,7 +252,11 @@ void usercontrol(void)
   // User control code here, inside the loop
   while (1)
   {
-    voltDrive(Controller1.Axis3.position(), Controller1.Axis2.position(), 0);
+    if(fabs(Controller1.Axis3.position(pct))<5 || fabs(Controller1.Axis2.position(pct)<5)){
+      drive_brake(coast);
+    }else{
+    voltDrive(driveCurve(Controller1.Axis3.position()),driveCurve( Controller1.Axis2.position()), 0);
+    }
     //std::cout << X << ",,," << Y << "\n";
     wait(10, msec);
   }
