@@ -17,29 +17,33 @@ competition Competition;
 
 void toggleclaw() { claw.set(!claw.value()); }
 
-//initailization of buttons for auton
+// initailization of buttons for auton
 button red1;
 button red2;
 button blue1;
 button blue2;
-//define the enum for the autons
-enum Auton {RED_1, RED_2, BLUE_1, BLUE_2};
-//default auton
-Auton selectedAuton = RED_1;
+// define the enum for the autons
+enum Auton
+{
+  offensiveZone,
+  defensiveZone
+};
+// default auton
+Auton selectedAuton = offensiveZone;
 
-//funtion to call when brain screen is pressed
+// funtion to call when brain screen is pressed
 void onScreenPress()
 {
-  //Brain.Screen.print("screen pressed                          ");
+  // Brain.Screen.print("screen pressed                          ");
   if (red1.checkTouch())
   {
-  
+
     red1.setFill(true);
     red2.setFill(false);
     blue1.setFill(false);
     blue2.setFill(false);
 
-    selectedAuton = RED_1;
+    selectedAuton = offensiveZone;
   }
   if (red2.checkTouch())
   {
@@ -49,7 +53,7 @@ void onScreenPress()
     blue1.setFill(false);
     blue2.setFill(false);
 
-    selectedAuton = RED_2;
+    selectedAuton = defensiveZone;
   }
   if (blue1.checkTouch())
   {
@@ -58,7 +62,7 @@ void onScreenPress()
     blue1.setFill(true);
     blue2.setFill(false);
 
-    selectedAuton = BLUE_1;
+    selectedAuton = offensiveZone;
   }
   if (blue2.checkTouch())
   {
@@ -66,17 +70,16 @@ void onScreenPress()
     red2.setFill(false);
     blue1.setFill(false);
     blue2.setFill(true);
-    
-    selectedAuton = BLUE_2;
+
+    selectedAuton = defensiveZone;
   }
 }
 
 bool devicesCheck()
 {
 
-  if (LF.installed() && RF.installed() && /*LB.installed() && RB.installed() &&*/ LM.installed() && RM.installed() &&
-      gyro1.installed()
-      )
+  if (LF.installed() && RF.installed() && LB.installed() && RB.installed() && LM.installed() && RM.installed() &&
+      gyro1.installed())
   {
     return true;
   }
@@ -95,7 +98,7 @@ int ControllerPrint()
     Controller1.Screen.setCursor(2, 1);
     Controller1.Screen.print("%f", gyro1.angle(degrees));
     Controller1.Screen.setCursor(3, 1);
-    /*
+
     if (devicesCheck())
     {
       Controller1.Screen.print("All Devices Connected :]       ");
@@ -123,20 +126,22 @@ int ControllerPrint()
       {
         Controller1.Screen.print("gyro not connected");
       }
-      else if(!LM.installed()){
+      else if (!LM.installed())
+      {
         Controller1.Screen.print("LM not connected");
       }
-      else if(!RM.installed()){
+      else if (!RM.installed())
+      {
         Controller1.Screen.print("RM not connected");
       }
       else
       {
         Controller1.Screen.print("unknown device not connected");
       }
-      
+
       wait(100, msec);
     }
-    */
+
     this_thread::sleep_for(100);
   }
 }
@@ -153,23 +158,14 @@ int ControllerPrint()
 void pre_auton(void)
 {
 
-  /* v1
-  red1 =  button(170, 30, 30, 30, red, "red1");
-  red2 =  button(287, 30, 30, 30, red, "red2");
-  blue1 = button(168, 225, 30, 30, blue, "blue1");
-  blue2 = button(288, 225, 30, 30, blue, "blue2");
-  */
-
-
-  //v2
+  // v2
   drawField();
   red1 = button(70, 190, 50, 50, red, "red1");
-  red2 =  button(228, 190, 50, 50, red, "red2");
-  blue1 =  button(70, 0, 50, 50, blue, "blue1");  
+  red2 = button(228, 190, 50, 50, red, "red2");
+  blue1 = button(70, 0, 50, 50, blue, "blue1");
   blue2 = button(228, 0, 50, 50, blue, "blue2");
 
-  //brain pressed callback
-
+  // brain pressed callback
 
   gyro1.calibrate();
 
@@ -177,7 +173,7 @@ void pre_auton(void)
 
   waitUntil(gyro1.isCalibrating() == false);
 
-  //launch threads
+  // launch threads
   //? maybe these could be tasks instead of threads that get stopped between mode and reintialized
   thread ControllerPrinting = thread(ControllerPrint);
   ControllerPrinting.setPriority(1);
@@ -185,14 +181,14 @@ void pre_auton(void)
 
   if (devicesCheck())
   {
-    //Brain.Screen.clearScreen();
-    //Brain.Screen.print("Devices Connected");
+    Brain.Screen.clearScreen();
+    Brain.Screen.print("Devices Connected");
   }
   else
   {
-    //Brain.Screen.clearScreen();
-   // Controller1.rumble("....");
-    //Brain.Screen.print("Devices Not Connected");
+    Brain.Screen.clearScreen();
+    Controller1.rumble("....");
+    Brain.Screen.print("Devices Not Connected");
   }
 }
 
@@ -211,28 +207,25 @@ void autonomous(void)
 
   std::cout << "Autonomous Started yes" << std::endl;
 
-  float throughGoal[4][2] = {
-      {0, 0},
-{0, 40},
-{20, 40},
-{20, 80}};
-  stanley(throughGoal, sizeof(throughGoal) / (2 * sizeof(float)));
-  wait(0.5, sec);
-
-
- switch (selectedAuton)
+  switch (selectedAuton)
   {
-  case RED_1:
-    // code for red auton 1
+  case offensiveZone:
+    // code for offensive zone auton
+    float throughGoal[4][2] = {
+        {0, 0},
+        {0, 40},
+        {20, 40},
+        {20, 80}};
+    stanley(throughGoal, sizeof(throughGoal) / (2 * sizeof(float)));
     break;
-  case RED_2:
-    // code for red auton 2
-    break;
-  case BLUE_1:
-    // code for blue auton 1
-    break;
-  case BLUE_2:
-    // code for blue auton 2
+
+  case defensiveZone:
+    float throughGoal[4][2] = {
+        {0, 0},
+        {0, 40},
+        {-20, 40},
+        {-20, 80}};
+    stanley(throughGoal, sizeof(throughGoal) / (2 * sizeof(float)));
     break;
   }
 }
@@ -252,12 +245,15 @@ void usercontrol(void)
   // User control code here, inside the loop
   while (1)
   {
-    if(fabs(Controller1.Axis3.position(pct))<5 || fabs(Controller1.Axis2.position(pct)<5)){
+    if (fabs(Controller1.Axis3.position(pct)) < 5 || fabs(Controller1.Axis2.position(pct) < 5))
+    {
       drive_brake(coast);
-    }else{
-    voltDrive(driveCurve(Controller1.Axis3.position()),driveCurve( Controller1.Axis2.position()), 0);
     }
-    //std::cout << X << ",,," << Y << "\n";
+    else
+    {
+      voltDrive(driveCurve(Controller1.Axis3.position()), driveCurve(Controller1.Axis2.position()), 0);
+    }
+    // std::cout << X << ",,," << Y << "\n";
     wait(10, msec);
   }
 }
@@ -267,10 +263,10 @@ void usercontrol(void)
 //
 int main()
 {
-  std::cout<<"yes";
+  std::cout << "yes";
   Brain.Screen.pressed(onScreenPress);
   // Set up callbacks for autonomous and driver control periods.
-  //Competition.bStopAllTasksBetweenModes = true;
+  // Competition.bStopAllTasksBetweenModes = true;
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
 

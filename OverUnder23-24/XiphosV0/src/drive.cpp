@@ -43,7 +43,7 @@ void voltDrive(double lSpeed, double rSpeed, double wt)
 
 void ffDrive(double lSpeed, double rSpeed, double wt)
 {
-  float kp = 1;
+  float kp = 0.25;
   float lfSpeed = lSpeed + (kp * (lSpeed - LF.velocity(pct)));
   float rfSpeed = rSpeed + (kp * (rSpeed - RF.velocity(pct)));
   float lbSpeed = lSpeed + (kp * (lSpeed - LB.velocity(pct)));
@@ -64,9 +64,12 @@ void drive_brake(vex::brakeType Brake)
   LF.stop(Brake);
   RF.stop(Brake);
   LB.stop(Brake);
+  LM.stop(Brake);
+  RM.stop(Brake);
   RB.stop(Brake);
 }
-
+/*
+!do not use
 void forward_dist(float dist)
 {
   // dist is in inches
@@ -79,6 +82,7 @@ void forward_dist(float dist)
   wait(t_to_run, sec);
   drive_brake();
 }
+*/
 /**
  * @brief drives the robot a certain distance
  * @param dist distance in inches
@@ -137,7 +141,7 @@ void rotate(double dir, double accuracy)
   }
   drive_brake();
 }
-
+//!no workie
 void DriveToPoint(double targetX, double targetY, float speedMult = 1)
 {
   // T=turn
@@ -186,7 +190,8 @@ void DriveToPoint(double targetX, double targetY, float speedMult = 1)
   }
   drive_brake();
 }
-
+//!no workie
+//?te
 void DriveToPoint2(float targetX, float targetY)
 {
 
@@ -236,7 +241,9 @@ void RAMSETE(float targetX, float targetY, float targetAngle,
 
 /**
  * @brief Drives to a point using the gyro
+ * // hvchfchf gnd
  */
+//!no workie
 void DriveToPoint3(float targetX, float targetY, float targetAngle,
                    float accuracy = 1)
 {
