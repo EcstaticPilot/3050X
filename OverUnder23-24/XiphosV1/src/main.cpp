@@ -209,25 +209,28 @@ void autonomous(void)
 
   switch (selectedAuton)
   {
-  case offensiveZone:
+  case offensiveZone:{
     // code for offensive zone auton
-    float throughGoal[4][2] = {
+    float throughGoalLeft[4][2] = {
         {0, 0},
         {0, 40},
         {20, 40},
         {20, 80}};
-    stanley(throughGoal, sizeof(throughGoal) / (2 * sizeof(float)));
+    stanley(throughGoalLeft, sizeof(throughGoalLeft) / (2 * sizeof(float)));
     break;
-
-  case defensiveZone:
-    float throughGoal[4][2] = {
+  }
+  case defensiveZone:{
+    float throughGoalRight[4][2] = {
         {0, 0},
         {0, 40},
         {-20, 40},
         {-20, 80}};
-    stanley(throughGoal, sizeof(throughGoal) / (2 * sizeof(float)));
-    break;
+    stanley(throughGoalRight, sizeof(throughGoalRight) / (2 * sizeof(float)));
+    break; 
+   }
   }
+  
+    
 }
 
 /*---------------------------------------------------------------------------*/
@@ -245,7 +248,7 @@ void usercontrol(void)
   // User control code here, inside the loop
   while (1)
   {
-    if (fabs(Controller1.Axis3.position(pct)) < 5 || fabs(Controller1.Axis2.position(pct) < 5))
+    if ((abs(Controller1.Axis3.position(pct)) < 1) && (abs(Controller1.Axis2.position(pct)) < 1))
     {
       drive_brake(coast);
     }
