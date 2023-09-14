@@ -248,6 +248,12 @@ void usercontrol(void)
   // User control code here, inside the loop
   while (1)
   {
+    if(Controller1.ButtonA.pressing()){
+      cata.spin(fwd,50,pct);
+    }
+    else{
+    cata.stop(coast);
+    }
     if ((abs(Controller1.Axis3.position(pct)) < 1) && (abs(Controller1.Axis2.position(pct)) < 1))
     {
       drive_brake(coast);

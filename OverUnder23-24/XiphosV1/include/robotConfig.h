@@ -11,6 +11,7 @@ extern motor RF;
 extern motor RB;
 extern motor RM;
 extern motor LM;
+extern motor cata;
 extern inertial gyro1;
 extern rotation RotationL;
 extern rotation RotationB;

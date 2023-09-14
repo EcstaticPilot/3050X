@@ -17,6 +17,7 @@ motor RF = motor(PORT5, ratio6_1, false);
 motor RM = motor(PORT6, ratio6_1, false);
 motor RB = motor(PORT10, ratio6_1, false);
 
+motor cata = motor(PORT19,ratio18_1,false);
 inertial gyro1 = inertial(PORT13);
 /*
 rotation RotationL = rotation(PORT17, false);
