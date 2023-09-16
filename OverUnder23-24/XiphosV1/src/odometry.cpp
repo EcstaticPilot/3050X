@@ -26,12 +26,10 @@ int odometery()
   double Heading = M_PI;
   double distFromCenterL = 4.2;
   double distFromCenterB = 6;
-  double lRad;
-  double bRad;
-  double rRad;   // radius of tracking wheel
-  lRad = 1.625; // radius of tracking wheel
-  bRad = 0;
-  rRad = 1.625;
+  double lRad=2;
+  double bRad=0;
+  double rRad=2;   // radius of tracking wheel
+
   // radius of tracking wheel
   double lEncoder = 0;      // declaring encoder variable left
   double bEncoder = 0;      // declaring encoder variable back
@@ -49,15 +47,14 @@ int odometery()
   double deltaX;
   double deltaY;
   gyro1.datarate(10);
-/*  RotationL.resetPosition();
+  /*
+  RotationL.resetPosition();
   RotationB.resetPosition();
   RotationR.resetPosition();
 
   RotationB.datarate(10);
   RotationL.datarate(10);
   RotationR.datarate(10);
-
-
 
   RotationL.setPosition(0, degrees);
   RotationB.setPosition(0, degrees);
@@ -76,8 +73,8 @@ int odometery()
     rEncoder = RotationR.position(degrees);
     bEncoder = RotationB.position(degrees);
     */
-    lEncoder = LB.position(degrees) * 3 / 5;
-    rEncoder = RB.position(degrees) * 3 / 5;
+    lEncoder = LB.position(degrees) * 3 / 6;
+    rEncoder = RB.position(degrees) * 3 / 6;
 
     // convert encoder distance into distance traveled
     distL = ((lEncoder - prevLE) * M_PI / 180) * lRad;

@@ -22,11 +22,14 @@ button red1;
 button red2;
 button blue1;
 button blue2;
+
+button skills;
 // define the enum for the autons
 enum Auton
 {
   offensiveZone,
-  defensiveZone
+  defensiveZone,
+  skillsAuton
 };
 // default auton
 Auton selectedAuton = offensiveZone;
@@ -37,41 +40,22 @@ void onScreenPress()
   // Brain.Screen.print("screen pressed                          ");
   if (red1.checkTouch())
   {
-
-    red1.setFill(true);
-    red2.setFill(false);
-    blue1.setFill(false);
-    blue2.setFill(false);
-
     selectedAuton = offensiveZone;
   }
   if (red2.checkTouch())
   {
-
-    red1.setFill(false);
-    red2.setFill(true);
-    blue1.setFill(false);
-    blue2.setFill(false);
-
     selectedAuton = defensiveZone;
   }
   if (blue1.checkTouch())
   {
-    red1.setFill(false);
-    red2.setFill(false);
-    blue1.setFill(true);
-    blue2.setFill(false);
-
     selectedAuton = offensiveZone;
   }
   if (blue2.checkTouch())
   {
-    red1.setFill(false);
-    red2.setFill(false);
-    blue1.setFill(false);
-    blue2.setFill(true);
-
     selectedAuton = defensiveZone;
+  }
+  if(skills.checkTouch()){
+    selectedAuton = skillsAuton;
   }
 }
 
@@ -93,12 +77,13 @@ int ControllerPrint()
 {
   while (true)
   {
+
     Controller1.Screen.setCursor(1, 1);
     Controller1.Screen.print("pos= (%.1f  , %.1f  )       ", X, Y);
     Controller1.Screen.setCursor(2, 1);
     Controller1.Screen.print("%f", gyro1.angle(degrees));
     Controller1.Screen.setCursor(3, 1);
-
+    
     if (devicesCheck())
     {
       Controller1.Screen.print("All Devices Connected :]       ");
@@ -143,6 +128,7 @@ int ControllerPrint()
     }
 
     this_thread::sleep_for(100);
+
   }
 }
 /*---------------------------------------------------------------------------*/
@@ -165,7 +151,7 @@ void pre_auton(void)
   blue1 = button(70, 0, 50, 50, blue, "blue1");
   blue2 = button(228, 0, 50, 50, blue, "blue2");
 
-  // brain pressed callback
+  skills = button(345,60,110,60,yellow,"skills");
 
   gyro1.calibrate();
 
@@ -181,12 +167,12 @@ void pre_auton(void)
 
   if (devicesCheck())
   {
-    Brain.Screen.clearScreen();
+    //Brain.Screen.clearScreen();
     Brain.Screen.print("Devices Connected");
   }
   else
   {
-    Brain.Screen.clearScreen();
+    //Brain.Screen.clearScreen();
     Controller1.rumble("....");
     Brain.Screen.print("Devices Not Connected");
   }
@@ -211,21 +197,21 @@ void autonomous(void)
   {
   case offensiveZone:{
     // code for offensive zone auton
-    float throughGoalLeft[4][2] = {
+    float offensiveZone[4][2] = {
         {0, 0},
         {0, 40},
         {20, 40},
         {20, 80}};
-    stanley(throughGoalLeft, sizeof(throughGoalLeft) / (2 * sizeof(float)));
+    stanley(offensiveZone, sizeof(offensiveZone) / (2 * sizeof(float)));
     break;
   }
   case defensiveZone:{
-    float throughGoalRight[4][2] = {
+    float defensiveZone[4][2] = {
         {0, 0},
         {0, 40},
         {-20, 40},
         {-20, 80}};
-    stanley(throughGoalRight, sizeof(throughGoalRight) / (2 * sizeof(float)));
+    stanley(defensiveZone, sizeof(defensiveZone) / (2 * sizeof(float)));
     break; 
    }
   }
@@ -246,17 +232,23 @@ void autonomous(void)
 void usercontrol(void)
 {
   // User control code here, inside the loop
+  brakeType driveBrake = coast;
   while (1)
   {
+    
     if(Controller1.ButtonA.pressing()){
-      cata.spin(fwd,50,pct);
+      cata.spin(fwd,90*120,voltageUnits::mV);
+      driveBrake = hold;
     }
+
     else{
-    cata.stop(coast);
+      cata.stop(coast);
+      driveBrake = coast;
     }
-    if ((abs(Controller1.Axis3.position(pct)) < 1) && (abs(Controller1.Axis2.position(pct)) < 1))
+
+    if ((abs(Controller1.Axis3.position(pct)) < 2) && (abs(Controller1.Axis2.position(pct)) < 2))
     {
-      drive_brake(coast);
+      drive_brake(driveBrake);
     }
     else
     {

@@ -30,10 +30,12 @@ bool button::checkTouch()
     int yTouch = Brain.Screen.yPosition();
     if ((xTouch <= x + width && xTouch > x) && (yTouch <= y + height && yTouch > y))
     {
+        setFill(true);
         return true;
     }
     else
     {
+        setFill(false);
         return false;
     }
 }

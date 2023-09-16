@@ -287,13 +287,13 @@ void stanley(float points[][2], int length, bool isReversed)
   float waitTime = 10;
   // constants for reaction to error
   // untested values
-  float kp = 2;
+  float kp = 2.75;
 
   float ki = 0;
 
   float kd = 10; // 6.666666
 
-  float kv = 7.5; // v/kv   7.5
+  float kv = 10; // v/kv   7.5
   // it would apeear that kd=kp*5 is good for some reason
   //  lookahead distance
   float ld;
@@ -490,7 +490,7 @@ void stanley(float points[][2], int length, bool isReversed)
       voltDrive(-vR, -vL, 0);
     }
 
-    std::cout << X << "," << Y << "," << error << std::endl;
+    std::cout << X << ",,," << Y <<","<<error<<","<<segmentDist*sign<<","<<output<<","<<kp*error<<","<<(error - prevError) * kd<< std::endl;
     wait(waitTime, msec);
     // std::cout <<Brain.Timer.time()<<","<< error << "," << output << "," << kp * error << "," << ki * totalError << "," << kd * (error - prevError) << std::endl; // pid tuning config
   }
