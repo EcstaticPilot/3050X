@@ -238,8 +238,8 @@ void usercontrol(void)
 {
   // User control code here, inside the loop
   brakeType driveBrake = coast;
-  auto light = sylib::Addrled(1,1,64);
-  while (1)
+  auto light = sylib::Addrled(21,1,64);
+  while (true)
   {
     light.gradient(0xFF0000, 0xFF0005, 1, 0, false, true);
  
@@ -251,20 +251,19 @@ void usercontrol(void)
       cata.spin(fwd, 90 * 120, voltageUnits::mV);
       driveBrake = hold;
     }
-
     else
     {
       cata.stop(coast);
       driveBrake = coast;
     }
 
-    if ((abs(Controller1.Axis3.position(pct)) < 2) && (abs(Controller1.Axis2.position(pct)) < 2))
+    if ((abs(Controller1.Axis3.position(pct)) < 5) && (abs(Controller1.Axis2.position(pct)) < 5))
     {
       drive_brake(driveBrake);
     }
     else
     {
-      voltDrive(driveCurve(Controller1.Axis3.position()), driveCurve(Controller1.Axis2.position()), 0);
+      voltDrive(Controller1.Axis3.position(), Controller1.Axis2.position(), 0);
     }
     // std::cout << X << ",,," << Y << "\n";
     this_thread::sleep_for(15);
@@ -277,7 +276,7 @@ void usercontrol(void)
 //
 int main()
 {
-  std::cout << "yes";
+
   Brain.Screen.pressed(onScreenPress);
   // Set up callbacks for autonomous and driver control periods.
   // Competition.bStopAllTasksBetweenModes = true;
