@@ -9,7 +9,7 @@
 /*----------------------------------------------------------------------------*/
 
 #include "vex.h"
-
+#include "sylib/sylib.hpp"
 using namespace vex;
 
 // A global instance of competition
@@ -54,7 +54,8 @@ void onScreenPress()
   {
     selectedAuton = defensiveZone;
   }
-  if(skills.checkTouch()){
+  if (skills.checkTouch())
+  {
     selectedAuton = skillsAuton;
   }
 }
@@ -83,7 +84,7 @@ int ControllerPrint()
     Controller1.Screen.setCursor(2, 1);
     Controller1.Screen.print("%f", gyro1.angle(degrees));
     Controller1.Screen.setCursor(3, 1);
-    
+
     if (devicesCheck())
     {
       Controller1.Screen.print("All Devices Connected :]       ");
@@ -128,7 +129,6 @@ int ControllerPrint()
     }
 
     this_thread::sleep_for(100);
-
   }
 }
 /*---------------------------------------------------------------------------*/
@@ -143,7 +143,7 @@ int ControllerPrint()
 
 void pre_auton(void)
 {
-
+  sylib::initialize();
   // v2
   drawField();
   red1 = button(70, 190, 50, 50, red, "red1");
@@ -151,7 +151,7 @@ void pre_auton(void)
   blue1 = button(70, 0, 50, 50, blue, "blue1");
   blue2 = button(228, 0, 50, 50, blue, "blue2");
 
-  skills = button(345,60,110,60,yellow,"skills");
+  skills = button(345, 60, 110, 60, yellow, "skills");
 
   gyro1.calibrate();
 
@@ -167,12 +167,12 @@ void pre_auton(void)
 
   if (devicesCheck())
   {
-    //Brain.Screen.clearScreen();
+    // Brain.Screen.clearScreen();
     Brain.Screen.print("Devices Connected");
   }
   else
   {
-    //Brain.Screen.clearScreen();
+    // Brain.Screen.clearScreen();
     Controller1.rumble("....");
     Brain.Screen.print("Devices Not Connected");
   }
@@ -195,7 +195,8 @@ void autonomous(void)
 
   switch (selectedAuton)
   {
-  case offensiveZone:{
+  case offensiveZone:
+  {
     // code for offensive zone auton
     float offensiveZone[4][2] = {
         {0, 0},
@@ -205,18 +206,22 @@ void autonomous(void)
     stanley(offensiveZone, sizeof(offensiveZone) / (2 * sizeof(float)));
     break;
   }
-  case defensiveZone:{
+  case defensiveZone:
+  {
     float defensiveZone[4][2] = {
         {0, 0},
         {0, 40},
         {-20, 40},
         {-20, 80}};
     stanley(defensiveZone, sizeof(defensiveZone) / (2 * sizeof(float)));
-    break; 
-   }
+    break;
   }
-  
-    
+
+  case skillsAuton:
+  {
+    //skills auton
+  }
+  }
 }
 
 /*---------------------------------------------------------------------------*/
@@ -233,15 +238,22 @@ void usercontrol(void)
 {
   // User control code here, inside the loop
   brakeType driveBrake = coast;
+  auto light = sylib::Addrled(1,1,64);
   while (1)
   {
-    
-    if(Controller1.ButtonA.pressing()){
-      cata.spin(fwd,90*120,voltageUnits::mV);
+    light.gradient(0xFF0000, 0xFF0005, 1, 0, false, true);
+ 
+    // Cycle the colors at speed 10
+    light.cycle(*light, 10);
+
+    if (Controller1.ButtonA.pressing())
+    {
+      cata.spin(fwd, 90 * 120, voltageUnits::mV);
       driveBrake = hold;
     }
 
-    else{
+    else
+    {
       cata.stop(coast);
       driveBrake = coast;
     }
@@ -255,7 +267,8 @@ void usercontrol(void)
       voltDrive(driveCurve(Controller1.Axis3.position()), driveCurve(Controller1.Axis2.position()), 0);
     }
     // std::cout << X << ",,," << Y << "\n";
-    wait(10, msec);
+    this_thread::sleep_for(15);
+
   }
 }
 
