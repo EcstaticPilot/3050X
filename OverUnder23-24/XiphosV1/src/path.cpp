@@ -286,7 +286,6 @@ void stanley(float points[][2], int length, bool isReversed)
 
   float waitTime = 10;
   // constants for reaction to error
-  // untested values
   float kp = 2.75;
 
   float ki = 0;
@@ -332,6 +331,7 @@ void stanley(float points[][2], int length, bool isReversed)
 
   // the 1-D vector of bezier point class
   std::vector<bezierPoint> Bpoints(10, bezierPoint(0, 0, 0, 0, 0));
+
 
   // Filling the vector with points
   for (int i = 0; i < 10; i++)
