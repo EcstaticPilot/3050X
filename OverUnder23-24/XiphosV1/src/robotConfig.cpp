@@ -24,9 +24,11 @@ rotation RotationL = rotation(PORT17, false);
 rotation RotationR = rotation(PORT5, false);
 rotation RotationB = rotation(PORT10, true);
 */
-pneumatics claw = pneumatics(Brain.ThreeWirePort.B);
+pneumatics wingL = pneumatics(Brain.ThreeWirePort.A);
+pneumatics wingR = pneumatics(Brain.ThreeWirePort.B);
 
-
+pneumatics blockerL = pneumatics(Brain.ThreeWirePort.C);
+pneumatics blockerR = pneumatics(Brain.ThreeWirePort.D);
 // VEXcode generated functions
 // define variable for remote controller enable/disable
 bool RemoteControlCodeEnabled = true;

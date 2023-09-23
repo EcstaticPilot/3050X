@@ -16,9 +16,10 @@ extern inertial gyro1;
 extern rotation RotationL;
 extern rotation RotationB;
 extern rotation RotationR;
-extern pneumatics claw;
-
-
+extern pneumatics wingL;
+extern pneumatics wingR;
+extern pneumatics blockerL;
+extern pneumatics blockerR;
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
  * 

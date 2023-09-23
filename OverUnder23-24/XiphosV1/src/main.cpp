@@ -12,10 +12,31 @@
 #include "sylib/sylib.hpp"
 using namespace vex;
 
+
 // A global instance of competition
 competition Competition;
 
-void toggleclaw() { claw.set(!claw.value()); }
+void togglePneumatic(pneumatics piston)
+{
+  piston.set(!piston.value());
+}
+bool blocker=false;
+void toggleBlocker()
+{
+
+
+  togglePneumatic(blockerL);
+  togglePneumatic(blockerR);
+  wait(0.25,sec);
+  blocker=!blocker;
+ 
+}
+void flapWings()
+{
+  togglePneumatic(wingL);
+  togglePneumatic(wingR);
+}
+
 
 // initailization of buttons for auton
 button red1;
@@ -125,7 +146,7 @@ int ControllerPrint()
         Controller1.Screen.print("unknown device not connected");
       }
 
-      wait(100, msec);
+      wait(250, msec);
     }
 
     this_thread::sleep_for(100);
@@ -144,6 +165,8 @@ int ControllerPrint()
 void pre_auton(void)
 {
   sylib::initialize();
+  
+    
   // v2
   drawField();
   red1 = button(70, 190, 50, 50, red, "red1");
@@ -177,6 +200,7 @@ void pre_auton(void)
     Brain.Screen.print("Devices Not Connected");
   }
 }
+
 
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
@@ -219,7 +243,7 @@ void autonomous(void)
 
   case skillsAuton:
   {
-    //skills auton
+    // skills auton
   }
   }
 }
@@ -236,15 +260,30 @@ void autonomous(void)
 
 void usercontrol(void)
 {
+  bool prevBlocker = blocker;
   // User control code here, inside the loop
+   auto LED = sylib::Addrled(21, 1, 64);
   brakeType driveBrake = coast;
-  auto light = sylib::Addrled(21,1,64);
+
+  LED.gradient(0xFF0000, 0xFF0005, 0, 0, false, true);
+  //light.pulse(0xFFC72C,10);
+    // Cycle the colors at speed 10
+  LED.cycle(*LED, 10);
   while (true)
   {
-    light.gradient(0xFF0000, 0xFF0005, 1, 0, false, true);
- 
-    // Cycle the colors at speed 10
-    light.cycle(*light, 10);
+    if(blocker!=prevBlocker){
+      prevBlocker=blocker;
+      if(blocker){
+        
+        LED.pulse(0xFF0000,64,15,0,false,0);
+        //LED.clear();
+        LED.set_all(0xFF0000);
+      }
+      else{
+        LED.gradient(0xFF0000, 0xFF0005, 0, 0, false, true);
+        LED.cycle(*LED, 10);
+      }
+    }
 
     if (Controller1.ButtonA.pressing())
     {
@@ -267,9 +306,9 @@ void usercontrol(void)
     }
     // std::cout << X << ",,," << Y << "\n";
     this_thread::sleep_for(15);
-
   }
 }
+
 
 //
 // Main will set up the competition functions and callbacks.
@@ -280,6 +319,8 @@ int main()
   Brain.Screen.pressed(onScreenPress);
   // Set up callbacks for autonomous and driver control periods.
   // Competition.bStopAllTasksBetweenModes = true;
+  Controller1.ButtonX.pressed(toggleBlocker);
+  Controller1.ButtonB.pressed(flapWings);
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
 
