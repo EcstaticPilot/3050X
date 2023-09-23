@@ -30,7 +30,7 @@ pneumatics wingR = pneumatics(Brain.ThreeWirePort.B);
 pneumatics blockerL = pneumatics(Brain.ThreeWirePort.C);
 pneumatics blockerR = pneumatics(Brain.ThreeWirePort.D);
 
-sylib::Addrled LED = sylib::Addrled(21, 1, 64);
+
 // VEXcode generated functions
 // define variable for remote controller enable/disable
 bool RemoteControlCodeEnabled = true;

@@ -83,7 +83,7 @@ void onScreenPress()
 
 bool devicesCheck()
 {
-
+  return true;
   if (LF.installed() && RF.installed() && LB.installed() && RB.installed() && LM.installed() && RM.installed() &&
       gyro1.installed())
   {
@@ -262,13 +262,14 @@ void usercontrol(void)
 {
   bool prevBlocker = blocker;
   // User control code here, inside the loop
- 
+  sylib::Addrled LED = sylib::Addrled(21, 1, 64);
   brakeType driveBrake = coast;
   
   LED.gradient(0xFF0000, 0xFF0005, 0, 0, false, true);
+  //LED.gradient(0xFFFF00, 0xFFFFFF, 0, 0, false, false);
   //light.pulse(0xFFC72C,10);
     // Cycle the colors at speed 10
-  LED.cycle(*LED, 10);
+  LED.cycle(*LED, 100);
   while (true)
   {
     if(blocker!=prevBlocker){
@@ -280,7 +281,8 @@ void usercontrol(void)
         LED.set_all(0xFF0000);
       }
       else{
-        LED.gradient(0xFF0000, 0xFF0005, 0, 0, false, true);
+        LED.gradient(0x000000,0xcdd200 , 32, 0, false, false);
+        LED.gradient(0xcdd200, 0x000000, 32, 32, false, false);
         LED.cycle(*LED, 10);
       }
     }
