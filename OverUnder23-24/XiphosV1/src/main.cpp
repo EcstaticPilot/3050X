@@ -4,14 +4,14 @@
 /*    Author:       Nicool Ramanuja                                           */
 /*    Created:      9/3/2023, 5:15:15 PM                                     */
 /*    Description:  program for palos verdes peninsula high school team 3050X */
-/*                  robot version 0                                           */
+/*                  robot version WRONG VERSION                               */
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 
 #include "vex.h"
 #include "sylib/sylib.hpp"
 using namespace vex;
-
+//!WRONG CODE VERSION
 extern sylib::Addrled LED;
 // A global instance of competition
 competition Competition;
