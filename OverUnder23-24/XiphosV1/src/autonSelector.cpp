@@ -1,7 +1,9 @@
 #include "vex.h"
 #include "autonSelector.h"
+#include "sylib/sylib.hpp"
 using namespace vex;
 #include <string>
+
 /**
  * @brief Construct a new button::button object
  *

@@ -12,7 +12,7 @@
 #include "sylib/sylib.hpp"
 using namespace vex;
 
-
+extern sylib::Addrled LED;
 // A global instance of competition
 competition Competition;
 
@@ -23,12 +23,12 @@ void togglePneumatic(pneumatics piston)
 bool blocker=false;
 void toggleBlocker()
 {
-
-
   togglePneumatic(blockerL);
   togglePneumatic(blockerR);
+
   wait(0.25,sec);
   blocker=!blocker;
+
  
 }
 void flapWings()
@@ -257,14 +257,14 @@ void autonomous(void)
 /*                                                                           */
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
-
+ 
 void usercontrol(void)
 {
   bool prevBlocker = blocker;
   // User control code here, inside the loop
-   auto LED = sylib::Addrled(21, 1, 64);
+ 
   brakeType driveBrake = coast;
-
+  
   LED.gradient(0xFF0000, 0xFF0005, 0, 0, false, true);
   //light.pulse(0xFFC72C,10);
     // Cycle the colors at speed 10

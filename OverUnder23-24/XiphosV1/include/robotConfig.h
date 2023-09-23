@@ -1,3 +1,4 @@
+#pragma once
 using namespace vex;
 
 extern brain Brain;
@@ -20,6 +21,8 @@ extern pneumatics wingL;
 extern pneumatics wingR;
 extern pneumatics blockerL;
 extern pneumatics blockerR;
+
+
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
  * 
