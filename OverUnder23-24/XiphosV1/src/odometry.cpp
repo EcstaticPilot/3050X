@@ -12,110 +12,98 @@
 
 */
 
-double X = 0, Y = 0;
+point robot = point(0, 0);
 
+#include <string>
+
+void point::print()
+{
+	std::cout << x << "," << y << std::endl;
+}
 /**
  * @brief odometry
  */
 int odometery()
 {
+	RF.resetPosition();
+	LF.resetPosition();
+	gyro1.resetHeading();
 
-  double prevHeading = gyro1.rotation();
+	double prevHeading = gyro1.rotation();
 
-  double deltaHeading = 0; // change in heading
-  double Heading = M_PI;
-  double distFromCenterL = 4.2;
-  double distFromCenterB = 6;
-  double lRad=2;
-  double bRad=0;
-  double rRad=2;   // radius of tracking wheel
+	double deltaHeading = 0; // change in heading
+	double Heading = M_PI;
+	double distFromCenterL = 6;
+	double distFromCenterB = 5;
+	double lRad = 1.625;
+	double rRad = 1.625; // radius of tracking wheel
+	double bRad = 1.375; // radius of tracking wheel
 
-  // radius of tracking wheel
-  double lEncoder = 0;      // declaring encoder variable left
-  double bEncoder = 0;      // declaring encoder variable back
-  double rEncoder = 0;      // declaring encoder variable right
+	// radius of tracking wheel
+	double lEncoder = 0; // declaring encoder variable left
+	double rEncoder = 0; // declaring encoder variable right
+	double bEncoder = 0; // declaring encoder variable right
 
-  double distL = 0;         // distance left encoder has traveled
-  double distB = 0;         // distance back encoder has traveled
-  double distR = 0;         // distance right encoder has traveled
+	double distL = 0; // distance left encoder has traveled
+	double distR = 0; // distance right encoder has traveled
+	double distB = 0;
 
-  double prevLE = lEncoder; // create previous encoder value left
-  double prevBE = bEncoder; // create previous encoder value back
-  double prevRE = rEncoder; // create previous encoder value right
+	double prevLE = lEncoder; // create previous encoder value left
+	double prevRE = rEncoder; // create previous encoder value right
+	double prevBE = bEncoder; // create previous encoder value right
 
-  double averageHeading; //
-  double deltaX;
-  double deltaY;
-  gyro1.datarate(10);
-  /*
-  RotationL.resetPosition();
-  RotationB.resetPosition();
-  RotationR.resetPosition();
+	double averageHeading; //
+	double deltaX;
+	double deltaY;
+	// gyro1.datarate(10);
 
-  RotationB.datarate(10);
-  RotationL.datarate(10);
-  RotationR.datarate(10);
 
-  RotationL.setPosition(0, degrees);
-  RotationB.setPosition(0, degrees);
-  RotationR.setPosition(0, degrees);
-  */
+	waitUntil(!gyro1.isCalibrating());
+	robot = point(0,0);
+	while (true)
+	{
+		lEncoder = LF.position(degrees) * 3 / 5;
+		rEncoder = RF.position(degrees) * 3 / 5;
+		//bEncoder = RotationB.position(degrees);
+		// convert encoder distance into distance traveled
+		distL = ((lEncoder - prevLE) * M_PI / 180) * lRad;
+		distR = ((rEncoder - prevRE) * M_PI / 180) * rRad;
+		distB = ((bEncoder - prevBE) * M_PI / 180) * bRad;
+		// convert encoder distance into disntance traveled
 
-  RB.resetPosition();
-  LB.resetPosition();
+		prevLE = lEncoder; // create previous encoder value left
+		prevRE = rEncoder; // create previous encoder value right
+		prevBE = bEncoder;
 
-  gyro1.resetHeading();
+		Heading = ((gyro1.rotation() * M_PI / 180));
+		Heading = fmod(Heading, 2 * M_PI);
+		deltaHeading = Heading - prevHeading; // calculate change in heading
 
-  while (true)
-  {
-    /*
-    lEncoder = RotationL.position(degrees);
-    rEncoder = RotationR.position(degrees);
-    bEncoder = RotationB.position(degrees);
-    */
-    lEncoder = LB.position(degrees) * 3 / 6;
-    rEncoder = RB.position(degrees) * 3 / 6;
+		prevHeading = Heading;
 
-    // convert encoder distance into distance traveled
-    distL = ((lEncoder - prevLE) * M_PI / 180) * lRad;
-    distR = ((rEncoder - prevRE) * M_PI / 180) * rRad;
-    //distB = ((bEncoder - prevBE) * M_PI / 180) * bRad;
+		if (deltaHeading == 0)
+		{
+			deltaX = distB;
+			if (RB.installed() && LB.installed())
+				deltaY = (distL + distR) / 2;
+		}
+		else
+		{
+			deltaX = 2 * sin(deltaHeading / 2) * ((distB / deltaHeading) + distFromCenterB);
+			deltaY = 2 * sin(deltaHeading / 2) * ((distR / deltaHeading) - distFromCenterL);
+		}
 
-    // convert encoder distance into disntance traveled
+		averageHeading = prevHeading + (deltaHeading / 2);
 
-    prevLE = lEncoder; // create previous encoder value left
-    prevRE = rEncoder; // create previous encoder value right
-    //prevBE = bEncoder; // create previous encoder value back
+		robot.x += (deltaY * sin(averageHeading)) + (deltaX * cos(averageHeading));
+		robot.y += (deltaY * cos(averageHeading)) - (deltaX * sin(averageHeading));
 
-    Heading = ((gyro1.rotation()*M_PI/180));
-    Heading = fmod(Heading, 2 * M_PI);
-    deltaHeading = Heading - prevHeading; // calculate change in heading
+		if (deltaX not_eq 0 || deltaY not_eq 0)
+		{
+			//    std::cout <<robot.x << "," <<robot.y << std::endl;
+		}
 
-    prevHeading = Heading;
-
-    if (true/*deltaHeading == 0*/)
-    {
-      deltaX = distB;
-      if(RB.installed() && LB.installed())
-      deltaY = (distL+distR)/2;
-    }
-    else
-    {
-      deltaX = 2 * sin(deltaHeading / 2) * ((distB / deltaHeading) + distFromCenterB);
-      deltaY = 2 * sin(deltaHeading / 2) * ((distR / deltaHeading) - distFromCenterL);
-    }
-
-    averageHeading = prevHeading + (deltaHeading / 2);
-
-    X += (deltaY * sin(averageHeading)) + (deltaX * cos(averageHeading));
-    Y += (deltaY * cos(averageHeading)) - (deltaX * sin(averageHeading));
-
-    if (deltaX != 0 || deltaY != 0)
-    {
-      //    std::cout << X << "," << Y << std::endl;
-    }
-
-    this_thread::sleep_for(10);
-  }
-  return 1;
+		this_thread::sleep_for(10);
+	}
+	return 1;
 }

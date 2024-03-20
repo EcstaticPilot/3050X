@@ -2,336 +2,464 @@
 /*                                                                            */
 /*    Module:       main.cpp                                                  */
 /*    Author:       Nicool Ramanuja                                           */
-/*    Created:      9/3/2023, 5:15:15 PM                                     */
+/*    Created:      9/3/2023, 5:15:15 PM                                      */
 /*    Description:  program for palos verdes peninsula high school team 3050X */
-/*                  robot version coorect version                          */
+/*                  robot version coorect version                             */
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 
 #include "vex.h"
+#include "comp_debug.h"
 #include "sylib/sylib.hpp"
+#include "autonSelector.h"
+#include "gifclass.h"
 using namespace vex;
 
-extern sylib::Addrled LED;
-// A global instance of competition
+// extern sylib::Addrled LED;
+
+//  A global instance of competition
 competition Competition;
 
-void togglePneumatic(pneumatics piston)
+// debug class
+// competition_debug Cdebug(Competition);
+
+bool LED_ENABLE = false;
+const bool isCordy = false;
+
+// piston stuff
+void toggle(pneumatics *piston)
 {
-  piston.set(!piston.value());
+	piston->set(!(piston->value()));
 }
-bool blocker=false;
+
+bool blocker = false;
+bool wings = false;
+bool prevBlocker = blocker;
+bool prevWings = wings;
+void LEDsOn()
+{
+	LED_ENABLE = true;
+	prevWings = !wings;
+	prevBlocker = !blocker;
+}
+void toggleLEDs()
+{
+	std::cout << "toggle LED";
+	LED_ENABLE = !LED_ENABLE;
+	if (LED_ENABLE)
+	{
+		LEDsOn();
+	}
+}
 void toggleBlocker()
 {
-  togglePneumatic(blockerL);
-  togglePneumatic(blockerR);
-
-  wait(0.25,sec);
-  blocker=!blocker;
-
- 
+	toggle(&blockerL);
+	toggle(&blockerR);
+	blocker = !blocker;
 }
 void flapWings()
 {
-  togglePneumatic(wingL);
-  togglePneumatic(wingR);
+	toggle(&wingL);
+	toggle(&wingR);
+	wings = !wings;
 }
 
-
-// initailization of buttons for auton
-button red1;
-button red2;
-button blue1;
-button blue2;
-
-button skills;
-// define the enum for the autons
-enum Auton
-{
-  offensiveZone,
-  defensiveZone,
-  skillsAuton
-};
-// default auton
-Auton selectedAuton = offensiveZone;
-
-// funtion to call when brain screen is pressed
-void onScreenPress()
-{
-  // Brain.Screen.print("screen pressed                          ");
-  if (red1.checkTouch())
-  {
-    selectedAuton = offensiveZone;
-  }
-  if (red2.checkTouch())
-  {
-    selectedAuton = defensiveZone;
-  }
-  if (blue1.checkTouch())
-  {
-    selectedAuton = offensiveZone;
-  }
-  if (blue2.checkTouch())
-  {
-    selectedAuton = defensiveZone;
-  }
-  if (skills.checkTouch())
-  {
-    selectedAuton = skillsAuton;
-  }
-}
-
+// devices stuff
 bool devicesCheck()
 {
-  return true;
-  if (LF.installed() && RF.installed() && LB.installed() && RB.installed() && LM.installed() && RM.installed() &&
-      gyro1.installed())
-  {
-    return true;
-  }
-  else
-  {
-    return false;
-  }
+	if (LF.installed() && RF.installed() && LB.installed() && RB.installed() && LM.installed() && RM.installed() &&
+		gyro1.installed() && cata.installed() && intake.installed() && cataRot.installed())
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
+// thread for printing on the controller
 int ControllerPrint()
 {
-  while (true)
-  {
+	while (true)
+	{
 
-    Controller1.Screen.setCursor(1, 1);
-    Controller1.Screen.print("pos= (%.1f  , %.1f  )       ", X, Y);
-    Controller1.Screen.setCursor(2, 1);
-    Controller1.Screen.print("%f", gyro1.angle(degrees));
-    Controller1.Screen.setCursor(3, 1);
+		Controller1.Screen.setCursor(1, 1);
+		Controller1.Screen.print("pos= (%.1f  , %.1f  )       ", robot.x, robot.y);
+		Controller1.Screen.setCursor(2, 1);
+		Controller1.Screen.print("%f", gyro1.angle(degrees));
+		Controller1.Screen.setCursor(3, 1);
 
-    if (devicesCheck())
-    {
-      Controller1.Screen.print("All Devices Connected :]       ");
-    }
-    else
-    {
-      Controller1.rumble(".");
-      if (!LF.installed())
-      {
-        Controller1.Screen.print("LF not connected");
-      }
-      else if (!RF.installed())
-      {
-        Controller1.Screen.print("RF not connected");
-      }
-      else if (!LB.installed())
-      {
-        Controller1.Screen.print("LB not connected");
-      }
-      else if (!RB.installed())
-      {
-        Controller1.Screen.print("RB not connected");
-      }
-      else if (!gyro1.installed())
-      {
-        Controller1.Screen.print("gyro not connected");
-      }
-      else if (!LM.installed())
-      {
-        Controller1.Screen.print("LM not connected");
-      }
-      else if (!RM.installed())
-      {
-        Controller1.Screen.print("RM not connected");
-      }
-      else
-      {
-        Controller1.Screen.print("unknown device not connected");
-      }
+		if (devicesCheck())
+		{
+			Controller1.Screen.print("All Devices Connected :]       ");
+		}
+		else
+		{
+			// Controller1.rumble(".");
+			if (!LF.installed())
+			{
+				Controller1.Screen.print("LF not connected");
+			}
+			else if (!RF.installed())
+			{
+				Controller1.Screen.print("RF not connected");
+			}
+			else if (!LB.installed())
+			{
+				Controller1.Screen.print("LB not connected");
+			}
+			else if (!RB.installed())
+			{
+				Controller1.Screen.print("RB not connected");
+			}
+			else if (!gyro1.installed())
+			{
+				Controller1.Screen.print("gyro not connected");
+			}
+			else if (!LM.installed())
+			{
+				Controller1.Screen.print("LM not connected");
+			}
+			else if (!RM.installed())
+			{
+				Controller1.Screen.print("RM not connected");
+			}
+			else
+			{
+				Controller1.Screen.print("unknown device not connected");
+			}
 
-      wait(250, msec);
-    }
+			wait(250, msec);
+		}
 
-    this_thread::sleep_for(100);
-  }
+		this_thread::sleep_for(200);
+	}
 }
-/*---------------------------------------------------------------------------*/
-/*                          Pre-Autonomous Functions                         */
-/*                                                                           */
-/*  You may want to perform some actions before the competition starts.      */
-/*  Do them in the following function.  You must return from this function   */
-/*  or the autonomous and usercontrol tasks will not be started.  This       */
-/*  function is only called once after the V5 has been powered on and        */
-/*  not every time that the robot is disabled.                               */
-/*---------------------------------------------------------------------------*/
+/*
+
+██╗       ███████╗  ██████╗   ███████╗
+██║       ██╔════╝  ██╔══██╗  ██╔════╝
+██║       █████╗    ██║  ██║  ███████╗
+██║       ██╔══╝    ██║  ██║  ╚════██║
+███████╗  ███████╗  ██████╔╝  ███████║
+╚══════╝  ╚══════╝  ╚═════╝   ╚══════╝
+
+*/
+
+int LEDmanager(void)
+{
+	
+	sylib::Addrled wingsLED1 = sylib::Addrled(19, 1, 35);
+	sylib::Addrled wingsLED2 = sylib::Addrled(22, 1, 35);
+
+	sylib::Addrled blockerLED1 = sylib::Addrled(22, 2, 35);
+	sylib::Addrled blockerLED2 = sylib::Addrled(19, 2, 35);
+
+	int blockerColor = 0xFF0000;
+	int wingColor = 0xFF0000;
+	if (LED_ENABLE)
+	{
+		blockerLED1.rainbow(5);
+		blockerLED2.rainbow(5);
+		wingsLED1.rainbow(5);
+		wingsLED2.rainbow(5);
+	}
+	uint32_t  red1 = red.rgb();
+	uint32_t grey = ClrDarkGray;
+	
+	
+	
+	while (true)
+	{
+		if (LED_ENABLE)
+		{
+			// blocker
+			if (blocker != prevBlocker)
+			{
+				prevBlocker = blocker;
+				if (blocker)
+				{
+					blockerLED1.pulse(blockerColor, 36, 20, 0, false, 0,false);
+					blockerLED2.pulse(blockerColor, 36, 20, 0, false, 0,false);
+					blockerLED1.set_all(blockerColor);
+					blockerLED2.set_all(blockerColor);
+				}
+				else
+				{
+					blockerLED1.rainbow(5);
+					blockerLED2.rainbow(5);
+				}
+			}
+			// wings
+			if (wings != prevWings)
+			{
+				prevWings = wings;
+				if (wings)
+				{
+					wingsLED1.pulse(wingColor, 36, 20, 0, false, 0,false);
+					wingsLED2.pulse(wingColor, 36, 20, 0, false, 0,false);
+					wingsLED1.set_all(wingColor);
+					wingsLED2.set_all(wingColor);
+				}
+				else
+				{
+					wingsLED1.rainbow(5);
+					wingsLED2.rainbow(5);
+				}
+			}
+		}
+		else
+		{
+			wingsLED1.turn_off();
+			wingsLED2.turn_off();
+			blockerLED1.turn_off();
+			blockerLED2.turn_off();
+		}
+		this_thread::sleep_for(50);
+	}
+	return 0;
+}
+/*
+-------------------------------------------------------------------------------------------------
+
+*	██████╗   ██████╗   ███████╗           █████╗   ██╗   ██╗  ████████╗   ██████╗   ███╗   ██╗
+*	██╔══██╗  ██╔══██╗  ██╔════╝          ██╔══██╗  ██║   ██║  ╚══██╔══╝  ██╔═══██╗  ████╗  ██║
+*	██████╔╝  ██████╔╝  █████╗    █████╗  ███████║  ██║   ██║     ██║     ██║   ██║  ██╔██╗ ██║
+*	██╔═══╝   ██╔══██╗  ██╔══╝    ╚════╝  ██╔══██║  ██║   ██║     ██║     ██║   ██║  ██║╚██╗██║
+*	██║       ██║  ██║  ███████╗          ██║  ██║  ╚██████╔╝     ██║     ╚██████╔╝  ██║ ╚████║
+*	╚═╝       ╚═╝  ╚═╝  ╚══════╝          ╚═╝  ╚═╝   ╚═════╝      ╚═╝      ╚═════╝   ╚═╝  ╚═══╝
+
+-------------------------------------------------------------------------------------------------
+*/
 
 void pre_auton(void)
 {
-  sylib::initialize();
-  
-    
-  // v2
-  drawField();
-  red1 = button(70, 190, 50, 50, red, "red1");
-  red2 = button(228, 190, 50, 50, red, "red2");
-  blue1 = button(70, 0, 50, 50, blue, "blue1");
-  blue2 = button(228, 0, 50, 50, blue, "blue2");
+	sylib::initialize();
 
-  skills = button(345, 60, 110, 60, yellow, "skills");
+	// draw field and initailization of buttons
+	initializeAutonSelector();
 
-  gyro1.calibrate();
+	gyro1.calibrate();
+	//? should we wait? I dont think its necessary
+	/*
+	while(gyro1.isCalibrating())
+	{
+		wait(10,msec);
+	}
+	*/
 
-  std::cout << "gyro calibrating" << std::endl;
-
-  waitUntil(gyro1.isCalibrating() == false);
-
-  // launch threads
-  //? maybe these could be tasks instead of threads that get stopped between mode and reintialized
-  thread ControllerPrinting = thread(ControllerPrint);
-  ControllerPrinting.setPriority(1);
-  thread posTrack = thread(odometery);
-
-  if (devicesCheck())
-  {
-    // Brain.Screen.clearScreen();
-    Brain.Screen.print("Devices Connected");
-  }
-  else
-  {
-    // Brain.Screen.clearScreen();
-    Controller1.rumble("....");
-    Brain.Screen.print("Devices Not Connected");
-  }
+	if (Brain.Battery.capacity(pct) < 25)
+	{
+		Controller1.rumble("---");
+		Controller1.Screen.print("low battery");
+	}
+	// launch threads
+	//? maybe these could be tasks instead of threads that get stopped between mode and reintialized
+	thread ControllerPrinting = thread(ControllerPrint);
+	ControllerPrinting.setPriority(1);
+	thread posTrack = thread(odometery);
+	thread LEDcontrol = thread(LEDmanager);
+	if (devicesCheck())
+	{
+		// Brain.Screen.print("Devices Connected");
+	}
+	else
+	{
+		Controller1.rumble("....");
+		Brain.Screen.print("Devices Not Connected");
+	}
 }
 
+/*
+---------------------------------------------------------------------------
 
-/*---------------------------------------------------------------------------*/
-/*                                                                           */
-/*                              Autonomous Task                              */
-/*                                                                           */
-/*  This task is used to control your robot during the autonomous phase of   */
-/*  a VEX Competition.                                                       */
-/*                                                                           */
-/*  You must modify the code to add your own robot specific commands here.   */
-/*---------------------------------------------------------------------------*/
+!		 █████╗   ██╗   ██╗  ████████╗   ██████╗   ███╗   ██╗
+!		██╔══██╗  ██║   ██║  ╚══██╔══╝  ██╔═══██╗  ████╗  ██║
+!		███████║  ██║   ██║     ██║     ██║   ██║  ██╔██╗ ██║
+!		██╔══██║  ██║   ██║     ██║     ██║   ██║  ██║╚██╗██║
+!		██║  ██║  ╚██████╔╝     ██║     ╚██████╔╝  ██║ ╚████║
+!		╚═╝  ╚═╝   ╚═════╝      ╚═╝      ╚═════╝   ╚═╝  ╚═══╝
 
+---------------------------------------------------------------------------
+*/
+// auton functions
+void offensiveZoneAuton();
+void defensiveZoneAuton();
+void skillsAuton();
 void autonomous(void)
 {
 
-  std::cout << "Autonomous Started yes" << std::endl;
+	if (Competition.isFieldControl() || Competition.isCompetitionSwitch())
+		LEDsOn();
+	std::cout << selectedAuton;
+	waitUntil(!gyro1.isCalibrating());
+	switch (selectedAuton)
+	{
+	case offensiveZone:
+	{
+		offensiveZoneAuton();
+		break;
+	}
+	case defensiveZone:
+	{
+		defensiveZoneAuton();
+		break;
+	}
 
-  switch (selectedAuton)
-  {
-  case offensiveZone:
-  {
-    // code for offensive zone auton
-    float offensiveZone[4][2] = {
-        {0, 0},
-        {0, 40},
-        {20, 40},
-        {20, 80}};
-    stanley(offensiveZone, sizeof(offensiveZone) / (2 * sizeof(float)));
-    break;
-  }
-  case defensiveZone:
-  {
-    float defensiveZone[4][2] = {
-        {0, 0},
-        {0, 40},
-        {-20, 40},
-        {-20, 80}};
-    stanley(defensiveZone, sizeof(defensiveZone) / (2 * sizeof(float)));
-    break;
-  }
-
-  case skillsAuton:
-  {
-    // skills auton
-  }
-  }
+	case skills:
+	{
+		skillsAuton();
+		break;
+	}
+	}
+	drive_brake(brake);
+	if (LED_ENABLE)
+		toggleLEDs();
+	return;
 }
 
-/*---------------------------------------------------------------------------*/
-/*                                                                           */
-/*                              User Control Task                            */
-/*                                                                           */
-/*  This task is used to control your robot during the user control phase of */
-/*  a VEX Competition.                                                       */
-/*                                                                           */
-/*  You must modify the code to add your own robot specific commands here.   */
-/*---------------------------------------------------------------------------*/
- 
-void usercontrol(void)
+/*
+---------------------------------------------------------------------------
+
+?		██████╗   ██████╗   ██╗  ██╗   ██╗  ███████╗  ██████╗
+?		██╔══██╗  ██╔══██╗  ██║  ██║   ██║  ██╔════╝  ██╔══██╗
+?		██║  ██║  ██████╔╝  ██║  ██║   ██║  █████╗    ██████╔╝
+?		██║  ██║  ██╔══██╗  ██║  ╚██╗ ██╔╝  ██╔══╝    ██╔══██╗
+?		██████╔╝  ██║  ██║  ██║   ╚████╔╝   ███████╗  ██║  ██║
+?		╚═════╝   ╚═╝  ╚═╝  ╚═╝    ╚═══╝    ╚══════╝  ╚═╝  ╚═╝
+
+---------------------------------------------------------------------------
+*/
+
+void usercontrol()
 {
-  bool prevBlocker = blocker;
-  // User control code here, inside the loop
-  sylib::Addrled LED = sylib::Addrled(21, 1, 64);
-  brakeType driveBrake = coast;
-  
-  LED.gradient(0xFF0000, 0xFF0005, 0, 0, false, true);
-  //LED.gradient(0xFFFF00, 0xFFFFFF, 0, 0, false, false);
-  //light.pulse(0xFFC72C,10);
-    // Cycle the colors at speed 10
-  LED.cycle(*LED, 100);
-  while (true)
-  {
-    if(blocker!=prevBlocker){
-      prevBlocker=blocker;
-      if(blocker){
-        
-        LED.pulse(0xFF0000,64,15,0,false,0);
-        //LED.clear();
-        LED.set_all(0xFF0000);
-      }
-      else{
-        LED.gradient(0x000000,0xcdd200 , 32, 0, false, false);
-        LED.gradient(0xcdd200, 0x000000, 32, 32, false, false);
-        LED.cycle(*LED, 10);
-      }
-    }
+	if (Competition.isFieldControl() || Competition.isCompetitionSwitch())
+		LEDsOn();
+	std::cout << "start driver" << std::endl;
 
-    if (Controller1.ButtonA.pressing())
-    {
-      cata.spin(fwd, 90 * 120, voltageUnits::mV);
-      driveBrake = hold;
-    }
-    else
-    {
-      cata.stop(coast);
-      driveBrake = coast;
-    }
+	blockerL.set(false);
+	blockerR.set(false);
+	wingL.set(false);
+	wingR.set(false);
+	blocker=false;
+	wings=false;
+	brakeType driveBrake = coast;
+	brakeType intakeBrake = coast;
+	cataRot.setPosition(30, degrees);
+	// bool LEDon = false;
+	//  User control code here, inside the loop
+	Brain.resetTimer();
+	//Brain.Screen.clearScreen();
+	//wait(1,sec);
+	vex::Gif gif("capyinbucket.gif", 26, 0);
 
-    if ((abs(Controller1.Axis3.position(pct)) < 5) && (abs(Controller1.Axis2.position(pct)) < 5))
-    {
-      drive_brake(driveBrake);
-    }
-    else
-    {
-      voltDrive(Controller1.Axis3.position(), Controller1.Axis2.position(), 0);
-    }
-    // std::cout << X << ",,," << Y << "\n";
-    this_thread::sleep_for(15);
-  }
+	while (true)
+	{
+		
+		// std::cout<<cataRot.position(degrees)<<std::endl;
+		if (Controller1.ButtonL1.pressing())
+		{
+			wings = true;
+			wingL.set(true);
+			wingR.set(true);
+		}
+		else
+		{
+			wings = false;
+			wingL.set(false);
+			wingR.set(false);
+		}
+
+		// cata manager
+		if (Controller1.ButtonY.pressing()){
+			cata.spin(fwd, -6, volt);
+		}
+		else if (Controller1.ButtonX.pressing() || cataRot.position(degrees) < 55)
+		{
+			cata.spin(fwd, 12 * 0.85, volt);
+			if (Controller1.ButtonX.pressing())
+			{
+				driveBrake = hold;
+			}
+			else
+			{
+				driveBrake = coast;
+			}
+		}
+		else
+		{
+			cata.stop(hold);
+			driveBrake = coast;
+		}
+
+		// intake
+		if (Controller1.ButtonR1.pressing())
+		{
+			intake.spin(fwd, 12, volt);
+			intakeBrake = hold;
+		}
+
+		// outake
+		else if (Controller1.ButtonR2.pressing())
+		{
+			intake.spin(fwd, -12, volt);
+			intakeBrake = coast;
+		}
+
+		// stop the intake
+		else
+		{
+			intake.stop(intakeBrake);
+		}
+
+		// deadzone
+		if ((abs(Controller1.Axis3.position(pct)) < 5) and (abs((isCordy ? Controller1.Axis1.position(pct) : Controller1.Axis2.position(pct))) < 5))
+		{
+			drive_brake(driveBrake);
+		}
+		else
+		{
+			if (!isCordy)
+			{
+				voltDrive(Controller1.Axis3.position(), Controller1.Axis2.position());
+			}
+			else
+			{
+				voltDrive(Controller1.Axis3.position() + Controller1.Axis1.position(), Controller1.Axis3.position() - Controller1.Axis1.position());
+			}
+		}
+		// std::cout <<Controller1.Axis3.position()<<","<<Controller1.Axis2.position()<< std::endl;
+		wait(10, msec);
+	}
 }
+/*
 
+███╗   ███╗   █████╗   ██╗  ███╗   ██╗
+████╗ ████║  ██╔══██╗  ██║  ████╗  ██║
+██╔████╔██║  ███████║  ██║  ██╔██╗ ██║
+██║╚██╔╝██║  ██╔══██║  ██║  ██║╚██╗██║
+██║ ╚═╝ ██║  ██║  ██║  ██║  ██║ ╚████║
+╚═╝     ╚═╝  ╚═╝  ╚═╝  ╚═╝  ╚═╝  ╚═══╝
 
-//
-// Main will set up the competition functions and callbacks.
-//
+*/
+// https://www.fancytextpro.com/BigTextGenerator/Big
 int main()
 {
 
-  Brain.Screen.pressed(onScreenPress);
-  // Set up callbacks for autonomous and driver control periods.
-  // Competition.bStopAllTasksBetweenModes = true;
-  Controller1.ButtonX.pressed(toggleBlocker);
-  Controller1.ButtonB.pressed(flapWings);
-  Competition.autonomous(autonomous);
-  Competition.drivercontrol(usercontrol);
+	Controller1.ButtonDown.pressed(toggleLEDs);
+	Controller1.ButtonB.pressed(toggleBlocker);
+	Brain.Screen.pressed(onScreenPress);
+	//  Set up callbacks for autonomous and driver control periods.
+	Competition.autonomous(autonomous);
+	Competition.drivercontrol(usercontrol);
 
-  // Run the pre-autonomous function.
-  pre_auton();
+	// Run the pre-autonomous function.
+	pre_auton();
 
-  // Prevent main from exiting with an infinite loop.
-  while (true)
-  {
-    wait(100, msec);
-  }
+	// Prevent main from exiting with an infinite loop.
+	while (true)
+	{
+		wait(100, msec);
+	}
 }

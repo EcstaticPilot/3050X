@@ -14,15 +14,15 @@ extern motor RM;
 extern motor LM;
 extern motor cata;
 extern inertial gyro1;
-extern rotation RotationL;
+extern rotation cataRot;
 extern rotation RotationB;
-extern rotation RotationR;
 extern pneumatics wingL;
 extern pneumatics wingR;
 extern pneumatics blockerL;
 extern pneumatics blockerR;
-
-
+extern motor intake;
+extern vision camera;
+extern vex::vision::signature TRIBALL;
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
  * 

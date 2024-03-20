@@ -1,19 +1,28 @@
-
+#pragma once
 class PID{
-    protected:
-    float kp,ki,kd;
-    float error, prevError, totalError;
-    float output;
     public:
-    PID(float kp, float ki, float kd, float error):kp(kp),ki(ki),kd(kd),error(error){
+    float error;
+    float prevError, totalError;
+
+    float kp,ki,kd;
+    float output;
+    float intergalLimit = 100;
+
+    PID(float kp, float ki, float kd, float error, float integralLimit = 100):kp(kp),ki(ki),kd(kd),error(error),intergalLimit(intergalLimit){
         prevError=error;
+        totalError=0;
     };
     
-    void update(float input){
-        error = input;
-        output = kp*error+ki*totalError+kd*(prevError-error);
-        totalError +=error;
-        prevError=error;
-    }
+    /**
+     * @brief updates the PID loop
+     * 
+     */
+    void update();
+
+    /**
+     * @brief prints out the pid values in the order of error, kp, ki, kd, outputss
+     * 
+     */
+    void print();
 };
 

@@ -1,6 +1,6 @@
 #pragma once
 #include "vex.h"
-
+//button class
 class button {
     
     private:
@@ -31,6 +31,15 @@ class button {
 
     void setFill(bool fill);
 };
-void drawField();
 
+//other auton stuff
+enum Auton
+{
+	offensiveZone,
+	defensiveZone,
+	skills
+};
 
+extern Auton selectedAuton;
+void onScreenPress(void);
+void initializeAutonSelector(void);
