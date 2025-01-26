@@ -1,0 +1,23 @@
+#pragma once
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+
+#include "v5.h"
+#include "v5_vcs.h"
+#include "robotConfig.h"
+
+//my files
+#include "drive.h"
+#include "odometry.h"
+#define maybe (rand() % 2 == 0)
+
+#define waitUntil(condition)                                                   \
+  do {                                                                         \
+    vex::wait(5, msec);                                                             \
+  } while (!(condition))
+
+#define repeat(iterations)                                                     \
+  for (int iterator = 0; iterator < iterations; iterator++)
